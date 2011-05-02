@@ -15,8 +15,8 @@ are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo
 MinSizeRel.")
 ENDIF()
 
-SET(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
-SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
@@ -24,6 +24,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 # Project Definition
 project(DooFit)
 cmake_minimum_required(VERSION 2.6)
+
+add_subdirectory(Fitter)
+add_subdirectory(Builder)
+add_subdirectory(Data)
+add_subdirectory(Plotter)
+add_subdirectory(ToyFactory)
+add_subdirectory(ToyStudy)
+add_subdirectory(ExtraRooPdf)
 
 add_subdirectory(Utils)
 

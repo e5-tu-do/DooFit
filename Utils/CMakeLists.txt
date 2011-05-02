@@ -1,6 +1,3 @@
-cmake_minimum_required (VERSION 2.6)
-project (Utils)
-
 find_package(ROOT REQUIRED)
 
 include_directories(${ROOT_INCLUDE_DIR})
