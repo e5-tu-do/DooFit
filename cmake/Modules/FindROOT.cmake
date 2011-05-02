@@ -121,6 +121,7 @@ IF (ROOT_FOUND)
 #  REMOVE_FROM_LIST(root_flags "${root_libs_all}" "${root_library}")
 
   SET(ROOT_LIBRARIES ${root_flags})
+  SET(ROOFIT_LIBRARIES "-lRooFit -lRooFitCore -lRooStats -lHtml -lMinuit -lThread -lFoam")
 
   # Make variables changeble to the advanced user
   MARK_AS_ADVANCED( ROOT_LIBRARY_DIR ROOT_INCLUDE_DIR ROOT_DEFINITIONS)
@@ -129,6 +130,7 @@ IF (ROOT_FOUND)
   SET( ROOT_INCLUDES ${ROOT_INCLUDE_DIR})
 
   SET(LD_LIBRARY_PATH ${LD_LIBRARY_PATH} ${ROOT_LIBRARY_DIR})
+
 
   #######################################
   #
@@ -142,6 +144,7 @@ IF (ROOT_FOUND)
     PATHS ${ROOT_BINARY_DIR}
     NO_DEFAULT_PATH
     )
+
 
 ENDIF (ROOT_FOUND)
 
