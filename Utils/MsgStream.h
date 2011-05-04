@@ -9,11 +9,18 @@
  * \brief A class for message output using different messages and colors.
  *
  * MsgStream is a handler class to output messages. It can be used like 
- * std::cout and similar streams. Some MsgStream objects are pre-defined for 
- * certain message levels.
+ * std::cout and similar streams. The following MsgStream objects are 
+ * pre-defined for certain message levels: serr, swarn, sinfo, scfg and sout.
  *
+ * Usage example:
  * \code 
  * swarn << "This is a warning message which will be printed in yellow. Value is " << value << endmsg;
+ * \endcode
+ *
+ * The user can define their own MsgStream as well:
+ * \code
+ * MsgStream mymsgstream(Utils::kTextBlue);
+ * mymsgstream << "My own stream" << endmsg;
  * \endcode
  */
 class MsgStream {
