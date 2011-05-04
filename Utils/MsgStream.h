@@ -5,9 +5,16 @@
 #include <iostream>
 #include <sstream> 
 
-/*! \brief A class for message output using different messages and colors.
+/*! \class MsgStream 
+ * \brief A class for message output using different messages and colors.
  *
- * MsgStream
+ * MsgStream is a handler class to output messages. It can be used like 
+ * std::cout and similar streams. Some MsgStream objects are pre-defined for 
+ * certain message levels.
+ *
+ * \code 
+ * swarn << "This is a warning message which will be printed in yellow. Value is " << value << endmsg;
+ * \endcode
  */
 class MsgStream {
 public:
