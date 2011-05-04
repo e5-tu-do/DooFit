@@ -25,18 +25,18 @@
  */
 class MsgStream {
 public:
-  /// Constructor for colored MsgStream.
+  /// \brief Constructor for colored MsgStream.
   /// \param color The color to be used for this stream.
   MsgStream(Utils::TerminalColor color) : text_color_(color) {}
   /// Constructor for standard uncolored output.
   MsgStream() : text_color_(Utils::kTextNone) {}
   
-  /// Get the internal std::ostringstream.
+  /// \brief Get the internal std::ostringstream.
   /// \return Internal std::ostringstream.
   std::ostringstream& stream() { return os_; }
   
-  /// Actually output the content of the MsgStream to std::cout. Normally not 
-  /// needed as endmsg() will force the output.
+  /// \brief Actually output the content of the MsgStream to std::cout. 
+  /// Normally not needed as endmsg() will force the output.
   /// \todo Include support for other streams as well besides std::cout.
   MsgStream& doOutput() {
     Utils::SetTerminalColor(text_color_);
@@ -46,14 +46,15 @@ public:
     return *this;
   }
   
-  /// Stream operator for STL streams. See iostreams documentation for 
-  /// reference.
+  /// \brief Stream operator for STL streams. 
+  /// See iostreams documentation for reference.
   MsgStream& operator<<(std::ostream& (*_f)(std::ostream&)) {
     _f(os_);
     return *this;
   }
   
-  /// Stream operator for MsgStream streams. Analogous to MsgStream::operator<<(std::ostream& (*)(std::ostream&)).
+  /// \brief Stream operator for MsgStream streams. 
+  /// Analogous to MsgStream::operator<<(std::ostream& (*)(std::ostream&)).
   MsgStream& operator<<(MsgStream& (*_f)(MsgStream&)) {
     _f(*this);
     return *this;
@@ -69,8 +70,8 @@ protected:
   /// Flush the internal std::ostringstream.
   void flush() { os_.flush(); doOutput(); }
   
-  std::ostringstream os_;               /// Internal std::ostringstream for data.
-  Utils::TerminalColor text_color_;     /// Text color for output.
+  std::ostringstream os_;            /// Internal std::ostringstream for data.
+  Utils::TerminalColor text_color_;  /// Text color for output.
 };
 
 /// MsgStream function to end a message (i.e. newline) and force the output. Not
