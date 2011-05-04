@@ -77,6 +77,7 @@ protected:
 };
 
 /// \brief MsgStream function to end a message (i.e. newline) and force the output. 
+///
 /// Not to be called directly but to be used together with 
 /// MsgStream::operator<<() functions.
 /// Usage example:
