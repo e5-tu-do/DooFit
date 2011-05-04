@@ -31,7 +31,8 @@ public:
   /// Constructor for standard uncolored output.
   MsgStream() : text_color_(Utils::kTextNone) {}
   
-  /// Return the internal std::ostringstream.
+  /// Get the internal std::ostringstream.
+  /// \return Internal std::ostringstream.
   std::ostringstream& stream() { return os_; }
   
   /// Actually output the content of the MsgStream to std::cout. Normally not 
@@ -52,7 +53,7 @@ public:
     return *this;
   }
   
-  /// Stream operator for MsgStream streams. Analogous to operator<<(std::ostream& (*_f)(std::ostream&)).
+  /// Stream operator for MsgStream streams. Analogous to MsgStream::operator<<(std::ostream& ()(std::ostream&)).
   MsgStream& operator<<(MsgStream& (*_f)(MsgStream&)) {
     _f(*this);
     return *this;
