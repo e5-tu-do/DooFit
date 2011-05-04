@@ -59,32 +59,48 @@ public:
     return *this;
   }
   
+  /// Output a horizontal ruler.
   void Ruler() {
     os_ << "==============================================================================================================";
     doOutput();
   }
   
 protected:
+  /// Flush the internal std::ostringstream.
   void flush() { os_.flush(); doOutput(); }
   
-  std::ostringstream os_;
-  Utils::TerminalColor text_color_;
+  std::ostringstream os_;               /// Internal std::ostringstream for data.
+  Utils::TerminalColor text_color_;     /// Text color for output.
 };
 
+/// MsgStream function to end a message (i.e. newline) and force the output. Not
+/// to be called directly but to be used together with MsgStream::operator<<() 
+/// functions.
+/// Usage example:
+/// \code
+/// swarn << "This is a warning message which will be printed in yellow. Value is " << value << endmsg;
+/// \endcode
 inline MsgStream& endmsg(MsgStream& s) {
   return s.doOutput();
 }
 
+/// Stream operator for MsgStream streams to be used with other objects like in
+/// STL iostreams.
 template<typename T>
 inline MsgStream& operator<<(MsgStream& lhs, const T& arg) {
   lhs.stream() << arg;
   return lhs;
 } 
 
+/// MsgStream for errors. Color: Red
 extern MsgStream serr; 
+/// MsgStream for warnings. Color: Yellow
 extern MsgStream swarn;
+/// MsgStream for info messages. Color: Green
 extern MsgStream sinfo;
+/// MsgStream for config messages. Color: Blue
 extern MsgStream scfg;
+/// MsgStream for standard messages. Color: None
 extern MsgStream sout;
 
 #endif
