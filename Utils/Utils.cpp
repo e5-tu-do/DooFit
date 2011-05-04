@@ -38,6 +38,8 @@ void Utils::setStyle(TString option)
 	gStyle->SetStatColor(0);
 	gStyle->SetTitleFillColor(0);
 
+  /// \todo Put some more documentation in here.
+  
 	// canvas default size
 	gStyle->SetCanvasDefH(480);
 	gStyle->SetCanvasDefW(640);
