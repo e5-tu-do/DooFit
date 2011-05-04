@@ -53,7 +53,7 @@ public:
     return *this;
   }
   
-  /// Stream operator for MsgStream streams. Analogous to MsgStream::operator<<(std::ostream& ()(std::ostream&)).
+  /// Stream operator for MsgStream streams. Analogous to MsgStream::operator<<(std::ostream& (*)(std::ostream&)).
   MsgStream& operator<<(MsgStream& (*_f)(MsgStream&)) {
     _f(*this);
     return *this;
