@@ -5,6 +5,10 @@
 #include <iostream>
 #include <sstream> 
 
+/*! \brief A class for message output using different messages and colors.
+ *
+ * MsgStream
+ */
 class MsgStream {
 public:
   MsgStream(Utils::TerminalColor color) : text_color_(color) {}
@@ -55,5 +59,6 @@ extern MsgStream serr;
 extern MsgStream swarn;
 extern MsgStream sinfo;
 extern MsgStream scfg;
+extern MsgStream sout;
 
 #endif
