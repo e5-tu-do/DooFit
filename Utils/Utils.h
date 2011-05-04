@@ -70,11 +70,11 @@ namespace Utils
 	bool		fileExists(TString strFilename);
 	int		  fileNLines(TString strFilename);
 	void 		printSystemRecources(TString cmd);
-  /// Sleep, i.e. halt everything.
+  /// \brief Sleep, i.e. halt everything.
   /// \param sleep_time Time to sleep in seconds.
   void    Sleep(double sleep_time);
 	
-  /// Set the terminal color.
+  /// \brief Set the terminal color.
   ///
   /// \param color The color to be used from now on.
   void    SetTerminalColor(TerminalColor color);
