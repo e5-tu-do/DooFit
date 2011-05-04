@@ -36,6 +36,7 @@
 
 namespace Utils
 {
+  /// Terminal color enum to be used for example in MsgStream class.
   enum TerminalColor {
     kTextBlack   = 0,
     kTextRed     = 1,
@@ -69,11 +70,15 @@ namespace Utils
 	bool		fileExists(TString strFilename);
 	int		  fileNLines(TString strFilename);
 	void 		printSystemRecources(TString cmd);
-  ///< sleep for sleep_time seconds.
+  /// Sleep, i.e. halt everything.
+  /// \param sleep_time Time to sleep in seconds.
   void    Sleep(double sleep_time);
 	
-  ///< I/O stuff
+  /// Set the terminal color.
+  ///
+  /// \param color The color to be used from now on.
   void    SetTerminalColor(TerminalColor color);
+  /// Reset the terminal color to none again.
   void    ResetTerminal();
   
 	//
