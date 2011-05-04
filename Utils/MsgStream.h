@@ -70,13 +70,13 @@ protected:
   /// Flush the internal std::ostringstream.
   void flush() { os_.flush(); doOutput(); }
   
-  std::ostringstream os_;            /// Internal std::ostringstream for data.
-  Utils::TerminalColor text_color_;  /// Text color for output.
+  std::ostringstream os_;            /// \brief Internal std::ostringstream for data.
+  Utils::TerminalColor text_color_;  /// \brief Text color for output.
 };
 
-/// MsgStream function to end a message (i.e. newline) and force the output. Not
-/// to be called directly but to be used together with MsgStream::operator<<() 
-/// functions.
+/// \brief MsgStream function to end a message (i.e. newline) and force the output. 
+/// Not to be called directly but to be used together with 
+/// MsgStream::operator<<() functions.
 /// Usage example:
 /// \code
 /// swarn << "This is a warning message which will be printed in yellow. Value is " << value << endmsg;
@@ -85,8 +85,8 @@ inline MsgStream& endmsg(MsgStream& s) {
   return s.doOutput();
 }
 
-/// Stream operator for MsgStream streams to be used with other objects like in
-/// STL iostreams.
+/// \brief Stream operator for MsgStream streams and additional objects.
+/// To be used with other objects like in STL iostreams.
 template<typename T>
 inline MsgStream& operator<<(MsgStream& lhs, const T& arg) {
   lhs.stream() << arg;
