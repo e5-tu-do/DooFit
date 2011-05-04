@@ -36,7 +36,7 @@ public:
   
   /// Actually output the content of the MsgStream to std::cout. Normally not 
   /// needed as endmsg() will force the output.
-  /// \todo{Include support for other streams as well besides std::cout.}
+  /// \todo Include support for other streams as well besides std::cout.
   MsgStream& doOutput() {
     Utils::SetTerminalColor(text_color_);
     std::cout << os_.str() << std::endl;
@@ -45,12 +45,14 @@ public:
     return *this;
   }
   
-  /// Stream operator for std::
+  /// Stream operator for STL streams. See iostreams documentation for 
+  /// reference.
   MsgStream& operator<<(std::ostream& (*_f)(std::ostream&)) {
     _f(os_);
     return *this;
   }
   
+  /// Stream operator for MsgStream streams. Analogous to operator<<(std::ostream& (*_f)(std::ostream&)).
   MsgStream& operator<<(MsgStream& (*_f)(MsgStream&)) {
     _f(*this);
     return *this;
