@@ -25,9 +25,13 @@
  */
 class MsgStream {
 public:
+  /// Constructor for colored MsgStream.
+  /// \param color The color to be used for this stream.
   MsgStream(Utils::TerminalColor color) : text_color_(color) {}
+  /// Constructor for standard uncolored output.
   MsgStream() : text_color_(Utils::kTextNone) {}
   
+  /// Return the internal std::ostringstream.
   std::ostringstream& stream() { return os_; }
   
   void flush() { os_.flush(); doOutput(); }
