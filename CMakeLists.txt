@@ -27,6 +27,8 @@ cmake_minimum_required(VERSION 2.6)
 
 add_subdirectory(Fitter)
 add_subdirectory(Builder)
+add_subdirectory(BuilderSim)
+add_subdirectory(PdfToWorkspace)
 add_subdirectory(Data)
 add_subdirectory(Plotter)
 add_subdirectory(ToyFactory)
