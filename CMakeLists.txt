@@ -36,5 +36,5 @@ add_subdirectory(ToyStudy)
 add_subdirectory(ExtraRooPdf)
 
 add_subdirectory(Utils)
-
+add_subdirectory(TestWiese)
 
