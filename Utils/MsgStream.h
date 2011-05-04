@@ -70,8 +70,10 @@ protected:
   /// Flush the internal std::ostringstream.
   void flush() { os_.flush(); doOutput(); }
   
-  std::ostringstream os_;            //< \brief Internal std::ostringstream for data.
-  Utils::TerminalColor text_color_;  //< \brief Text color for output.
+  /// \brief Internal std::ostringstream for data.
+  std::ostringstream os_;            
+  /// \brief Text color for output.
+  Utils::TerminalColor text_color_;  
 };
 
 /// \brief MsgStream function to end a message (i.e. newline) and force the output. 
