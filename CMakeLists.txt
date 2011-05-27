@@ -25,6 +25,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 project(DooFit)
 cmake_minimum_required(VERSION 2.6)
 
+add_subdirectory(Config)
 add_subdirectory(Fitter)
 add_subdirectory(Builder)
 add_subdirectory(BuilderSim)
