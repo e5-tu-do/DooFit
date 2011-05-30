@@ -1,4 +1,4 @@
-/** 
+/** \class Config
  *  \brief DooFit Config base class.
  *
  *  This is the base class for all DooFit config objects. It offers
@@ -20,9 +20,12 @@ class Config {
   
  public:
    
-  /** 
-   * The standard constructor.
-   */
+  /**
+   *  \brief The standard constructor.
+   *
+   *  Sets all memebers to default values.
+  **/
+
   Config();
   Config(int argc, char* argv);
   Config(const vector<string>& option_vector);
