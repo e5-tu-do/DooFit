@@ -77,13 +77,37 @@ class Config {
   std::string name_;
   
   /** 
-   *  \brief Program options description.
+   *  \brief Program options description for non-hidden options.
    */
   boost::program_options::description   desc_;
   /** 
-   *  \brief Program options variables map.
+   *  \brief Program options variables map for non-hidden options.
    */
   boost::program_options::variables_map var_map_;
+  /** 
+   *  \brief Container for all non-hidden program option descriptions.
+   *
+   *  Each entry is for one group/category of options to be set. All entries 
+   *  will be merged into desc_
+   */
+  vector <boost::program_options::description> descs_;
+  
+  /** 
+   *  \brief Program options description for hidden options.
+   */
+  boost::program_options::description   desc_hidden_;
+  /** 
+   *  \brief Program options variables map for hidden options.
+   */
+  boost::program_options::variables_map var_map_hidden_;
+  /** 
+   *  \brief Container for all hidden program option descriptions.
+   *
+   *  Each entry is for one group/category of options to be set. All entries 
+   *  will be merged into desc_hidden_
+   */
+  vector <boost::program_options::description> descs_hidden_;
+  
   /** 
    *  \brief Vector of unrecognized program options.
    */
