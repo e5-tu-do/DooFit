@@ -16,18 +16,27 @@
 
 // RooFit
 
+// forward declarations
+
 class Config {
   
  public:
    
   /**
-   *  \brief The standard constructor.
+   *  \brief Standard constructor.
    *
    *  Sets all memebers to default values.
-  **/
-
+   */
   Config();
+  
+  /**
+   *  \brief Constructor for usage with input from command line.
+   */
   Config(int argc, char* argv);
+  
+  /**
+   *  \brief Constructor for usage with string vector command options.
+   */
   Config(const vector<string>& option_vector);
   
   ~Config;
