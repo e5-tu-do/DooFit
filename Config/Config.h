@@ -64,7 +64,7 @@ class Config {
   }
   
   /**
-   *  \brief Getter for program options that could not be parsed.
+   *  \brief Getter for options that could not be parsed by this module.
    */
   const vector<string>& unrec_options(){
     return unrec_options_;
