@@ -33,8 +33,8 @@ class Config {
   /**
    *  \brief Constructor for usage with input from command line.
    *
-   *  @param1 argc Number of arguments.
-   *  @param2 argv Char array with arguments.
+   *  @param argc Number of arguments.
+   *  @param argv Char array with arguments.
    */
   Config(int argc, char* argv);
   
