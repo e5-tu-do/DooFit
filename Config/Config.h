@@ -17,6 +17,8 @@
 // RooFit
 
 // forward declarations
+class something;
+
 
 class Config {
   
