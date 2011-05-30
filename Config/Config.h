@@ -41,18 +41,18 @@ class Config {
   /**
    *  \brief Constructor for usage with string vector command options.
    */
-  Config(const vector<string>& option_vector);
+  Config(const std::vector<std::string>& option_vector);
   
   /**
    *  \brief Destructor.
    */
-  ~Config;
+  ~Config();
       
   
   /**
    *  \brief Getter for program options description.
    */
-  const boost::program_options::description&    desc(){
+  const boost::program_options::options_description&    desc(){
     return desc_;
   }
 
@@ -66,7 +66,7 @@ class Config {
   /**
    *  \brief Getter for options that could not be parsed by this module.
    */
-  const vector<string>& unrec_options(){
+  const std::vector<std::string>& unrec_options(){
     return unrec_options_;
   }
   
@@ -79,7 +79,7 @@ class Config {
   /** 
    *  \brief Program options description for non-hidden options.
    */
-  boost::program_options::description   desc_;
+  boost::program_options::options_description   desc_;
   /** 
    *  \brief Program options variables map for non-hidden options.
    */
@@ -90,12 +90,12 @@ class Config {
    *  Each entry is for one group/category of options to be set. All entries 
    *  will be merged into Config::desc_
    */
-  vector <boost::program_options::description> descs_;
+  std::vector <boost::program_options::options_description> descs_;
   
   /** 
    *  \brief Program options description for hidden options.
    */
-  boost::program_options::description   desc_hidden_;
+  boost::program_options::options_description   desc_hidden_;
   /** 
    *  \brief Program options variables map for hidden options.
    */
@@ -106,12 +106,13 @@ class Config {
    *  Each entry is for one group/category of options to be set. All entries 
    *  will be merged into \link Config::desc_hidden_
    */
-  vector <boost::program_options::description> descs_hidden_;
+  std::vector <boost::program_options::options_description> descs_hidden_;
   
   /** 
    *  \brief Vector of unrecognized program options.
    */
-  vector<string> unrec_options_;
+  std::vector<std::string> unrec_options_;
   
  private: 
+  
 };
