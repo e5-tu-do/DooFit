@@ -32,6 +32,9 @@ class Config {
   
   /**
    *  \brief Constructor for usage with input from command line.
+   *
+   *  @param1 argc Number of arguments.
+   *  @param2 argv Char array with arguments.
    */
   Config(int argc, char* argv);
   
@@ -52,10 +55,22 @@ class Config {
   const vector<string>& unrec_options(); 
   
  protected:
+  /**
+   *  \brief Name of the configuration object.
+   */
   std::string name_;
   
+  /** 
+   *  \brief Program options description.
+   */
   boost::program_options::description   desc_;
+  /** 
+   *  \brief Program options variables map.
+   */
   boost::program_options::variables_map var_map_;
+  /** 
+   *  \brief Vector of unrecognized program options.
+   */
   vector<string> unrec_options_;
   
  private: 
