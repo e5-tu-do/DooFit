@@ -49,10 +49,26 @@ class Config {
   ~Config;
       
   
+  /**
+   *  \brief Getter for program options description.
+   */
+  const boost::program_options::description&    desc(){
+    return desc_;
+  }
+
+  /**
+   *  \brief Getter for program options variables map.
+   */
+  const boost::program_options::variables_map&  var_map(){
+    return var_map_;
+  }
   
-  const boost::program_options::description&    desc();
-  const boost::program_options::variables_map&  var_map();
-  const vector<string>& unrec_options(); 
+  /**
+   *  \brief Getter for program options that could not be parsed.
+   */
+  const vector<string>& unrec_options(){
+    return unrec_options_;
+  }
   
  protected:
   /**
