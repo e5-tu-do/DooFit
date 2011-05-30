@@ -1,4 +1,4 @@
-/** \class Config
+/** 
  *  \brief DooFit Config base class.
  *
  *  This is the base class for all DooFit config objects. It offers
