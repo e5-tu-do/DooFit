@@ -88,7 +88,7 @@ class Config {
    *  \brief Container for all non-hidden program option descriptions.
    *
    *  Each entry is for one group/category of options to be set. All entries 
-   *  will be merged into desc_
+   *  will be merged into Config::desc_
    */
   vector <boost::program_options::description> descs_;
   
@@ -104,7 +104,7 @@ class Config {
    *  \brief Container for all hidden program option descriptions.
    *
    *  Each entry is for one group/category of options to be set. All entries 
-   *  will be merged into \link desc_hidden_
+   *  will be merged into \link Config::desc_hidden_
    */
   vector <boost::program_options::description> descs_hidden_;
   
