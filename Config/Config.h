@@ -72,6 +72,17 @@ class Config {
   
  protected:
   /**
+   *  \brief Define all program options.
+   *
+   *  Virtual function that will define all program options for this config 
+   *  object. It is automatically called by constructors. All option 
+   *  descriptions need to be added to Config::descs_ and Config::descs_hidden_
+   *  (depending on if sections are to be visible or not). Individual entries
+   *  in these vectors are for individual option categories/sections.
+   */
+  virtual void DefineOptions() = 0;
+  
+  /**
    *  \brief Name of the configuration object.
    */
   std::string name_;
@@ -88,7 +99,7 @@ class Config {
    *  \brief Container for all non-hidden program option descriptions.
    *
    *  Each entry is for one group/category of options to be set. All entries 
-   *  will be merged into Config::desc_
+   *  will be merged into Config::desc_.
    */
   std::vector <boost::program_options::options_description> descs_;
   
@@ -104,7 +115,7 @@ class Config {
    *  \brief Container for all hidden program option descriptions.
    *
    *  Each entry is for one group/category of options to be set. All entries 
-   *  will be merged into \link Config::desc_hidden_
+   *  will be merged into \link Config::desc_hidden_.
    */
   std::vector <boost::program_options::options_description> descs_hidden_;
   
@@ -114,5 +125,12 @@ class Config {
   std::vector<std::string> unrec_options_;
   
  private: 
-  
+  /**
+   *  \brief Combine all previously defined option descriptions.
+   *
+   *  Iteratre through Config::descs_ and Config::descs_hidden_ and combine them
+   *  into Config::desc_ and Config::desc_hidden_. This function will be called
+   *  automatically through the constructors.
+   */
+  void CombineOptions();
 };
