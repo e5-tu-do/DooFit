@@ -1,6 +1,8 @@
-/** \brief DooFit Config base class.
+/** \class Config
+ *  \brief DooFit Config base class.
  *
- * This is the base class for all DooFit config objects. 
+ *  This is the base class for all DooFit config objects. It offers
+ *  configuration via the boost::program_options package.
  */
 
 // STL
@@ -17,6 +19,10 @@
 class Config {
   
  public:
+   
+  /** 
+   * The standard constructor.
+   */
   Config();
   Config(int argc, char* argv);
   Config(const vector<string>& option_vector);
