@@ -17,13 +17,12 @@
 // RooFit
 
 // forward declarations
-class something;
 
 
 class Config {
   
  public:
-   
+  
   /**
    *  \brief Standard constructor.
    *
@@ -41,7 +40,12 @@ class Config {
    */
   Config(const vector<string>& option_vector);
   
+  /**
+   *  \brief Destructor.
+   */
   ~Config;
+      
+  
   
   const boost::program_options::description&    desc();
   const boost::program_options::variables_map&  var_map();
