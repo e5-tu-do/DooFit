@@ -27,10 +27,6 @@ my_test_int_(0)
 ConfigTest::~ConfigTest() {}
 
 void ConfigTest::Print() {
-  if (var_map_.count("help")) {
-    cout << desc_visible_ << "\n";
-  }
-   
   cout << "my test switch (internal): ";
   if (my_test_switch_) {
     cout << "true";
@@ -57,4 +53,9 @@ void ConfigTest::DefineOptions() {
 void ConfigTest::LoadOptions() {
   set_my_test_switch(var_map_["my-test-switch"].as<bool>());
   set_my_test_int(var_map_["my-test-int"].as<int>());
+  
+  if (var_map_.count("help")) {
+    cout << desc_visible_ << "\n";
+    exit(0);
+  }
 }
