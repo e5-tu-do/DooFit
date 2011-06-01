@@ -5,6 +5,9 @@
  *  configuration via the boost::program_options package.
  */
 
+#ifndef CONFIG_h
+#define CONFIG_h
+
 // STL
 #include <string>
 #include <vector>
@@ -36,7 +39,7 @@ class Config {
    *  @param argc Number of arguments.
    *  @param argv Char array with arguments.
    */
-  Config(int argc, char* argv);
+  Config(int argc, char* argv[]);
   
   /**
    *  \brief Constructor for usage with string vector command options.
@@ -47,19 +50,26 @@ class Config {
    *  \brief Destructor.
    */
   ~Config();
+  
+  /**
+   *  \brief Print all options.
+   *
+   *  Virtual function that will print all options for this config object.
+   */
+  virtual void Print() = 0;
       
   
   /**
    *  \brief Getter for program options description.
    */
-  const boost::program_options::options_description&    desc(){
+  const boost::program_options::options_description& desc(){
     return desc_;
   }
 
   /**
    *  \brief Getter for program options variables map.
    */
-  const boost::program_options::variables_map&  var_map(){
+  const boost::program_options::variables_map& var_map(){
     return var_map_;
   }
   
@@ -88,29 +98,30 @@ class Config {
   std::string name_;
   
   /** 
-   *  \brief Program options description for non-hidden options.
+   *  \brief Program options description for all options.
    */
-  boost::program_options::options_description   desc_;
+  boost::program_options::options_description desc_;
   /** 
-   *  \brief Program options variables map for non-hidden options.
+   *  \brief Program options variables map for all options.
    */
   boost::program_options::variables_map var_map_;
+  
+  /** 
+   *  \brief Program options description for non-hidden options.
+   */
+  boost::program_options::options_description desc_visible_;
   /** 
    *  \brief Container for all non-hidden program option descriptions.
    *
    *  Each entry is for one group/category of options to be set. All entries 
    *  will be merged into Config::desc_.
    */
-  std::vector <boost::program_options::options_description> descs_;
+  std::vector <boost::program_options::options_description> descs_visible_;
   
   /** 
    *  \brief Program options description for hidden options.
    */
-  boost::program_options::options_description   desc_hidden_;
-  /** 
-   *  \brief Program options variables map for hidden options.
-   */
-  boost::program_options::variables_map var_map_hidden_;
+  boost::program_options::options_description desc_hidden_;
   /** 
    *  \brief Container for all hidden program option descriptions.
    *
@@ -134,3 +145,5 @@ class Config {
    */
   void CombineOptions();
 };
+
+#endif //CONFIG_h

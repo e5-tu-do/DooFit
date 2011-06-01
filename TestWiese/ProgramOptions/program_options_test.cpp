@@ -5,6 +5,8 @@
 #include <vector>
 #include <algorithm>
 
+#include "Config/Config.h"
+
 namespace po = boost::program_options;
 using namespace std;
 
