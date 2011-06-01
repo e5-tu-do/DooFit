@@ -9,6 +9,8 @@
 using namespace std;
 namespace po = boost::program_options;
 
+boost::program_options::options_description Config::desc_visible_all_;
+
 Config::Config() :
   name_("Name"),
   desc_(),
@@ -47,7 +49,7 @@ void Config::InitializeOptions(const vector<string>& option_vector) {
 }
 
 void Config::PrintHelp() {
-  cout << desc_visible_ << endl;
+  cout << desc_visible_all_ << endl;
 }
 
 void Config::CombineOptions() {
@@ -60,4 +62,5 @@ void Config::CombineOptions() {
   }
   
   desc_.add(desc_visible_).add(desc_hidden_);
+  desc_visible_all_.add(desc_visible_);
 }

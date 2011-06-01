@@ -197,6 +197,15 @@ class Config {
    */
   std::vector <boost::program_options::options_description*> descs_hidden_;
   
+  /**
+   *  \brief Static collection of all visible program_options.
+   *
+   *  This options_description object contains all visible options that any 
+   *  derived Config object ever created. Will be used by Config::PrintHelp()
+   *  to print a help message for all options through any Config object. 
+   */
+  static boost::program_options::options_description desc_visible_all_;
+  
   /** 
    *  \brief Vector of unrecognized program options.
    */

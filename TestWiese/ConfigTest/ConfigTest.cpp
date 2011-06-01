@@ -46,10 +46,6 @@ void ConfigTest::DefineOptions() {
 void ConfigTest::LoadOptions() {
   set_my_test_switch(var_map_["my-test-switch"].as<bool>());
   set_my_test_int(var_map_["my-test-int"].as<int>());
-  
-  if (var_map_.count("help")) {
-    PrintHelp();
-  }
 }
 
 ConfigTestSecond::ConfigTestSecond() :
@@ -80,6 +76,4 @@ void ConfigTestSecond::DefineOptions() {
 void ConfigTestSecond::LoadOptions() {
   set_my_test_switch(var_map_["my-second-test-switch"].as<bool>());
   set_my_test_int(var_map_["my-second-test-int"].as<int>());
-  
-  PrintHelp();
 }

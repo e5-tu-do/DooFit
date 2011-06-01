@@ -10,5 +10,7 @@ int main(int argc, char *argv[]) {
   config2.InitializeOptions(config.unrec_options());
   config2.Print();
   
+  config.PrintHelp();
+  
   return 0;
 }
