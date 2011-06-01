@@ -72,7 +72,7 @@ class Config {
    */
   virtual void Print() = 0;
       
-  /** @name getter_program_options
+  /** @name Getter program_options
    *  Getter functions for program_options related members.
    */
   ///@{
