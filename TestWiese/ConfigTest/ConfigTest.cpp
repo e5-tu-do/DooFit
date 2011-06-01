@@ -24,30 +24,18 @@ my_test_int_(0)
 {
 }
 
-ConfigTest::ConfigTest(int argc, char* argv[]) :
-Config(argc, argv),
-my_test_switch_(false),
-my_test_int_(0)
-{
-}
-
-ConfigTest::ConfigTest(const std::vector<std::string>& option_vector) :
-Config(option_vector),
-my_test_switch_(false),
-my_test_int_(0)
-{
-}
+ConfigTest::~ConfigTest() {}
 
 void ConfigTest::DefineOptions() {
-  // Declare a group of options that will be 
-  // allowed only on command line
-  po::options_description generic("Generic options");
-  generic.add_options()
+  po::options_description* generic = new po::options_description("Generic options");
+  generic->add_options()
   ("help", "produce help message")
   ("my-test-switch,s", po::value<bool>()->default_value(false),
    "my test bool switch")
   ("my-test-int,i", po::value<int>()->default_value(0),
    "my test integer");
+  
+  descs_visible_.push_back(generic);
 }
 
 void ConfigTest::Print() {

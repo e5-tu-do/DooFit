@@ -34,19 +34,6 @@ class ConfigTest : public Config {
   ConfigTest();
   
   /**
-   *  \brief Constructor for usage with input from command line.
-   *
-   *  @param argc Number of arguments.
-   *  @param argv Char array with arguments.
-   */
-  ConfigTest(int argc, char* argv[]);
-  
-  /**
-   *  \brief Constructor for usage with string vector command options.
-   */
-  ConfigTest(const std::vector<std::string>& option_vector);
-  
-  /**
    *  \brief Destructor.
    */
   ~ConfigTest();
@@ -81,8 +68,20 @@ class ConfigTest : public Config {
    *  \brief Define options for the derived class.
    *
    *  This function will define all options for the derived ConfigTest class.
+   * 
+   *  @see Config::DefineOptions()
    */
   void DefineOptions();
+  
+  /**
+   *  \brief Load program options into own member variables.
+   *
+   *  This function will store all options from the variable map into own 
+   *  members.
+   *  
+   *  @see Config::LoadOptions()
+   */
+  void LoadOptions();
   
  private:
   /**

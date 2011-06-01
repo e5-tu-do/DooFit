@@ -2,8 +2,9 @@
 
 int main(int argc, char *argv[]) {
   
-  ConfigTest config(argc, argv);
+  ConfigTest config;
   
+  config.InitializeOptions(argc, argv);
   config.Print();
   
   return 0;

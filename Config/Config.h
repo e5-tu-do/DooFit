@@ -34,22 +34,31 @@ class Config {
   Config();
   
   /**
-   *  \brief Constructor for usage with input from command line.
-   *
-   *  @param argc Number of arguments.
-   *  @param argv Char array with arguments.
-   */
-  Config(int argc, char* argv[]);
-  
-  /**
-   *  \brief Constructor for usage with string vector command options.
-   */
-  Config(const std::vector<std::string>& option_vector);
-  
-  /**
    *  \brief Destructor.
    */
-  ~Config();
+  virtual ~Config();
+  
+  /**
+   *  \brief Initialize options with input from command line.
+   *
+   *  Using argc and argv this function initializes all options using 
+   *  boost::program_options.
+   *
+   *  @param argc Number of arguments.
+   *  @param argv char* array with arguments.
+   */
+  void InitializeOptions(int argc, char* argv[]);
+
+  /**
+   *  \brief Initialize options with with string vector.
+   *
+   *  Using option_vector this function initializes all options using 
+   *  boost::program_options.
+   *
+   *  @param option_vector vector of options not parsed by any other Config
+   *                       classes (i.e. unrecognized options).
+   */
+  void InitializeOptions(const std::vector<std::string>& option_vector);
   
   /**
    *  \brief Print all options.
@@ -93,6 +102,15 @@ class Config {
   virtual void DefineOptions() = 0;
   
   /**
+   *  \brief Load program options into own member variables.
+   *
+   *  Virtual function that will load all program options for this config 
+   *  object from the internal variables map into own member variables. It is 
+   *  automatically called by Config::InitializeOptions(). 
+   */
+  virtual void LoadOptions() = 0;
+  
+  /**
    *  \brief Name of the configuration object.
    */
   std::string name_;
@@ -114,9 +132,12 @@ class Config {
    *  \brief Container for all non-hidden program option descriptions.
    *
    *  Each entry is for one group/category of options to be set. All entries 
-   *  will be merged into Config::desc_.
+   *  will be merged into Config::desc_. As the boost developers were so 
+   *  prospective to build boost::program_options::options_description
+   *  in such a way that they cannot be copied or assigned, we need to keep a 
+   *  vector of pointers instead of a vector of real objects.
    */
-  std::vector <boost::program_options::options_description> descs_visible_;
+  std::vector <boost::program_options::options_description*> descs_visible_;
   
   /** 
    *  \brief Program options description for hidden options.
@@ -126,9 +147,12 @@ class Config {
    *  \brief Container for all hidden program option descriptions.
    *
    *  Each entry is for one group/category of options to be set. All entries 
-   *  will be merged into \link Config::desc_hidden_.
+   *  will be merged into \link Config::desc_hidden_. As the boost developers
+   *  were so prospective to build boost::program_options::options_description
+   *  in such a way that they cannot be copied or assigned, we need to keep a 
+   *  vector of pointers instead of a vector of real objects.
    */
-  std::vector <boost::program_options::options_description> descs_hidden_;
+  std::vector <boost::program_options::options_description*> descs_hidden_;
   
   /** 
    *  \brief Vector of unrecognized program options.
