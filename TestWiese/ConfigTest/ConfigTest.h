@@ -45,6 +45,10 @@ class ConfigTest : public Config {
    */
   void Print();
   
+  /** @name getter_actual_options
+   *  Getter functions for actual options members.
+   */
+  ///@{
   /**
    *  \brief Getter for ConfigTest::my_test_switch_
    */
@@ -53,7 +57,12 @@ class ConfigTest : public Config {
    *  \brief Getter for ConfigTest::my_test_int_
    */
   int my_test_int() const {return my_test_int_;}
-  
+  ///@}
+
+  /** @name setter_actual_options
+   *  Setter functions for actual options members.
+   */
+  ///@{
   /**
    *  \brief Setter for ConfigTest::my_test_switch_
    */
@@ -62,6 +71,7 @@ class ConfigTest : public Config {
    *  \brief Setter for ConfigTest::my_test_int_
    */
   void set_my_test_int(int i) {my_test_int_ = i;}
+  ///@}
 
  protected:
   /**
@@ -84,6 +94,10 @@ class ConfigTest : public Config {
   void LoadOptions();
   
  private:
+  /** @name actual_options
+   *  The actual options members.
+   */
+  ///@{ 
   /**
    *  \brief Test switch for ConfigTest class.
    */
@@ -93,6 +107,7 @@ class ConfigTest : public Config {
    *  \brief Test integer for ConfigTest class.
    */
   int my_test_int_;
+  ///@}
 
 };
 

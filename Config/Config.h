@@ -90,6 +90,9 @@ class Config {
   }
   
  protected:
+  /** @name virtual_functions
+   *  Pure virtual functions to be implemented in derived classes.
+   */
   ///@{   
   /**
    *  \brief Define all program options.
@@ -110,13 +113,17 @@ class Config {
    *  automatically called by Config::InitializeOptions(). 
    */
   virtual void LoadOptions() = 0;
-  /**@}*/
+  ///@}
   
   /**
    *  \brief Name of the configuration object.
    */
   std::string name_;
   
+  /** @name program_options
+   *  All program_options related member variables.
+   */
+  ///@{
   /** 
    *  \brief Program options description for all options.
    */
@@ -160,6 +167,7 @@ class Config {
    *  \brief Vector of unrecognized program options.
    */
   std::vector<std::string> unrec_options_;
+  ///@}
   
  private: 
   /**
