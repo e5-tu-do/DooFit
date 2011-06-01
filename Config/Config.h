@@ -65,13 +65,25 @@ class Config {
   void InitializeOptions(const std::vector<std::string>& option_vector);
   ///@}
 
+  /** @name Printing
+   *  Functions for printing of currently set options and help messages.
+   */
+  ///@{
   /**
    *  \brief Print all options.
    *
    *  Virtual function that will print all options for this config object.
    */
   virtual void Print() = 0;
-      
+  
+  /**
+   *  \brief Print help message for program_options
+   *
+   *  Print help for all available visible program_options.
+   */
+  void PrintHelp();
+  ///@}
+ 
   /** @name Getter program_options
    *  Getter functions for program_options related members.
    */
@@ -122,6 +134,19 @@ class Config {
    *  automatically called by Config::InitializeOptions(). 
    */
   virtual void LoadOptions() = 0;
+  ///@}
+  
+  /** @name Helper functions
+   *  Helper functions for printing and other needs.
+   */
+  ///@{ 
+  /**
+   *  \brief Convert a bool to string.
+   *
+   *  @param b bool to print.
+   *  \return{ true or false for b. }
+   */
+  std::string BoolToString(bool b) const { if (b) return "true"; else return "false"; }
   ///@}
   
   /**

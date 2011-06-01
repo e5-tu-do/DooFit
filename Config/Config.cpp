@@ -46,6 +46,10 @@ void Config::InitializeOptions(const vector<string>& option_vector) {
   LoadOptions();
 }
 
+void Config::PrintHelp() {
+  cout << desc_visible_ << endl;
+}
+
 void Config::CombineOptions() {
   for (vector<po::options_description*>::const_iterator it = descs_visible_.begin(); it < descs_visible_.end(); ++it) {
     desc_visible_.add(**it);
