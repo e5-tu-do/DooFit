@@ -38,6 +38,10 @@ class Config {
    */
   virtual ~Config();
   
+  /** @name initializer_functions
+   *  Functions to initialize Config objects through boost::program_options.
+   */
+  ///@{
   /**
    *  \brief Initialize options with input from command line.
    *
@@ -59,7 +63,8 @@ class Config {
    *                       classes (i.e. unrecognized options).
    */
   void InitializeOptions(const std::vector<std::string>& option_vector);
-  
+  ///@}
+
   /**
    *  \brief Print all options.
    *
@@ -67,7 +72,10 @@ class Config {
    */
   virtual void Print() = 0;
       
-  
+  /** @name getter_program_options
+   *  Getter functions for program_options related members.
+   */
+  ///@{
   /**
    *  \brief Getter for program options description.
    */
@@ -88,6 +96,7 @@ class Config {
   const std::vector<std::string>& unrec_options(){
     return unrec_options_;
   }
+  ///@}
   
  protected:
   /** @name virtual_functions

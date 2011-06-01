@@ -74,6 +74,10 @@ class ConfigTest : public Config {
   ///@}
 
  protected:
+  /** @name virtual_functions
+   *  Implementation of pure virtual functions.
+   */
+  ///@{
   /**
    *  \brief Define options for the derived class.
    *
@@ -92,7 +96,8 @@ class ConfigTest : public Config {
    *  @see Config::LoadOptions()
    */
   void LoadOptions();
-  
+  ///@}
+
  private:
   /** @name actual_options
    *  The actual options members.
