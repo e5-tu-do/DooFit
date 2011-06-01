@@ -30,6 +30,8 @@ void Config::InitializeOptions(int argc, char* argv[]) {
   po::store(parsed, var_map_);
   notify(var_map_);
   unrec_options_ = po::collect_unrecognized(parsed.options, po::exclude_positional);
+  
+  LoadOptions();
 }
 
 void Config::InitializeOptions(const vector<string>& option_vector) {
@@ -40,6 +42,8 @@ void Config::InitializeOptions(const vector<string>& option_vector) {
   po::store(parsed, var_map_);
   notify(var_map_);
   unrec_options_ = po::collect_unrecognized(parsed.options, po::exclude_positional);
+    
+  LoadOptions();
 }
 
 void Config::CombineOptions() {

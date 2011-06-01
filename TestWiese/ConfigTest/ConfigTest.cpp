@@ -26,6 +26,22 @@ my_test_int_(0)
 
 ConfigTest::~ConfigTest() {}
 
+void ConfigTest::Print() {
+  if (var_map_.count("help")) {
+    cout << desc_visible_ << "\n";
+  }
+   
+  cout << "my test switch (internal): ";
+  if (my_test_switch_) {
+    cout << "true";
+  } else {
+    cout << "false";
+  }
+  cout << endl;
+  
+  cout << "my test integer (internal): " << my_test_int_ << endl;
+}
+
 void ConfigTest::DefineOptions() {
   po::options_description* generic = new po::options_description("Generic options");
   generic->add_options()
@@ -38,24 +54,7 @@ void ConfigTest::DefineOptions() {
   descs_visible_.push_back(generic);
 }
 
-void ConfigTest::Print() {
-  if (var_map_.count("help")) {
-    cout << desc_visible_ << "\n";
-  }
-  if (var_map_.count("my-test-switch")) {
-    cout << "my test switch: " << var_map_["my-test-switch"].as<bool>() << "\n";
-  }
-  if (var_map_.count("my-test-int")) {
-    cout << "my test integer: " << var_map_["my-test-int"].as<int>() << "\n";
-  }
-  
-  cout << "my test switch (internal): ";
-  if (my_test_switch_) {
-    cout << "true";
-  } else {
-    cout << "false";
-  }
-  cout << endl;
-  
-  cout << "my test integer (internal): " << my_test_int_ << endl;
+void ConfigTest::LoadOptions() {
+  set_my_test_switch(var_map_["my-test-switch"].as<bool>());
+  set_my_test_int(var_map_["my-test-int"].as<int>());
 }
