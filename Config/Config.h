@@ -90,11 +90,7 @@ class Config {
   }
   
  protected:
-  /** @defgroup virt-functs Pure virtual functions for derived classes 
-   *  These are pure virtual functions to be implemented in derived classes.
-   *  @{
-   */
-  
+  ///@{   
   /**
    *  \brief Define all program options.
    *
@@ -114,8 +110,7 @@ class Config {
    *  automatically called by Config::InitializeOptions(). 
    */
   virtual void LoadOptions() = 0;
-  /** @} */ // end of virt-functs
-
+  /**@}*/
   
   /**
    *  \brief Name of the configuration object.
