@@ -38,7 +38,7 @@ class Config {
    */
   virtual ~Config();
   
-  /** @name initializer_functions
+  /** @name Initializer functions
    *  Functions to initialize Config objects through boost::program_options.
    */
   ///@{
@@ -99,7 +99,7 @@ class Config {
   ///@}
   
  protected:
-  /** @name virtual_functions
+  /** @name Virtual functions
    *  Pure virtual functions to be implemented in derived classes.
    */
   ///@{   
@@ -129,7 +129,7 @@ class Config {
    */
   std::string name_;
   
-  /** @name program_options
+  /** @name program_options members
    *  All program_options related member variables.
    */
   ///@{

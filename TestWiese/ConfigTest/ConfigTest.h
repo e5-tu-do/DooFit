@@ -45,7 +45,7 @@ class ConfigTest : public Config {
    */
   void Print();
   
-  /** @name getter_actual_options
+  /** @name Getter actual options
    *  Getter functions for actual options members.
    */
   ///@{
@@ -59,7 +59,7 @@ class ConfigTest : public Config {
   int my_test_int() const {return my_test_int_;}
   ///@}
 
-  /** @name setter_actual_options
+  /** @name Setter actual options
    *  Setter functions for actual options members.
    */
   ///@{
@@ -74,7 +74,7 @@ class ConfigTest : public Config {
   ///@}
 
  protected:
-  /** @name virtual_functions
+  /** @name Virtual functions
    *  Implementation of pure virtual functions.
    */
   ///@{
@@ -99,7 +99,7 @@ class ConfigTest : public Config {
   ///@}
 
  private:
-  /** @name actual_options
+  /** @name Actual options
    *  The actual options members.
    */
   ///@{ 
