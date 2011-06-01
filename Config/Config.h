@@ -236,7 +236,7 @@ class Config {
   void CombineOptions();
   
   /**
-   *  \brief Parse options, store them and parse config file.
+   *  \brief Parse options, store them and (if necessary) parse config file.
    *
    *  Parse using the given command line parser, store parsed options in 
    *  Config::var_map_, notify map and (if Config::config_file_ is set) parse 
