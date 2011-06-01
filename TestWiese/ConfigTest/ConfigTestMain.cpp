@@ -2,10 +2,19 @@
 
 int main(int argc, char *argv[]) {
   /**
-   * \todo When should config objects display help message and how should this
-   *       be captured?
+   * \todo When should Config objects display help message and how should this
+   *       be captured? I.e. if a "--help" option is supplied, only one Config
+   *       object will have it defined as option in its variables map. At some 
+   *       point in the code one should check if the help flag is set and invoke
+   *       Config::PrintHelp(). I'd like this to be rather automatic without the
+   *       need to invoke something like Config::CheckforHelpFlagAndPrintHelp() 
+   *       in every binary or main().
    * \todo How can printing of all set options be handled without having to 
-   *       invoke all Config::Print() functions by hand?
+   *       invoke all Config::Print() functions by hand? Imagine having created 
+   *       a bunch of derived Config objects and then you want to print/dump the
+   *       complete set of options at different points in the code. It would be
+   *       rather not nice to have to always use a block of Print() statements
+   *       there.
    */
   
   ConfigTest config;
