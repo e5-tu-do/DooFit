@@ -35,7 +35,9 @@ void ConfigTest::DefineOptions() {
   po::options_description* generic = new po::options_description("Generic options");
   generic->add_options()
   ("help", "produce help message")
-  ("my-test-switch,s", po::value<bool>()->default_value(false),
+  ("config-file", po::value<string>(&config_file_)->default_value(""),
+   "config file to parse")
+  ("my-test-switch,s", po::value<bool>(&my_test_switch_)->default_value(false),
    "my test bool switch")
   ("my-test-int,i", po::value<int>()->default_value(0),
    "my test integer");
@@ -44,7 +46,6 @@ void ConfigTest::DefineOptions() {
 }
 
 void ConfigTest::LoadOptions() {
-  set_my_test_switch(var_map_["my-test-switch"].as<bool>());
   set_my_test_int(var_map_["my-test-int"].as<int>());
 }
 

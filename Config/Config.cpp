@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <fstream>
 
 #include "Config/Config.h"
 
@@ -10,6 +11,7 @@ using namespace std;
 namespace po = boost::program_options;
 
 boost::program_options::options_description Config::desc_visible_all_;
+std::string Config::config_file_;
 
 Config::Config() :
   name_("Name"),
@@ -28,10 +30,7 @@ void Config::InitializeOptions(int argc, char* argv[]) {
   DefineOptions();
   CombineOptions();
   
-  po::parsed_options parsed = po::command_line_parser(argc, argv).options(desc_).allow_unregistered().run();
-  po::store(parsed, var_map_);
-  notify(var_map_);
-  unrec_options_ = po::collect_unrecognized(parsed.options, po::exclude_positional);
+  ParseOptionsAndConfigFile(po::command_line_parser(argc, argv));
   
   LoadOptions();
 }
@@ -40,11 +39,8 @@ void Config::InitializeOptions(const vector<string>& option_vector) {
   DefineOptions();
   CombineOptions();
   
-  po::parsed_options parsed = po::command_line_parser(option_vector).options(desc_).allow_unregistered().run();
-  po::store(parsed, var_map_);
-  notify(var_map_);
-  unrec_options_ = po::collect_unrecognized(parsed.options, po::exclude_positional);
-    
+  ParseOptionsAndConfigFile(po::command_line_parser(option_vector));
+  
   LoadOptions();
 }
 
@@ -63,4 +59,20 @@ void Config::CombineOptions() {
   
   desc_.add(desc_visible_).add(desc_hidden_);
   desc_visible_all_.add(desc_visible_);
+}
+
+void Config::ParseOptionsAndConfigFile(boost::program_options::command_line_parser parser) {
+  po::parsed_options parsed = parser.options(desc_).allow_unregistered().run();
+  po::store(parsed, var_map_);
+  notify(var_map_);
+  unrec_options_ = po::collect_unrecognized(parsed.options, po::exclude_positional);
+  
+  ifstream ifs(config_file_.c_str());
+  if (!ifs) {
+    cout << "can not open config file: " << config_file_ << "\n";
+  } else {
+    po::parsed_options parsed = po::parse_config_file(ifs, desc_, true);
+    po::store(parsed, var_map_);
+    po::notify(var_map_);
+  }
 }

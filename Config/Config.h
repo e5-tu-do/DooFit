@@ -79,7 +79,10 @@ class Config {
   /**
    *  \brief Print help message for program_options
    *
-   *  Print help for all available visible program_options.
+   *  Print help for all available visible program_options. Due to static
+   *  collection of all options any call of Config::PrintHelp() in any derived
+   *  class will print the help message for all options throughout all Config 
+   *  objects.
    */
   void PrintHelp();
   ///@}
@@ -212,6 +215,16 @@ class Config {
   std::vector<std::string> unrec_options_;
   ///@}
   
+  /**
+   *  \brief Config file to parse
+   *
+   *  Name of config file to parse for options. This is a static member as 
+   *  parsing the option file only once and handling over unrecognized options
+   *  is more complicated if it needs to be done for command line \a and config 
+   *  file. 
+   */
+  static std::string config_file_;
+  
  private: 
   /**
    *  \brief Combine all previously defined option descriptions.
@@ -221,6 +234,17 @@ class Config {
    *  automatically through the constructors.
    */
   void CombineOptions();
+  
+  /**
+   *  \brief Parse options, store them and parse config file.
+   *
+   *  Parse using the given command line parser, store parsed options in 
+   *  Config::var_map_, notify map and (if Config::config_file_ is set) parse 
+   *  the config file as well (and notify, store...).
+   *
+   *  @param parser command line parser to use
+   */
+  void ParseOptionsAndConfigFile(boost::program_options::command_line_parser parser);
 };
 
 #endif //CONFIG_h
