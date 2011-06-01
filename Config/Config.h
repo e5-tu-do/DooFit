@@ -1,8 +1,10 @@
 /** \class Config
  *  \brief DooFit Config base class.
  *
- *  This is the base class for all DooFit config objects. It offers
- *  configuration via the boost::program_options package.
+ *  This is the abstract base class for all DooFit config objects. It offers
+ *  configuration via the boost::program_options package. All derived classes 
+ *  \a must define Config::DefineOptions() and Config::LoadOptions() as well as
+ *  the Config::Print() function.
  */
 
 #ifndef CONFIG_h
