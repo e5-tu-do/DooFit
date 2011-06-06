@@ -61,10 +61,15 @@ class Config {
    *  Using option_vector this function initializes all options using 
    *  boost::program_options.
    *
-   *  @param option_vector vector of options not parsed by any other Config
-   *                       classes (i.e. unrecognized options).
+   *  @param previous_config previous Config object for which its unrecognized 
+   *                         options are to be used for this Config object. This
+   *                         includes Config::config_file_ of previous_config. 
+   *                         Therefore, the config file (if set in 
+   *                         previous_config) will be parsed again. 
+   *                         Unfortunately, there is no smarter way to handle 
+   *                         this with boost::program_options.
    */
-  void InitializeOptions(const std::vector<std::string>& option_vector);
+  void InitializeOptions(const Config& previous_config);
   ///@}
 
   /** @name Printing
@@ -96,21 +101,21 @@ class Config {
   /**
    *  \brief Getter for program options description.
    */
-  const boost::program_options::options_description& desc(){
+  const boost::program_options::options_description& desc() const {
     return desc_;
   }
 
   /**
    *  \brief Getter for program options variables map.
    */
-  const boost::program_options::variables_map& var_map(){
+  const boost::program_options::variables_map& var_map() const {
     return var_map_;
   }
   
   /**
    *  \brief Getter for options that could not be parsed by this module.
    */
-  const std::vector<std::string>& unrec_options(){
+  const std::vector<std::string>& unrec_options() const {
     return unrec_options_;
   }
   ///@}
@@ -225,7 +230,7 @@ class Config {
    *  is more complicated if it needs to be done for command line \a and config 
    *  file. 
    */
-  static std::string config_file_;
+  std::string config_file_;
   
  private: 
   /**

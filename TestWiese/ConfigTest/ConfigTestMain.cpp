@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   config.InitializeOptions(argc, argv);
   
   ConfigTestSecond config2;
-  config2.InitializeOptions(config.unrec_options());
+  config2.InitializeOptions(config);
   
   config.PrintHelp();
   

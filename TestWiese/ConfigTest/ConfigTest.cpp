@@ -61,6 +61,7 @@ ConfigTestSecond::~ConfigTestSecond() {}
 void ConfigTestSecond::Print() {
   cout << "my second test switch (internal): " << BoolToString(my_test_switch_) << endl;
   cout << "my second test integer (internal): " << my_test_int_ << endl;
+  cout << "my second test vector (internal): " << my_test_vector_.size() << endl;
 }
 
 void ConfigTestSecond::DefineOptions() {
@@ -69,7 +70,8 @@ void ConfigTestSecond::DefineOptions() {
   ("my-second-test-switch", po::value<bool>()->default_value(false),
    "my second test bool switch")
   ("my-second-test-int", po::value<int>()->default_value(0),
-   "my second test integer");
+   "my second test integer")
+  ("my-second-test-vector", po::value<vector<string> >(&my_test_vector_)->composing());
   
   descs_visible_.push_back(generic);
 }

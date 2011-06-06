@@ -212,6 +212,11 @@ private:
    *  \brief Test integer for ConfigTestSecond class.
    */
   int my_test_int_;
+  
+  /**
+   *  \brief Test string vector for ConfigTestSecond class.
+   */
+  std::vector<std::string> my_test_vector_;
   ///@}
   
 };
