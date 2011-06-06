@@ -68,10 +68,6 @@ void Config::ParseOptionsAndConfigFile(boost::program_options::command_line_pars
   po::notify(var_map_);
   unrec_options_ = po::collect_unrecognized(parsed.options, po::exclude_positional);
   
-  for (vector<string>::const_iterator it = unrec_options_.begin(); it < unrec_options_.end(); ++it) {
-    cout << "unrec: " << *it << endl;
-  }
-  
   if (config_file_.length() > 0) {
     ifstream ifs(config_file_.c_str());
     if (!ifs) {
