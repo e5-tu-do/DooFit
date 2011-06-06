@@ -56,18 +56,17 @@ class Config {
   void InitializeOptions(int argc, char* argv[]);
 
   /**
-   *  \brief Initialize options with with string vector.
+   *  \brief Initialize options with with previously initialized Config object.
    *
-   *  Using option_vector this function initializes all options using 
+   *  Using previous_config this function initializes all options using 
+   *  unrecognized boost::program_options from a previously initialized Config
+   *  object. This includes Config::config_file_ of previous_config. Therefore, 
+   *  the config file (if set in previous_config) will be parsed again. 
+   *  Unfortunately, there is no smarter way to handle this with 
    *  boost::program_options.
    *
    *  @param previous_config previous Config object for which its unrecognized 
-   *                         options are to be used for this Config object. This
-   *                         includes Config::config_file_ of previous_config. 
-   *                         Therefore, the config file (if set in 
-   *                         previous_config) will be parsed again. 
-   *                         Unfortunately, there is no smarter way to handle 
-   *                         this with boost::program_options.
+   *                         options are to be used for this Config object. 
    */
   void InitializeOptions(const Config& previous_config);
   ///@}
