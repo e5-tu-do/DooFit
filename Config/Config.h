@@ -5,6 +5,9 @@
  *  configuration via the boost::program_options package. All derived classes 
  *  \a must define Config::DefineOptions() and Config::LoadOptions() as well as
  *  the Config::Print() function.
+ *  Furthermore, the Config::help_flag_ option and Config::config_file_ should 
+ *  be set by the derived class accordingly. Config::CheckHelpFlagAndPrintHelp()
+ *  can be used to capture the set help flag and print a help message.
  */
 
 #ifndef CONFIG_h
@@ -240,8 +243,10 @@ class Config {
    *
    *  Name of config file to parse for options. This is a static member as 
    *  parsing the option file only once and handling over unrecognized options
-   *  is more complicated if it needs to be done for command line \a and config 
-   *  file. 
+   *  is more complicated if it needs to be done for config file. 
+   *  This member must be set through 
+   *  boost::program_options::value<string>(&config_file_) in 
+   *  Config::DefineOptions().
    */
   std::string config_file_;
   
@@ -249,7 +254,8 @@ class Config {
    *  \brief Print help flag
    *
    *  Flag specifying whether the help message with available options should be 
-   *  printed.
+   *  printed. The derived class needs to set this by hand in 
+   *  Config::LoadOptions().
    */
   bool help_flag_;
   
