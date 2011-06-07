@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "Utils/MsgStream.h"
 #include "Config/Config.h"
 
 using namespace std;
@@ -26,6 +27,12 @@ Config::Config(const std::string& name) :
   help_flag_(false)
 {
   /// \todo Implement uniqueness check for names
+  for (vector<Config*>::const_iterator it = config_container_.begin(); it < config_container_.end(); ++it) {
+    if (name_.compare((*it)->name_) == 0) {
+      serr << "ERROR" << endmsg;
+    }
+  }
+  
   config_container_.push_back(this);
 }
 
