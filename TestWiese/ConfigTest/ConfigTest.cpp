@@ -17,8 +17,8 @@
 using namespace std;
 namespace po = boost::program_options;
 
-ConfigTest::ConfigTest() :
-Config(),
+ConfigTest::ConfigTest(const std::string& name) :
+Config(name),
 my_test_switch_(false),
 my_test_int_(0)
 {
@@ -26,7 +26,7 @@ my_test_int_(0)
 
 ConfigTest::~ConfigTest() {}
 
-void ConfigTest::Print() {
+void ConfigTest::Print() const {
   cout << "my test switch (internal): " << BoolToString(my_test_switch_) << endl;
   cout << "my test integer (internal): " << my_test_int_ << endl;
 }
@@ -47,10 +47,12 @@ void ConfigTest::DefineOptions() {
 
 void ConfigTest::LoadOptions() {
   set_my_test_int(var_map_["my-test-int"].as<int>());
+  
+  if (var_map_.count("help")) help_flag_ = true;
 }
 
-ConfigTestSecond::ConfigTestSecond() :
-Config(),
+ConfigTestSecond::ConfigTestSecond(const std::string& name) :
+Config(name),
 my_test_switch_(false),
 my_test_int_(0)
 {
@@ -58,7 +60,7 @@ my_test_int_(0)
 
 ConfigTestSecond::~ConfigTestSecond() {}
 
-void ConfigTestSecond::Print() {
+void ConfigTestSecond::Print() const {
   cout << "my second test switch (internal): " << BoolToString(my_test_switch_) << endl;
   cout << "my second test integer (internal): " << my_test_int_ << endl;
   cout << "my second test vector (internal): " << my_test_vector_.size() << endl;

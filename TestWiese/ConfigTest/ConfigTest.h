@@ -38,8 +38,10 @@ class ConfigTest : public Config {
    *  \brief Standard constructor.
    *
    *  Sets all memebers to default values.
+   *
+   *  @param name Name of this Config object.
    */
-  ConfigTest();
+  ConfigTest(const std::string& name);
   
   /**
    *  \brief Destructor.
@@ -51,7 +53,7 @@ class ConfigTest : public Config {
    *
    *  Virtual function that will print all options for this config object.
    */
-  void Print();
+  void Print() const;
   
   /** @name Getter actual options
    *  Getter functions for actual options members.
@@ -130,8 +132,10 @@ public:
    *  \brief Standard constructor.
    *
    *  Sets all memebers to default values.
+   *
+   *  @param name Name of this Config object.
    */
-  ConfigTestSecond();
+  ConfigTestSecond(const std::string& name);
   
   /**
    *  \brief Destructor.
@@ -143,7 +147,7 @@ public:
    *
    *  Virtual function that will print all options for this config object.
    */
-  void Print();
+  void Print() const;
   
   /** @name Getter actual options
    *  Getter functions for actual options members.

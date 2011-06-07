@@ -13,8 +13,8 @@ namespace po = boost::program_options;
 boost::program_options::options_description Config::desc_visible_all_;
 std::vector<Config*> Config::config_container_;
 
-Config::Config() :
-  name_("Name"),
+Config::Config(const std::string& name) :
+  name_(name),
   desc_(),
   var_map_(),
   desc_visible_(),
@@ -22,8 +22,10 @@ Config::Config() :
   desc_hidden_(),
   descs_hidden_(),
   unrec_options_(),
-  config_file_()
+  config_file_(),
+  help_flag_(false)
 {
+  /// \todo Implement uniqueness check for names
   config_container_.push_back(this);
 }
 
@@ -48,7 +50,13 @@ void Config::InitializeOptions(const Config& previous_config) {
   LoadOptions();
 }
 
-void Config::PrintHelp() {
+void Config::PrintAll() const {
+  for (vector<Config*>::const_iterator it = config_container_.begin(); it < config_container_.end(); ++it) {
+    (*it)->Print();
+  }
+}
+
+void Config::PrintHelp() const {
   cout << desc_visible_all_ << endl;
 }
 

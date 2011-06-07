@@ -32,8 +32,10 @@ class Config {
    *  \brief Standard constructor.
    *
    *  Sets all memebers to default values.
+   *
+   *  @param name Name of this Config object.
    */
-  Config();
+  Config(const std::string& name);
   
   /**
    *  \brief Destructor.
@@ -76,11 +78,19 @@ class Config {
    */
   ///@{
   /**
-   *  \brief Print all options.
+   *  \brief Print all options for this object.
    *
    *  Virtual function that will print all options for this config object.
    */
-  virtual void Print() = 0;
+  virtual void Print() const = 0;
+  
+  /**
+   *  \brief Print all options for all Config objects.
+   *
+   *  Iterate through all Config objects and invoke their Config::Print() 
+   *  function.
+   */
+  void PrintAll() const;
   
   /**
    *  \brief Print help message for program_options
@@ -90,7 +100,20 @@ class Config {
    *  class will print the help message for all options throughout all Config 
    *  objects.
    */
-  void PrintHelp();
+  void PrintHelp() const;
+  
+  /**
+   *  \brief Check for help flag and if necessary print help message
+   *
+   *  Depending on the setting of Config::help_flag_ print the help message and
+   *  exit the program termination. 
+   */
+  void CheckHelpFlagAndPrintHelp() const {
+    if (help_flag_) {
+      PrintHelp();
+      exit(0);
+    }
+  }
   ///@}
  
   /** @name Getter program_options
@@ -212,6 +235,44 @@ class Config {
   std::vector<std::string> unrec_options_;
   ///@}
   
+  /**
+   *  \brief Config file to parse
+   *
+   *  Name of config file to parse for options. This is a static member as 
+   *  parsing the option file only once and handling over unrecognized options
+   *  is more complicated if it needs to be done for command line \a and config 
+   *  file. 
+   */
+  std::string config_file_;
+  
+  /**
+   *  \brief Print help flag
+   *
+   *  Flag specifying whether the help message with available options should be 
+   *  printed.
+   */
+  bool help_flag_;
+  
+ private: 
+  /**
+   *  \brief Combine all previously defined option descriptions.
+   *
+   *  Iteratre through Config::descs_ and Config::descs_hidden_ and combine them
+   *  into Config::desc_ and Config::desc_hidden_. This function will be called
+   *  automatically through the constructors.
+   */
+  void CombineOptions();
+  
+  /**
+   *  \brief Parse options, store them and (if necessary) parse config file.
+   *
+   *  Parse using the given command line parser, store parsed options in 
+   *  Config::var_map_, notify map and (if Config::config_file_ is set) parse 
+   *  the config file as well (and notify, store...).
+   *
+   *  @param parser command line parser to use
+   */
+  void ParseOptionsAndConfigFile(boost::program_options::command_line_parser parser);
   
   /** @name static members
    *  All static member variables for functionality across Config objects.
@@ -234,37 +295,6 @@ class Config {
    */
   static std::vector<Config*> config_container_;
   ///@}
-  
-  /**
-   *  \brief Config file to parse
-   *
-   *  Name of config file to parse for options. This is a static member as 
-   *  parsing the option file only once and handling over unrecognized options
-   *  is more complicated if it needs to be done for command line \a and config 
-   *  file. 
-   */
-  std::string config_file_;
-  
- private: 
-  /**
-   *  \brief Combine all previously defined option descriptions.
-   *
-   *  Iteratre through Config::descs_ and Config::descs_hidden_ and combine them
-   *  into Config::desc_ and Config::desc_hidden_. This function will be called
-   *  automatically through the constructors.
-   */
-  void CombineOptions();
-  
-  /**
-   *  \brief Parse options, store them and (if necessary) parse config file.
-   *
-   *  Parse using the given command line parser, store parsed options in 
-   *  Config::var_map_, notify map and (if Config::config_file_ is set) parse 
-   *  the config file as well (and notify, store...).
-   *
-   *  @param parser command line parser to use
-   */
-  void ParseOptionsAndConfigFile(boost::program_options::command_line_parser parser);
 };
 
 #endif //CONFIG_h
