@@ -206,6 +206,17 @@ class Config {
    */
   std::vector <boost::program_options::options_description*> descs_hidden_;
   
+  /** 
+   *  \brief Vector of unrecognized program options.
+   */
+  std::vector<std::string> unrec_options_;
+  ///@}
+  
+  
+  /** @name static members
+   *  All static member variables for functionality across Config objects.
+   */
+  ///@{
   /**
    *  \brief Static collection of all visible program_options.
    *
@@ -214,11 +225,14 @@ class Config {
    *  to print a help message for all options through any Config object. 
    */
   static boost::program_options::options_description desc_visible_all_;
-  
-  /** 
-   *  \brief Vector of unrecognized program options.
+  /**
+   *  \brief Static collection of all created Config objects.
+   *
+   *  This vector contains pointers to all created Config objects. This is 
+   *  necessary for all functionality that has to work on all Config objects 
+   *  like printing of set options.
    */
-  std::vector<std::string> unrec_options_;
+  static std::vector<Config*> config_container_;
   ///@}
   
   /**

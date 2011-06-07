@@ -11,6 +11,7 @@ using namespace std;
 namespace po = boost::program_options;
 
 boost::program_options::options_description Config::desc_visible_all_;
+std::vector<Config*> Config::config_container_;
 
 Config::Config() :
   name_("Name"),
@@ -22,7 +23,9 @@ Config::Config() :
   descs_hidden_(),
   unrec_options_(),
   config_file_()
-{}
+{
+  config_container_.push_back(this);
+}
 
 Config::~Config() {}
 
