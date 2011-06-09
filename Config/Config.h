@@ -27,6 +27,7 @@
 // forward declarations
 class Config;
 
+/// Map of Config pointers accessible via std::string
 typedef std::map<std::string,Config*> ConfigMap;
 
 class Config {
@@ -213,7 +214,7 @@ class Config {
   std::vector <boost::program_options::options_description*> descs_hidden_;
   
   /** 
-   *  \brief Vector of unrecognized program options.
+   *  \brief Vector of unrecognized command line program options.
    */
   std::vector<std::string> unrec_options_;
   ///@}
