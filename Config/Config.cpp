@@ -29,7 +29,8 @@ Config::Config(const std::string& name) :
   /// \todo Implement uniqueness check for names
   for (vector<Config*>::const_iterator it = config_container_.begin(); it < config_container_.end(); ++it) {
     if (name_.compare((*it)->name_) == 0) {
-      serr << "ERROR" << endmsg;
+      serr << "ERROR in Config::Config(const std::string&): Config object with name " << name_ << " already existing." << endmsg;
+      throw 1;
     }
   }
   
@@ -81,19 +82,25 @@ void Config::CombineOptions() {
 }
 
 void Config::ParseOptionsAndConfigFile(boost::program_options::command_line_parser parser) {
-  po::parsed_options parsed = parser.options(desc_).allow_unregistered().run();
-  po::store(parsed, var_map_);
-  po::notify(var_map_);
-  unrec_options_ = po::collect_unrecognized(parsed.options, po::exclude_positional);
-  
-  if (config_file_.length() > 0) {
-    ifstream ifs(config_file_.c_str());
-    if (!ifs) {
-      cout << "can not open config file: " << config_file_ << "\n";
-    } else {
-      po::parsed_options parsed = po::parse_config_file(ifs, desc_, true);
-      po::store(parsed, var_map_);
-      po::notify(var_map_);
+  try {
+    po::parsed_options parsed = parser.options(desc_).allow_unregistered().run();
+    po::store(parsed, var_map_);
+    po::notify(var_map_);
+    unrec_options_ = po::collect_unrecognized(parsed.options, po::exclude_positional);
+    
+    if (config_file_.length() > 0) {
+      ifstream ifs(config_file_.c_str());
+      if (!ifs) {
+        cout << "can not open config file: " << config_file_ << "\n";
+      } else {
+        po::parsed_options parsed = po::parse_config_file(ifs, desc_, true);
+        po::store(parsed, var_map_);
+        po::notify(var_map_);
+      }
     }
+  } catch (exception& e) {
+    // in case of parsing problems give an error message and throw exception further
+    serr << "ERROR in Config::ParseOptionsAndConfigFile(boost::program_options::command_line_parser): Parsing problem in Config " << name_ << ": " << e.what() << endmsg;
+    throw e;
   }
 }
