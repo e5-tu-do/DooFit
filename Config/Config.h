@@ -124,32 +124,6 @@ class Config {
   }
   ///@}
  
-  /** @name Getter program_options
-   *  Getter functions for program_options related members.
-   */
-  ///@{
-  /**
-   *  \brief Getter for program options description.
-   */
-  const boost::program_options::options_description& desc() const {
-    return desc_;
-  }
-
-  /**
-   *  \brief Getter for program options variables map.
-   */
-  const boost::program_options::variables_map& var_map() const {
-    return var_map_;
-  }
-  
-  /**
-   *  \brief Getter for options that could not be parsed by this module.
-   */
-  const std::vector<std::string>& unrec_options() const {
-    return unrec_options_;
-  }
-  ///@}
-  
  protected:
   /** @name Virtual functions
    *  Pure virtual functions to be implemented in derived classes.

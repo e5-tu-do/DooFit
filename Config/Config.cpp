@@ -55,7 +55,7 @@ void Config::InitializeOptions(const Config& previous_config) {
   CombineOptions();
   
   config_file_ = previous_config.config_file_;
-  ParseOptionsAndConfigFile(po::command_line_parser(previous_config.unrec_options()));
+  ParseOptionsAndConfigFile(po::command_line_parser(previous_config.unrec_options_));
   
   LoadOptions();
 }
