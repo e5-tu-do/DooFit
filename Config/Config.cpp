@@ -5,6 +5,9 @@
 #include <iostream>
 #include <fstream>
 
+// boost
+#include <boost/exception/all.hpp>
+
 #include "Utils/MsgStream.h"
 #include "Config/Config.h"
 
@@ -13,6 +16,11 @@ namespace po = boost::program_options;
 
 boost::program_options::options_description Config::desc_visible_all_;
 std::vector<Config*> Config::config_container_;
+
+typedef boost::error_info<struct tag_my_info,std::string> ConfigName;
+struct NameDuplicationException: public virtual boost::exception, public virtual std::exception { 
+  virtual const char* what() const throw() { return "Name duplication"; }
+};
 
 Config::Config(const std::string& name) :
   name_(name),
@@ -30,7 +38,7 @@ Config::Config(const std::string& name) :
   for (vector<Config*>::const_iterator it = config_container_.begin(); it < config_container_.end(); ++it) {
     if (name_.compare((*it)->name_) == 0) {
       serr << "ERROR in Config::Config(const std::string&): Config object with name " << name_ << " already existing." << endmsg;
-      throw 1;
+      throw NameDuplicationException() << ConfigName(name_); 
     }
   }
   

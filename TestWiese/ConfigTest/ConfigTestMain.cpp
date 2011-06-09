@@ -1,4 +1,6 @@
 #include "TestWiese/ConfigTest/ConfigTest.h"
+#include <exception>
+#include <iostream>
 
 int main(int argc, char *argv[]) {
   /**
@@ -15,8 +17,15 @@ int main(int argc, char *argv[]) {
   ConfigTest config("FirstConfig");
   config.InitializeOptions(argc, argv);
   
-  ConfigTestSecond config2("SecondConfig");
-  config2.InitializeOptions(config);
+  
+  try {
+    ConfigTestSecond config2("FirstConfig");
+    config2.InitializeOptions(config);
+  } catch (std::exception& e) {
+    // in case of parsing problems give an error message and throw exception further
+    std::cout << "ERROR: " << e.what() << std::endl;
+    throw;
+  }
   
   config.CheckHelpFlagAndPrintHelp();
   
