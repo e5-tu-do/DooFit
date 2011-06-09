@@ -17,8 +17,13 @@ namespace po = boost::program_options;
 boost::program_options::options_description Config::desc_visible_all_;
 std::vector<Config*> Config::config_container_;
 
+/// boost error_info for the name of the config file (see boost::exception for reference)
 typedef boost::error_info<struct tag_my_info,std::string> ConfigName;
-struct NameDuplicationException: public virtual boost::exception, public virtual std::exception { 
+
+/** \struct ConfigNameDuplicationException
+ *  \brief Exception for name duplication in Config objects.
+ */
+struct ConfigNameDuplicationException: public virtual boost::exception, public virtual std::exception { 
   virtual const char* what() const throw() { return "Name duplication"; }
 };
 
@@ -38,7 +43,7 @@ Config::Config(const std::string& name) :
   for (vector<Config*>::const_iterator it = config_container_.begin(); it < config_container_.end(); ++it) {
     if (name_.compare((*it)->name_) == 0) {
       serr << "ERROR in Config::Config(const std::string&): Config object with name " << name_ << " already existing." << endmsg;
-      throw NameDuplicationException() << ConfigName(name_); 
+      throw ConfigNameDuplicationException() << ConfigName(name_); 
     }
   }
   
