@@ -26,7 +26,7 @@ my_test_int_(0)
 
 ConfigTest::~ConfigTest() {}
 
-void ConfigTest::Print() const {
+void ConfigTest::PrintOptions() const {
   cout << "my test switch (internal): " << BoolToString(my_test_switch_) << endl;
   cout << "my test integer (internal): " << my_test_int_ << endl;
 }
@@ -60,7 +60,7 @@ my_test_int_(0)
 
 ConfigTestSecond::~ConfigTestSecond() {}
 
-void ConfigTestSecond::Print() const {
+void ConfigTestSecond::PrintOptions() const {
   cout << "my second test switch (internal): " << BoolToString(my_test_switch_) << endl;
   cout << "my second test integer (internal): " << my_test_int_ << endl;
   cout << "my second test vector (internal): " << my_test_vector_.size() << endl;

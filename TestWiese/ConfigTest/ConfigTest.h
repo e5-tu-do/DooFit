@@ -48,13 +48,6 @@ class ConfigTest : public Config {
    */
   ~ConfigTest();
   
-  /**
-   *  \brief Print all options.
-   *
-   *  Virtual function that will print all options for this config object.
-   */
-  void Print() const;
-  
   /** @name Getter actual options
    *  Getter functions for actual options members.
    */
@@ -106,6 +99,13 @@ class ConfigTest : public Config {
    *  @see Config::LoadOptions()
    */
   void LoadOptions();
+  
+  /**
+   *  \brief Print all options for this object.
+   *
+   *  Virtual function that will print all options for this config object.
+   */
+  void PrintOptions() const;
   ///@}
 
  private:
@@ -141,13 +141,6 @@ public:
    *  \brief Destructor.
    */
   ~ConfigTestSecond();
-  
-  /**
-   *  \brief Print all options.
-   *
-   *  Virtual function that will print all options for this config object.
-   */
-  void Print() const;
   
   /** @name Getter actual options
    *  Getter functions for actual options members.
@@ -200,6 +193,13 @@ protected:
    *  @see Config::LoadOptions()
    */
   void LoadOptions();
+  
+  /**
+   *  \brief Print all options for this object.
+   *
+   *  Virtual function that will print all options for this config object.
+   */
+  void PrintOptions() const;
   ///@}
   
 private:

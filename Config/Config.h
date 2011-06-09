@@ -25,7 +25,9 @@
 // RooFit
 
 // forward declarations
+class Config;
 
+typedef std::map<std::string,Config*> ConfigMap;
 
 class Config {
   
@@ -81,19 +83,22 @@ class Config {
    */
   ///@{
   /**
-   *  \brief Print all options for this object.
+   *  \brief Print object summary (name, options, values).
    *
-   *  Virtual function that will print all options for this config object.
+   *  This function will print a complete summary of the Config object, incl.
+   *  name, options, values etc.
+   *
+   *  \see Config::PrintOptions()
    */
-  virtual void Print() const = 0;
+  void Print() const;
   
   /**
-   *  \brief Print all options for all Config objects.
+   *  \brief Print all summaries for all Config objects.
    *
    *  Iterate through all Config objects and invoke their Config::Print() 
    *  function.
    */
-  void PrintAll() const;
+  static void PrintAll();
   
   /**
    *  \brief Print help message for program_options
@@ -169,6 +174,13 @@ class Config {
    *  automatically called by Config::InitializeOptions(). 
    */
   virtual void LoadOptions() = 0;
+  
+  /**
+   *  \brief Print all options for this object.
+   *
+   *  Virtual function that will print all options for this config object.
+   */
+  virtual void PrintOptions() const = 0;
   ///@}
   
   /** @name Helper functions
@@ -295,11 +307,11 @@ class Config {
   /**
    *  \brief Static collection of all created Config objects.
    *
-   *  This vector contains pointers to all created Config objects. This is 
+   *  This map contains pointers to all created Config objects. This is 
    *  necessary for all functionality that has to work on all Config objects 
-   *  like printing of set options.
+   *  like printing of set options via Config::PrintAll().
    */
-  static std::vector<Config*> config_container_;
+  static ConfigMap config_container_;
   ///@}
 };
 

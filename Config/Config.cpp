@@ -15,7 +15,7 @@ using namespace std;
 namespace po = boost::program_options;
 
 boost::program_options::options_description Config::desc_visible_all_;
-std::vector<Config*> Config::config_container_;
+ConfigMap Config::config_container_;
 
 Config::Config(const std::string& name) :
   name_(name),
@@ -29,18 +29,17 @@ Config::Config(const std::string& name) :
   config_file_(),
   help_flag_(false)
 {
-  /// \todo Implement uniqueness check for names
-  for (vector<Config*>::const_iterator it = config_container_.begin(); it < config_container_.end(); ++it) {
-    if (name_.compare((*it)->name_) == 0) {
-      serr << "ERROR in Config::Config(const std::string&): Config object with name " << name_ << " already existing." << endmsg;
-      throw ConfigNameDuplicationException() << ConfigName(name_); 
-    }
+  if (config_container_.count(name_) > 0) {
+    serr << "ERROR in Config::Config(const std::string&): Config object with name " << name_ << " already existing." << endmsg;
+    throw ConfigNameDuplicationException() << ConfigName(name_); 
   }
   
-  config_container_.push_back(this);
+  config_container_[name_] = this;
 }
 
-Config::~Config() {}
+Config::~Config() {
+  config_container_.erase(name_);
+}
 
 void Config::InitializeOptions(int argc, char* argv[]) {
   DefineOptions();
@@ -61,9 +60,14 @@ void Config::InitializeOptions(const Config& previous_config) {
   LoadOptions();
 }
 
-void Config::PrintAll() const {
-  for (vector<Config*>::const_iterator it = config_container_.begin(); it < config_container_.end(); ++it) {
-    (*it)->Print();
+void Config::Print() const {
+  scfg << "Config object " << name_ << endmsg;
+  PrintOptions();
+}
+
+void Config::PrintAll() {
+  for (ConfigMap::const_iterator it = config_container_.begin(); it != config_container_.end(); ++it) {
+    (*it).second->Print();
   }
 }
 
