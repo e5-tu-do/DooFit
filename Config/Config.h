@@ -303,4 +303,15 @@ class Config {
   ///@}
 };
 
+/// boost error_info for the name of the config file (see boost::exception for reference)
+typedef boost::error_info<struct tag_my_info,std::string> ConfigName;
+
+/** \struct ConfigNameDuplicationException
+ *  \brief Exception for name duplication in Config objects.
+ */
+struct ConfigNameDuplicationException: public virtual boost::exception, public virtual std::exception { 
+  virtual const char* what() const throw() { return "Name duplication"; }
+};
+
+
 #endif //CONFIG_h
