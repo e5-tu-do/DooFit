@@ -94,7 +94,16 @@ template<typename T>
 inline MsgStream& operator<<(MsgStream& lhs, const T& arg) {
   lhs.stream() << arg;
   return lhs;
-} 
+}
+
+inline MsgStream& operator<<(MsgStream& lhs, bool b) {
+  if (b) {
+    lhs.stream() << "True";
+  } else {
+    lhs.stream() << "False";
+  }
+  return lhs;
+}
 
 /// MsgStream for errors. Color: Red
 extern MsgStream serr; 

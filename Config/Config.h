@@ -187,13 +187,7 @@ class Config {
    *  Helper functions for printing and other needs.
    */
   ///@{ 
-  /**
-   *  \brief Convert a bool to string.
-   *
-   *  @param b bool to print.
-   *  \return{ true or false for b. }
-   */
-  std::string BoolToString(bool b) const { if (b) return "true"; else return "false"; }
+  
   ///@}
   
   /**

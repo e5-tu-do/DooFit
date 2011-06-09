@@ -13,6 +13,7 @@
 
 // from project
 #include "TestWiese/ConfigTest/ConfigTest.h"
+#include "Utils/MsgStream.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -27,8 +28,8 @@ my_test_int_(0)
 ConfigTest::~ConfigTest() {}
 
 void ConfigTest::PrintOptions() const {
-  cout << "my test switch (internal): " << BoolToString(my_test_switch_) << endl;
-  cout << "my test integer (internal): " << my_test_int_ << endl;
+  scfg << "my test switch (internal): " << my_test_switch_ << endmsg;
+  scfg << "my test integer (internal): " << my_test_int_ << endmsg;
 }
 
 void ConfigTest::DefineOptions() {
@@ -61,9 +62,9 @@ my_test_int_(0)
 ConfigTestSecond::~ConfigTestSecond() {}
 
 void ConfigTestSecond::PrintOptions() const {
-  cout << "my second test switch (internal): " << BoolToString(my_test_switch_) << endl;
-  cout << "my second test integer (internal): " << my_test_int_ << endl;
-  cout << "my second test vector (internal): " << my_test_vector_.size() << endl;
+  scfg << "my second test switch (internal): " << my_test_switch_ << endmsg;
+  scfg << "my second test integer (internal): " << my_test_int_ << endmsg;
+  scfg << "my second test vector (internal): " << my_test_vector_.size() << endmsg;
 }
 
 void ConfigTestSecond::DefineOptions() {
