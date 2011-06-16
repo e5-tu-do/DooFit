@@ -1,0 +1,12 @@
+add_subdirectory(Config)
+add_subdirectory(Fitter)
+add_subdirectory(Builder)
+add_subdirectory(BuilderSim)
+add_subdirectory(PdfToWorkspace)
+add_subdirectory(Data)
+add_subdirectory(Plotter)
+add_subdirectory(ToyFactory)
+add_subdirectory(ToyStudy)
+add_subdirectory(ExtraRooPdf)
+
+add_subdirectory(Utils)
