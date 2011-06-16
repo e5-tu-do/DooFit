@@ -20,7 +20,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-set(BASEPATH "${CMAKE_SOURCE_DIR}")
+set(BASEPATH "${CMAKE_SOURCE_DIR}/src")
 include_directories(${BASEPATH})
 
 # Project Definition
@@ -35,17 +35,6 @@ link_directories(${Boost_LIBRARY_DIR})
 
 include_directories(${ROOT_INCLUDE_DIR})
 
-add_subdirectory(Config)
-add_subdirectory(Fitter)
-add_subdirectory(Builder)
-add_subdirectory(BuilderSim)
-add_subdirectory(PdfToWorkspace)
-add_subdirectory(Data)
-add_subdirectory(Plotter)
-add_subdirectory(ToyFactory)
-add_subdirectory(ToyStudy)
-add_subdirectory(ExtraRooPdf)
-
-add_subdirectory(Utils)
+add_subdirectory(src)
 add_subdirectory(TestWiese)
 

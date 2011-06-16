@@ -1,4 +1,4 @@
-#include "TestWiese/ConfigTest/ConfigTest.h"
+#include "ConfigTest.h"
 #include <exception>
 #include <iostream>
 

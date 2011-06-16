@@ -12,7 +12,7 @@
 // RooFit
 
 // from project
-#include "TestWiese/ConfigTest/ConfigTest.h"
+#include "ConfigTest.h"
 #include "Utils/MsgStream.h"
 
 using namespace std;
