@@ -4,10 +4,13 @@
  *  This is the abstract base class for all DooFit config objects. It offers
  *  configuration via the boost::program_options package. All derived classes 
  *  \a must define Config::DefineOptions() and Config::LoadOptions() as well as
- *  the Config::Print() function.
+ *  the Config::PrintOptions() function.
+ *
  *  Furthermore, the Config::help_flag_ option and Config::config_file_ should 
  *  be set by the derived class accordingly. Config::CheckHelpFlagAndPrintHelp()
- *  can be used to capture the set help flag and print a help message.
+ *  can be used to capture the set help flag and print a help message. Both \a 
+ *  must be defined by the first Config object to be initialized.
+ *
  *  Usage examples can be found in ConfigTest and ConfigTestSecond as well as in
  *  file ConfigTestMain.cpp.
  *
@@ -62,7 +65,13 @@ class Config {
    *  \brief Initialize options with input from command line.
    *
    *  Using argc and argv this function initializes all options using 
-   *  boost::program_options.
+   *  boost::program_options. This should only be used once and for the first 
+   *  and most general Config object. Also the Config object using this must 
+   *  define options for Config::help_flag_ and Config::config_file_ if a Config
+   *  file is to be supported.
+   *  
+   *  Further Config objects should use Config::InitializeOptions(const Config&)
+   *  instead to initialize themself.
    *
    *  @param argc Number of arguments.
    *  @param argv char* array with arguments.
@@ -298,6 +307,14 @@ typedef boost::error_info<struct tag_my_info,std::string> ConfigName;
  */
 struct ConfigNameDuplicationException: public virtual boost::exception, public virtual std::exception { 
   virtual const char* what() const throw() { return "Name duplication"; }
+};
+
+/** \struct ConfigCmdArgsUsedTwice
+ *  \brief Exception for second (and therefore unallowed) use of argc and argv 
+ *         for initialization of Config object.
+ */
+struct ConfigCmdArgsUsedTwice: public virtual boost::exception, public virtual std::exception { 
+  virtual const char* what() const throw() { return "Command line arguments argc and argv used multiple times."; }
 };
 
 
