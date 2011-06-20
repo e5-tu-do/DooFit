@@ -8,6 +8,12 @@
  *  Furthermore, the Config::help_flag_ option and Config::config_file_ should 
  *  be set by the derived class accordingly. Config::CheckHelpFlagAndPrintHelp()
  *  can be used to capture the set help flag and print a help message.
+ *  Usage examples can be found in ConfigTest and ConfigTestSecond as well as in
+ *  file ConfigTestMain.cpp.
+ *
+ *  \see ConfigTest
+ *  \see ConfigTestSecond
+ *  \see ConfigTestMain.cpp
  */
 
 #ifndef CONFIG_h
