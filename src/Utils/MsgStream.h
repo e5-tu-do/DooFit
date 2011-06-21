@@ -10,7 +10,8 @@
  *
  * MsgStream is a handler class to output messages. It can be used like 
  * std::cout and similar streams. The following MsgStream objects are 
- * pre-defined for certain message levels: serr, swarn, sinfo, scfg and sout.
+ * pre-defined for certain message levels: serr, swarn, sinfo, scfg, sout and 
+ * sdebug.
  *
  * Usage example:
  * \code 
@@ -27,9 +28,9 @@ class MsgStream {
 public:
   /// \brief Constructor for colored MsgStream.
   /// \param color The color to be used for this stream.
-  MsgStream(Utils::TerminalColor color) : text_color_(color) {}
+  MsgStream(Utils::TerminalColor color) : text_color_(color), is_active_(true) {}
   /// Constructor for standard uncolored output.
-  MsgStream() : text_color_(Utils::kTextNone) {}
+  MsgStream() : text_color_(Utils::kTextNone), is_active_(true) {}
   
   /// \brief Get the internal std::ostringstream.
   /// \return Internal std::ostringstream.
@@ -39,9 +40,11 @@ public:
   /// Normally not needed as endmsg() will force the output.
   /// \todo Include support for other streams as well besides std::cout.
   MsgStream& doOutput() {
-    Utils::SetTerminalColor(text_color_);
-    std::cout << os_.str() << std::endl;
-    Utils::ResetTerminal();
+    if (is_active_) {
+      Utils::SetTerminalColor(text_color_);
+      std::cout << os_.str() << std::endl;
+      Utils::ResetTerminal();
+    }
     os_.str("");
     return *this;
   }
@@ -66,6 +69,9 @@ public:
     doOutput();
   }
   
+  /// set activity state of stream (i.e. whether to print or not)
+  void set_active(bool active_state) { is_active_ = active_state; }
+  
 protected:
   /// Flush the internal std::ostringstream.
   void flush() { os_.flush(); doOutput(); }
@@ -74,6 +80,9 @@ protected:
   std::ostringstream os_;            
   /// \brief Text color for output.
   Utils::TerminalColor text_color_;  
+  
+  /// \brief determining if stream is active or not (i.e. printing)
+  bool is_active_;
 };
 
 /// \brief MsgStream function to end a message (i.e. newline) and force the output. 

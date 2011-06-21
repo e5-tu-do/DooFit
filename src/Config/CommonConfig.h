@@ -71,6 +71,13 @@ class CommonConfig : public Config {
    */
   void PrintOptions() const;
   ///@}
+  
+ private:
+  /** @name Actual options
+   *  The actual options members.
+   */
+  ///@{
+  ///@}
 };
 
 #endif //COMMONCONFIG_h
