@@ -8,6 +8,7 @@
    */
 
 #include "ConfigTest.h"
+#include "Config/CommonConfig.h"
 #include <exception>
 #include <iostream>
 
@@ -15,7 +16,7 @@ int main(int argc, char *argv[]) {
   try {
     
     // instantiate first config object
-    ConfigTest config("FirstConfig");
+    CommonConfig config("CommonConfig");
     
     // initialize config object via argc and argv
     config.InitializeOptions(argc, argv);

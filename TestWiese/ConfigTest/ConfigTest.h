@@ -103,7 +103,7 @@ class ConfigTest : public Config {
   /**
    *  \brief Print all options for this object.
    *
-   *  Virtual function that will print all options for this config object.
+   *  Virtual function that will print all options for this Config object.
    */
   void PrintOptions() const;
   ///@}
