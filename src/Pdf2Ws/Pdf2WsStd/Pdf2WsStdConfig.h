@@ -25,7 +25,7 @@
 // forward declarations
 
 class Pdf2WsStdConfig : public Config {
-public:
+ public:
   /**
    *  \brief Standard constructor.
    *
@@ -40,7 +40,7 @@ public:
    */
   ~Pdf2WsStdConfig();
   
-protected:
+ protected:
   /** @name Virtual functions
    *  Implementation of pure virtual functions.
    */
@@ -72,7 +72,7 @@ protected:
   void PrintOptions() const;
   ///@}
   
-private:
+ private:
   /** @name Actual options
    *  The actual options members.
    */

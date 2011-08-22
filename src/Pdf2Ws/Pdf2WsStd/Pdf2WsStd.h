@@ -9,6 +9,19 @@
 #ifndef PDF2WSSTD_h
 #define PDF2WSSTD_h
 
+// forward declarations
+class CommonConfig; 
+class Pdf2WsStdConfig;
+
+class Pdf2WsStd{
+ public:
+  Pdf2WsStd(const CommonConfig&, const Pdf2WsStdConfig&);
+  ~Pdf2WsStd();
+  
+ protected:
+  
+ private:
+};
 
 
 #endif // PDF2WSSTD_h
