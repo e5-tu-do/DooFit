@@ -16,7 +16,7 @@
  *  @see Pdf2WsStd::ProptimeErr
  *  
  */
-/** @namespace CommonFuncs
+/** @namespace Pdf2WsStd::CommonFuncs
  *  @brief DooFit Pdf2WsStd::CommonFuncs namespace with helper functions.
  *
  *  The Pdf2WsStd::CommonFuncs namespace contains functions used by other 
