@@ -12,26 +12,26 @@
 
 // from project
 #include "Utils/MsgStream.h"
-#include "Pdf2WsStdConfig.h"
+#include "BuilderStdConfig.h"
 
 using namespace std;
 namespace po = boost::program_options;
 
-Pdf2WsStdConfig::Pdf2WsStdConfig(const std::string& name) :
+BuilderStdConfig::BuilderStdConfig(const std::string& name) :
 Config(name)
 {
 }
 
-Pdf2WsStdConfig::~Pdf2WsStdConfig() {}
+BuilderStdConfig::~BuilderStdConfig() {}
 
-void Pdf2WsStdConfig::PrintOptions() const {
+void BuilderStdConfig::PrintOptions() const {
   scfg << "nothing to see here" << endmsg;
 }
 
-void Pdf2WsStdConfig::DefineOptions() {
+void BuilderStdConfig::DefineOptions() {
   
 }
 
-void Pdf2WsStdConfig::LoadOptions() {
+void BuilderStdConfig::LoadOptions() {
   
 }

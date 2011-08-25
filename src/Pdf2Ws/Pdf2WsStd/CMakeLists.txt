@@ -1,0 +1,3 @@
+add_library(Pdf2WsStdMass Pdf2WsStdMass.cpp Pdf2WsStdMass.h)
+add_library(Pdf2WsStdProptime Pdf2WsStdProptime.cpp Pdf2WsStdProptime.h)
+add_library(Pdf2WsStdProptimeErr Pdf2WsStdProptimeErr.cpp Pdf2WsStdProptimeErr.h)

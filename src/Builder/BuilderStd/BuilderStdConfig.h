@@ -1,15 +1,15 @@
-/** \class Pdf2WsStdConfig
- *  \brief DooFit Config class for the Pdf2WsStd Pdf builder.
+/** \class BuilderStdConfig
+ *  \brief DooFit Config class for the BuilderStd Pdf builder.
  *
- *  This Config object is responsible for all options of the Pdf2WsStd not
+ *  This Config object is responsible for all options of the BuilderStd not
  *  covered by CommonConfig
  *  \see CommonConfig
- *  \see Pdf2WsStd
+ *  \see BuilderStd
  */
 
 
-#ifndef PDF2WSSTDCONFIG_h
-#define PDF2WSSTDCONFIG_h
+#ifndef BUILDERSTDCONFIG_h
+#define BUILDERSTDCONFIG_h
 
 // STL
 
@@ -24,7 +24,7 @@
 
 // forward declarations
 
-class Pdf2WsStdConfig : public Config {
+class BuilderStdConfig : public Config {
  public:
   /**
    *  \brief Standard constructor.
@@ -33,12 +33,12 @@ class Pdf2WsStdConfig : public Config {
    *
    *  @param name Name of this Config object.
    */
-  Pdf2WsStdConfig(const std::string& name);
+  BuilderStdConfig(const std::string& name);
   
   /**
    *  \brief Destructor.
    */
-  ~Pdf2WsStdConfig();
+  ~BuilderStdConfig();
   
  protected:
   /** @name Virtual functions
@@ -80,4 +80,4 @@ class Pdf2WsStdConfig : public Config {
   ///@}
 };
 
-#endif //PDF2WSSTDCONFIG_h
+#endif // BUILDERSTDCONFIG_h

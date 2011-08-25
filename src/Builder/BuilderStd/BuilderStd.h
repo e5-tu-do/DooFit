@@ -1,22 +1,22 @@
-/** \class Pdf2WsStd
- *  \brief Standard Pdf2Ws. Adds Pdf object to a workspace.
+/** \class BuilderStd
+ *  \brief Standard Builder. Adds Pdf object to a workspace.
  *
- *  This Pdf2Ws class is meant as standard implementation. The configuration in
- *  the Pdf2WsStdConfig class is used to create the correct Pdfs on a workspace.
- *  \see Pdf2WsStdConfig
+ *  This Builder class is meant as standard implementation. The configuration in
+ *  the BuilderStdConfig class is used to create the correct Pdfs on a workspace.
+ *  \see BuilderStdConfig
  */
 
-#ifndef PDF2WSSTD_h
-#define PDF2WSSTD_h
+#ifndef BUILDERSTD_h
+#define BUILDERSTD_h
 
 // forward declarations
 class CommonConfig; 
-class Pdf2WsStdConfig;
+class BuilderStdConfig;
 
-class Pdf2WsStd{
+class BuilderStd{
  public:
-  Pdf2WsStd(const CommonConfig&, const Pdf2WsStdConfig&);
-  ~Pdf2WsStd();
+  BuilderStd(const CommonConfig&, const BuilderStdConfig&);
+  ~BuilderStd();
   
  protected:
   
@@ -24,4 +24,4 @@ class Pdf2WsStd{
 };
 
 
-#endif // PDF2WSSTD_h
+#endif // BUILDERSTD_h
