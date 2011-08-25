@@ -1,4 +1,4 @@
-/** @namespace PdfWsStd::Mass
+/** @namespace Mass
  *
  *  @brief PdfWsStd::Mass namespace for mass pdf adders.
  *
