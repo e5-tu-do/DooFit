@@ -46,6 +46,7 @@ namespace Pdf2WsStd{ namespace CommonFuncs{
    *  on the workspace is then returned.
    *  @param ws the workspace
    *  @param var_name the name of the variable
+   *
    *  The following variables are only relevant if variable does not exist on @a ws:
    *  @param var_title the title 
    *  @param init_value initial value 
