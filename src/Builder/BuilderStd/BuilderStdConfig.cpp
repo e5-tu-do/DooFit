@@ -1,10 +1,11 @@
+#include "Builder/BuilderStd/BuilderStdConfig.h"
+
 // STL
 #include <string>
 #include <vector>
 #include <iostream>
 
 // Boost
-#include <boost/program_options.hpp>
 
 // ROOT
 
@@ -12,7 +13,6 @@
 
 // from project
 #include "Utils/MsgStream.h"
-#include "BuilderStdConfig.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -20,6 +20,7 @@ namespace po = boost::program_options;
 BuilderStdConfig::BuilderStdConfig(const std::string& name) :
 Config(name)
 {
+  PrintOptions();
 }
 
 BuilderStdConfig::~BuilderStdConfig() {}

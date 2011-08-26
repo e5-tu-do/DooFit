@@ -20,6 +20,7 @@ namespace po = boost::program_options;
 CommonConfig::CommonConfig(const std::string& name) :
 Config(name)
 {
+  PrintOptions();
 }
 
 CommonConfig::~CommonConfig() {}

@@ -15,7 +15,7 @@ class BuilderStdConfig;
 
 class BuilderStd{
  public:
-  BuilderStd(const CommonConfig&, const BuilderStdConfig&);
+  BuilderStd(const CommonConfig& cfg_com, const BuilderStdConfig& cfg_bld);
   ~BuilderStd();
   
  protected:

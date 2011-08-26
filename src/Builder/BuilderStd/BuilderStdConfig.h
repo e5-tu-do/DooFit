@@ -48,7 +48,7 @@ class BuilderStdConfig : public Config {
   /**
    *  \brief Define options for the derived class.
    *
-   *  This function will define all options for the derived CommonConfig class.
+   *  This function will define all options for the derived BuilderStdConfig class.
    * 
    *  @see Config::DefineOptions()
    */
