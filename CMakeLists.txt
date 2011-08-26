@@ -23,6 +23,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(BASEPATH "${CMAKE_SOURCE_DIR}/src")
 include_directories(${BASEPATH})
 
+set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
+
 # Project Definition
 project(DooFit)
 cmake_minimum_required(VERSION 2.6)
@@ -37,4 +40,4 @@ include_directories(${ROOT_INCLUDE_DIR})
 
 add_subdirectory(src)
 add_subdirectory(TestWiese)
-
+add_subdirectory(main)

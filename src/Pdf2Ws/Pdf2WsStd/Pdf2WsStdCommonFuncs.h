@@ -42,8 +42,8 @@ namespace Pdf2WsStd{ namespace CommonFuncs{
    *  on the workspace @a ws. If this is the case it returns it. If an object of
    *  this name is found but is no RooAbsReal, the program exits. If no object
    *  of this name is found, the other parameters are used to create a
-   *  RooRealVar which is subsequently imported to the workspace @a ws. Its copy
-   *  on the workspace is then returned.
+   *  RooRealVar which is subsequently imported to the workspace @a ws. A pointer
+   *  to its copy on the workspace is then returned.
    *  @param ws the workspace
    *  @param var_name the name of the variable
    *

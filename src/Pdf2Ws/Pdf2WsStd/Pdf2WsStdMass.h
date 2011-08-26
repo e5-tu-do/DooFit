@@ -1,6 +1,6 @@
 /** @namespace Pdf2WsStd::Mass
  *
- *  @brief Pdf2WsStd::Mass namespace for mass pdf adders.
+ *  @brief DooFit Pdf2WsStd::Mass namespace for mass pdf adders.
  *
  */
 #ifndef PDF2WSSTDMASS_h
