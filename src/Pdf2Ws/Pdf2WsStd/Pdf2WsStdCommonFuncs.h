@@ -72,6 +72,8 @@ namespace Pdf2WsStd{ namespace CommonFuncs{
    *  Helper/Wrapper function to import an object to a given RooWorkspace. Main
    *  intention is to keep the possibility to issue global RooCmdArg options for
    *  all imports like Silence().
+   * 
+   *  Therefore, all imports to workspaces should be handled by this wrapper.
    *
    *  @param ws RooWorkspace to import into
    *  @param arg RooAbsArg to import
