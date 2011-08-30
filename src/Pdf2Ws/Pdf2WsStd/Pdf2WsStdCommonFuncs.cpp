@@ -14,6 +14,7 @@
 #include "RooWorkspace.h"
 
 // from Project
+#include "Utils/MsgStream.h"
 
 using namespace std;
 

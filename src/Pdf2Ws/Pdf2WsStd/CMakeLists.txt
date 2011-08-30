@@ -1,6 +1,1 @@
-add_library(Pdf2WsStdCommonFuncs Pdf2WsStdCommonFuncs.cpp Pdf2WsStdCommonFuncs.h)
-add_library(Pdf2WsStdMass Pdf2WsStdMass.cpp Pdf2WsStdMass.h)
-add_library(Pdf2WsStdProptime Pdf2WsStdProptime.cpp Pdf2WsStdProptime.h)
-add_library(Pdf2WsStdProptimeErr Pdf2WsStdProptimeErr.cpp Pdf2WsStdProptimeErr.h)
-
-
+add_library(Pdf2WsStd Pdf2WsStdCommonFuncs.cpp Pdf2WsStdCommonFuncs.h Pdf2WsStdMass.cpp Pdf2WsStdMass.h Pdf2WsStdProptime.cpp Pdf2WsStdProptime.h Pdf2WsStdProptimeErr.cpp Pdf2WsStdProptimeErr.h)

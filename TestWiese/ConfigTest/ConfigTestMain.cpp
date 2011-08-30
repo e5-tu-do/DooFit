@@ -9,6 +9,10 @@
 
 #include "ConfigTest.h"
 #include "Config/CommonConfig.h"
+#include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
+
+#include "RooWorkspace.h"
+
 #include <exception>
 #include <iostream>
 
@@ -35,6 +39,10 @@ int main(int argc, char *argv[]) {
     
     // Print all set options for the user (optional).
     Config::PrintAll();
+    
+    RooWorkspace* ws = new RooWorkspace("ws", "ws");
+    
+    Pdf2WsStd::CommonFuncs::getVar(ws, "test_var", "test variable title", 10, 0, 20, "");
     
   } catch (std::exception& e) {
     // in case of parsing problems give an error message and throw exception further
