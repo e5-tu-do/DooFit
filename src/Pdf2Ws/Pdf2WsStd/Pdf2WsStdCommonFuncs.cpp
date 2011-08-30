@@ -12,11 +12,14 @@
 #include "RooAbsReal.h"
 #include "RooRealVar.h"
 #include "RooWorkspace.h"
+#include "RooAbsArg.h"
 
 // from Project
 #include "Utils/MsgStream.h"
 
 using namespace std;
+using namespace ROOT;
+using namespace RooFit;
 
 RooAbsReal* Pdf2WsStd::CommonFuncs::getVar(RooWorkspace* ws,
                                            const TString& var_name, const TString& var_title, 
@@ -37,9 +40,13 @@ RooAbsReal* Pdf2WsStd::CommonFuncs::getVar(RooWorkspace* ws,
     }
   }
   else{
-    ws->import(RooRealVar(var_name, var_title, init_value, min_value, max_value, unit));
+    import(ws, RooRealVar(var_name, var_title, init_value, min_value, max_value, unit));
     var_temp = (RooAbsReal*)ws->obj(var_name);
   }
   
   return var_temp;
 }  
+
+void Pdf2WsStd::CommonFuncs::import(RooWorkspace* ws, const RooAbsArg& arg) {
+  ws->import(arg, Silence());
+}

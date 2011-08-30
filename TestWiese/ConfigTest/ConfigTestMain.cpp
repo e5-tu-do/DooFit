@@ -46,18 +46,8 @@ int main(int argc, char *argv[]) {
     
     RooWorkspace* ws = new RooWorkspace("ws", "ws");
     
-    TH1D arglist("test", "test", 100, 0, 10);
+    Pdf2WsStd::Mass::Gaussian(ws, "test", "test bla", "var_mass", "par_mean", "par_sigma");
     
-    ws->import(arglist);
-    
-    ws->Print();
-    
-    std::cout << ws->obj("test") << std::endl;
-    
-    //Pdf2WsStd::Mass::Gaussian(ws, "test", "test bla", "var_mass", "par_mean", "par_sigma");
-    
-    
-    RooAbsReal* v = Pdf2WsStd::CommonFuncs::getVar(ws, "test", "test variable title", 10, 0, 20, "");
     
   } catch (std::exception& e) {
     // in case of parsing problems give an error message and throw exception further

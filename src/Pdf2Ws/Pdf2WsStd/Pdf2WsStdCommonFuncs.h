@@ -32,6 +32,7 @@
 // forward declarations
 class RooAbsReal;
 class RooWorkspace;
+class RooAbsArg;
 
 
 namespace Pdf2WsStd{ namespace CommonFuncs{
@@ -64,6 +65,18 @@ namespace Pdf2WsStd{ namespace CommonFuncs{
                      const TString& var_name, const TString& var_title, 
                      Double_t init_value, Double_t min_value, Double_t max_value, 
                      const TString& unit);
+  
+  /**
+   *  \brief Wrapper to import object @a arg to workspace @a ws.
+   *
+   *  Helper/Wrapper function to import an object to a given RooWorkspace. Main
+   *  intention is to keep the possibility to issue global RooCmdArg options for
+   *  all imports like Silence().
+   *
+   *  @param ws RooWorkspace to import into
+   *  @param arg RooAbsArg to import
+   */
+  void import(RooWorkspace* ws, const RooAbsArg& arg);
 } }
 
 #endif // PDF2WSSTDCOMMONFUNCS_h
