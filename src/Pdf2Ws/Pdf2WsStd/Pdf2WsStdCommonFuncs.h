@@ -44,6 +44,12 @@ namespace Pdf2WsStd{ namespace CommonFuncs{
    *  of this name is found, the other parameters are used to create a
    *  RooRealVar which is subsequently imported to the workspace @a ws. A pointer
    *  to its copy on the workspace is then returned.
+   *
+   *  Please note that this function will gladly return any object on the 
+   *  workspace that is a RooAbsReal. As nearly all objects on the workspace 
+   *  will be RooAbsReal, the name getVar might be a bit misleading as it will 
+   *  also return PDFs for example.
+   *
    *  @param ws the workspace
    *  @param var_name the name of the variable
    *
