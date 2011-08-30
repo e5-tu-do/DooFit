@@ -124,5 +124,7 @@ extern MsgStream sinfo;
 extern MsgStream scfg;
 /// MsgStream for standard messages. Color: None
 extern MsgStream sout;
+/// MsgStream for debug messages. Color: None
+extern MsgStream sdebug;
 
 #endif

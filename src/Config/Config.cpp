@@ -44,7 +44,7 @@ Config::~Config() {
 void Config::InitializeOptions(int argc, char* argv[]) {
   if (config_container_.size() > 1) {
     serr << "ERROR in Config::InitializeOptions(int, char* [])): Initialization with argc/argv should only be used by first Config object to be initialized. " << endmsg;
-    throw ConfigCmdArgsUsedTwice() << ConfigName(name_); 
+    throw ConfigCmdArgsUsedTwiceException() << ConfigName(name_); 
   }
   
   DefineOptions();

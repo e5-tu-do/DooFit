@@ -309,11 +309,11 @@ struct ConfigNameDuplicationException: public virtual boost::exception, public v
   virtual const char* what() const throw() { return "Name duplication"; }
 };
 
-/** \struct ConfigCmdArgsUsedTwice
+/** \struct ConfigCmdArgsUsedTwiceException
  *  \brief Exception for second (and therefore unallowed) use of argc and argv 
  *         for initialization of Config object.
  */
-struct ConfigCmdArgsUsedTwice: public virtual boost::exception, public virtual std::exception { 
+struct ConfigCmdArgsUsedTwiceException: public virtual boost::exception, public virtual std::exception { 
   virtual const char* what() const throw() { return "Command line arguments argc and argv used multiple times."; }
 };
 

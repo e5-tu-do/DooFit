@@ -28,14 +28,12 @@ RooAbsReal* Pdf2WsStd::CommonFuncs::getVar(RooWorkspace* ws,
   // Check if object with this name exists on workspace, else create one.
   if (ws->obj(var_name) != NULL){
     // if it does, check, that it is castable to RooAbsReal, else exit program
-    try {
-      var_temp = dynamic_cast<RooAbsReal*>(ws->obj(var_name));
-    } catch (const std::bad_cast& e) {
-      cerr << "Pdf2WsStd: You tried to use the Workspace object with name " 
-      << var_name << " as a RooAbsReal parameter in a pdf!" << endl;
-      cerr << "  bad_cast caught: " << e.what() << endl;
-      cerr << "Exiting..." << endl;
-      exit(1);
+    var_temp = dynamic_cast<RooAbsReal*>(ws->obj(var_name));
+    
+    if (var_temp == NULL) {
+      serr << "Pdf2WsStd: You tried to use the Workspace object with name " 
+      << var_name << " as a RooAbsReal parameter in a pdf!" << endmsg;
+      throw;
     }
   }
   else{
