@@ -66,12 +66,16 @@ void Config::InitializeOptions(const Config& previous_config) {
 }
 
 void Config::Print() const {
-  scfg << "Config object " << name_ << endmsg;
+  scfg.Ruler();
+  scfg << "Config object " << name_ << ":" << endmsg;
+  scfg.set_indent(2);
   PrintOptions();
+  scfg.set_indent(0);
 }
 
 void Config::PrintAll() {
   for (ConfigMap::const_iterator it = config_container_.begin(); it != config_container_.end(); ++it) {
+    scfg << endmsg;
     (*it).second->Print();
   }
 }

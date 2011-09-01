@@ -20,7 +20,6 @@ namespace po = boost::program_options;
 BuilderStdConfig::BuilderStdConfig(const std::string& name) :
 Config(name)
 {
-  PrintOptions();
 }
 
 BuilderStdConfig::~BuilderStdConfig() {}

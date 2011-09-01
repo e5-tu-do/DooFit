@@ -28,9 +28,9 @@ class MsgStream {
 public:
   /// \brief Constructor for colored MsgStream.
   /// \param color The color to be used for this stream.
-  MsgStream(Utils::TerminalColor color) : text_color_(color), is_active_(true) {}
+  MsgStream(Utils::TerminalColor color) : text_color_(color), is_active_(true), indent_(0) {}
   /// Constructor for standard uncolored output.
-  MsgStream() : text_color_(Utils::kTextNone), is_active_(true) {}
+  MsgStream() : text_color_(Utils::kTextNone), is_active_(true), indent_(0) {}
   
   /// \brief Get the internal std::ostringstream.
   /// \return Internal std::ostringstream.
@@ -46,6 +46,9 @@ public:
       Utils::ResetTerminal();
     }
     os_.str("");
+    
+    os_ << std::string(indent_, ' ');
+    
     return *this;
   }
   
@@ -72,6 +75,14 @@ public:
   /// set activity state of stream (i.e. whether to print or not)
   void set_active(bool active_state) { is_active_ = active_state; }
   
+  /// set current indent for new lines.
+  void set_indent(int indent) { 
+    indent_ = indent; 
+    if (os_.str().length() == 0) {
+      os_ << std::string(indent_, ' ');
+    }
+  }
+  
 protected:
   /// Flush the internal std::ostringstream.
   void flush() { os_.flush(); doOutput(); }
@@ -83,6 +94,11 @@ protected:
   
   /// \brief determining if stream is active or not (i.e. printing)
   bool is_active_;
+  
+  /**
+   *  \brief Indent for new lines.
+   */
+  int indent_;
 };
 
 /// \brief MsgStream function to end a message (i.e. newline) and force the output. 

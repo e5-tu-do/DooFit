@@ -20,6 +20,7 @@
 #include "Config/Config.h"
 
 // forward declarations
+class RooAbsPdf;
 
 class ToyFactoryStdConfig : public Config {
  public:
@@ -36,6 +37,26 @@ class ToyFactoryStdConfig : public Config {
    *  \brief Destructor for ToyFactoryStdConfig
    */
   ~ToyFactoryStdConfig();
+  
+  /** @name Getter actual options
+   *  Getter functions for actual options members.
+   */
+  ///@{
+  /**
+   *  \brief Getter for RooAbsPdf* to use for dataset generation.
+   */
+  const RooAbsPdf* generation_pdf() const {return generation_pdf_;}
+  ///@}
+  
+  /** @name Setter actual options
+   *  Setter functions for actual options members.
+   */
+  ///@{
+  /**
+   *  \brief Setter for RooAbsPdf* to use for dataset generation.
+   */
+  void set_generation_pdf(const RooAbsPdf* generation_pdf) {generation_pdf_ = generation_pdf;}
+  ///@}
   
  protected:
   /** @name Virtual functions
@@ -74,6 +95,10 @@ private:
    *  The actual options members.
    */
   ///@{
+  /**
+   *  \brief RooAbsPdf to generate toys for
+   */
+  const RooAbsPdf* generation_pdf_;
   ///@}
 };
 

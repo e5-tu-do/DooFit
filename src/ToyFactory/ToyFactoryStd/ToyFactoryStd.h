@@ -34,6 +34,14 @@ class ToyFactoryStd {
  protected:
   
  private:
+  /**
+   *  \brief CommonConfig instance to use
+   */
+  const CommonConfig& config_common_;
+  /**
+   *  \brief ToyFactoryStdConfig instance to use
+   */
+  const ToyFactoryStdConfig& config_toyfactory_;
 };
 
 
