@@ -1,7 +1,7 @@
 /** \class ToyFactoryStdConfig
- *  \brief DooFit config class for the ToyFactory class.
+ *  \brief DooFit config class for the ToyFactoryStd class.
  *
- *  This class is responsible for all ToyFactory related configuration options
+ *  This class is responsible for all ToyFactoryStd related configuration options
  *  which are not covered by CommonConfig.
  */
 

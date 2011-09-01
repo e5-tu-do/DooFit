@@ -18,7 +18,8 @@ class ToyFactoryStd {
   /**
    *  \brief Default constructor for ToyFactoryStd
    *
-   *  Detailed description.
+   *  This is the default constructor for ToyFactoryStd involving general 
+   *  configuration @a cfg_com and specific configuration @a cfg_tfac.
    *
    *  @param cfg_com CommonConfig for the general configuration.
    *  @param cfg_tfac ToyFactoryStdConfig for this specific toy factory.
