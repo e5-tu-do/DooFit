@@ -75,7 +75,8 @@ public:
   /// set activity state of stream (i.e. whether to print or not)
   void set_active(bool active_state) { is_active_ = active_state; }
   
-  /// set current indent for new lines.
+  /// set current indent for new lines. Every new line will be indented by this
+  /// number of spaces
   void set_indent(int indent) { 
     indent_ = indent; 
     if (os_.str().length() == 0) {
