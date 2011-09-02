@@ -3,11 +3,14 @@
 // Boost
 
 // ROOT
+#include "TCanvas.h"
 
 // RooFit
 #include "RooWorkspace.h"
 #include "RooDataSet.h"
 #include "RooArgSet.h"
+#include "RooRealVar.h"
+#include "RooPlot.h"
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -37,7 +40,7 @@ int main() {
   ws->Print("t");
   
   cfg_tfac.set_generation_pdf(ws->pdf("test"));
-  cfg_tfac.set_expected_yield(1000);
+  cfg_tfac.set_expected_yield(100000);
   RooArgSet argset_obs("argset_obs");
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
   
@@ -49,4 +52,15 @@ int main() {
   data->Print();
   
   sdebug << data->numEntries() << endmsg;
+  
+  RooRealVar* mass = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "");
+  RooPlot* mass_frame = mass->frame();
+  
+  data->plotOn(mass_frame);
+  ws->pdf("test")->plotOn(mass_frame);
+  
+  TCanvas c1("c1", "c1", 800, 600);
+  mass_frame->Draw();
+  
+  c1.SaveAs("c1.pdf");
 }
