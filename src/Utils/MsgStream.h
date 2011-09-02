@@ -27,7 +27,7 @@
 class MsgStream {
 public:
   /**
-   *  \brief Constructor for colored MsgStream
+   *  \brief Constructor for colored output
    *
    *  @param color The color to be used for this stream
    */
@@ -43,7 +43,7 @@ public:
    *  This function returns a reference to the std::ostringstream used to store
    *  output before it is flushed to the console.
    *
-   *  \return{ internal std::ostringstream. }
+   *  \return internal std::ostringstream
    */
   std::ostringstream& stream() { return os_; }
   
@@ -52,7 +52,7 @@ public:
    *
    *  Normally not needed as endmsg() will force the output.
    *
-   *  \return{ this MstStream object }
+   *  \return this MstStream object
    *
    *  \todo Include support for other streams as well besides std::cout.
    */
