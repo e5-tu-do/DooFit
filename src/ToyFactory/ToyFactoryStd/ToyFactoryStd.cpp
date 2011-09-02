@@ -21,6 +21,6 @@ ToyFactoryStd::~ToyFactoryStd(){
   
 }
 
-ToyFactoryStd::Generate() {
+RooDataSet* ToyFactoryStd::Generate() {
   
 }
