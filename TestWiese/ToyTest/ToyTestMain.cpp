@@ -6,6 +6,8 @@
 
 // RooFit
 #include "RooWorkspace.h"
+#include "RooDataSet.h"
+#include "RooArgSet.h"
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -14,9 +16,12 @@
 #include "Builder/BuilderStd/BuilderStdConfig.h"
 
 #include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
+#include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
 
 #include "ToyFactory/ToyFactoryStd/ToyFactoryStd.h"
 #include "ToyFactory/ToyFactoryStd/ToyFactoryStdConfig.h"
+
+#include "Utils/MsgStream.h"
 
 int main() {
   CommonConfig cfg_com("cfg_com");
@@ -32,6 +37,16 @@ int main() {
   ws->Print("t");
   
   cfg_tfac.set_generation_pdf(ws->pdf("test"));
+  cfg_tfac.set_expected_yield(1000);
+  RooArgSet argset_obs("argset_obs");
+  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
+  
+  cfg_tfac.set_argset_generation_observables(&argset_obs);
   
   cfg_com.PrintAll();
+  
+  RooDataSet* data = tfac.Generate();
+  data->Print();
+  
+  sdebug << data->numEntries() << endmsg;
 }

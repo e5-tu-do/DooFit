@@ -2,10 +2,13 @@
 
 // from RooFit
 #include "RooDataSet.h"
+#include "RooAbsPdf.h"
+#include "TClass.h"
 
 // from Project
 #include "Config/CommonConfig.h"
 #include "ToyFactory/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "Utils/MsgStream.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -22,5 +25,43 @@ ToyFactoryStd::~ToyFactoryStd(){
 }
 
 RooDataSet* ToyFactoryStd::Generate() {
+  if (config_toyfactory_.generation_pdf() == NULL) {
+    serr << "Generation PDF not set. Cannot generate toy sample." << endmsg;
+    throw;
+  }
+  if (config_toyfactory_.argset_generation_observables() == NULL) {
+    serr << "Generation observables argset not set. Cannot generate toy sample." << endmsg;
+    throw;
+  }
   
+  return GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield());
+}
+
+bool ToyFactoryStd::PdfIsDecomposable(const RooAbsPdf& pdf) {
+  if (strcmp(pdf.IsA()->GetName(),"RooSimultaneous") == 0 
+      || strcmp(pdf.IsA()->GetName(),"RooAddPdf") == 0
+      || strcmp(pdf.IsA()->GetName(),"RooProdPdf") == 0
+      || strcmp(pdf.IsA()->GetName(),"RooExtendPdf") == 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, int expected_yield) {
+  if (PdfIsDecomposable(pdf)) {
+    // pdf needs to be decomposed and generated piece-wise
+    serr << "PDF is decomposable, but decomposition is not yet implemented. Giving up." << endmsg;
+    throw;
+  } else {
+    // pdf can be generated straightly
+    
+    // TODO: if expected yield == 0, get yield from PDF
+    
+    sinfo << endmsg;
+    sinfo.Ruler();
+    sinfo << "Generating for PDF " << pdf.GetName() << " (" << pdf.IsA()->GetName() << "). Expected yield: " << expected_yield << " events." << endmsg;
+    
+    return pdf.generate(*(pdf.getObservables(argset_generation_observables)), expected_yield, Extended());
+  }
 }

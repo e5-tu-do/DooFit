@@ -13,6 +13,8 @@
 class CommonConfig; 
 class ToyFactoryStdConfig;
 class RooDataSet;
+class RooAbsPdf;
+class RooArgSet;
 
 class ToyFactoryStd {
  public:
@@ -47,6 +49,28 @@ class ToyFactoryStd {
  protected:
   
  private:
+  /**
+   *  \brief Checks if a RooAbsPdf is decomposable
+   *
+   *  @param pdf pdf to check for decomposability
+   *  \return whether pdf is decomposable or not
+   */
+  bool PdfIsDecomposable(const RooAbsPdf& pdf);
+  
+  /**
+   *  \brief Generate a toy sample for a given PDF.
+   *
+   *  Helper function to be used by ToyFactoryStd::Generate().
+   *
+   *  @param pdf PDF to generate sample for
+   *  @param yield Expected yield to generate (if equals 0, then get yield from
+   *         PDF itself)
+   *  \return Pointer to the generated sample. ToyFactoryStd does not assume 
+   *          ownership of this sample. Therefore, the invoker of this function
+   *          must take care of proper deletion afterwards.
+   */
+  RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, int expected_yield=0);
+  
   /**
    *  \brief CommonConfig instance to use
    */
