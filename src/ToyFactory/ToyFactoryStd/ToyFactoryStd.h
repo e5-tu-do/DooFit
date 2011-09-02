@@ -12,6 +12,7 @@
 // forward declarations
 class CommonConfig; 
 class ToyFactoryStdConfig;
+class RooDataSet;
 
 class ToyFactoryStd {
  public:
@@ -30,6 +31,18 @@ class ToyFactoryStd {
    *  \brief Destructor for ToyFactoryStd
    */
   ~ToyFactoryStd();
+  
+  /**
+   *  \brief Generate a toy sample
+   *
+   *  Based on all settings in the supplied ToyFactoryStdConfig object, generate
+   *  a toy sample. Please note comment on ownership of returned dataset.
+   *
+   *  \return Pointer to the generated sample. ToyFactoryStd does not assume 
+   *          ownership of this sample. Therefore, the invoker of this function
+   *          must take care of proper deletion afterwards.
+   */
+  RooDataSet* Generate();
   
  protected:
   
