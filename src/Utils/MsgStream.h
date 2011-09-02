@@ -26,19 +26,36 @@
  */
 class MsgStream {
 public:
-  /// \brief Constructor for colored MsgStream.
-  /// \param color The color to be used for this stream.
+  /**
+   *  \brief Constructor for colored MsgStream
+   *
+   *  @param color The color to be used for this stream
+   */
   MsgStream(Utils::TerminalColor color) : text_color_(color), is_active_(true), indent_(0) {}
-  /// Constructor for standard uncolored output.
+  /**
+   *  \brief Default constructor for standard uncolored output
+   */
   MsgStream() : text_color_(Utils::kTextNone), is_active_(true), indent_(0) {}
   
-  /// \brief Get the internal std::ostringstream.
-  /// \return Internal std::ostringstream.
+  /**
+   *  \brief Get the internal std::ostringstream
+   *
+   *  This function returns a reference to the std::ostringstream used to store
+   *  output before it is flushed to the console.
+   *
+   *  \return{ internal std::ostringstream. }
+   */
   std::ostringstream& stream() { return os_; }
   
-  /// \brief Actually output the content of the MsgStream to std::cout. 
-  /// Normally not needed as endmsg() will force the output.
-  /// \todo Include support for other streams as well besides std::cout.
+  /**
+   *  \brief Actually output the content of the MsgStream to std::cout. 
+   *
+   *  Normally not needed as endmsg() will force the output.
+   *
+   *  \return{ this MstStream object }
+   *
+   *  \todo Include support for other streams as well besides std::cout.
+   */
   MsgStream& doOutput() {
     if (is_active_) {
       Utils::SetTerminalColor(text_color_);
@@ -52,31 +69,54 @@ public:
     return *this;
   }
   
-  /// \brief Stream operator for STL streams. 
-  /// See iostreams documentation for reference.
+  /**
+   *  \brief Stream operator for std::ostream streams. 
+   *
+   *  Analogous to MsgStream::operator<<(MsgStream& (*)(MsgStream&)). See 
+   *  iostreams documentation for reference.
+   */
   MsgStream& operator<<(std::ostream& (*_f)(std::ostream&)) {
     _f(os_);
     return *this;
   }
   
-  /// \brief Stream operator for MsgStream streams. 
-  /// Analogous to MsgStream::operator<<(std::ostream& (*)(std::ostream&)).
+  /**
+   *  \brief Stream operator for MsgStream streams. 
+   *
+   *  Analogous to MsgStream::operator<<(std::ostream& (*)(std::ostream&)). See 
+   *  iostreams documentation for reference.
+   */
   MsgStream& operator<<(MsgStream& (*_f)(MsgStream&)) {
     _f(*this);
     return *this;
   }
   
-  /// Output a horizontal ruler.
+  /**
+   *  \brief Output a horizontal ruler
+   */
   void Ruler() {
     os_ << "==============================================================================================================";
     doOutput();
   }
   
-  /// set activity state of stream (i.e. whether to print or not)
+  /**
+   *  \brief Set active state of this stream
+   *
+   *  Determine whether to print messages send to this stream on the console or
+   *  not.
+   *
+   *  @param active_state determines whether printing is enabled or disabled
+   */
   void set_active(bool active_state) { is_active_ = active_state; }
   
-  /// set current indent for new lines. Every new line will be indented by this
-  /// number of spaces
+  /**
+   *  \brief Set current indent for new lines
+   *
+   *  Every new line will be indented by @a indent number of spaces, starting 
+   *  after the next endmsg().
+   *
+   *  @param indent number of spaces to insert at every new line
+   */
   void set_indent(int indent) { 
     indent_ = indent; 
     if (os_.str().length() == 0) {
@@ -85,7 +125,9 @@ public:
   }
   
 protected:
-  /// Flush the internal std::ostringstream.
+  /**
+   *  \brief Flush the internal std::ostringstream and output.
+   */
   void flush() { os_.flush(); doOutput(); }
   
   /// \brief Internal std::ostringstream for data.
