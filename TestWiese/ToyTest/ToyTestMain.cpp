@@ -49,10 +49,7 @@ int main() {
   cfg_com.PrintAll();
   
   RooDataSet* data = tfac.Generate();
-  data->Print();
-  
-  sdebug << data->numEntries() << endmsg;
-  
+ 
   RooRealVar* mass = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "");
   RooPlot* mass_frame = mass->frame();
   

@@ -34,7 +34,13 @@ RooDataSet* ToyFactoryStd::Generate() {
     throw;
   }
   
-  return GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield());
+  sinfo << endmsg;
+  sinfo.Ruler();
+  
+  RooDataSet* data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield());
+  
+  sinfo.Ruler();
+  return data;
 }
 
 bool ToyFactoryStd::PdfIsDecomposable(const RooAbsPdf& pdf) {
@@ -55,13 +61,12 @@ RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argse
     throw;
   } else {
     // pdf can be generated straightly
-    
-    // TODO: if expected yield == 0, get yield from PDF
-    
-    sinfo << endmsg;
-    sinfo.Ruler();
     sinfo << "Generating for PDF " << pdf.GetName() << " (" << pdf.IsA()->GetName() << "). Expected yield: " << expected_yield << " events." << endmsg;
     
-    return pdf.generate(*(pdf.getObservables(argset_generation_observables)), expected_yield, Extended());
+    RooDataSet* data = pdf.generate(*(pdf.getObservables(argset_generation_observables)), expected_yield, Extended());
+    
+    sinfo << "Generated " << data->numEntries() << " events for PDF " << pdf.GetName() << endmsg;
+    
+    return data;
   }
 }
