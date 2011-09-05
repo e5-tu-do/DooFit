@@ -24,18 +24,26 @@
  *
  *  \code
  *  // instantiate first config object
- *  CommonConfig config("CommonConfig");
+ *  MyConfig1 config1("MyConfig1");
  *  
  *  // initialize config object via argc and argv
- *  config.InitializeOptions(argc, argv);
+ *  config1.InitializeOptions(argc, argv);
  *  
  *  // instantiate second config object
- *  ConfigTestSecond config2("SecondConfig");
+ *  MyConfig2 config2("MyConfig2");
  *  
  *  // Initialize config object via previously initialized Config object.
  *  // See Config::InitializeOptions() why you should avoid initializing via 
  *  // argc and argv again.
  *  config2.InitializeOptions(config);
+ *
+ *  // instantiate second config object
+ *  MyConfig3 config3("MyConfig3");
+ *  
+ *  // Initialize config object via previously initialized Config object.
+ *  // See Config::InitializeOptions() why you should avoid initializing via 
+ *  // argc and argv again.
+ *  config3.InitializeOptions(config2);  
  *  
  *  // More or less mandatory step after initialization of all Config objects.
  *  // Check if the help flag is set and (if so) print a help message.
