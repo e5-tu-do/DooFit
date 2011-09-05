@@ -14,7 +14,7 @@
  *  Usage examples can be found in ConfigTest and ConfigTestSecond as well as in
  *  file ConfigTestMain.cpp.
  *
- *  \section defining Defining options to be parsed
+ *  @section defining Defining options to be parsed
  *
  *  Options for parsing are defined in Config::DefineOptions() using 
  *  boost::program_options::options_description. See boost documentation for 
@@ -28,8 +28,8 @@
  *
  *  Usage example:
  *
- *  \code
- *  void ConfigTest::DefineOptions() {
+ *  @code
+ *  void MyConfig::DefineOptions() {
  *    po::options_description* generic = new po::options_description("Generic options");
  *    generic->add_options()
  *    ("help", "produce help message")
@@ -39,9 +39,9 @@
  *  
  *    descs_visible_.push_back(generic);
  *  }
- *  \endcode
+ *  @endcode
  *
- *  \section parsing Parsing command line and config file
+ *  @section parsing Parsing command line and config file
  *
  *  Parsing command line and an optional config file (see Config::config_file_)
  *  is very simple through Config::InitializeOptions(const Config&) and 
@@ -49,7 +49,7 @@
  *
  *  Usage example:
  *
- *  \code
+ *  @code
  *  // instantiate first config object
  *  MyConfig1 config1("MyConfig1");
  *  
@@ -78,14 +78,30 @@
  *  
  *  // Print all set options for the user (optional).
  *  Config::PrintAll();
- *  \endcode
+ *  @endcode
  *
- *  \author Florian Kruse
- *  \author Julian Wishahi
+ *  @section loading Loading parsed options
  *
- *  \see ConfigTest
- *  \see ConfigTestSecond
- *  \see ConfigTestMain.cpp
+ *  Parsed options can be loaded into specific member variables via 
+ *  Config::LoadOptions(). Again, see boost documentation on how to get the 
+ *  parsed options.
+ *
+ *  Usage example:
+ *
+ *  @code
+ *  void MyConfig::LoadOptions() {
+ *    set_my_test_int(var_map_[GetOptionString("my-test-int")].as<int>());
+ *    
+ *    if (var_map_.count("help")) help_flag_ = true;
+ *  }
+ *  @endcode
+ *
+ *  @author Florian Kruse
+ *  @author Julian Wishahi
+ *
+ *  @see ConfigTest
+ *  @see ConfigTestSecond
+ *  @see ConfigTestMain.cpp
  */
 
 #ifndef CONFIG_h
