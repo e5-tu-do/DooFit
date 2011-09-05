@@ -14,6 +14,33 @@
  *  Usage examples can be found in ConfigTest and ConfigTestSecond as well as in
  *  file ConfigTestMain.cpp.
  *
+ *  \section defining Defining options to be parsed
+ *
+ *  Options for parsing are defined in Config::DefineOptions() using 
+ *  boost::program_options::options_description. See boost documentation for 
+ *  more details on that or ConfigTest and ConfigTestSecond for an example. The
+ *  usage of Config::GetOptionString(std::string, std::string) is also 
+ *  recommended to group options into sections defined by the Config object's
+ *  name.
+ *
+ *  @see Config::desc_visible_
+ *  @see Config::desc_hidden_
+ *
+ *  Usage example:
+ *
+ *  \code
+ *  void ConfigTest::DefineOptions() {
+ *    po::options_description* generic = new po::options_description("Generic options");
+ *    generic->add_options()
+ *    ("help", "produce help message")
+ *    ("config-file", po::value<string>(&config_file_)->default_value(""), "config file to parse")
+ *    (GetOptionString("my-test-switch","s").c_str(), po::value<bool>(&my_test_switch_)->default_value(false), "my test bool switch")
+ *    (GetOptionString("my-test-int","i").c_str(), po::value<int>()->default_value(0), "my test integer");
+ *  
+ *    descs_visible_.push_back(generic);
+ *  }
+ *  \endcode
+ *
  *  \section parsing Parsing command line and config file
  *
  *  Parsing command line and an optional config file (see Config::config_file_)
