@@ -16,7 +16,34 @@
  *
  *  \section parsing Parsing command line and config file
  *
- *  Bla
+ *  Parsing command line and an optional config file (see Config::config_file_)
+ *  is very simple through Config::InitializeOptions(const Config&) and 
+ *  Config::InitializeOptions(int, char* []). 
+ *
+ *  Usage example:
+ *
+ *  \code
+ *  // instantiate first config object
+ *  CommonConfig config("CommonConfig");
+ *  
+ *  // initialize config object via argc and argv
+ *  config.InitializeOptions(argc, argv);
+ *  
+ *  // instantiate second config object
+ *  ConfigTestSecond config2("SecondConfig");
+ *  
+ *  // Initialize config object via previously initialized Config object.
+ *  // See Config::InitializeOptions() why you should avoid initializing via 
+ *  // argc and argv again.
+ *  config2.InitializeOptions(config);
+ *  
+ *  // More or less mandatory step after initialization of all Config objects.
+ *  // Check if the help flag is set and (if so) print a help message.
+ *  config.CheckHelpFlagAndPrintHelp();
+ *  
+ *  // Print all set options for the user (optional).
+ *  Config::PrintAll();
+ *  \endcode
  *
  *  \author Florian Kruse
  *  \author Julian Wishahi
