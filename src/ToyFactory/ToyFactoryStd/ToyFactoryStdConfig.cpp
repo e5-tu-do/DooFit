@@ -24,13 +24,16 @@ ToyFactoryStdConfig::ToyFactoryStdConfig(const std::string& name) :
 Config(name),
 generation_pdf_(NULL),
 expected_yield_(0),
-argset_generation_observables_(NULL)
+argset_generation_observables_(NULL),
+random_seed_(0)
 {
 }
 
 ToyFactoryStdConfig::~ToyFactoryStdConfig() {}
 
 void ToyFactoryStdConfig::PrintOptions() const {
+  scfg << "Random seed:       " << random_seed() << endmsg;
+  
   if (generation_pdf_ != NULL) {
     scfg << "Generation PDF:    " << generation_pdf_->IsA()->GetName() << ":"
          << generation_pdf_->GetName() << " (" << generation_pdf_->GetTitle()
@@ -52,7 +55,7 @@ void ToyFactoryStdConfig::PrintOptions() const {
     RooAbsArg* arg = NULL;
     bool first = true;
     
-    while (arg = (RooAbsArg*)arg_it->Next()) {
+    while ((arg = (RooAbsArg*)arg_it->Next())) {
       if (!first) {
         scfg << ", ";
       } else {

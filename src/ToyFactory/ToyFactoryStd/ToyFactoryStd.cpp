@@ -1,9 +1,12 @@
 #include "ToyFactory/ToyFactoryStd/ToyFactoryStd.h"
 
+// ROOT
+#include "TClass.h"
+
 // from RooFit
 #include "RooDataSet.h"
 #include "RooAbsPdf.h"
-#include "TClass.h"
+#include "RooRandom.h"
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -17,7 +20,7 @@ ToyFactoryStd::ToyFactoryStd(const CommonConfig& cfg_com, const ToyFactoryStdCon
 config_common_(cfg_com),
 config_toyfactory_(cfg_tfac)
 {
-  
+  RooRandom::randomGenerator()->SetSeed(cfg_tfac.random_seed());
 }
 
 ToyFactoryStd::~ToyFactoryStd(){

@@ -243,6 +243,16 @@ class Config {
    *  This member must be set through 
    *  boost::program_options::value<string>(&config_file_) in 
    *  Config::DefineOptions().
+   *
+   *  Example:
+   *  \code 
+   *  void MyConfig::DefineOptions() {
+   *    po::options_description* generic = new po::options_description("Generic options");
+   generic->add_options()
+   ("config-file", po::value<string>(&config_file_)->default_value(""),
+   "config file to parse");
+   *  }
+   *  \endcode
    */
   std::string config_file_;
   
@@ -252,6 +262,13 @@ class Config {
    *  Flag specifying whether the help message with available options should be 
    *  printed. The derived class needs to set this by hand in 
    *  Config::LoadOptions().
+   *  
+   *  Example:
+   *  \code 
+   *  void MyConfig::LoadOptions() {
+   *    if (var_map_.count("help")) help_flag_ = true;
+   *  }
+   *  \endcode
    */
   bool help_flag_;
   

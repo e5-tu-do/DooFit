@@ -58,6 +58,12 @@ class ToyFactoryStdConfig : public Config {
    *  \brief Getter for RooArgSet* with all observables to generate directly
    */
   const RooArgSet* argset_generation_observables() const {return argset_generation_observables_;}
+  /**
+   *  \brief Getter for random seed
+   *
+   *  \see ToyFactoryStdConfig::set_random_seed(int)
+   */
+  int random_seed() const {return random_seed_;}
   ///@}
   
   /** @name Setter actual options
@@ -96,7 +102,17 @@ class ToyFactoryStdConfig : public Config {
   /**
    *  \brief Setter for RooArgSet* with all observables to generate directly
    */
-  void set_argset_generation_observables(const RooArgSet* argset_generation_observables) {argset_generation_observables_ = argset_generation_observables;}
+  void set_argset_generation_observables(const RooArgSet* argset_generation_observables) 
+  {argset_generation_observables_ = argset_generation_observables;}
+  /**
+   *  \brief Setter for random seed
+   *
+   *  Will be used at initialization of the toy factory. A value of 0 means to 
+   *  use random seed for irreproducible results.
+   *
+   *  @param seed the seed to use
+   */
+  void set_random_seed(int seed) {random_seed_ = seed;}
   ///@}
   
  protected:
@@ -151,6 +167,10 @@ private:
    *  \brief RooArgSet with all observables to generate directly
    */
   const RooArgSet* argset_generation_observables_;
+  /**
+   *  \brief Random seed to use for the toy factory upon initialization
+   */
+  int random_seed_;
   ///@}
 };
 

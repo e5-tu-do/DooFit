@@ -29,9 +29,15 @@ void CommonConfig::PrintOptions() const {
 }
 
 void CommonConfig::DefineOptions() {
+  po::options_description* generic = new po::options_description("Generic options");
+  generic->add_options()
+  ("help", "produce help message")
+  ("config-file", po::value<string>(&config_file_)->default_value(""),
+   "config file to parse");
   
+  descs_visible_.push_back(generic);
 }
 
 void CommonConfig::LoadOptions() {
-  
+  if (var_map_.count("help")) help_flag_ = true;
 }
