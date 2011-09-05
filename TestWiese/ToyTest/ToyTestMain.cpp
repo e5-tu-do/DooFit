@@ -26,12 +26,23 @@
 
 #include "Utils/MsgStream.h"
 
-int main() {
+int main(int argc, char *argv[]) {
   CommonConfig cfg_com("cfg_com");
+  
+  cfg_com.InitializeOptions(argc, argv);
+  
   BuilderStdConfig cfg_bld("cfg_bld");
-  BuilderStd bld(cfg_com,cfg_bld);
+  
+  cfg_bld.InitializeOptions(cfg_com);
   
   ToyFactoryStdConfig cfg_tfac("config_toyfactorystd");
+  
+  cfg_bld.InitializeOptions(cfg_tfac);
+  
+  cfg_com.CheckHelpFlagAndPrintHelp();
+  
+  BuilderStd bld(cfg_com,cfg_bld);
+  
   ToyFactoryStd tfac(cfg_com, cfg_tfac);
   
   RooWorkspace* ws = new RooWorkspace("ws");

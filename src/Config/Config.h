@@ -14,6 +14,10 @@
  *  Usage examples can be found in ConfigTest and ConfigTestSecond as well as in
  *  file ConfigTestMain.cpp.
  *
+ *  \section Parsing command line and config file
+ *
+ *  Bla
+ *
  *  \see ConfigTest
  *  \see ConfigTestSecond
  *  \see ConfigTestMain.cpp
@@ -130,7 +134,7 @@ class Config {
    *  \brief Check for help flag and if necessary print help message
    *
    *  Depending on the setting of Config::help_flag_ print the help message and
-   *  exit the program termination. 
+   *  exit the program afterwards. 
    */
   void CheckHelpFlagAndPrintHelp() const {
     if (help_flag_) {
