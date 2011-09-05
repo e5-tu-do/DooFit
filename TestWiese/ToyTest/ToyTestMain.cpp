@@ -27,21 +27,21 @@
 #include "Utils/MsgStream.h"
 
 int main(int argc, char *argv[]) {
-  CommonConfig cfg_com("cfg_com");
+  CommonConfig cfg_com("common");
   
   cfg_com.InitializeOptions(argc, argv);
   
-  BuilderStdConfig cfg_bld("cfg_bld");
+  BuilderStdConfig cfg_bld("builder");
   
   cfg_bld.InitializeOptions(cfg_com);
   
-  ToyFactoryStdConfig cfg_tfac("config_toyfactorystd");
+  ToyFactoryStdConfig cfg_tfac("toy");
   
-  cfg_bld.InitializeOptions(cfg_tfac);
+  cfg_tfac.InitializeOptions(cfg_bld);
   
   cfg_com.CheckHelpFlagAndPrintHelp();
   
-  BuilderStd bld(cfg_com,cfg_bld);
+  BuilderStd bld(cfg_com, cfg_bld);
   
   ToyFactoryStd tfac(cfg_com, cfg_tfac);
   
@@ -51,7 +51,6 @@ int main(int argc, char *argv[]) {
   ws->Print("t");
   
   cfg_tfac.set_generation_pdf(ws->pdf("test"));
-  cfg_tfac.set_expected_yield(100000);
   RooArgSet argset_obs("argset_obs");
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
   

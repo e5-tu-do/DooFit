@@ -37,7 +37,7 @@
  *  // argc and argv again.
  *  config2.InitializeOptions(config);
  *
- *  // instantiate second config object
+ *  // instantiate third config object
  *  MyConfig3 config3("MyConfig3");
  *  
  *  // Initialize config object via previously initialized Config object.
@@ -219,7 +219,21 @@ class Config {
    *  Helper functions for printing and other needs.
    */
   ///@{ 
-  
+  /**
+   *  @brief Get option string with prefixed Config name
+   *
+   *  This function will return the option name @a option_name prefixed with 
+   *  this Config object's name. A short option @a short_option can also be 
+   *  specified which will (of course) not be prefixed. Caution should be used
+   *  for short options to avoid option clashes.
+   *
+   *  @param option_name the option name to be used (e.g. my-option for 
+   *                     --configname.my-option on command line)
+   *  @param short_option the short option name to be used (e.g. i for -i on 
+   *                      command line)
+   *  @return option string as used by boost::program_options
+   */
+  std::string GetOptionString(std::string option_name, std::string short_option="") const;
   ///@}
   
   /**

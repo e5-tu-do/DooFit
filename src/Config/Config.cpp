@@ -84,6 +84,20 @@ void Config::PrintHelp() const {
   cout << desc_visible_all_ << endl;
 }
 
+std::string Config::GetOptionString(std::string option_name, std::string short_option) const {
+  std::string option;
+  
+  option = name_ + "." + option_name;
+  
+  if (short_option.length() > 0) {
+    option = option + "," + short_option;
+  }
+  
+  sdebug << option << endmsg;
+  
+  return option;
+}
+
 void Config::CombineOptions() {
   for (vector<po::options_description*>::const_iterator it = descs_visible_.begin(); it < descs_visible_.end(); ++it) {
     desc_visible_.add(**it);

@@ -38,16 +38,16 @@ void ConfigTest::DefineOptions() {
   ("help", "produce help message")
   ("config-file", po::value<string>(&config_file_)->default_value(""),
    "config file to parse")
-  ("my-test-switch,s", po::value<bool>(&my_test_switch_)->default_value(false),
+  (GetOptionString("my-test-switch","s").c_str(), po::value<bool>(&my_test_switch_)->default_value(false),
    "my test bool switch")
-  ("my-test-int,i", po::value<int>()->default_value(0),
+  (GetOptionString("my-test-int","i").c_str(), po::value<int>()->default_value(0),
    "my test integer");
   
   descs_visible_.push_back(generic);
 }
 
 void ConfigTest::LoadOptions() {
-  set_my_test_int(var_map_["my-test-int"].as<int>());
+  set_my_test_int(var_map_[GetOptionString("my-test-int")].as<int>());
   
   if (var_map_.count("help")) help_flag_ = true;
 }
@@ -70,16 +70,16 @@ void ConfigTestSecond::PrintOptions() const {
 void ConfigTestSecond::DefineOptions() {
   po::options_description* generic = new po::options_description("Second options");
   generic->add_options()
-  ("my-second-test-switch", po::value<bool>()->default_value(false),
+  (GetOptionString("my-second-test-switch").c_str(), po::value<bool>()->default_value(false),
    "my second test bool switch")
-  ("my-second-test-int", po::value<int>()->default_value(0),
+  (GetOptionString("my-second-test-int").c_str(), po::value<int>()->default_value(0),
    "my second test integer")
-  ("my-second-test-vector", po::value<vector<string> >(&my_test_vector_)->composing());
+  (GetOptionString("my-second-test-vector").c_str(), po::value<vector<string> >(&my_test_vector_)->composing());
   
   descs_visible_.push_back(generic);
 }
 
 void ConfigTestSecond::LoadOptions() {
-  set_my_test_switch(var_map_["my-second-test-switch"].as<bool>());
-  set_my_test_int(var_map_["my-second-test-int"].as<int>());
+  set_my_test_switch(var_map_[GetOptionString("my-second-test-switch")].as<bool>());
+  set_my_test_int(var_map_[GetOptionString("my-second-test-int")].as<int>());
 }

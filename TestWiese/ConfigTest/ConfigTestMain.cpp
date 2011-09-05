@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   try {
     
     // instantiate first config object
-    CommonConfig config("CommonConfig");
+    ConfigTest config("FirstConfig");
     
     // initialize config object via argc and argv
     config.InitializeOptions(argc, argv);

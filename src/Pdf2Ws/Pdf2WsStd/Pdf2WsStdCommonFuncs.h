@@ -67,7 +67,7 @@ namespace Pdf2WsStd{ namespace CommonFuncs{
                      const TString& unit);
   
   /**
-   *  \brief Wrapper to import object @a arg to workspace @a ws.
+   *  @brief Wrapper to import object @a arg to workspace @a ws.
    *
    *  Helper/Wrapper function to import an object to a given RooWorkspace. Main
    *  intention is to keep the possibility to issue global RooCmdArg options for
