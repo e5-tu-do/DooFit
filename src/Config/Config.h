@@ -14,9 +14,12 @@
  *  Usage examples can be found in ConfigTest and ConfigTestSecond as well as in
  *  file ConfigTestMain.cpp.
  *
- *  \section Parsing command line and config file
+ *  \section parsing Parsing command line and config file
  *
  *  Bla
+ *
+ *  \author Florian Kruse
+ *  \author Julian Wishahi
  *
  *  \see ConfigTest
  *  \see ConfigTestSecond
