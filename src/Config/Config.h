@@ -248,9 +248,8 @@ class Config {
    *  \code 
    *  void MyConfig::DefineOptions() {
    *    po::options_description* generic = new po::options_description("Generic options");
-   generic->add_options()
-   ("config-file", po::value<string>(&config_file_)->default_value(""),
-   "config file to parse");
+   *    generic->add_options()
+   *    ("config-file", po::value<string>(&config_file_)->default_value(""), "config file to parse");
    *  }
    *  \endcode
    */
