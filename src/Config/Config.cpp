@@ -14,7 +14,6 @@
 using namespace std;
 namespace po = boost::program_options;
 
-boost::program_options::options_description Config::desc_visible_all_;
 ConfigMap Config::config_container_;
 unsigned int Config::id_counter_ = 0;
 
@@ -41,13 +40,6 @@ Config::Config(const std::string& name) :
 
 Config::~Config() {
   config_container_.erase(id_);
-  
-  // recreate desc_visible_all_ which is kind of cumbersome
-//  desc_visible_all_ = boost::program_options::options_description();
-//  for (ConfigMap::const_iterator it = config_container_.begin(); it != config_container_.end(); ++it) {
-//    
-//    desc_visible_all_.add((*it).second->desc_visible_);
-//  }
 }
 
 void Config::InitializeOptions(int argc, char* argv[]) {
@@ -90,7 +82,14 @@ void Config::PrintAll() {
 }
 
 void Config::PrintHelp() const {
-  cout << desc_visible_all_ << endl;
+  boost::program_options::options_description desc_visible_all;
+  
+  for (ConfigMap::const_iterator it = config_container_.begin(); it != config_container_.end(); ++it) {
+    
+    desc_visible_all.add((*it).second->desc_visible_);
+  }
+  
+  cout << desc_visible_all << endl;
 }
 
 std::string Config::GetOptionString(std::string option_name, std::string short_option) const {
@@ -115,7 +114,6 @@ void Config::CombineOptions() {
   }
   
   desc_.add(desc_visible_).add(desc_hidden_);
-  desc_visible_all_.add(desc_visible_);
 }
 
 void Config::ParseOptionsAndConfigFile(boost::program_options::command_line_parser parser) {

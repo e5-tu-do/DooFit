@@ -151,11 +151,6 @@ class Config : public TObject {
   
   /**
    *  \brief Destructor.
-   *
-   *  @bug Although the destructor will take care to delete this Config object 
-   *       from the Config::config_container_, it will not empty the 
-   *       Config::desc_visible_all_ container for all visible options to be 
-   *       printed at Config::PrintHelp().
    */
   virtual ~Config();
   
@@ -419,14 +414,6 @@ class Config : public TObject {
    *  All static member variables for functionality across Config objects.
    */
   ///@{
-  /**
-   *  \brief Static collection of all visible program_options.
-   *
-   *  This options_description object contains all visible options that any 
-   *  derived Config object ever created. Will be used by Config::PrintHelp()
-   *  to print a help message for all options through any Config object. 
-   */
-  static boost::program_options::options_description desc_visible_all_;
   /**
    *  \brief Static collection of all created Config objects.
    *
