@@ -27,6 +27,12 @@
 #include "Utils/MsgStream.h"
 
 int main(int argc, char *argv[]) {
+  
+  {
+    ToyFactoryStdConfig cfg_com("toy");
+    cfg_com.InitializeOptions(argc, argv);
+  }
+  
   CommonConfig cfg_com("common");
   
   cfg_com.InitializeOptions(argc, argv);

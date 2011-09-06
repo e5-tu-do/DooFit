@@ -110,11 +110,23 @@
 // STL
 #include <string>
 #include <vector>
+#include <map>
 
 // Boost
+
+// ROOT Cint hacks...
+#ifndef __CINT__
 #include <boost/program_options.hpp>
+#else
+namespace boost { namespace program_options {
+  class options_description;
+  class variables_map;
+  class command_line_parser;
+};};
+#endif /* __CINT __ */
 
 // ROOT
+#include "TObject.h"
 
 // RooFit
 
@@ -122,9 +134,9 @@
 class Config;
 
 /// Map of Config pointers accessible via std::string
-typedef std::map<std::string,Config*> ConfigMap;
+typedef std::map<unsigned int,Config*> ConfigMap;
 
-class Config {
+class Config : public TObject {
   
  public:
   
@@ -139,6 +151,11 @@ class Config {
   
   /**
    *  \brief Destructor.
+   *
+   *  @bug Although the destructor will take care to delete this Config object 
+   *       from the Config::config_container_, it will not empty the 
+   *       Config::desc_visible_all_ container for all visible options to be 
+   *       printed at Config::PrintHelp().
    */
   virtual ~Config();
   
@@ -280,7 +297,7 @@ class Config {
   ///@}
   
   /**
-   *  \brief Name of the configuration object.
+   *  @brief Name of the configuration object.
    */
   std::string name_;
   
@@ -391,6 +408,13 @@ class Config {
    */
   void ParseOptionsAndConfigFile(boost::program_options::command_line_parser parser);
   
+  /**
+   *  @brief Unique ID of this Config object
+   *
+   *  For internal use in bookkeeping.
+   */
+  unsigned int id_;
+  
   /** @name static members
    *  All static member variables for functionality across Config objects.
    */
@@ -411,9 +435,23 @@ class Config {
    *  like printing of set options via Config::PrintAll().
    */
   static ConfigMap config_container_;
+  /**
+   *  @brief Unique ID counter
+   *
+   *  Internal counter for unique IDs. Bookkeeping is handled by Config base 
+   *  class itself.
+   */
+  static unsigned int id_counter_;
   ///@}
+  
+  /**
+   *  @brief ClassDef statement for CINT dictionary generation
+   */
+  //ClassDef(Config,1);
 };
 
+// let ROOT Cint not bother about this
+#ifndef __CINT__
 /// boost error_info for the name of the config file (see boost::exception for reference)
 typedef boost::error_info<struct tag_my_info,std::string> ConfigName;
 
@@ -431,6 +469,6 @@ struct ConfigNameDuplicationException: public virtual boost::exception, public v
 struct ConfigCmdArgsUsedTwiceException: public virtual boost::exception, public virtual std::exception { 
   virtual const char* what() const throw() { return "Command line arguments argc and argv used multiple times."; }
 };
-
+#endif /* __CINT __ */
 
 #endif //CONFIG_h

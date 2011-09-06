@@ -16,6 +16,7 @@ namespace po = boost::program_options;
 
 boost::program_options::options_description Config::desc_visible_all_;
 ConfigMap Config::config_container_;
+unsigned int Config::id_counter_ = 0;
 
 Config::Config(const std::string& name) :
   name_(name),
@@ -27,18 +28,26 @@ Config::Config(const std::string& name) :
   descs_hidden_(),
   unrec_options_(),
   config_file_(),
-  help_flag_(false)
+  help_flag_(false),
+  id_(id_counter_++)
 {
-  if (config_container_.count(name_) > 0) {
+  if (config_container_.count(id_) > 0) {
     serr << "ERROR in Config::Config(const std::string&): Config object with name " << name_ << " already existing." << endmsg;
     throw ConfigNameDuplicationException() << ConfigName(name_); 
   }
   
-  config_container_[name_] = this;
+  config_container_[id_] = this;
 }
 
 Config::~Config() {
-  config_container_.erase(name_);
+  config_container_.erase(id_);
+  
+  // recreate desc_visible_all_ which is kind of cumbersome
+//  desc_visible_all_ = boost::program_options::options_description();
+//  for (ConfigMap::const_iterator it = config_container_.begin(); it != config_container_.end(); ++it) {
+//    
+//    desc_visible_all_.add((*it).second->desc_visible_);
+//  }
 }
 
 void Config::InitializeOptions(int argc, char* argv[]) {
@@ -92,8 +101,6 @@ std::string Config::GetOptionString(std::string option_name, std::string short_o
   if (short_option.length() > 0) {
     option = option + "," + short_option;
   }
-  
-  sdebug << option << endmsg;
   
   return option;
 }
