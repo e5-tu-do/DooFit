@@ -19,11 +19,10 @@ unsigned int Config::id_counter_ = 0;
 
 Config::Config(const std::string& name) :
   name_(name),
-  desc_(),
   var_map_(),
-  desc_visible_(),
+  //desc_visible_(),
   descs_visible_(),
-  desc_hidden_(),
+  //desc_hidden_(),
   descs_hidden_(),
   unrec_options_(),
   config_file_(),
@@ -31,15 +30,47 @@ Config::Config(const std::string& name) :
   id_(id_counter_++)
 {
   if (config_container_.count(id_) > 0) {
-    serr << "ERROR in Config::Config(const std::string&): Config object with name " << name_ << " already existing." << endmsg;
+    serr << "ERROR in Config::Config(const std::string&): Config object with ID " << id_ << " already existing." << endmsg;
     throw ConfigNameDuplicationException() << ConfigName(name_); 
   }
   
   config_container_[id_] = this;
 }
 
+Config::Config(const Config& other) :
+name_(other.name_),
+var_map_(other.var_map_),
+//desc_visible_(other.desc_visible_),
+descs_visible_(other.descs_visible_),
+//desc_hidden_(other.desc_hidden_),
+descs_hidden_(other.descs_hidden_),
+unrec_options_(other.unrec_options_),
+config_file_(other.config_file_),
+help_flag_(other.help_flag_),
+id_(id_counter_++)
+{
+  config_container_[id_] = this;
+}
+
 Config::~Config() {
   config_container_.erase(id_);
+}
+
+Config& Config::operator=(const Config& other) {
+  if (this != &other) {
+    name_ = other.name_;
+    //desc_
+    //var_map_
+    //desc_visible_
+    //descs_visible_
+    //desc_hidden_
+    //descs_hidden_
+    unrec_options_ = other.unrec_options_;
+    config_file_ = other.config_file_;
+    help_flag_ = other.help_flag_;
+    // id should stay the same
+  }
+  return *this;
 }
 
 void Config::InitializeOptions(int argc, char* argv[]) {
@@ -49,7 +80,6 @@ void Config::InitializeOptions(int argc, char* argv[]) {
   }
   
   DefineOptions();
-  CombineOptions();
   
   ParseOptionsAndConfigFile(po::command_line_parser(argc, argv));
   
@@ -58,7 +88,6 @@ void Config::InitializeOptions(int argc, char* argv[]) {
 
 void Config::InitializeOptions(const Config& previous_config) {
   DefineOptions();
-  CombineOptions();
   
   config_file_ = previous_config.config_file_;
   ParseOptionsAndConfigFile(po::command_line_parser(previous_config.unrec_options_));
@@ -86,7 +115,9 @@ void Config::PrintHelp() const {
   
   for (ConfigMap::const_iterator it = config_container_.begin(); it != config_container_.end(); ++it) {
     
-    desc_visible_all.add((*it).second->desc_visible_);
+    // @todo finish
+    
+    desc_visible_all.add((*it).second->GetAllVisibleOptionsDescriptions());
   }
   
   cout << desc_visible_all << endl;
@@ -104,21 +135,36 @@ std::string Config::GetOptionString(std::string option_name, std::string short_o
   return option;
 }
 
-void Config::CombineOptions() {
+boost::program_options::options_description Config::GetAllVisibleOptionsDescriptions() const {
+  boost::program_options::options_description desc_visible;
+  
   for (vector<po::options_description*>::const_iterator it = descs_visible_.begin(); it < descs_visible_.end(); ++it) {
-    desc_visible_.add(**it);
+    desc_visible.add(**it);
   }
+  
+  return desc_visible;
+}
+
+boost::program_options::options_description Config::GetAllOptionsDescriptions() const {
+  boost::program_options::options_description desc;
+  boost::program_options::options_description desc_hidden;
   
   for (vector<po::options_description*>::const_iterator it = descs_hidden_.begin(); it < descs_hidden_.end(); ++it) {
-    desc_hidden_.add(**it);
+    desc_hidden.add(**it);
   }
   
-  desc_.add(desc_visible_).add(desc_hidden_);
+  desc.add(GetAllVisibleOptionsDescriptions()).add(desc_hidden);
+  
+  return desc;
 }
 
 void Config::ParseOptionsAndConfigFile(boost::program_options::command_line_parser parser) {
   try {
-    po::parsed_options parsed = parser.options(desc_).allow_unregistered().run();
+    boost::program_options::options_description desc;
+    
+    desc.add(GetAllOptionsDescriptions());
+    
+    po::parsed_options parsed = parser.options(desc).allow_unregistered().run();
     po::store(parsed, var_map_);
     po::notify(var_map_);
     unrec_options_ = po::collect_unrecognized(parsed.options, po::exclude_positional);
@@ -128,7 +174,7 @@ void Config::ParseOptionsAndConfigFile(boost::program_options::command_line_pars
       if (!ifs) {
         cout << "can not open config file: " << config_file_ << "\n";
       } else {
-        po::parsed_options parsed = po::parse_config_file(ifs, desc_, true);
+        po::parsed_options parsed = po::parse_config_file(ifs, desc, true);
         po::store(parsed, var_map_);
         po::notify(var_map_);
       }

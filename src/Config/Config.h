@@ -11,6 +11,10 @@
  *  can be used to capture the set help flag and print a help message. Both \a 
  *  must be defined by the first Config object to be initialized.
  *
+ *  Also check if you need to implement a copy constructor inside your derived
+ *  class (will be generated automatically by C++, but this might behave 
+ *  incorrectly).
+ *
  *  Usage examples can be found in ConfigTest and ConfigTestSecond as well as in
  *  file ConfigTestMain.cpp.
  *
@@ -141,7 +145,7 @@ class Config : public TObject {
  public:
   
   /**
-   *  \brief Standard constructor.
+   *  @brief Standard constructor.
    *
    *  Sets all memebers to default values.
    *
@@ -150,9 +154,27 @@ class Config : public TObject {
   Config(const std::string& name);
   
   /**
+   *  @brief Copy constructor
+   * 
+   *  @param other Config object to copy
+   */
+  Config(const Config& other);
+  
+  /**
    *  \brief Destructor.
    */
   virtual ~Config();
+  
+  /**
+   *  @brief Standard assignment operator
+   *
+   *  This operator is needed as the default auto-build version will not work as
+   *  boost::program_options::options_description are not assignable.
+   *
+   *  @param other other Config object to assign
+   *  @return reference to this Config object
+   */
+  Config& operator=(const Config& other);
   
   /** @name Initializer functions
    *  Functions to initialize Config objects through boost::program_options.
@@ -301,18 +323,10 @@ class Config : public TObject {
    */
   ///@{
   /** 
-   *  \brief Program options description for all options.
-   */
-  boost::program_options::options_description desc_;
-  /** 
    *  \brief Program options variables map for all options.
    */
   boost::program_options::variables_map var_map_;
   
-  /** 
-   *  \brief Program options description for non-hidden options.
-   */
-  boost::program_options::options_description desc_visible_;
   /** 
    *  \brief Container for all non-hidden program option descriptions.
    *
@@ -324,10 +338,6 @@ class Config : public TObject {
    */
   std::vector <boost::program_options::options_description*> descs_visible_;
   
-  /** 
-   *  \brief Program options description for hidden options.
-   */
-  boost::program_options::options_description desc_hidden_;
   /** 
    *  \brief Container for all hidden program option descriptions.
    *
@@ -384,13 +394,20 @@ class Config : public TObject {
   
  private: 
   /**
-   *  \brief Combine all previously defined option descriptions.
+   *  @brief Get all visible program options descriptions
    *
-   *  Iteratre through Config::descs_ and Config::descs_hidden_ and combine them
-   *  into Config::desc_ and Config::desc_hidden_. This function will be called
-   *  automatically through the constructors.
+   *  @return boost::program_options::options_description with all visible 
+   *          options descriptions
    */
-  void CombineOptions();
+  boost::program_options::options_description GetAllVisibleOptionsDescriptions() const;
+  
+  /**
+   *  @brief Get all program options descriptions (visible and hidden)
+   *
+   *  @return boost::program_options::options_description with all options 
+   *          descriptions
+   */
+  boost::program_options::options_description GetAllOptionsDescriptions() const;
   
   /**
    *  \brief Parse options, store them and (if necessary) parse config file.

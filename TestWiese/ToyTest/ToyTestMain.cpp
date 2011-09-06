@@ -1,4 +1,5 @@
 // STL
+#include <vector>
 
 // Boost
 
@@ -28,11 +29,6 @@
 
 int main(int argc, char *argv[]) {
   
-  {
-    ToyFactoryStdConfig cfg_com("toy");
-    cfg_com.InitializeOptions(argc, argv);
-  }
-  
   CommonConfig cfg_com("common");
   
   cfg_com.InitializeOptions(argc, argv);
@@ -48,9 +44,7 @@ int main(int argc, char *argv[]) {
   cfg_com.CheckHelpFlagAndPrintHelp();
   
   BuilderStd bld(cfg_com, cfg_bld);
-  
-  ToyFactoryStd tfac(cfg_com, cfg_tfac);
-  
+    
   RooWorkspace* ws = new RooWorkspace("ws");
   Pdf2WsStd::Mass::Gaussian(ws, "test", "Gaussian test pdf","mass","mittelwert", "abweichung");
   
@@ -61,6 +55,14 @@ int main(int argc, char *argv[]) {
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
   
   cfg_tfac.set_argset_generation_observables(&argset_obs);
+  
+  ToyFactoryStdConfig cfg_tfac2("newtoy");
+  
+  cfg_tfac2 = cfg_tfac;
+  
+  cfg_tfac2.PrintHelp();
+  
+  ToyFactoryStd tfac(cfg_com, cfg_tfac2);
   
   cfg_com.PrintAll();
   
