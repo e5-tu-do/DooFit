@@ -20,9 +20,7 @@ unsigned int Config::id_counter_ = 0;
 Config::Config(const std::string& name) :
   name_(name),
   var_map_(),
-  //desc_visible_(),
   descs_visible_(),
-  //desc_hidden_(),
   descs_hidden_(),
   unrec_options_(),
   config_file_(),
@@ -40,9 +38,7 @@ Config::Config(const std::string& name) :
 Config::Config(const Config& other) :
 name_(other.name_),
 var_map_(other.var_map_),
-//desc_visible_(other.desc_visible_),
 descs_visible_(other.descs_visible_),
-//desc_hidden_(other.desc_hidden_),
 descs_hidden_(other.descs_hidden_),
 unrec_options_(other.unrec_options_),
 config_file_(other.config_file_),
@@ -59,12 +55,9 @@ Config::~Config() {
 Config& Config::operator=(const Config& other) {
   if (this != &other) {
     name_ = other.name_;
-    //desc_
-    //var_map_
-    //desc_visible_
-    //descs_visible_
-    //desc_hidden_
-    //descs_hidden_
+    var_map_ = other.var_map_;
+    descs_visible_ = other.descs_visible_;
+    descs_hidden_ = other.descs_hidden_;
     unrec_options_ = other.unrec_options_;
     config_file_ = other.config_file_;
     help_flag_ = other.help_flag_;

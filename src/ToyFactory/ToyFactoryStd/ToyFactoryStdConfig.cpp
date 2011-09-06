@@ -68,6 +68,8 @@ void ToyFactoryStdConfig::PrintOptions() const {
   } else {
     scfg << "(not set)" << endmsg;
   }
+  
+  scfg << "WHASSUP: " << var_map_[GetOptionString("random_seed")].as<int>() << endmsg;
 }
 
 void ToyFactoryStdConfig::DefineOptions() {
