@@ -38,30 +38,70 @@ Config::Config(const std::string& name) :
 Config::Config(const Config& other) :
 name_(other.name_),
 var_map_(other.var_map_),
-descs_visible_(other.descs_visible_),
-descs_hidden_(other.descs_hidden_),
+descs_visible_(),
+descs_hidden_(),
 unrec_options_(other.unrec_options_),
 config_file_(other.config_file_),
 help_flag_(other.help_flag_),
 id_(id_counter_++)
 {
+  // copy dynamically allocated objects
+  for (vector<po::options_description*>::const_iterator it = other.descs_visible_.begin(); it < other.descs_visible_.end(); ++it) {
+    descs_visible_.push_back(new boost::program_options::options_description(**it));
+  }
+  
+  for (vector<po::options_description*>::const_iterator it = other.descs_hidden_.begin(); it < other.descs_hidden_.end(); ++it) {
+    descs_hidden_.push_back(new boost::program_options::options_description(**it));
+  }
+  
   config_container_[id_] = this;
 }
 
 Config::~Config() {
   config_container_.erase(id_);
+  
+  // delete all dynamically allocated objects
+  for (vector<po::options_description*>::const_iterator it = descs_visible_.begin(); it < descs_visible_.end(); ++it) {
+    delete *it;
+  }
+  
+  for (vector<po::options_description*>::const_iterator it = descs_hidden_.begin(); it < descs_hidden_.end(); ++it) {
+    delete *it;
+  }
 }
 
 Config& Config::operator=(const Config& other) {
   if (this != &other) {
     name_ = other.name_;
     var_map_ = other.var_map_;
-    descs_visible_ = other.descs_visible_;
-    descs_hidden_ = other.descs_hidden_;
+    //descs_visible_ = other.descs_visible_;
+    //descs_hidden_ = other.descs_hidden_;
     unrec_options_ = other.unrec_options_;
     config_file_ = other.config_file_;
     help_flag_ = other.help_flag_;
     // id should stay the same
+    
+    // delete our dynamically allocated objects...
+    for (vector<po::options_description*>::const_iterator it = descs_visible_.begin(); it < descs_visible_.end(); ++it) {
+      delete *it;
+    }
+    
+    for (vector<po::options_description*>::const_iterator it = descs_hidden_.begin(); it < descs_hidden_.end(); ++it) {
+      delete *it;
+    }
+    
+    // ...clear vectors holding them...
+    descs_visible_.clear();
+    descs_hidden_.clear();
+    
+    // ...and copy dynamically allocated objects from other
+    for (vector<po::options_description*>::const_iterator it = other.descs_visible_.begin(); it < other.descs_visible_.end(); ++it) {
+      descs_visible_.push_back(new boost::program_options::options_description(**it));
+    }
+    
+    for (vector<po::options_description*>::const_iterator it = other.descs_hidden_.begin(); it < other.descs_hidden_.end(); ++it) {
+      descs_hidden_.push_back(new boost::program_options::options_description(**it));
+    }
   }
   return *this;
 }

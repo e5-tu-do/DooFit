@@ -30,16 +30,18 @@
 int main(int argc, char *argv[]) {
   
   CommonConfig cfg_com("common");
-  
   cfg_com.InitializeOptions(argc, argv);
   
   BuilderStdConfig cfg_bld("builder");
-  
   cfg_bld.InitializeOptions(cfg_com);
   
   ToyFactoryStdConfig cfg_tfac("toy");
-  
   cfg_tfac.InitializeOptions(cfg_bld);
+  
+  {
+    ToyFactoryStdConfig cfg_tfac_die("toy_die");
+    cfg_tfac_die.InitializeOptions(cfg_bld);
+  }
   
   cfg_com.CheckHelpFlagAndPrintHelp();
   
@@ -56,7 +58,7 @@ int main(int argc, char *argv[]) {
   
   cfg_tfac.set_argset_generation_observables(&argset_obs);
   
-  ToyFactoryStdConfig cfg_tfac2("newtoy");
+  ToyFactoryStdConfig cfg_tfac2("new_toy");
   
   cfg_tfac2 = cfg_tfac;
   
