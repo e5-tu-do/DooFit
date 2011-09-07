@@ -20,12 +20,25 @@
 // RooFit
 
 // from project
+#ifndef __CINT__
 #include "Config/Config.h"
+#else
+// ROOT Cint hacks...
+#include "Config.h"
+#endif /* __CINT __ */
 
 // forward declarations
 
 class CommonConfig : public Config {
  public:
+  /**
+   *  @brief Default constructor for CommonConfig
+   *
+   *  Unfortunately this constructor is needed for ROOT CINT and streaming to 
+   *  ROOT files.
+   */
+  CommonConfig();
+  
   /**
    *  \brief Standard constructor.
    *
@@ -78,6 +91,11 @@ class CommonConfig : public Config {
    */
   ///@{
   ///@}
+  
+  /**
+   *  @brief ClassDef statement for CINT dictionary generation
+   */
+  ClassDef(CommonConfig,1);
 };
 
 #endif //COMMONCONFIG_h
