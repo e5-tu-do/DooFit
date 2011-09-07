@@ -336,5 +336,6 @@ macro (root_generate_dictionaries)
     add_dependencies(${_FINALDICT} ${_OUTTARGET})
   endforeach ()
 
+  set(${_FINALDICT} "${_ROOT_DICTS}")
 endmacro ()
 
