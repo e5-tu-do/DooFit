@@ -15,18 +15,33 @@
 // ROOT
 
 // RooFit
+// forward declaration not enough as rootcint dictionary will fail compiling if 
+// not included
+#include "RooAbsPdf.h"
+#include "RooArgSet.h"
 
 // from project
+#ifndef __CINT__
 #include "Config/Config.h"
+#else
+// ROOT Cint hacks...
+#include "../../Config/Config.h"
+#endif /* __CINT __ */
 
 // forward declarations
-class RooAbsPdf;
-class RooArgSet;
 
 class ToyFactoryStdConfig : public Config {
  public:
   /**
-   *  \brief Default constructor for ToyFactoryStdConfig
+   *  @brief Default constructor for ToyFactoryStdConfig
+   *
+   *  Unfortunately this constructor is needed for ROOT CINT and streaming to 
+   *  ROOT files.
+   */
+  ToyFactoryStdConfig();
+  
+  /**
+   *  \brief Standard constructor for ToyFactoryStdConfig
    *
    *  Sets all memebers to default values.
    *
@@ -172,6 +187,11 @@ private:
    */
   int random_seed_;
   ///@}
+  
+  /**
+   *  @brief ClassDef statement for CINT dictionary generation
+   */
+  ClassDef(ToyFactoryStdConfig,1);
 };
 
 

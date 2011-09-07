@@ -5,6 +5,7 @@
 
 // ROOT
 #include "TCanvas.h"
+#include "TFile.h"
 
 // RooFit
 #include "RooWorkspace.h"
@@ -28,6 +29,13 @@
 #include "Utils/MsgStream.h"
 
 int main(int argc, char *argv[]) {
+  TFile f_read("test_yay.root", "read");
+
+  ToyFactoryStdConfig* test = (ToyFactoryStdConfig*)f_read.Get("toy");
+  test->Print();
+  f_read.Close();
+  
+  TFile f("test.root", "recreate");
   
   CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
@@ -63,6 +71,9 @@ int main(int argc, char *argv[]) {
   cfg_tfac2 = cfg_tfac;
   
   cfg_tfac2.PrintHelp();
+  
+  cfg_tfac.Write("toy");
+  f.Close();
   
   ToyFactoryStd tfac(cfg_com, cfg_tfac2);
   

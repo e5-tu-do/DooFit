@@ -13,7 +13,9 @@
  *
  *  Also check if you need to implement a copy constructor inside your derived
  *  class (will be generated automatically by C++, but this might behave 
- *  incorrectly).
+ *  incorrectly). A default (i.e. argumentless) constructor is not wanted in 
+ *  general, but might be needed for ROOT CINT and .root file streaming (see 
+ *  below).
  *
  *  Usage examples can be found in ConfigTest and ConfigTestSecond as well as in
  *  file ConfigTestMain.cpp.
@@ -100,6 +102,45 @@
  *  }
  *  @endcode
  *
+ *  @section root-files ROOT file streaming
+ *
+ *  To be able to stream Config objects into ROOT files and read them afterwards
+ *  a dictionary for the derived class needs to be created. See the ROOT 
+ *  documentation for details. In general, adding a ClassDef statement to the 
+ *  class definition and generating the dictionary via rootcint (can be 
+ *  automated via CMake through the root_generate_dictionaries macro in 
+ *  FindROOT.cmake) should be enough.
+ *
+ *  Some hacks with #ifndef macros might be required for rootcint to find 
+ *  certain headers and not see certain things it cannot cope with.
+ *  
+ *  Config itself is prepared for dictionary building. However, all boost 
+ *  related member variables for program options had to be masked from rootcint.
+ *  This means that these members will not be saved to and read from ROOT files!
+ *
+ *  Example:
+ *
+ *  @code
+ *  // RooFit
+ *  // forward declaration not enough as rootcint dictionary will fail compiling if 
+ *  // not included
+ *  #include "RooAbsPdf.h"
+ *  #include "RooArgSet.h"
+ *  
+ *  // from project
+ *  #ifndef __CINT__
+ *  #include "Config/Config.h"
+ *  #else
+ *  // ROOT Cint hacks...
+ *  #include "../../Config/Config.h"
+ *  #endif // __CINT __
+ *  
+ *  class MyConfig : public Config {
+ *  ...
+ *    ClassDef(MyConfig, 42);
+ *  };
+ *  @endcode
+ *
  *  @author Florian Kruse
  *  @author Julian Wishahi
  *
@@ -117,11 +158,10 @@
 #include <map>
 
 // Boost
-
-// ROOT Cint hacks...
 #ifndef __CINT__
 #include <boost/program_options.hpp>
 #else
+// ROOT Cint hacks...
 namespace boost { namespace program_options {
   class options_description;
   class variables_map;
@@ -318,6 +358,7 @@ class Config : public TObject {
    */
   std::string name_;
   
+  #ifndef __CINT__
   /** @name program_options members
    *  All program_options related member variables.
    */
@@ -354,6 +395,7 @@ class Config : public TObject {
    */
   std::vector<std::string> unrec_options_;
   ///@}
+  #endif /* __CINT __ */
   
   /**
    *  \brief Config file to parse
@@ -427,6 +469,13 @@ class Config : public TObject {
    */
   unsigned int id_;
   
+  /**
+   *  @brief Initialization state of this object
+   *
+   *  Used to prevent multiple initialization.
+   */
+  bool initialized_;
+  
   /** @name static members
    *  All static member variables for functionality across Config objects.
    */
@@ -451,7 +500,7 @@ class Config : public TObject {
   /**
    *  @brief ClassDef statement for CINT dictionary generation
    */
-  //ClassDef(Config,1);
+  ClassDef(Config,1);
 };
 
 // let ROOT Cint not bother about this
@@ -472,6 +521,14 @@ struct ConfigNameDuplicationException: public virtual boost::exception, public v
  */
 struct ConfigCmdArgsUsedTwiceException: public virtual boost::exception, public virtual std::exception { 
   virtual const char* what() const throw() { return "Command line arguments argc and argv used multiple times."; }
+};
+
+/** \struct ConfigAlreadyInitializedException
+ *  \brief Exception for initialization attempt of already initialized Config 
+ *         object
+ */
+struct ConfigAlreadyInitializedException: public virtual boost::exception, public virtual std::exception { 
+  virtual const char* what() const throw() { return "Object already initialized."; }
 };
 #endif /* __CINT __ */
 

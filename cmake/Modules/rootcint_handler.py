@@ -40,7 +40,10 @@ def generate_dictionary(rootcint, dict_file, input_files):
   cmd = rootcint + " -f " + dict_file + " -c -p " + ' '.join(input_files)
   if lock_file(dict_file): 
     p = call_shell(cmd)
-    p.wait()
+    r = p.wait()
+    if r != 0:
+      print p.stderr.read()
+      print p.stdout.read()
     shutil.copy(dict_file, dict_file_completed)
     unlock_file(dict_file)
   else:

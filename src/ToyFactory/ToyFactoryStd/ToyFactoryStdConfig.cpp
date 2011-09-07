@@ -20,6 +20,16 @@
 using namespace std;
 namespace po = boost::program_options;
 
+ToyFactoryStdConfig::ToyFactoryStdConfig() : 
+Config("empty_name"),
+generation_pdf_(NULL),
+expected_yield_(0),
+argset_generation_observables_(NULL),
+random_seed_(0)
+{
+  swarn << "Usage of ToyFactoryStdConfig::ToyFactoryStdConfig() is not recommended!" <<endmsg;
+}
+
 ToyFactoryStdConfig::ToyFactoryStdConfig(const std::string& name) :
 Config(name),
 generation_pdf_(NULL),
@@ -68,8 +78,6 @@ void ToyFactoryStdConfig::PrintOptions() const {
   } else {
     scfg << "(not set)" << endmsg;
   }
-  
-  scfg << "WHASSUP: " << var_map_[GetOptionString("random_seed")].as<int>() << endmsg;
 }
 
 void ToyFactoryStdConfig::DefineOptions() {

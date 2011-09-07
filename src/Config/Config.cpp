@@ -25,7 +25,8 @@ Config::Config(const std::string& name) :
   unrec_options_(),
   config_file_(),
   help_flag_(false),
-  id_(id_counter_++)
+  id_(id_counter_++),
+  initialized_(false)
 {
   if (config_container_.count(id_) > 0) {
     serr << "ERROR in Config::Config(const std::string&): Config object with ID " << id_ << " already existing." << endmsg;
@@ -36,14 +37,15 @@ Config::Config(const std::string& name) :
 }
 
 Config::Config(const Config& other) :
-name_(other.name_),
-var_map_(other.var_map_),
-descs_visible_(),
-descs_hidden_(),
-unrec_options_(other.unrec_options_),
-config_file_(other.config_file_),
-help_flag_(other.help_flag_),
-id_(id_counter_++)
+  name_(other.name_),
+  var_map_(other.var_map_),
+  descs_visible_(),
+  descs_hidden_(),
+  unrec_options_(other.unrec_options_),
+  config_file_(other.config_file_),
+  help_flag_(other.help_flag_),
+  id_(id_counter_++),
+  initialized_(other.initialized_)
 {
   // copy dynamically allocated objects
   for (vector<po::options_description*>::const_iterator it = other.descs_visible_.begin(); it < other.descs_visible_.end(); ++it) {
@@ -107,25 +109,32 @@ Config& Config::operator=(const Config& other) {
 }
 
 void Config::InitializeOptions(int argc, char* argv[]) {
-  if (config_container_.size() > 1) {
-    serr << "ERROR in Config::InitializeOptions(int, char* [])): Initialization with argc/argv should only be used by first Config object to be initialized. " << endmsg;
-    throw ConfigCmdArgsUsedTwiceException() << ConfigName(name_); 
+  if (!initialized_) {
+    DefineOptions();
+    
+    ParseOptionsAndConfigFile(po::command_line_parser(argc, argv));
+    
+    LoadOptions();
+    
+    initialized_ = true;
+  } else {
+    throw ConfigAlreadyInitializedException() << ConfigName(name_);
   }
-  
-  DefineOptions();
-  
-  ParseOptionsAndConfigFile(po::command_line_parser(argc, argv));
-  
-  LoadOptions();
 }
 
 void Config::InitializeOptions(const Config& previous_config) {
-  DefineOptions();
-  
-  config_file_ = previous_config.config_file_;
-  ParseOptionsAndConfigFile(po::command_line_parser(previous_config.unrec_options_));
-  
-  LoadOptions();
+  if (!initialized_) {
+    DefineOptions();
+    
+    config_file_ = previous_config.config_file_;
+    ParseOptionsAndConfigFile(po::command_line_parser(previous_config.unrec_options_));
+    
+    LoadOptions();
+    
+    initialized_ = true;
+  } else {
+    throw ConfigAlreadyInitializedException() << ConfigName(name_);
+  }
 }
 
 void Config::Print() const {

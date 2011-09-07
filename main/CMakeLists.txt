@@ -3,7 +3,7 @@ add_executable(FitterStd FitterStd.cpp)
 
 # Aliases for module libs
 set(UTILS_LIBS Utils)
-set(CONFIG_LIBS CommonConfig Config)
+set(CONFIG_LIBS CommonConfig Config ConfigDict)
 set(PDF2WS_STD_LIBS Pdf2WsStd)
 set(BUILDER_STD_LIBS BuilderStd BuilderStdConfig)
 
