@@ -1,5 +1,8 @@
 #include "ToyFactory/ToyFactoryStd/ToyFactoryStd.h"
 
+// STL
+#include <cstring>
+
 // ROOT
 #include "TClass.h"
 
@@ -46,22 +49,31 @@ RooDataSet* ToyFactoryStd::Generate() {
   return data;
 }
 
-bool ToyFactoryStd::PdfIsDecomposable(const RooAbsPdf& pdf) {
+bool ToyFactoryStd::PdfIsDecomposable(const RooAbsPdf& pdf) const {
   if (strcmp(pdf.IsA()->GetName(),"RooSimultaneous") == 0 
       || strcmp(pdf.IsA()->GetName(),"RooAddPdf") == 0
       || strcmp(pdf.IsA()->GetName(),"RooProdPdf") == 0
-      || strcmp(pdf.IsA()->GetName(),"RooExtendPdf") == 0) {
+      || PdfIsExtended(pdf)) {
     return true;
   } else {
     return false;
   }
 }
 
-RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, int expected_yield) {
+RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield) {
   if (PdfIsDecomposable(pdf)) {
     // pdf needs to be decomposed and generated piece-wise
-    serr << "PDF is decomposable, but decomposition is not yet implemented. Giving up." << endmsg;
-    throw;
+    if (PdfIsExtended(pdf)) {
+      RooRealVar& yield = *((RooRealVar*)pdf.findServer(1));
+      RooAbsPdf& sub_pdf = *((RooAbsPdf*)pdf.findServer(0));
+      
+      sinfo << "RooExtendPdf " << pdf.GetName() << "(" << sub_pdf.GetName() << "," << yield.GetName() << ") will be decomposed." << endmsg;
+      
+      return GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield>0 ? expected_yield : yield.getVal());
+    } else {
+      serr << "PDF is decomposable, but decomposition is not yet implemented. Giving up." << endmsg;
+      throw;
+    }
   } else {
     // pdf can be generated straightly
     sinfo << "Generating for PDF " << pdf.GetName() << " (" << pdf.IsA()->GetName() << "). Expected yield: " << expected_yield << " events." << endmsg;

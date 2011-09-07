@@ -9,11 +9,19 @@
 #ifndef TOYFACTORYSTD_h
 #define TOYFACTORYSTD_h
 
+// STL
+#include <cstring>
+
+// ROOT
+#include "TClass.h"
+
+// from RooFit
+#include "RooAbsPdf.h"
+
 // forward declarations
 class CommonConfig; 
 class ToyFactoryStdConfig;
 class RooDataSet;
-class RooAbsPdf;
 class RooArgSet;
 
 class ToyFactoryStd {
@@ -50,12 +58,27 @@ class ToyFactoryStd {
   
  private:
   /**
-   *  \brief Checks if a RooAbsPdf is decomposable
+   *  @brief Checks if a RooAbsPdf is decomposable
    *
    *  @param pdf pdf to check for decomposability
-   *  \return whether pdf is decomposable or not
+   *  @return whether pdf is decomposable or not
    */
-  bool PdfIsDecomposable(const RooAbsPdf& pdf);
+  bool PdfIsDecomposable(const RooAbsPdf& pdf) const;
+  
+  /**
+   *  @brief Checks if a RooAbsPdf is an extended pdf
+   *
+   *  @param pdf pdf to check for extended pdf
+   *  @return whether pdf is extended or not
+   */
+  bool PdfIsExtended(const RooAbsPdf& pdf) const {
+    if (std::strcmp(pdf.IsA()->GetName(),"RooExtendPdf") == 0) {
+      return true;
+    } else {
+      return false;
+    }
+
+  }
   
   /**
    *  \brief Generate a toy sample for a given PDF.
@@ -69,7 +92,7 @@ class ToyFactoryStd {
    *          ownership of this sample. Therefore, the invoker of this function
    *          must take care of proper deletion afterwards.
    */
-  RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, int expected_yield=0);
+  RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0);
   
   /**
    *  \brief CommonConfig instance to use

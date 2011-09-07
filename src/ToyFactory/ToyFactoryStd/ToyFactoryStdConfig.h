@@ -68,7 +68,7 @@ class ToyFactoryStdConfig : public Config {
   /**
    *  \brief Getter for expected yield to use for dataset generation
    */
-  int expected_yield() const {return expected_yield_;}
+  double expected_yield() const {return expected_yield_;}
   /**
    *  \brief Getter for RooArgSet* with all observables to generate directly
    */
@@ -113,7 +113,7 @@ class ToyFactoryStdConfig : public Config {
    *  value, as in an extended likelihood manner. A value of 0 means to use the
    *  yield as set in the generation PDF itself (in case of RooExtendPdf).
    */
-  void set_expected_yield(int expected_yield) {expected_yield_ = expected_yield;}
+  void set_expected_yield(double expected_yield) {expected_yield_ = expected_yield;}
   /**
    *  \brief Setter for RooArgSet* with all observables to generate directly
    */
@@ -177,7 +177,7 @@ private:
   /**
    *  \brief Expected yield to use
    */
-  int expected_yield_;
+  double expected_yield_;
   /**
    *  \brief RooArgSet with all observables to generate directly
    */

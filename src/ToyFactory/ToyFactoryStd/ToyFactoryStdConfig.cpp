@@ -86,7 +86,7 @@ void ToyFactoryStdConfig::DefineOptions() {
   generation->add_options()
   (GetOptionString("random_seed").c_str(), po::value<int>(&random_seed_)->default_value(0),
    "Random seed to use for the toy generation (set to 0 for random seed)")
-  (GetOptionString("expected_yield").c_str(), po::value<int>(&expected_yield_)->default_value(0),
+  (GetOptionString("expected_yield").c_str(), po::value<double>(&expected_yield_)->default_value(0),
    "Expected yield for toy sample (set to 0 for usage of expected yield in extended likelihood PDF)");
   
   descs_visible_.push_back(generation);

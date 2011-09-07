@@ -13,6 +13,8 @@
 #include "RooArgSet.h"
 #include "RooRealVar.h"
 #include "RooPlot.h"
+#include "RooGaussian.h"
+#include "RooExtendPdf.h"
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -59,8 +61,12 @@ int main(int argc, char *argv[]) {
   Pdf2WsStd::Mass::Gaussian(ws, "test", "Gaussian test pdf","mass","mittelwert", "abweichung");
   
   ws->Print("t");
+
+  RooGaussian* pdf = (RooGaussian*)ws->pdf("test");
+  RooRealVar yield("yield", "pdf yield", 1000, 0, 10000);
+  RooExtendPdf pdf_extend("pdf_extend", "extended pdf", *pdf, yield);
   
-  cfg_tfac.set_generation_pdf(ws->pdf("test"));
+  cfg_tfac.set_generation_pdf(&pdf_extend);
   RooArgSet argset_obs("argset_obs");
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
   
