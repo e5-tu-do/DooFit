@@ -101,6 +101,7 @@ RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& 
   
   RooAddPdf& add_pdf = dynamic_cast<RooAddPdf&>(pdf);
   const RooArgList& coefs = add_pdf.coefList();
+  // whether PDF is extended or relying on coefficients
   bool add_pdf_extended = (coefs.getSize() == 0);
   
   TIterator* it;

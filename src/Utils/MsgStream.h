@@ -65,9 +65,7 @@ public:
       Utils::ResetTerminal();
     }
     os_.str("");
-    
-    //os_ << std::string(indent_, ' ');
-    
+      
     return *this;
   }
   
@@ -119,14 +117,7 @@ public:
    *
    *  @param indent number of spaces to insert at every new line
    */
-  void set_indent(int indent) { 
-    indent_ = indent; 
-    //std::cout << "indent: " << indent_ << std::endl;
-//    // check for current buffer to be only previously set indentation
-//    if (os_.str().compare(std::string(old_indent, ' ')) == 0) {
-//      os_ << std::string(indent_, ' ');
-//    }
-  }
+  void set_indent(int indent) {indent_ = indent;}
   
   /**
    *  \brief Get current indent for new lines

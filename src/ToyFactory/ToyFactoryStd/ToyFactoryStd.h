@@ -115,6 +115,8 @@ class ToyFactoryStd {
    *  Helper function to be used by ToyFactoryStd::GenerateForPdf().
    *
    *  @param pdf PDF to generate sample for
+   *  @param argset_generation_observables argument set with variables in which 
+   *                                       dimensions to generate
    *  @param yield Expected yield to generate (if equals 0, then get yield from
    *         PDF itself)
    *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
