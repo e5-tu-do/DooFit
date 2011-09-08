@@ -171,7 +171,7 @@ RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet
   sinfo << "RooProdPdf " << pdf.GetName() << " will be decomposed." << endmsg;
   sinfo.set_indent(sinfo.indent()+2);
   
-  // @todo: check for PDF arguments to be uncorrelated
+  // TODO: check for PDF arguments to be uncorrelated
   
   RooProdPdf& prod_pdf = dynamic_cast<RooProdPdf&>(pdf);
   
