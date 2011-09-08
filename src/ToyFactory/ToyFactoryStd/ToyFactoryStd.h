@@ -4,6 +4,9 @@
  *  This class handles generation of toy samples for a given pdf. Generation 
  *  should be as smart as possible involving automatic decomposition of more 
  *  complex pdfs and generation of proto datasets based on given distributions.
+ * 
+ *  @todo fix memory leaks coming from usage of RooDataSet::merge() and 
+ *        RooDataSet::append()
  */
 
 #ifndef TOYFACTORYSTD_h
