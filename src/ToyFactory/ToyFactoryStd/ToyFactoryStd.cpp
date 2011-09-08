@@ -156,7 +156,9 @@ RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& 
       sub_yield = coef*expected_yield;
       
       if (data) {
-        data->append(*(GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield)));
+        RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield);
+        data->append(*data_temp);
+        delete data_temp;
       } else {
         data = (GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield));
       }
@@ -186,7 +188,9 @@ RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet
   
   while ((sub_pdf = (RooAbsPdf*)it->Next())) {
     if (data) {
-      data->merge(GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false));
+      RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false);
+      data->merge(data_temp);
+      delete data_temp;
     } else {
       data = (GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false));
     }
