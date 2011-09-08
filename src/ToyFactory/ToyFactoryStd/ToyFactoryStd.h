@@ -57,6 +57,10 @@ class ToyFactoryStd {
  protected:
   
  private:
+  /** @name PDF type functions
+   *  Functions to check for specific PDF types.
+   */
+  ///@{
   /**
    *  @brief Checks if a RooAbsPdf is decomposable
    *
@@ -106,7 +110,12 @@ class ToyFactoryStd {
       return false;
     }
   }
+  ///@}
   
+  /** @name Generator functions
+   *  Functions to generate toy samples for specific PDF (types).
+   */
+  ///@{
   /**
    *  @brief Generate a toy sample for a given PDF.
    *
@@ -154,6 +163,7 @@ class ToyFactoryStd {
    *          must take care of proper deletion afterwards.
    */
   RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true);
+  ///@}
   
   /**
    *  \brief CommonConfig instance to use
