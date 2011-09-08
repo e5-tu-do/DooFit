@@ -161,6 +161,7 @@ class ToyFactoryStd {
    *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
    *          ownership of this sample. Therefore, the invoker of this function
    *          must take care of proper deletion afterwards.
+   *  @todo check for PDF arguments to be uncorrelated
    */
   RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true);
   ///@}
