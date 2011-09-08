@@ -4,6 +4,7 @@
 #include "Utils.h"
 #include <iostream>
 #include <sstream> 
+#include <cstring>
 
 /*! \class MsgStream 
  * \brief A class for message output using different messages and colors.
@@ -59,12 +60,13 @@ public:
   MsgStream& doOutput() {
     if (is_active_) {
       Utils::SetTerminalColor(text_color_);
+      std::cout << std::string(indent_, ' ');
       std::cout << os_.str() << std::endl;
       Utils::ResetTerminal();
     }
     os_.str("");
     
-    os_ << std::string(indent_, ' ');
+    //os_ << std::string(indent_, ' ');
     
     return *this;
   }
@@ -119,10 +121,21 @@ public:
    */
   void set_indent(int indent) { 
     indent_ = indent; 
-    if (os_.str().length() == 0) {
-      os_ << std::string(indent_, ' ');
-    }
+    //std::cout << "indent: " << indent_ << std::endl;
+//    // check for current buffer to be only previously set indentation
+//    if (os_.str().compare(std::string(old_indent, ' ')) == 0) {
+//      os_ << std::string(indent_, ' ');
+//    }
   }
+  
+  /**
+   *  \brief Get current indent for new lines
+   *
+   *  @see MsgStream::set_indent(int)
+   *
+   *  @return number of spaces to insert at every new line
+   */
+  int indent() const {return indent_;}
   
 protected:
   /**

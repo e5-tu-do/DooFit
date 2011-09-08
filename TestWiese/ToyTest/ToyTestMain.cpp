@@ -15,6 +15,7 @@
 #include "RooPlot.h"
 #include "RooGaussian.h"
 #include "RooExtendPdf.h"
+#include "RooAddPdf.h" 
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -31,14 +32,6 @@
 #include "Utils/MsgStream.h"
 
 int main(int argc, char *argv[]) {
-  TFile f_read("test_yay.root", "read");
-
-  ToyFactoryStdConfig* test = (ToyFactoryStdConfig*)f_read.Get("toy");
-  test->Print();
-  f_read.Close();
-  
-  TFile f("test.root", "recreate");
-  
   CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
   
@@ -58,30 +51,39 @@ int main(int argc, char *argv[]) {
   BuilderStd bld(cfg_com, cfg_bld);
     
   RooWorkspace* ws = new RooWorkspace("ws");
-  Pdf2WsStd::Mass::Gaussian(ws, "test", "Gaussian test pdf","mass","mittelwert", "abweichung");
+  Pdf2WsStd::Mass::Gaussian(ws, "test1", "Gaussian test pdf #1","mass","mittelwert", "abweichung");
+  Pdf2WsStd::Mass::Gaussian(ws, "test2", "Gaussian test pdf #2","mass","mittelwert_bkg", "abweichung_bkg");
+  Pdf2WsStd::Mass::Gaussian(ws, "test3", "Gaussian test pdf #3","mass","mittelwert_bkg2", "abweichung_bkg2");
   
   ws->Print("t");
 
-  RooGaussian* pdf = (RooGaussian*)ws->pdf("test");
-  RooRealVar yield("yield", "pdf yield", 1000, 0, 10000);
-  RooExtendPdf pdf_extend("pdf_extend", "extended pdf", *pdf, yield);
+  RooGaussian* pdf1 = (RooGaussian*)ws->pdf("test1");
+  RooGaussian* pdf2 = (RooGaussian*)ws->pdf("test2");
+  RooGaussian* pdf3 = (RooGaussian*)ws->pdf("test3");
   
-  cfg_tfac.set_generation_pdf(&pdf_extend);
+  RooRealVar yield1("yield1", "pdf yield", 10000, 0, 10000);
+  RooExtendPdf pdf_extend1("pdf_extend1", "extended pdf #1", *pdf1, yield1);
+  
+  RooRealVar yield2("yield2", "pdf yield", 50000, 0, 10000);
+  RooExtendPdf pdf_extend2("pdf_extend2", "extended pdf #2", *pdf2, yield2);
+  
+  RooRealVar yield3("yield3", "pdf yield", 5000, 0, 10000);
+  RooExtendPdf pdf_extend3("pdf_extend3", "extended pdf #3", *pdf3, yield3);
+  
+  RooRealVar coeff1("coeff1", "coeff1", 0.1, 0.0, 1.0);
+  RooRealVar coeff2("coeff2", "coeff2", 0.1, 0.0, 1.0);
+  //RooAddPdf pdf_add("pdf_add", "added pdf", RooArgSet(pdf_extend1, pdf_extend2, pdf_extend3));
+  //RooAddPdf pdf_add("pdf_add", "added pdf", RooArgList(*pdf1, *pdf2, *pdf3), RooArgList(coeff1, coeff2));
+  RooAddPdf pdf_add("pdf_add", "added pdf", *pdf1, *pdf2, coeff1);
+  
+  cfg_tfac.set_generation_pdf(&pdf_add);
   RooArgSet argset_obs("argset_obs");
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
+  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "")));
   
   cfg_tfac.set_argset_generation_observables(&argset_obs);
   
-  ToyFactoryStdConfig cfg_tfac2("new_toy");
-  
-  cfg_tfac2 = cfg_tfac;
-  
-  cfg_tfac2.PrintHelp();
-  
-  cfg_tfac.Write("toy");
-  f.Close();
-  
-  ToyFactoryStd tfac(cfg_com, cfg_tfac2);
+  ToyFactoryStd tfac(cfg_com, cfg_tfac);
   
   cfg_com.PrintAll();
   
@@ -91,7 +93,7 @@ int main(int argc, char *argv[]) {
   RooPlot* mass_frame = mass->frame();
   
   data->plotOn(mass_frame);
-  ws->pdf("test")->plotOn(mass_frame);
+  pdf_add.plotOn(mass_frame);
   
   TCanvas c1("c1", "c1", 800, 600);
   mass_frame->Draw();

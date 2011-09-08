@@ -2,6 +2,7 @@
 
 // STL
 #include <cstring>
+#include <vector>
 
 // ROOT
 #include "TClass.h"
@@ -9,7 +10,10 @@
 // from RooFit
 #include "RooDataSet.h"
 #include "RooAbsPdf.h"
+#include "RooAddPdf.h"
 #include "RooRandom.h"
+#include "RooArgList.h"
+#include "RooArgSet.h"
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -51,7 +55,7 @@ RooDataSet* ToyFactoryStd::Generate() {
 
 bool ToyFactoryStd::PdfIsDecomposable(const RooAbsPdf& pdf) const {
   if (strcmp(pdf.IsA()->GetName(),"RooSimultaneous") == 0 
-      || strcmp(pdf.IsA()->GetName(),"RooAddPdf") == 0
+      || PdfIsAdded(pdf)
       || strcmp(pdf.IsA()->GetName(),"RooProdPdf") == 0
       || PdfIsExtended(pdf)) {
     return true;
@@ -61,6 +65,7 @@ bool ToyFactoryStd::PdfIsDecomposable(const RooAbsPdf& pdf) const {
 }
 
 RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield) {
+  
   if (PdfIsDecomposable(pdf)) {
     // pdf needs to be decomposed and generated piece-wise
     if (PdfIsExtended(pdf)) {
@@ -69,7 +74,12 @@ RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argse
       
       sinfo << "RooExtendPdf " << pdf.GetName() << "(" << sub_pdf.GetName() << "," << yield.GetName() << ") will be decomposed." << endmsg;
       
-      return GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield>0 ? expected_yield : yield.getVal());
+      sinfo.set_indent(sinfo.indent()+2);
+      RooDataSet* data = GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield>0 ? expected_yield : yield.getVal());
+      sinfo.set_indent(sinfo.indent()-2);
+      return data;
+    } else if (PdfIsAdded(pdf)) {
+      return GenerateForAddedPdf(pdf, argset_generation_observables, expected_yield);
     } else {
       serr << "PDF is decomposable, but decomposition is not yet implemented. Giving up." << endmsg;
       throw;
@@ -84,4 +94,67 @@ RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argse
     
     return data;
   }
+}
+
+RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield) {
+  sinfo << "RooAddPdf " << pdf.GetName();
+  
+  RooAddPdf& add_pdf = dynamic_cast<RooAddPdf&>(pdf);
+  const RooArgList& coefs = add_pdf.coefList();
+  bool add_pdf_extended = (coefs.getSize() == 0);
+  
+  TIterator* it;
+  if (add_pdf_extended) {
+    sinfo << " (extended) ";
+    
+    // in extended case it's best to iterate over the PDF's servers.
+    it = pdf.serverIterator();
+  } else {
+    sinfo << " (not extended) ";
+    
+    // in non-extended case it's best to iterate over the PDF's components.
+    it = add_pdf.getComponents()->createIterator();
+    // the first component is the RooAddPdf itself, get rid of it
+    it->Next();
+  }
+  
+  sinfo << "will be decomposed." << endmsg;
+  sinfo.set_indent(sinfo.indent()+2);
+  
+  RooAbsPdf* sub_pdf = NULL;
+  RooDataSet* data = NULL;
+  
+  int coef_i = 0;
+  double sum_coef = 0.0;
+  
+  while ((sub_pdf = (RooAbsPdf*)it->Next())) {
+    if (sub_pdf->IsA()->InheritsFrom("RooAbsPdf")) {
+      double sub_yield, coef;
+      if (add_pdf_extended) {
+        // yields have to be scaled according to sub PDF's expectation and 
+        // requested yield for the RooAddPdf. This is equivalent to 
+        // coefficient in non-extended PDF.
+        coef = sub_pdf->expectedEvents(argset_generation_observables)/pdf.expectedEvents(argset_generation_observables);
+      } else {
+        if (coef_i < coefs.getSize()) {
+          coef = dynamic_cast<RooAbsReal&>(coefs[coef_i++]).getVal();
+        } else {
+          // last coefficient is (in non-recursive way) always 
+          // 1-(sum coeffs)
+          coef = 1.0 - sum_coef;
+        }
+        sum_coef += coef;
+      }
+      sub_yield = coef*expected_yield;
+      
+      if (data) {
+        data->append(*(GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield)));
+      } else {
+        data = (GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield));
+      }
+    }
+  }
+  
+  sinfo.set_indent(sinfo.indent()-2);
+  return data;
 }
