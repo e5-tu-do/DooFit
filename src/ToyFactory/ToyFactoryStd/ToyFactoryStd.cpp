@@ -11,9 +11,11 @@
 #include "RooDataSet.h"
 #include "RooAbsPdf.h"
 #include "RooAddPdf.h"
+#include "RooProdPdf.h"
 #include "RooRandom.h"
 #include "RooArgList.h"
 #include "RooArgSet.h"
+#include "RooCmdArg.h"
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -56,7 +58,7 @@ RooDataSet* ToyFactoryStd::Generate() {
 bool ToyFactoryStd::PdfIsDecomposable(const RooAbsPdf& pdf) const {
   if (strcmp(pdf.IsA()->GetName(),"RooSimultaneous") == 0 
       || PdfIsAdded(pdf)
-      || strcmp(pdf.IsA()->GetName(),"RooProdPdf") == 0
+      || PdfIsProduct(pdf)
       || PdfIsExtended(pdf)) {
     return true;
   } else {
@@ -64,7 +66,7 @@ bool ToyFactoryStd::PdfIsDecomposable(const RooAbsPdf& pdf) const {
   }
 }
 
-RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield) {
+RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended) {
   
   if (PdfIsDecomposable(pdf)) {
     // pdf needs to be decomposed and generated piece-wise
@@ -72,7 +74,7 @@ RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argse
       RooRealVar& yield = *((RooRealVar*)pdf.findServer(1));
       RooAbsPdf& sub_pdf = *((RooAbsPdf*)pdf.findServer(0));
       
-      sinfo << "RooExtendPdf " << pdf.GetName() << "(" << sub_pdf.GetName() << "," << yield.GetName() << ") will be decomposed." << endmsg;
+      sinfo << "RooExtendPdf " << pdf.GetName() << "(" << sub_pdf.GetName() << "," << yield.GetName() << "=" << yield.getVal() << ") will be decomposed." << endmsg;
       
       sinfo.set_indent(sinfo.indent()+2);
       RooDataSet* data = GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield>0 ? expected_yield : yield.getVal());
@@ -80,6 +82,8 @@ RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argse
       return data;
     } else if (PdfIsAdded(pdf)) {
       return GenerateForAddedPdf(pdf, argset_generation_observables, expected_yield);
+    } else if (PdfIsProduct(pdf)) {
+      return GenerateForProductPdf(pdf, argset_generation_observables, expected_yield);
     } else {
       serr << "PDF is decomposable, but decomposition is not yet implemented. Giving up." << endmsg;
       throw;
@@ -88,7 +92,12 @@ RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argse
     // pdf can be generated straightly
     sinfo << "Generating for PDF " << pdf.GetName() << " (" << pdf.IsA()->GetName() << "). Expected yield: " << expected_yield << " events." << endmsg;
     
-    RooDataSet* data = pdf.generate(*(pdf.getObservables(argset_generation_observables)), expected_yield, Extended());
+    RooCmdArg extend_arg = RooCmdArg::none();
+    if (extended) {
+      extend_arg = Extended();
+    }
+    
+    RooDataSet* data = pdf.generate(*(pdf.getObservables(argset_generation_observables)), expected_yield, extend_arg);
     
     sinfo << "Generated " << data->numEntries() << " events for PDF " << pdf.GetName() << endmsg;
     
@@ -96,7 +105,7 @@ RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argse
   }
 }
 
-RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield) {
+RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended) {
   sinfo << "RooAddPdf " << pdf.GetName();
   
   RooAddPdf& add_pdf = dynamic_cast<RooAddPdf&>(pdf);
@@ -153,6 +162,37 @@ RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& 
       } else {
         data = (GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield));
       }
+    }
+  }
+  
+  sinfo.set_indent(sinfo.indent()-2);
+  return data;
+}
+
+RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended) {
+  sinfo << "RooProdPdf " << pdf.GetName() << " will be decomposed." << endmsg;
+  sinfo.set_indent(sinfo.indent()+2);
+  
+  // @todo: check for PDF arguments to be uncorrelated
+  
+  RooProdPdf& prod_pdf = dynamic_cast<RooProdPdf&>(pdf);
+  
+  TIterator* it = prod_pdf.getComponents()->createIterator();
+  // the first component is the RooAddPdf itself, get rid of it
+  it->Next();
+  
+  RooAbsPdf* sub_pdf = NULL;
+  RooDataSet* data = NULL;
+  
+  if (extended) {
+    expected_yield = RooRandom::randomGenerator()->Poisson(expected_yield);
+  }
+  
+  while ((sub_pdf = (RooAbsPdf*)it->Next())) {
+    if (data) {
+      data->merge(GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false));
+    } else {
+      data = (GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false));
     }
   }
   

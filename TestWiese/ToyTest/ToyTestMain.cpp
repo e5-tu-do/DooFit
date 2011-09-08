@@ -16,6 +16,7 @@
 #include "RooGaussian.h"
 #include "RooExtendPdf.h"
 #include "RooAddPdf.h" 
+#include "RooProdPdf.h"
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -55,26 +56,38 @@ int main(int argc, char *argv[]) {
   Pdf2WsStd::Mass::Gaussian(ws, "test2", "Gaussian test pdf #2","mass","mittelwert_bkg", "abweichung_bkg");
   Pdf2WsStd::Mass::Gaussian(ws, "test3", "Gaussian test pdf #3","mass","mittelwert_bkg2", "abweichung_bkg2");
   
+  Pdf2WsStd::Mass::Gaussian(ws, "time1", "Gaussian test pdf #1 (time)","time","mean_time1", "sigma_time1");
+  Pdf2WsStd::Mass::Gaussian(ws, "time2", "Gaussian test pdf #2 (time)","time","mean_time2", "sigma_time2");
+  Pdf2WsStd::Mass::Gaussian(ws, "time3", "Gaussian test pdf #3 (time)","time","mean_time3", "sigma_time3");
+  
   ws->Print("t");
 
   RooGaussian* pdf1 = (RooGaussian*)ws->pdf("test1");
   RooGaussian* pdf2 = (RooGaussian*)ws->pdf("test2");
   RooGaussian* pdf3 = (RooGaussian*)ws->pdf("test3");
   
+  RooGaussian* time1 = (RooGaussian*)ws->pdf("time1");
+  RooGaussian* time2 = (RooGaussian*)ws->pdf("time2");
+  RooGaussian* time3 = (RooGaussian*)ws->pdf("time3");
+  
+  RooProdPdf pdf_prod1("pdf_prod1", "pdf_prod1", RooArgList(*pdf1, *time1));
+  RooProdPdf pdf_prod2("pdf_prod2", "pdf_prod2", RooArgList(*pdf2, *time2));
+  RooProdPdf pdf_prod3("pdf_prod3", "pdf_prod3", RooArgList(*pdf3, *time3));
+  
   RooRealVar yield1("yield1", "pdf yield", 10000, 0, 10000);
-  RooExtendPdf pdf_extend1("pdf_extend1", "extended pdf #1", *pdf1, yield1);
+  RooExtendPdf pdf_extend1("pdf_extend1", "extended pdf #1", pdf_prod1, yield1);
   
   RooRealVar yield2("yield2", "pdf yield", 50000, 0, 10000);
-  RooExtendPdf pdf_extend2("pdf_extend2", "extended pdf #2", *pdf2, yield2);
+  RooExtendPdf pdf_extend2("pdf_extend2", "extended pdf #2", pdf_prod2, yield2);
   
   RooRealVar yield3("yield3", "pdf yield", 5000, 0, 10000);
-  RooExtendPdf pdf_extend3("pdf_extend3", "extended pdf #3", *pdf3, yield3);
+  RooExtendPdf pdf_extend3("pdf_extend3", "extended pdf #3", pdf_prod3, yield3);
   
   RooRealVar coeff1("coeff1", "coeff1", 0.1, 0.0, 1.0);
   RooRealVar coeff2("coeff2", "coeff2", 0.1, 0.0, 1.0);
-  //RooAddPdf pdf_add("pdf_add", "added pdf", RooArgSet(pdf_extend1, pdf_extend2, pdf_extend3));
+  RooAddPdf pdf_add("pdf_add", "added pdf", RooArgSet(pdf_extend1, pdf_extend2, pdf_extend3));
   //RooAddPdf pdf_add("pdf_add", "added pdf", RooArgList(*pdf1, *pdf2, *pdf3), RooArgList(coeff1, coeff2));
-  RooAddPdf pdf_add("pdf_add", "added pdf", *pdf1, *pdf2, coeff1);
+  //RooAddPdf pdf_add("pdf_add", "added pdf", *pdf1, *pdf2, coeff1);
   
   cfg_tfac.set_generation_pdf(&pdf_add);
   RooArgSet argset_obs("argset_obs");

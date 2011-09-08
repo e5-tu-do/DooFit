@@ -94,6 +94,20 @@ class ToyFactoryStd {
   }
   
   /**
+   *  @brief Checks if a RooAbsPdf is a product pdf
+   *
+   *  @param pdf pdf to check for product pdf
+   *  @return whether pdf is product or not
+   */
+  bool PdfIsProduct(const RooAbsPdf& pdf) const {
+    if (std::strcmp(pdf.IsA()->GetName(),"RooProdPdf") == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /**
    *  @brief Generate a toy sample for a given PDF.
    *
    *  Helper function to be used by ToyFactoryStd::Generate().
@@ -107,7 +121,7 @@ class ToyFactoryStd {
    *          ownership of this sample. Therefore, the invoker of this function
    *          must take care of proper deletion afterwards.
    */
-  RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0);
+  RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true);
   
   /**
    *  @brief Generate a toy sample for a given RooAddPdf.
@@ -123,7 +137,23 @@ class ToyFactoryStd {
    *          ownership of this sample. Therefore, the invoker of this function
    *          must take care of proper deletion afterwards.
    */
-  RooDataSet* GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0);
+  RooDataSet* GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true);
+  
+  /**
+   *  @brief Generate a toy sample for a given RooProdPdf.
+   *
+   *  Helper function to be used by ToyFactoryStd::GenerateForPdf().
+   *
+   *  @param pdf PDF to generate sample for
+   *  @param argset_generation_observables argument set with variables in which 
+   *                                       dimensions to generate
+   *  @param yield Expected yield to generate (if equals 0, then get yield from
+   *         PDF itself)
+   *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
+   *          ownership of this sample. Therefore, the invoker of this function
+   *          must take care of proper deletion afterwards.
+   */
+  RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true);
   
   /**
    *  \brief CommonConfig instance to use
