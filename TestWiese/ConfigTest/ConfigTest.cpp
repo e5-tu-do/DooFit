@@ -65,6 +65,10 @@ void ConfigTestSecond::PrintOptions() const {
   scfg << "my second test switch (internal): " << my_test_switch_ << endmsg;
   scfg << "my second test integer (internal): " << my_test_int_ << endmsg;
   scfg << "my second test vector (internal): " << my_test_vector_.size() << endmsg;
+  
+  for (vector<string>::const_iterator it = my_test_vector_.begin(); it != my_test_vector_.end(); ++it) {
+    scfg << " my second test vector: " << *it << endmsg;
+  }
 }
 
 void ConfigTestSecond::DefineOptions() {

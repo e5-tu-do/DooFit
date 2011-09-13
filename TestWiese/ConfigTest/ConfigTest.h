@@ -19,6 +19,7 @@
 // STL
 #include <string>
 #include <vector>
+#include <map>
 
 // Boost
 #include <boost/program_options.hpp>
@@ -223,6 +224,62 @@ private:
   std::vector<std::string> my_test_vector_;
   ///@}
   
+};
+
+/** \class ConfigTestAbstractType
+ *  \brief DooFit Config test abstract data type
+ *
+ *  This is an abstract data type which should be read in via 
+ *  boost::program_options. It's supposed to have a string representation (for 
+ *  command line and config file) and should take care of parsing this string
+ *  representation. Handling inside a Config class should be transparent. Maybe 
+ *  a base class for abstract string-parsing types will arise from this.
+ */
+class ConfigTestAbstractType {
+ public:
+  /**
+   *  @brief Default constructor for ConfigTestAbstractType
+   */
+  ConfigTestAbstractType() {}
+  
+  /**
+   *  @brief Parse a given string
+   *
+   *  The given string @a str is parsed. If parsing is not successful, an 
+   *  exception will be thrown. The string is supposed to be formatted like 
+   *  this:
+   *
+   *  @verbatim
+   *  simple,key,value,key,value,...,key,value
+   *  @endverbatim
+   *
+   *  @see ConfigTestAbstractType::simple_
+   *  @see ConfigTestAbstractType::map_
+   *
+   *  @param str string to parse
+   */
+  void Parse(std::string str);
+  
+ protected:
+ private:
+  /**
+   *  @brief simple member to be parsed into
+   * 
+   *  Just a simple string, like a name or something.
+   *
+   *  @see ConfigTestAbstractType::Parse(std::string)
+   */
+  std::string simple_;
+  
+  /**
+   *  @brief abstract member to be parsed into
+   * 
+   *  This map contains string key value pairs which are supposed to be filled
+   *  via a string.
+   *
+   *  @see ConfigTestAbstractType::Parse(std::string)
+   */
+  std::map<std::string,std::string> map_;
 };
 
 #endif //CONFIGTEST_h
