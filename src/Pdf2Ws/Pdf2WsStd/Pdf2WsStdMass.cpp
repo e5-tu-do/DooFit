@@ -25,7 +25,7 @@ using namespace std;
 using namespace Pdf2WsStd;
 
 
-void Pdf2WsStd::Mass::Gaussian(RooWorkspace* ws, 
+RooGaussian* Pdf2WsStd::Mass::Gaussian(RooWorkspace* ws, 
                                const TString& pdf_name, const TString& pdf_desc,
                                const TString& var_mass_name, 
                                const TString& par_mean_name, const TString& par_sigma_name){
@@ -42,4 +42,6 @@ void Pdf2WsStd::Mass::Gaussian(RooWorkspace* ws,
   RooAbsReal* par_sigma = CommonFuncs::getVar(ws, par_sigma_name, "#sigma_{m}",15,5,20,"MeV/c^{2}");
   
   CommonFuncs::import(ws,RooGaussian(pdf_name, pdf_desc, *var_mass, *par_mean, *par_sigma));
+  
+  return (RooGaussian*)ws->pdf(pdf_name);
 }

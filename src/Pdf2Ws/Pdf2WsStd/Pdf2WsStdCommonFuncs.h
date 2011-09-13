@@ -77,8 +77,9 @@ namespace Pdf2WsStd{ namespace CommonFuncs{
    *
    *  @param ws RooWorkspace to import into
    *  @param arg RooAbsArg to import
+   *  @return true if an error has occurred.
    */
-  void import(RooWorkspace* ws, const RooAbsArg& arg);
+  bool import(RooWorkspace* ws, const RooAbsArg& arg);
 } }
 
 #endif // PDF2WSSTDCOMMONFUNCS_h

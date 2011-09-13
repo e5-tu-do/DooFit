@@ -52,24 +52,21 @@ int main(int argc, char *argv[]) {
   BuilderStd bld(cfg_com, cfg_bld);
     
   RooWorkspace* ws = new RooWorkspace("ws");
-  Pdf2WsStd::Mass::Gaussian(ws, "test1", "Gaussian test pdf #1","mass","mittelwert", "abweichung");
-  Pdf2WsStd::Mass::Gaussian(ws, "test2", "Gaussian test pdf #2","mass","mittelwert_bkg", "abweichung_bkg");
-  Pdf2WsStd::Mass::Gaussian(ws, "test3", "Gaussian test pdf #3","mass","mittelwert_bkg2", "abweichung_bkg2");
   
-  Pdf2WsStd::Mass::Gaussian(ws, "time1", "Gaussian test pdf #1 (time)","time","mean_time1", "sigma_time1");
-  Pdf2WsStd::Mass::Gaussian(ws, "time2", "Gaussian test pdf #2 (time)","time","mean_time2", "sigma_time2");
-  Pdf2WsStd::Mass::Gaussian(ws, "time3", "Gaussian test pdf #3 (time)","time","mean_time3", "sigma_time3");
+  Pdf2WsStd::CommonFuncs::getVar(ws, "mean1", "mean1", 5200, 5000, 5700, "MeV/c^{2}");
+  Pdf2WsStd::CommonFuncs::getVar(ws, "mean2", "mean2", 5300, 5000, 5700, "MeV/c^{2}");
+  Pdf2WsStd::CommonFuncs::getVar(ws, "mean3", "mean3", 5400, 5000, 5700, "MeV/c^{2}");
+  
+  RooGaussian* pdf1 = Pdf2WsStd::Mass::Gaussian(ws, "test1", "Gaussian test pdf #1","mass","mean1", "abweichung");
+  RooGaussian* pdf2 = Pdf2WsStd::Mass::Gaussian(ws, "test2", "Gaussian test pdf #2","mass","mean2", "abweichung_bkg");
+  RooGaussian* pdf3 = Pdf2WsStd::Mass::Gaussian(ws, "test3", "Gaussian test pdf #3","mass","mean3", "abweichung_bkg2");
+  
+  RooGaussian* time1 = Pdf2WsStd::Mass::Gaussian(ws, "time1", "Gaussian test pdf #1 (time)","time","mean_time1", "sigma_time1");
+  RooGaussian* time2 = Pdf2WsStd::Mass::Gaussian(ws, "time2", "Gaussian test pdf #2 (time)","time","mean_time2", "sigma_time2");
+  RooGaussian* time3 = Pdf2WsStd::Mass::Gaussian(ws, "time3", "Gaussian test pdf #3 (time)","time","mean_time3", "sigma_time3");
   
   ws->Print("t");
-
-  RooGaussian* pdf1 = (RooGaussian*)ws->pdf("test1");
-  RooGaussian* pdf2 = (RooGaussian*)ws->pdf("test2");
-  RooGaussian* pdf3 = (RooGaussian*)ws->pdf("test3");
-  
-  RooGaussian* time1 = (RooGaussian*)ws->pdf("time1");
-  RooGaussian* time2 = (RooGaussian*)ws->pdf("time2");
-  RooGaussian* time3 = (RooGaussian*)ws->pdf("time3");
-  
+    
   RooProdPdf pdf_prod1("pdf_prod1", "pdf_prod1", RooArgList(*pdf1, *time1));
   RooProdPdf pdf_prod2("pdf_prod2", "pdf_prod2", RooArgList(*pdf2, *time2));
   RooProdPdf pdf_prod3("pdf_prod3", "pdf_prod3", RooArgList(*pdf3, *time3));

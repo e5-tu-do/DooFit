@@ -47,7 +47,7 @@ RooAbsReal* Pdf2WsStd::CommonFuncs::getVar(RooWorkspace* ws,
   return var_temp;
 }  
 
-void Pdf2WsStd::CommonFuncs::import(RooWorkspace* ws, const RooAbsArg& arg) {
+bool Pdf2WsStd::CommonFuncs::import(RooWorkspace* ws, const RooAbsArg& arg) {
   // Silence for testing purposes for now. Later to be exchanged by some Config foo.
-  ws->import(arg, Silence());
+  return ws->import(arg, Silence());
 }

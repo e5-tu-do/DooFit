@@ -13,6 +13,7 @@
 // forward declarations
 class RooWorkspace;
 class TString;
+class RooGaussian;
 
 namespace Pdf2WsStd{ namespace Mass{
   /**
@@ -25,8 +26,9 @@ namespace Pdf2WsStd{ namespace Mass{
    *  @param var_mass_name Name of the mass variable.
    *  @param par_mean_name Name of the Gaussian mean parameter, typically the mass to be fit.
    *  @param par_sigma_name Name of the standard deviation parameter of the Gaussian. 
+   *  @return the generated RooGaussian
    */
-  void Gaussian(RooWorkspace* ws, 
+  RooGaussian* Gaussian(RooWorkspace* ws, 
                 const TString& pdf_name, const TString& pdf_desc,
                 const TString& var_mass, 
                 const TString& par_mean, const TString& par_sigma);
