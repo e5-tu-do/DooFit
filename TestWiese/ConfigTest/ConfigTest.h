@@ -200,7 +200,28 @@ private:
   std::map<std::string,std::string> map_;
 };
 
+/**
+ *  @brief Input stream operator for ConfigTestAbstractType
+ *
+ *  This function is used to pass string representations of 
+ *  ConfigTestAbstractType via an istream into a ConfigTestAbstractType object.
+ *
+ *  @param is the incoming input stream
+ *  @param arg the ConfigTestAbstractType to parse the string and fill its 
+ *             members accordingly
+ *  @return the rest of the input stream to pass along
+ */
 std::istream& operator>>(std::istream& is, ConfigTestAbstractType& arg);
+/**
+ *  @brief Output stream operator for ConfigTestAbstractType
+ *
+ *  This function is used to pass a ConfigTestAbstractType object to an ostream
+ *  for printing.
+ *
+ *  @param os the incoming output stream
+ *  @param arg the ConfigTestAbstractType to print
+ *  @return the rest of the output stream to pass along
+ */
 std::ostream& operator<<(std::ostream& os, const ConfigTestAbstractType& arg);
 
 class ConfigTestSecond : public Config {
