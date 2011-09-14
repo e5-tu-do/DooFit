@@ -72,7 +72,9 @@ void ConfigTestSecond::PrintOptions() const {
     scfg << " my second test vector: " << *it << endmsg;
   }
   
-  scfg << "my abstract: " << my_abstract_type_ << endmsg;
+  for (vector<ConfigTestAbstractType>::const_iterator it = my_abstract_type_.begin(); it != my_abstract_type_.end(); ++it) {
+    scfg << "my abstract: " << *it << endmsg;
+  }
 }
 
 void ConfigTestSecond::DefineOptions() {
@@ -82,7 +84,7 @@ void ConfigTestSecond::DefineOptions() {
    "my second test bool switch")
   (GetOptionString("my-second-test-int").c_str(), po::value<int>()->default_value(0),
    "my second test integer")
-  (GetOptionString("my-abstract").c_str(), po::value<ConfigTestAbstractType>(&my_abstract_type_), "Abstract test object with a simple string and a map of keys and values (both string). The string representation of this object is string,key,value,key,value,...")
+  (GetOptionString("my-abstract").c_str(), po::value<vector<ConfigTestAbstractType> >(&my_abstract_type_)->composing(), "Abstract test object with a simple string and a map of keys and values (both string). The string representation of this object is string,key,value,key,value,...")
   (GetOptionString("my-second-test-vector").c_str(), po::value<vector<string> >(&my_test_vector_)->composing(), "some simple string vector");
   
   descs_visible_.push_back(generic);

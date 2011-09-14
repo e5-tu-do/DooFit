@@ -325,7 +325,7 @@ private:
    *
    *  @see ConfigTestAbstractType
    */
-  ConfigTestAbstractType my_abstract_type_;
+  std::vector<ConfigTestAbstractType> my_abstract_type_;
   ///@}
 };
 
