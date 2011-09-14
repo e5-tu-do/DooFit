@@ -7,7 +7,6 @@
 
 // Boost
 #include <boost/program_options.hpp>
-#include <boost/tokenizer.hpp>
 
 // ROOT
 
@@ -96,41 +95,30 @@ void ConfigTestSecond::LoadOptions() {
 }
 
 void ConfigTestAbstractType::Parse(string str) {
-  using namespace std;
-  using namespace boost;
-  tokenizer<> tok(str);
+  vector<string> elements = DecomposeString(str);
   
-  tokenizer<>::iterator it=tok.begin();
+  // number of elements must be odd (one simple and several pairs)
+  if (elements.size()%2 != 1) {
+    serr << "ERROR in ConfigTestAbstractType::Parse(std::string): String '" << str << "' ends prematurely." << endmsg;
+    throw;
+  }
+  
+  vector<string>::iterator it=elements.begin();
   
   simple_ = *(it);
   ++it;
   
-  while (it!=tok.end()) {
-    string key = *it;
-    ++it;
-    if (it==tok.end()) {
-      serr << "ERROR in ConfigTestAbstractType::Parse(std::string): String '" << str << "' ended prematurely." << endmsg;
-      throw;
-    }
-    string value = *it;
-    map_[key] = value;
-    //map_[*it] = *(++it);
+  while (it!=elements.end()) {
+    map_[*it] = *(++it);
     ++it;
   }
 }
 
-std::istream& operator>>(std::istream& is, ConfigTestAbstractType& arg) {
-  std::string s;
-  is >> s;
-  arg.Parse(s);
-  return is;
-}
-
-std::ostream& operator<<(std::ostream& os, const ConfigTestAbstractType& arg) {
-  os << "simple: " << arg.simple();
-  const map<string,string>& m = arg.map();
-  for (map<string,string>::const_iterator itmap=m.begin(); itmap!=m.end(); ++itmap) {
+void ConfigTestAbstractType::Print(std::ostream& os) const {
+  os << "simple: " << simple_;
+  std::map<string,string> fask;
+  for (std::map<string,string>::const_iterator itmap=map_.begin(); itmap!=map_.end(); ++itmap) {
     os << "; k: " << (*itmap).first << ", v: " << (*itmap).second;
   }
-  return os;
 }
+

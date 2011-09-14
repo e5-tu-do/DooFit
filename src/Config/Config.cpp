@@ -7,6 +7,7 @@
 
 // boost
 #include <boost/exception/all.hpp>
+#include <boost/tokenizer.hpp>
 
 #include "Utils/MsgStream.h"
 #include "Config/Config.h"
@@ -227,3 +228,29 @@ void Config::ParseOptionsAndConfigFile(boost::program_options::command_line_pars
     throw e;
   }
 }
+
+vector<string> ConfigAbstractTypeCommaSeparated::DecomposeString(string str) const {
+  vector<string> elements;
+  
+  using namespace boost;
+  tokenizer<> tok(str);
+    
+  for (tokenizer<>::iterator it=tok.begin(); it!=tok.end(); ++it) {
+    elements.push_back(*it);
+  }
+  
+  return elements;
+}
+
+std::istream& operator>>(std::istream& is, ConfigAbstractTypeCommaSeparated& arg) {
+  std::string s;
+  is >> s;
+  arg.Parse(s);
+  return is;
+}
+
+std::ostream& operator<<(std::ostream& os, const ConfigAbstractTypeCommaSeparated& arg) {
+  arg.Print(os);
+  return os;
+}
+

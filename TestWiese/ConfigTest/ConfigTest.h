@@ -22,14 +22,28 @@
 #include <map>
 
 // Boost
+#ifndef __CINT__
 #include <boost/program_options.hpp>
+#else
+// ROOT Cint hacks...
+namespace boost { namespace program_options {
+  class options_description;
+  class variables_map;
+  class command_line_parser;
+};};
+#endif /* __CINT __ */
 
 // ROOT
 
 // RooFit
 
 // from project
+#ifndef __CINT__
 #include "Config/Config.h"
+#else
+// ROOT Cint hacks...
+#include "../../src/Config/Config.h"
+#endif /* __CINT __ */
 
 // forward declarations
 class ConfigTestAbstractType;
@@ -141,8 +155,9 @@ class ConfigTest : public Config {
  *
  *  @see std::istream& operator>>(std::istream&, ConfigTestAbstractType&)
  *  @see std::ostream& operator<<(std::ostream&, const ConfigTestAbstractType&)
+ *  @see ConfigTestSecond
  */
-class ConfigTestAbstractType {
+class ConfigTestAbstractType : public ConfigAbstractTypeCommaSeparated {
 public:
   /**
    *  @brief Default constructor for ConfigTestAbstractType
@@ -164,6 +179,17 @@ public:
    *  @param str string to parse
    */
   void Parse(std::string str);
+  
+  /**
+   *  @brief Print this object to an std::ostream
+   *
+   *  This function is used to print the object. Calling this function directly
+   *  is not necessary as it can be streamed directly to any ostream via 
+   *  operator<<(std::ostream&, const ConfigAbstractTypeCommaSeparated&).
+   *
+   *  @param os ostream to print to
+   */
+  virtual void Print(std::ostream& os) const;
   
   /**
    *  @brief Getter for simple
@@ -198,31 +224,12 @@ private:
    *  @see ConfigTestAbstractType::Parse(std::string)
    */
   std::map<std::string,std::string> map_;
+  
+  /**
+   *  @brief ClassDef statement for CINT dictionary generation
+   */
+  ClassDef(ConfigTestAbstractType,1);
 };
-
-/**
- *  @brief Input stream operator for ConfigTestAbstractType
- *
- *  This function is used to pass string representations of 
- *  ConfigTestAbstractType via an istream into a ConfigTestAbstractType object.
- *
- *  @param is the incoming input stream
- *  @param arg the ConfigTestAbstractType to parse the string and fill its 
- *             members accordingly
- *  @return the rest of the input stream to pass along
- */
-std::istream& operator>>(std::istream& is, ConfigTestAbstractType& arg);
-/**
- *  @brief Output stream operator for ConfigTestAbstractType
- *
- *  This function is used to pass a ConfigTestAbstractType object to an ostream
- *  for printing.
- *
- *  @param os the incoming output stream
- *  @param arg the ConfigTestAbstractType to print
- *  @return the rest of the output stream to pass along
- */
-std::ostream& operator<<(std::ostream& os, const ConfigTestAbstractType& arg);
 
 class ConfigTestSecond : public Config {
 public:
@@ -321,7 +328,7 @@ private:
   std::vector<std::string> my_test_vector_;
   
   /**
-   *  @brief abstract object member
+   *  @brief vector of abstract object member
    *
    *  @see ConfigTestAbstractType
    */
