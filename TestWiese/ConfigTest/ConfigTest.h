@@ -32,6 +32,7 @@
 #include "Config/Config.h"
 
 // forward declarations
+class ConfigTestAbstractType;
 
 class ConfigTest : public Config {
  public:
@@ -127,6 +128,78 @@ class ConfigTest : public Config {
 
 };
 
+/** \class ConfigTestAbstractType
+ *  \brief DooFit Config test abstract data type
+ *
+ *  This is an abstract data type which can be read in via 
+ *  boost::program_options. It's supposed to have a string representation (for 
+ *  command line and config file) and can take care of parsing this string
+ *  representation as well as printing itself. Handling inside a Config class 
+ *  is transparent in respect to option defining and loading (i.e. the Config 
+ *  object should not be responsible for parsing). Maybe a base class for 
+ *  abstract string-parsing types will arise from this.
+ */
+class ConfigTestAbstractType {
+public:
+  /**
+   *  @brief Default constructor for ConfigTestAbstractType
+   */
+  ConfigTestAbstractType() {}
+  
+  /**
+   *  @brief Parse a given string
+   *
+   *  The given string @a str is parsed. If parsing is not successful, an 
+   *  exception will be thrown. The string is supposed to be a comma-separated 
+   *  list formatted like this:
+   *
+   *  @verbatim simple,key,value,key,value,...,key,value @endverbatim
+   *
+   *  @see ConfigTestAbstractType::simple_
+   *  @see ConfigTestAbstractType::map_
+   *
+   *  @param str string to parse
+   */
+  void Parse(std::string str);
+  
+  /**
+   *  @brief Getter for simple
+   * 
+   *  @return simple member string
+   */
+  std::string simple() const {return simple_;}
+  
+  /**
+   *  @brief Getter for abstract map
+   * 
+   *  @return abstract member map
+   */
+  const std::map<std::string,std::string>& map() const {return map_;}
+  
+private:
+  /**
+   *  @brief simple member to be parsed into
+   * 
+   *  Just a simple string, like a name or something.
+   *
+   *  @see ConfigTestAbstractType::Parse(std::string)
+   */
+  std::string simple_;
+  
+  /**
+   *  @brief abstract member to be parsed into
+   * 
+   *  This map contains string key value pairs which are supposed to be filled
+   *  via a string.
+   *
+   *  @see ConfigTestAbstractType::Parse(std::string)
+   */
+  std::map<std::string,std::string> map_;
+};
+
+std::istream& operator>>(std::istream& is, ConfigTestAbstractType& arg);
+std::ostream& operator<<(std::ostream& os, const ConfigTestAbstractType& arg);
+
 class ConfigTestSecond : public Config {
 public:
   /**
@@ -209,77 +282,28 @@ private:
    */
   ///@{ 
   /**
-   *  \brief Test switch for ConfigTestSecond class.
+   *  \brief Test switch for ConfigTestSecond class
    */
   bool my_test_switch_;
   
   /**
-   *  \brief Test integer for ConfigTestSecond class.
+   *  \brief Test integer for ConfigTestSecond class
    */
   int my_test_int_;
   
   /**
-   *  \brief Test string vector for ConfigTestSecond class.
+   *  \brief Test string vector for ConfigTestSecond class
    */
   std::vector<std::string> my_test_vector_;
-  ///@}
   
+  /**
+   *  @brief abstract object member
+   *
+   *  @see ConfigTestAbstractType
+   */
+  ConfigTestAbstractType my_abstract_type_;
+  ///@}
 };
 
-/** \class ConfigTestAbstractType
- *  \brief DooFit Config test abstract data type
- *
- *  This is an abstract data type which should be read in via 
- *  boost::program_options. It's supposed to have a string representation (for 
- *  command line and config file) and should take care of parsing this string
- *  representation. Handling inside a Config class should be transparent. Maybe 
- *  a base class for abstract string-parsing types will arise from this.
- */
-class ConfigTestAbstractType {
- public:
-  /**
-   *  @brief Default constructor for ConfigTestAbstractType
-   */
-  ConfigTestAbstractType() {}
-  
-  /**
-   *  @brief Parse a given string
-   *
-   *  The given string @a str is parsed. If parsing is not successful, an 
-   *  exception will be thrown. The string is supposed to be formatted like 
-   *  this:
-   *
-   *  @verbatim
-   *  simple,key,value,key,value,...,key,value
-   *  @endverbatim
-   *
-   *  @see ConfigTestAbstractType::simple_
-   *  @see ConfigTestAbstractType::map_
-   *
-   *  @param str string to parse
-   */
-  void Parse(std::string str);
-  
- protected:
- private:
-  /**
-   *  @brief simple member to be parsed into
-   * 
-   *  Just a simple string, like a name or something.
-   *
-   *  @see ConfigTestAbstractType::Parse(std::string)
-   */
-  std::string simple_;
-  
-  /**
-   *  @brief abstract member to be parsed into
-   * 
-   *  This map contains string key value pairs which are supposed to be filled
-   *  via a string.
-   *
-   *  @see ConfigTestAbstractType::Parse(std::string)
-   */
-  std::map<std::string,std::string> map_;
-};
 
 #endif //CONFIGTEST_h

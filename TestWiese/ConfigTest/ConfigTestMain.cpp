@@ -22,7 +22,6 @@
 
 int main(int argc, char *argv[]) {
   try {
-    
     // instantiate first config object
     ConfigTest config("FirstConfig");
     

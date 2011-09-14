@@ -2,10 +2,12 @@
 // STL
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 // Boost
 #include <boost/program_options.hpp>
+#include <boost/tokenizer.hpp>
 
 // ROOT
 
@@ -69,6 +71,8 @@ void ConfigTestSecond::PrintOptions() const {
   for (vector<string>::const_iterator it = my_test_vector_.begin(); it != my_test_vector_.end(); ++it) {
     scfg << " my second test vector: " << *it << endmsg;
   }
+  
+  scfg << "my abstract: " << my_abstract_type_ << endmsg;
 }
 
 void ConfigTestSecond::DefineOptions() {
@@ -78,7 +82,8 @@ void ConfigTestSecond::DefineOptions() {
    "my second test bool switch")
   (GetOptionString("my-second-test-int").c_str(), po::value<int>()->default_value(0),
    "my second test integer")
-  (GetOptionString("my-second-test-vector").c_str(), po::value<vector<string> >(&my_test_vector_)->composing());
+  (GetOptionString("my-abstract").c_str(), po::value<ConfigTestAbstractType>(&my_abstract_type_), "Abstract test object with a simple string and a map of keys and values (both string). The string representation of this object is string,key,value,key,value,...")
+  (GetOptionString("my-second-test-vector").c_str(), po::value<vector<string> >(&my_test_vector_)->composing(), "some simple string vector");
   
   descs_visible_.push_back(generic);
 }
@@ -86,4 +91,44 @@ void ConfigTestSecond::DefineOptions() {
 void ConfigTestSecond::LoadOptions() {
   set_my_test_switch(var_map_[GetOptionString("my-second-test-switch")].as<bool>());
   set_my_test_int(var_map_[GetOptionString("my-second-test-int")].as<int>());
+}
+
+void ConfigTestAbstractType::Parse(string str) {
+  using namespace std;
+  using namespace boost;
+  tokenizer<> tok(str);
+  
+  tokenizer<>::iterator it=tok.begin();
+  
+  simple_ = *(it);
+  ++it;
+  
+  while (it!=tok.end()) {
+    string key = *it;
+    ++it;
+    if (it==tok.end()) {
+      serr << "ERROR in ConfigTestAbstractType::Parse(std::string): String '" << str << "' ended prematurely." << endmsg;
+      throw;
+    }
+    string value = *it;
+    map_[key] = value;
+    //map_[*it] = *(++it);
+    ++it;
+  }
+}
+
+std::istream& operator>>(std::istream& is, ConfigTestAbstractType& arg) {
+  std::string s;
+  is >> s;
+  arg.Parse(s);
+  return is;
+}
+
+std::ostream& operator<<(std::ostream& os, const ConfigTestAbstractType& arg) {
+  os << "simple: " << arg.simple();
+  const map<string,string>& m = arg.map();
+  for (map<string,string>::const_iterator itmap=m.begin(); itmap!=m.end(); ++itmap) {
+    os << "; k: " << (*itmap).first << ", v: " << (*itmap).second;
+  }
+  return os;
 }
