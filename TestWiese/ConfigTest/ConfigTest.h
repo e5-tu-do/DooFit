@@ -138,6 +138,9 @@ class ConfigTest : public Config {
  *  is transparent in respect to option defining and loading (i.e. the Config 
  *  object should not be responsible for parsing). Maybe a base class for 
  *  abstract string-parsing types will arise from this.
+ *
+ *  @see std::istream& operator>>(std::istream&, ConfigTestAbstractType&)
+ *  @see std::ostream& operator<<(std::ostream&, const ConfigTestAbstractType&)
  */
 class ConfigTestAbstractType {
 public:
