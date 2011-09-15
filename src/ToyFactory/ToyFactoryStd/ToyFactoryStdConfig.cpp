@@ -5,6 +5,8 @@
 #include <vector>
 #include <iostream>
 #include <cstdlib>
+#include <map>
+#include <utility>
 
 // Boost
 
@@ -122,7 +124,7 @@ void DiscreteProbabilityDistribution::Parse(string str) {
     double value = atof((*(++it)).c_str());
     cumuluated_prob += value;    
     
-    probabilities_map_[key] = value;
+    probabilities_map_[key] = pair<double,double>(value,cumuluated_prob);
     ++it;
   }
   
@@ -134,8 +136,8 @@ void DiscreteProbabilityDistribution::Parse(string str) {
 
 void DiscreteProbabilityDistribution::Print(std::ostream& os) const {
   os << "Variable: " << var_name_;
-  for (std::map<double,double>::const_iterator itmap=probabilities_map_.begin(); itmap!=probabilities_map_.end(); ++itmap) {
-    os << "; P(" << (*itmap).first << ") = " << (*itmap).second;
+  for (std::map<double,pair<double,double> >::const_iterator itmap=probabilities_map_.begin(); itmap!=probabilities_map_.end(); ++itmap) {
+    os << "; P(" << (*itmap).first << ") = " << (*itmap).second.first;
   }
 }
 

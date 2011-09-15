@@ -9,6 +9,9 @@
 #define TOYFACTORYSTDCONFIG_h
 
 // STL
+#include <map>
+#include <utility>
+#include <vector>
 
 // Boost
 
@@ -92,11 +95,12 @@ public:
   std::string var_name() const {return var_name_;}
   
   /**
-   *  @brief Getter for abstract map
+   *  @brief Getter for abstract map 
+   *         DiscreteProbabilityDistribution::probabilities_map_
    * 
    *  @return abstract member map
    */
-  const std::map<double,double>& probabilities_map() const {return probabilities_map_;}
+  const std::map<double,std::pair<double,double> >& probabilities_map() const {return probabilities_map_;}
   
 protected:
   
@@ -109,12 +113,14 @@ private:
   /**
    *  @brief Map for discrete probabilities and corresponding values
    * 
-   *  This map contains double key value pairs which are supposed to be filled
-   *  via a string.
+   *  This map contains double key, pair<double, double> value pairs which are 
+   *  supposed to be filled via a string. The value type contains the 
+   *  probability for this key and the cumulative probability of all keys added
+   *  so far.
    *
    *  @see DiscreteProbabilityDistribution::Parse(std::string)
    */
-  std::map<double,double> probabilities_map_;
+  std::map<double,std::pair<double,double> > probabilities_map_;
   
   /**
    *  @brief ClassDef statement for CINT dictionary generation
