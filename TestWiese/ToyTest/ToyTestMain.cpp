@@ -86,10 +86,11 @@ int main(int argc, char *argv[]) {
   //RooAddPdf pdf_add("pdf_add", "added pdf", RooArgList(*pdf1, *pdf2, *pdf3), RooArgList(coeff1, coeff2));
   //RooAddPdf pdf_add("pdf_add", "added pdf", *pdf1, *pdf2, coeff1);
   
-  cfg_tfac.set_generation_pdf(&pdf_add);
+  cfg_tfac.set_generation_pdf(pdf2);
   RooArgSet argset_obs("argset_obs");
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "")));
+  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "varTag", "tag of B meson", 0, -1, 1, "")));
   
   cfg_tfac.set_argset_generation_observables(&argset_obs);
   
@@ -103,7 +104,7 @@ int main(int argc, char *argv[]) {
   RooPlot* mass_frame = mass->frame();
   
   data->plotOn(mass_frame);
-  pdf_add.plotOn(mass_frame);
+  pdf2->plotOn(mass_frame);
   
   TCanvas c1("c1", "c1", 800, 600);
   mass_frame->Draw();

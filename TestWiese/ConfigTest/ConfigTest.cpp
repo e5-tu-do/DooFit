@@ -116,7 +116,6 @@ void ConfigTestAbstractType::Parse(string str) {
 
 void ConfigTestAbstractType::Print(std::ostream& os) const {
   os << "simple: " << simple_;
-  std::map<string,string> fask;
   for (std::map<string,string>::const_iterator itmap=map_.begin(); itmap!=map_.end(); ++itmap) {
     os << "; k: " << (*itmap).first << ", v: " << (*itmap).second;
   }

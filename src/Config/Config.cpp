@@ -215,7 +215,7 @@ void Config::ParseOptionsAndConfigFile(boost::program_options::command_line_pars
     if (config_file_.length() > 0) {
       ifstream ifs(config_file_.c_str());
       if (!ifs) {
-        cout << "can not open config file: " << config_file_ << "\n";
+        serr << "ERROR in Config::ParseOptionsAndConfigFile(boost::program_options::command_line_parser): Can not open config file: " << config_file_ << endmsg;
       } else {
         po::parsed_options parsed = po::parse_config_file(ifs, desc, true);
         po::store(parsed, var_map_);
@@ -233,9 +233,10 @@ vector<string> ConfigAbstractTypeCommaSeparated::DecomposeString(string str) con
   vector<string> elements;
   
   using namespace boost;
-  tokenizer<> tok(str);
+  char_separator<char> sep(",");
+  tokenizer<char_separator<char> > tok(str,sep);
     
-  for (tokenizer<>::iterator it=tok.begin(); it!=tok.end(); ++it) {
+  for (tokenizer<char_separator<char> >::iterator it=tok.begin(); it!=tok.end(); ++it) {
     elements.push_back(*it);
   }
   

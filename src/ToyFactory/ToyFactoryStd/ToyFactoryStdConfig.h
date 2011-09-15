@@ -30,6 +30,98 @@
 
 // forward declarations
 
+
+/** @class DiscreteProbabilityDistribution
+ *  @brief Distribution for discrete probabilities of variables.
+ *
+ *  This class is merely a container for Config objects to store the discrete
+ *  probability distribution of a certain variable. As it's inheriting from 
+ *  ConfigAbstractTypeCommaSeparated, parsing from command line or config file
+ *  is possible. 
+ *
+ *  It contains a variable name and a list of value and corresponding 
+ *  probability pairs. String representation is 
+ *  
+ *  @verbatim var_name,value1,prob1,value2,prob2,...,valueN,probN @endverbatim
+ * 
+ *  @see ConfigAbstractTypeCommaSeparated
+ *  @see ConfigTestAbstractType
+ */
+class DiscreteProbabilityDistribution : public ConfigAbstractTypeCommaSeparated {
+public:
+  /**
+   *  @brief Default constructor for DiscreteProbabilityDistribution
+   */
+  DiscreteProbabilityDistribution() {}
+  
+  /**
+   *  @brief Destructor for DiscreteProbabilityDistribution
+   */
+  ~DiscreteProbabilityDistribution() {}
+  
+  /**
+   *  @brief Parse a given string
+   *
+   *  The given string @a str is parsed. If parsing is not successful, an 
+   *  exception will be thrown. The string is supposed to be a comma-separated 
+   *  list formatted like this:
+   *
+   *  @verbatim var_name,value1,prob1,value2,prob2,...,valueN,probN @endverbatim
+   *
+   *  @see DiscreteProbabilityDistribution::var_name_
+   *  @see DiscreteProbabilityDistribution::probabilities_map_
+   *
+   *  @param str string to parse
+   */
+  void Parse(std::string str);
+  
+  /**
+   *  @brief Print this object to an std::ostream
+   *
+   *  This function is used to print the object. Calling this function directly
+   *  is not necessary as it can be streamed directly to any ostream via 
+   *  operator<<(std::ostream&, const ConfigAbstractTypeCommaSeparated&).
+   *
+   *  @param os ostream to print to
+   */
+  virtual void Print(std::ostream& os) const;
+  
+  /**
+   *  @brief Getter for variable name
+   */
+  std::string var_name() const {return var_name_;}
+  
+  /**
+   *  @brief Getter for abstract map
+   * 
+   *  @return abstract member map
+   */
+  const std::map<double,double>& probabilities_map() const {return probabilities_map_;}
+  
+protected:
+  
+private:
+  /**
+   *  @brief Name of variable to store probabilities for
+   */
+  std::string var_name_;
+  
+  /**
+   *  @brief Map for discrete probabilities and corresponding values
+   * 
+   *  This map contains double key value pairs which are supposed to be filled
+   *  via a string.
+   *
+   *  @see DiscreteProbabilityDistribution::Parse(std::string)
+   */
+  std::map<double,double> probabilities_map_;
+  
+  /**
+   *  @brief ClassDef statement for CINT dictionary generation
+   */
+  ClassDef(DiscreteProbabilityDistribution,1);
+};
+
 class ToyFactoryStdConfig : public Config {
  public:
   /**
@@ -79,6 +171,12 @@ class ToyFactoryStdConfig : public Config {
    *  \see ToyFactoryStdConfig::set_random_seed(int)
    */
   int random_seed() const {return random_seed_;}
+  /**
+   *  @brief Getter for discrete probability distributions
+   *
+   *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
+   */
+  const std::vector<DiscreteProbabilityDistribution>& discrete_probabilities() const {return discrete_probabilities_;}
   ///@}
   
   /** @name Setter actual options
@@ -128,6 +226,33 @@ class ToyFactoryStdConfig : public Config {
    *  @param seed the seed to use
    */
   void set_random_seed(int seed) {random_seed_ = seed;}
+  /**
+   *  \brief Setter for discrete probability distributions
+   *
+   *  Directly set the vector of discrete probability distributions. For each 
+   *  entry for which the variable is also in the argument set to generate a 
+   *  discrete distribution data set will be generated.
+   *
+   *  @see DiscreteProbabilityDistribution
+   *  @see ToyFactoryStdConfig::AddDiscreteProbability(const DiscreteProbabilityDistribution&)
+   *
+   *  @param prop_dists vector of DiscreteProbabilityDistribution to use
+   */
+  void set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>& prop_dists) {discrete_probabilities_ = prop_dists;}
+  /**
+   *  \brief Add a discrete probability distribution
+   *
+   *  Add a discrete probability distribution to the vector of such 
+   *  distributions. For each entry for which the variable is also in the 
+   *  argument set to generate a discrete distribution data set will be 
+   *  generated.
+   *
+   *  @see DiscreteProbabilityDistribution
+   *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
+   *
+   *  @param prop_dist DiscreteProbabilityDistribution to use
+   */
+  void AddDiscreteProbability(const DiscreteProbabilityDistribution& prop_dist) {discrete_probabilities_.push_back(prop_dist);}
   ///@}
   
  protected:
@@ -186,6 +311,12 @@ private:
    *  \brief Random seed to use for the toy factory upon initialization
    */
   int random_seed_;
+  /**
+   *  @brief Vector of discrete probability distributions
+   *
+   *  @see DiscreteProbabilityDistribution
+   */
+  std::vector<DiscreteProbabilityDistribution> discrete_probabilities_;
   ///@}
   
   /**
@@ -193,6 +324,5 @@ private:
    */
   ClassDef(ToyFactoryStdConfig,1);
 };
-
 
 #endif // TOYFACTORYSTDCONFIG_h
