@@ -6,6 +6,8 @@
 #include <sstream> 
 #include <cstring>
 
+#include "TStopwatch.h"
+
 /*! \class MsgStream 
  * \brief A class for message output using different messages and colors.
  *
@@ -168,6 +170,9 @@ inline MsgStream& operator<<(MsgStream& lhs, const T& arg) {
   return lhs;
 }
 
+/**
+ *  @brief Function to output bools directly and nicely into MsgStreams
+ */
 inline MsgStream& operator<<(MsgStream& lhs, bool b) {
   if (b) {
     lhs.stream() << "True";
@@ -176,6 +181,21 @@ inline MsgStream& operator<<(MsgStream& lhs, bool b) {
   }
   return lhs;
 }
+
+/**
+ *  @brief Function to output TStopwatches directly and nicely into MsgStreams
+ *
+ *  This function includes stop of stopwatch and reset after printing.
+ */
+inline MsgStream& operator<<(MsgStream& lhs, TStopwatch sw) {
+  sw.Stop();
+  
+  lhs.stream() << "t(CPU) = " << sw.CpuTime() << " s; t(Real) = " << sw.RealTime() << " s.";
+  
+  sw.Reset();
+  return lhs;
+}
+
 
 /// MsgStream for errors. Color: Red
 extern MsgStream serr; 

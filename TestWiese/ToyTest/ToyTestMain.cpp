@@ -101,8 +101,6 @@ int main(int argc, char *argv[]) {
 //  
 //  sdebug << "C: " << sw.CpuTime() << ", R: " << sw.RealTime() << endmsg;
 
-  
-  
   CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
   

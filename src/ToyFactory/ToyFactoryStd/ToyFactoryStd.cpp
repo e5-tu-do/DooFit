@@ -56,6 +56,8 @@ RooDataSet* ToyFactoryStd::Generate() {
   
   sinfo << endmsg;
   sinfo.Ruler();
+  TStopwatch sw;
+  sw.Start();
   
   RooDataSet* data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield());
   
@@ -67,6 +69,8 @@ RooDataSet* ToyFactoryStd::Generate() {
     
   data->merge(data_discrete);
   delete data_discrete;
+
+  sinfo << "Generation of this sample took " << sw << endmsg;
   
   sinfo.Ruler();
   return data;
@@ -252,7 +256,7 @@ RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<DiscreteProb
       } else {
         const std::vector<std::pair<double,double> >& prob_map = (*it).probabilities();
         // create some simple arrays for faster generation (looping over arrays 
-        // faster than looping over complex map).
+        // faster than looping over complex vectors and stuff).
         // I tried creating a special case for constant variables 
         // (num_values == 1), but it's not worth (the overhead through looping 
         // is irrelevant).
