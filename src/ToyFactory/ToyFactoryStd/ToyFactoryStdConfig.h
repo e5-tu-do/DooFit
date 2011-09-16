@@ -100,7 +100,7 @@ public:
    * 
    *  @return abstract member map
    */
-  const std::map<double,std::pair<double,double> >& probabilities_map() const {return probabilities_map_;}
+  const std::vector<std::pair<double,double> >& probabilities() const {return probabilities_;}
   
 protected:
   
@@ -111,16 +111,15 @@ private:
   std::string var_name_;
   
   /**
-   *  @brief Map for discrete probabilities and corresponding values
+   *  @brief Vector for values and corresponding cumulative discrete probabilities 
    * 
-   *  This map contains double key, pair<double, double> value pairs which are 
-   *  supposed to be filled via a string. The value type contains the 
-   *  probability for this key and the cumulative probability of all keys added
-   *  so far.
+   *  This vector contains pair<double, double> value pairs which are 
+   *  supposed to be filled via a string. The pair contains the value and 
+   *  corresponding cumulative probability.
    *
    *  @see DiscreteProbabilityDistribution::Parse(std::string)
    */
-  std::map<double,std::pair<double,double> > probabilities_map_;
+  std::vector<std::pair<double,double> > probabilities_;
   
   /**
    *  @brief ClassDef statement for CINT dictionary generation

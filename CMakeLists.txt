@@ -15,7 +15,7 @@ are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo
 MinSizeRel.")
 ENDIF()
 
-set(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")

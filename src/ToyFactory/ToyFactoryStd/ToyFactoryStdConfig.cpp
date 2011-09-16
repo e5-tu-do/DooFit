@@ -12,6 +12,7 @@
 
 // ROOT
 #include "TIterator.h"
+#include "TMath.h"
 
 // RooFit
 #include "RooAbsPdf.h"
@@ -124,20 +125,23 @@ void DiscreteProbabilityDistribution::Parse(string str) {
     double value = atof((*(++it)).c_str());
     cumuluated_prob += value;    
     
-    probabilities_map_[key] = pair<double,double>(value,cumuluated_prob);
+    probabilities_.push_back(pair<double,double>(key,cumuluated_prob));
     ++it;
   }
   
-  if (cumuluated_prob != 1.0) {
-    serr << "ERROR in DiscreteProbabilityDistribution::Parse(string): Cumulative probability is not 1.0 (is " << cumuluated_prob << ")." << endmsg;
+  if (TMath::Abs((cumuluated_prob - 1.0)) > 1e-14) {
+    serr << "ERROR in DiscreteProbabilityDistribution::Parse(string): Cumulative probability is not 1.0 (is " << cumuluated_prob << " - 1 = " << cumuluated_prob-1.0 << ")." << endmsg;
     throw;
   }
 }
 
 void DiscreteProbabilityDistribution::Print(std::ostream& os) const {
   os << "Variable: " << var_name_;
-  for (std::map<double,pair<double,double> >::const_iterator itmap=probabilities_map_.begin(); itmap!=probabilities_map_.end(); ++itmap) {
-    os << "; P(" << (*itmap).first << ") = " << (*itmap).second.first;
+  double cumuluated_prob = 0.0;
+  for (std::vector<pair<double,double> >::const_iterator itmap=probabilities_.begin(); itmap!=probabilities_.end(); ++itmap) {
+    
+    os << "; P(" << (*itmap).first << ") = " << (*itmap).second-cumuluated_prob;
+    cumuluated_prob = (*itmap).second;
   }
 }
 

@@ -19,9 +19,11 @@
 // from RooFit
 #include "RooAbsPdf.h"
 
+// from project
+#include "ToyFactory/ToyFactoryStd/ToyFactoryStdConfig.h"
+
 // forward declarations
 class CommonConfig; 
-class ToyFactoryStdConfig;
 class RooDataSet;
 class RooArgSet;
 
@@ -125,8 +127,8 @@ class ToyFactoryStd {
    *  @param pdf PDF to generate sample for
    *  @param argset_generation_observables argument set with variables in which 
    *                                       dimensions to generate
-   *  @param yield Expected yield to generate (if equals 0, then get yield from
-   *         PDF itself)
+   *  @param expected_yield Expected yield to generate (if equals 0, then get 
+   *                        yield from PDF itself)
    *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
    *          ownership of this sample. Therefore, the invoker of this function
    *          must take care of proper deletion afterwards.
@@ -141,8 +143,8 @@ class ToyFactoryStd {
    *  @param pdf PDF to generate sample for
    *  @param argset_generation_observables argument set with variables in which 
    *                                       dimensions to generate
-   *  @param yield Expected yield to generate (if equals 0, then get yield from
-   *         PDF itself)
+   *  @param expected_yield Expected yield to generate (if equals 0, then get 
+   *                        yield from PDF itself)
    *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
    *          ownership of this sample. Therefore, the invoker of this function
    *          must take care of proper deletion afterwards.
@@ -155,16 +157,35 @@ class ToyFactoryStd {
    *  Helper function to be used by ToyFactoryStd::GenerateForPdf().
    *
    *  @param pdf PDF to generate sample for
-   *  @param argset_generation_observables argument set with variables in which 
+   *  @param argset_generation_observables Argument set with variables in which 
    *                                       dimensions to generate
-   *  @param yield Expected yield to generate (if equals 0, then get yield from
-   *         PDF itself)
+   *  @param expected_yield Expected yield to generate (if equals 0, then get 
+   *                        yield from PDF itself)
    *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
    *          ownership of this sample. Therefore, the invoker of this function
    *          must take care of proper deletion afterwards.
    *  @todo check for PDF arguments to be uncorrelated
    */
   RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true);
+  
+  /**
+   *  @brief Generate a toy sample for discrete variables.
+   *
+   *  Helper function to be used by ToyFactoryStd::Generate().
+   *
+   *  @param discrete_probabilities Vector of DiscreteProbabilityDistribution to 
+   *                                generate sample for
+   *  @param argset_generation_observables Argument set with variables in which 
+   *                                       dimensions to generate
+   *  @param argset_already_generated Argument set with variables already 
+   *                                  generated
+   *  @param yield Yield to generate
+   *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
+   *          ownership of this sample. Therefore, the invoker of this function
+   *          must take care of proper deletion afterwards.
+   *  @todo check for PDF arguments to be uncorrelated
+   */
+  RooDataSet* GenerateDiscreteSample(const std::vector<DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield);
   ///@}
   
   /**

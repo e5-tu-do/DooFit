@@ -1,17 +1,20 @@
 // STL
 #include <vector>
+#include <sstream>
 
 // Boost
 
 // ROOT
 #include "TCanvas.h"
 #include "TFile.h"
+#include "TStopwatch.h"
 
 // RooFit
 #include "RooWorkspace.h"
 #include "RooDataSet.h"
 #include "RooArgSet.h"
 #include "RooRealVar.h"
+#include "RooCategory.h"
 #include "RooPlot.h"
 #include "RooGaussian.h"
 #include "RooExtendPdf.h"
@@ -33,6 +36,73 @@
 #include "Utils/MsgStream.h"
 
 int main(int argc, char *argv[]) {
+//  // some performance test code
+//  int i_max = 30;
+//  int j_max = 1000000;
+//  
+//  TStopwatch sw;
+//  sw.Start();
+//  RooRealVar* var0 = new RooRealVar("var0","", 0, -10, 10);
+//  RooArgSet argset0(*var0);
+//  RooDataSet * data_test = new RooDataSet("data", "data", argset0);
+//  for (int j=0; j<j_max; ++j) {
+//    var0->setVal(5);
+//    data_test->add(argset0);
+//  }
+//  
+//  for (int i=1; i<i_max; ++i) {
+//    ostringstream s;
+//    s << "var" << i;
+//    RooRealVar* var = new RooRealVar(s.str().c_str(),"", 0, -10, 10);
+//    RooArgSet argset(*var);
+//    
+//    RooDataSet * sub_data = new RooDataSet("data", "data", argset);
+//    
+//    for (int j=0; j<j_max; ++j) {
+//      var->setVal(5);
+//      sub_data->add(argset);
+//    }
+//    
+//    sdebug << "merge" << endmsg;
+//    data_test->merge(sub_data);
+//    delete sub_data;
+//  }
+//  data_test->Print();
+//  sw.Stop();
+//  
+//  sdebug << "C: " << sw.CpuTime() << ", R: " << sw.RealTime() << endmsg;
+//  
+//  delete data_test;
+//  sw.Reset();
+//  sw.Start();
+//
+//  RooArgSet argset;
+//  for (int i=0; i<i_max; ++i) {
+//    ostringstream s;
+//    s << "var" << i;
+//    RooRealVar* var = new RooRealVar(s.str().c_str(),"", 0, -10, 10);
+//    argset.add(*var);
+//  }
+//  
+//  data_test = new RooDataSet("data", "data", argset);
+//  
+//  for (int j=0; j<j_max; ++j) {
+//    for (int i=0; i<i_max; ++i) {
+//      ostringstream s;
+//      s << "var" << i;
+//      RooRealVar* var = (RooRealVar*)argset.find(s.str().c_str());
+//      var->setVal(5);
+//    }
+//  
+//    data_test->add(argset);
+//  }
+//  data_test->Print();
+//  sw.Stop();
+//  
+//  sdebug << "C: " << sw.CpuTime() << ", R: " << sw.RealTime() << endmsg;
+
+  
+  
   CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
   
@@ -90,7 +160,15 @@ int main(int argc, char *argv[]) {
   RooArgSet argset_obs("argset_obs");
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "")));
-  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "varTag", "tag of B meson", 0, -1, 1, "")));
+  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "tag2", "tag of B meson", 0, -10, 10, "")));
+  RooRealVar* tag2 = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "tag2", "", 0, 0, 0, "");
+  
+  RooCategory* tag = new RooCategory("tag", "tag");
+  tag->defineType("b0", 1);
+  tag->defineType("b0_bar", -1);
+  ws->import(*tag);
+  tag = ws->cat("tag");
+  argset_obs.add(*tag);
   
   cfg_tfac.set_argset_generation_observables(&argset_obs);
   
@@ -101,13 +179,19 @@ int main(int argc, char *argv[]) {
   RooDataSet* data = tfac.Generate();
  
   RooRealVar* mass = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "");
+  
   RooPlot* mass_frame = mass->frame();
+  RooPlot* tag2_frame = tag2->frame();
   
   data->plotOn(mass_frame);
   pdf2->plotOn(mass_frame);
   
+  data->plotOn(tag2_frame);
+  
   TCanvas c1("c1", "c1", 800, 600);
   mass_frame->Draw();
-  
   c1.SaveAs("c1.pdf");
+  
+  tag2_frame->Draw();
+  c1.SaveAs("c2.pdf");  
 }
