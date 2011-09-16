@@ -228,6 +228,10 @@ RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<DiscreteProb
   //  5. number of entries in C style arrays
   vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> > disc_vars;
   
+  // prepare everything:
+  //  - check variables for validity
+  //  - generate arrays with values and cumulative probabilities
+  //  - add to relevant arg sets
   RooArgSet disc_argset;
   RooArgSet disc_cat_argset;
   for (std::vector<DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities.begin(); it != discrete_probabilities.end(); ++it) {
@@ -278,6 +282,7 @@ RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<DiscreteProb
     }
   }
   
+  // prepare dataset
   RooDataSet* data_discrete = new RooDataSet("data_discrete", "data_discrete", disc_argset);
   double r;
   int j;
@@ -289,8 +294,12 @@ RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<DiscreteProb
   }
   sinfo << endmsg;
   
+  // the actual loop generating the dataset
   for (int i=0; i<yield; ++i) {
+    // loop over variables (thanks to previous preparations, the only call 
+    // consuming relevant CPU time is the call to RooDataSet::addFast(...))
     for (vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> >::const_iterator it = disc_vars.begin(); it != disc_vars.end(); ++it) {   
+      // get all stuff from the tuple
       RooAbsArg* disc_var   = (*it).get<0>();
       double* cum_probs     = (*it).get<1>();
       double* values        = (*it).get<2>();
