@@ -161,7 +161,7 @@ class ToyFactoryStdConfig : public Config {
    *  You might ask, why this needs non-const RooAbsPdf*. Refer to 
    *  ToyFactoryStdConfig::set_generation_pdf(RooAbsPdf*) for details on that.
    */
-  RooAbsPdf* generation_pdf() const {return generation_pdf_;}
+  RooAbsPdf* generation_pdf() const;
   /**
    *  \brief Getter for expected yield to use for dataset generation
    */
@@ -169,7 +169,7 @@ class ToyFactoryStdConfig : public Config {
   /**
    *  \brief Getter for RooArgSet* with all observables to generate directly
    */
-  const RooArgSet* argset_generation_observables() const {return argset_generation_observables_;}
+  const RooArgSet* argset_generation_observables() const; 
   /**
    *  \brief Getter for random seed
    *
@@ -222,6 +222,46 @@ class ToyFactoryStdConfig : public Config {
    */
   void set_argset_generation_observables(const RooArgSet* argset_generation_observables) 
   {argset_generation_observables_ = argset_generation_observables;}
+  /**
+   *  @brief Setter for workspace to use for getting PDFs and argument sets
+   *
+   *  Setting this workspace is only sensible if also using setters for PDF and
+   *  argument set names.
+   *
+   *  @see ToyFactoryStdConfig::set_argset_generation_observables_workspace(const string&)
+   *  @see ToyFactoryStdConfig::set_generation_pdf_workspace(const std::string&)
+   *
+   *  @param ws RooWorkspace to use
+   */
+  void set_workspace(RooWorkspace* ws) {workspace_ = ws;} 
+  /**
+   *  @brief Setter for RooAbsPdf* name to use for dataset generation on linked 
+   *         workspace
+   *
+   *  If a workspace is linked and no RooAbsPdf* is set via the appropriate 
+   *  setter itself, a RooAbsPdf* will be loaded from the workspace with the 
+   *  supplied name.
+   *
+   *  @see ToyFactoryStdConfig::set_workspace(const RooWorkspace*)
+   *  @see ToyFactoryStdConfig::set_generation_pdf_workspace(const std::string&)
+   *
+   *  @param name Name of RooAbsPdf on workspace
+   */
+  void set_generation_pdf_workspace(const std::string& name);
+  /**
+   *  @brief Setter for RooArgSet* name with all observables to generate 
+   *         directly on linked workspace
+   *
+   *  If a workspace is linked and no RooArgSet* is set via the appropriate 
+   *  setter itself, a RooArgSet* will be loaded from the workspace with the 
+   *  supplied name.
+   *
+   *  @see ToyFactoryStdConfig::set_workspace(const RooWorkspace*)
+   *  @see ToyFactoryStdConfig::set_generation_pdf_workspace(const std::string&)
+   *
+   *  @param name Name of RooArgSet on workspace
+   */
+  void set_argset_generation_observables_workspace(const std::string& name); 
   /**
    *  \brief Setter for random seed
    *
@@ -312,6 +352,29 @@ private:
    *  \brief RooArgSet with all observables to generate directly
    */
   const RooArgSet* argset_generation_observables_;
+  /**
+   *  @brief RooWorkspace to use to get PDFs and argument sets
+   *
+   *  You might ask, why this needs to be a mutable member. It's the same reason
+   *  as for ToyFactoryStdConfig::generation_pdf_ (in short: ROOT developers
+   *  giving a shit on const correctness).
+   */  
+  mutable RooWorkspace* workspace_;
+  /**
+   *  @brief Name of RooAbsPdf to generate toys for on linked workspace
+   *
+   *  @see ToyFactoryStdConfig::generation_pdf_
+   *  @see ToyFactoryStdConfig::workspace_
+   */  
+  std::string generation_pdf_workspace_;
+  /**
+   *  @brief Name of RooArgSet with all observables to generate directly on 
+   *         linked workspace
+   *
+   *  @see ToyFactoryStdConfig::argset_generation_observables_
+   *  @see ToyFactoryStdConfig::workspace_
+   */  
+  std::string argset_generation_observables_workspace_;
   /**
    *  \brief Random seed to use for the toy factory upon initialization
    */

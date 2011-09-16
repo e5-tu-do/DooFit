@@ -133,12 +133,10 @@ int main(int argc, char *argv[]) {
   RooGaussian* time2 = Pdf2WsStd::Mass::Gaussian(ws, "time2", "Gaussian test pdf #2 (time)","time","mean_time2", "sigma_time2");
   RooGaussian* time3 = Pdf2WsStd::Mass::Gaussian(ws, "time3", "Gaussian test pdf #3 (time)","time","mean_time3", "sigma_time3");
   
-  ws->Print("t");
-    
   RooProdPdf pdf_prod1("pdf_prod1", "pdf_prod1", RooArgList(*pdf1, *time1));
   RooProdPdf pdf_prod2("pdf_prod2", "pdf_prod2", RooArgList(*pdf2, *time2));
   RooProdPdf pdf_prod3("pdf_prod3", "pdf_prod3", RooArgList(*pdf3, *time3));
-  
+
   RooRealVar yield1("yield1", "pdf yield", 10000, 0, 10000);
   RooExtendPdf pdf_extend1("pdf_extend1", "extended pdf #1", pdf_prod1, yield1);
   
@@ -154,7 +152,8 @@ int main(int argc, char *argv[]) {
   //RooAddPdf pdf_add("pdf_add", "added pdf", RooArgList(*pdf1, *pdf2, *pdf3), RooArgList(coeff1, coeff2));
   //RooAddPdf pdf_add("pdf_add", "added pdf", *pdf1, *pdf2, coeff1);
   
-  cfg_tfac.set_generation_pdf(pdf2);
+  ws->import(pdf_add);
+  
   RooArgSet argset_obs("argset_obs");
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
   argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "")));
@@ -166,9 +165,18 @@ int main(int argc, char *argv[]) {
   tag->defineType("b0_bar", -1);
   ws->import(*tag);
   tag = ws->cat("tag");
+    
   argset_obs.add(*tag);
+  ws->defineSet("argset_obs",argset_obs);  
   
-  cfg_tfac.set_argset_generation_observables(&argset_obs);
+  ws->Print("t");
+  
+  //cfg_tfac.set_generation_pdf(ws->pdf("test2"));
+  //cfg_tfac.set_argset_generation_observables(&argset_obs);
+  
+  cfg_tfac.set_workspace(ws);
+  cfg_tfac.set_generation_pdf_workspace("test2");
+  cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
   
   ToyFactoryStd tfac(cfg_com, cfg_tfac);
   
