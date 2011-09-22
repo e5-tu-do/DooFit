@@ -109,7 +109,7 @@ void ToyFactoryStdConfig::PrintOptions() const {
   }
   
   scfg << "Observables to generate directly: ";
-  if (argset_generation_observables_ != NULL) {
+  if (argset_generation_observables() != NULL) {
     TIterator* arg_it = argset_generation_observables()->createIterator();
     RooAbsArg* arg = NULL;
     bool first = true;
