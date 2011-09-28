@@ -40,9 +40,11 @@ namespace boost { namespace program_options {
 // from project
 #ifndef __CINT__
 #include "Config/Config.h"
+#include "Config/ConfigAbstractTypeCommaSeparated.h"
 #else
 // ROOT Cint hacks...
 #include "../../src/Config/Config.h"
+#include "../../src/Config/ConfigAbstractTypeCommaSeparated.h"
 #endif /* __CINT __ */
 
 // forward declarations

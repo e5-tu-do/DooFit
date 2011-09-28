@@ -1,24 +1,25 @@
-// STL
+#include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
+
+// from STL
 #include <iostream>
 
-// Boost
+// from Boost
 
-// ROOT
+// from ROOT
 #include "TString.h"
 
-// RooFit
+// from RooFit
 #include "RooAbsReal.h"
 #include "RooRealVar.h"
 #include "RooWorkspace.h"
 
-// RooFit PDFs
+// RooFit PDFs from RooFit
 #include "RooGaussian.h"
 
 // RooFit PDFs from Project 
 
 // from Project
 #include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
-#include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 
 
 using namespace std;
