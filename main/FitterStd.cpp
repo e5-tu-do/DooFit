@@ -15,11 +15,19 @@
 
 #include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 
-int main(){
+int main(int argc, char *argv[]){
   // Test Builder
-  CommonConfig cfg_com("cfg_com");
-  BuilderStdConfig cfg_bld("cfg_bld");
+  CommonConfig cfg_com("common");
+  cfg_com.InitializeOptions(argc, argv);
+  
+  BuilderStdConfig cfg_bld("builder");
+  cfg_bld.InitializeOptions(cfg_com);
+  
+  cfg_com.CheckHelpFlagAndPrintHelp();
+  
   BuilderStd bld(cfg_com,cfg_bld);
+  
+
   
   
   RooWorkspace* ws = new RooWorkspace("ws");

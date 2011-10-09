@@ -6,6 +6,9 @@
 #include <iostream>
 
 // Boost
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/info_parser.hpp>
+
 
 // ROOT
 
@@ -16,6 +19,7 @@
 
 using namespace std;
 namespace po = boost::program_options;
+namespace pt = boost::property_tree;
 
 BuilderStdConfig::BuilderStdConfig(const std::string& name) :
 Config(name)
@@ -34,4 +38,9 @@ void BuilderStdConfig::DefineOptions() {
 
 void BuilderStdConfig::LoadOptions() {
   
+}
+
+/** BAUSTELLE */
+void BuilderStdConfig::load(const std::string &filename){
+  pt::ptree pt;
 }

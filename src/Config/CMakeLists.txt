@@ -5,8 +5,11 @@ add_library(CommonConfig CommonConfig.cpp CommonConfig.h ${CommonConfigDict})
 
 root_generate_dictionaries(ConfigAbstractTypeCommaSeparatedDict ConfigAbstractTypeCommaSeparated.h)
 root_generate_dictionaries(DiscreteProbabilityDistributionDict DiscreteProbabilityDistribution.h)
+root_generate_dictionaries(ConfigCstStringVectorDict ConfigCstStringVector.h)
 add_library(ConfigHelper 
 ConfigAbstractTypeCommaSeparated.cpp ConfigAbstractTypeCommaSeparated.h ${ConfigAbstractTypeCommaSeparatedDict}
 DiscreteProbabilityDistribution.h DiscreteProbabilityDistribution.cpp ${DiscreteProbabilityDistributionDict}
+ConfigCstStringVector.h ConfigCstStringVector.cpp ${ConfigCstStringVectorDict}
 )
+
 

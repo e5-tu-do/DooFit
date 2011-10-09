@@ -72,12 +72,21 @@ class BuilderStdConfig : public Config {
   void PrintOptions() const;
   ///@}
   
+  /** BAUSTELLE */
+  void load(const std::string &filename);
+  void save(const std::string &filename);
+  
  private:
   /** @name Actual options
    *  The actual options members.
    */
   ///@{
   ///@}
+
+  std::vector<std::string> categories_;
+  std::vector<std::string> components_;
+  
+  
 };
 
 #endif // BUILDERSTDCONFIG_h
