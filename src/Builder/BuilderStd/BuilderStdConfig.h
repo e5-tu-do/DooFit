@@ -40,6 +40,10 @@ class BuilderStdConfig : public Config {
    */
   ~BuilderStdConfig();
   
+  /** BAUSTELLE, to be moved to protected or private */
+  void load(const std::string &filename);
+  void save(const std::string &filename);
+  
  protected:
   /** @name Virtual functions
    *  Implementation of pure virtual functions.
@@ -72,9 +76,7 @@ class BuilderStdConfig : public Config {
   void PrintOptions() const;
   ///@}
   
-  /** BAUSTELLE */
-  void load(const std::string &filename);
-  void save(const std::string &filename);
+
   
  private:
   /** @name Actual options
@@ -85,6 +87,18 @@ class BuilderStdConfig : public Config {
 
   std::vector<std::string> categories_;
   std::vector<std::string> components_;
+  std::vector<std::string> dimensions_;
+  
+  // function to correctly interpret lists of strings in property-tree
+  template<typename T>
+  std::vector<T> to_array(const std::string& s)
+  {
+    std::vector<T> result;
+    std::stringstream ss(s);
+    std::string item;
+    while(std::getline(ss, item, ',')) result.push_back(boost::lexical_cast<T>(item));
+    return result;
+  }
   
   
 };

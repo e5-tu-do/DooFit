@@ -22,6 +22,7 @@ int main(int argc, char *argv[]){
   
   BuilderStdConfig cfg_bld("builder");
   cfg_bld.InitializeOptions(cfg_com);
+  cfg_bld.load("TestInfoFile.txt");
   
   cfg_com.CheckHelpFlagAndPrintHelp();
   

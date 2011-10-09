@@ -6,6 +6,7 @@
 #include <iostream>
 
 // Boost
+#include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
@@ -43,4 +44,10 @@ void BuilderStdConfig::LoadOptions() {
 /** BAUSTELLE */
 void BuilderStdConfig::load(const std::string &filename){
   pt::ptree pt;
+//  pt::read_info(filename, pt);
+//  
+//  categories_ = to_array<std::string>(pt.get<std::string>("Components"));
+//  BOOST_FOREACH(string category, categories_){
+//    cout << category << endl;
+//  }
 }
