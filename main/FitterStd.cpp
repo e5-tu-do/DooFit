@@ -10,8 +10,8 @@
 // from Project
 #include "Config/CommonConfig.h"
 
-#include "Builder/BuilderStd/BuilderStd.h"
-#include "Builder/BuilderStd/BuilderStdConfig.h"
+#include "Builder/BuilderS2b/BuilderS2b.h"
+#include "Builder/BuilderS2b/BuilderS2bConfig.h"
 
 #include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 
@@ -20,16 +20,12 @@ int main(int argc, char *argv[]){
   CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
   
-  BuilderStdConfig cfg_bld("builder");
+  BuilderS2bConfig cfg_bld("builder");
   cfg_bld.InitializeOptions(cfg_com);
-  cfg_bld.load("TestInfoFile.txt");
   
   cfg_com.CheckHelpFlagAndPrintHelp();
   
-  BuilderStd bld(cfg_com,cfg_bld);
-  
-
-  
+  BuilderS2b bld(cfg_com,cfg_bld);
   
   RooWorkspace* ws = new RooWorkspace("ws");
   Pdf2WsStd::Mass::Gaussian(ws, "test", "test","mass","mittelwert", "abweichung");

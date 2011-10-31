@@ -7,6 +7,9 @@
 
 BuilderS2b::BuilderS2b(const CommonConfig& cfg_com, const BuilderS2bConfig& cfg_bld){
   
+  
+  
+  
 }
 
 BuilderS2b::~BuilderS2b(){

@@ -14,13 +14,24 @@ class CommonConfig;
 class BuilderS2bConfig;
 
 class BuilderS2b{
-public:
+ public:
   BuilderS2b(const CommonConfig& cfg_com, const BuilderS2bConfig& cfg_bld);
   ~BuilderS2b();
   
-protected:
+  void build();
   
-private:
+ protected:
+  
+ private:
+  void build_vars();
+  void build_special_pars();
+  
+  void build_mass();
+  void build_omega();
+  void build_proptime_resol();
+  void build_proptime();
+  
+  
 };
 
 

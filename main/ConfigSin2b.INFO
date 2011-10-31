@@ -1,0 +1,21 @@
+; A comment
+
+Variables
+{
+  Mass
+  {
+    name "varMass"
+    desc "Reconstructed Mass"
+    low   5100
+    high  5300
+    unit "MeV/c^{2}"
+  }
+}
+
+CompSig "Signal Component" 
+{   
+  Mass
+  {
+    pdftype "Gaussian"
+  }
+}
