@@ -264,10 +264,12 @@ RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<DiscreteProb
         double* cum_probs     = new double[num_values];
         double* values        = new double[num_values];
         int*    num_generated = new int[num_values];
+        
         int j = 0;
         for (std::vector<std::pair<double,double> >::const_iterator it_prob = prob_map.begin(); it_prob != prob_map.end(); ++it_prob) {
-          cum_probs[j] = (*it_prob).second;
-          values[j] = (*it_prob).first;
+          cum_probs[j]     = (*it_prob).second;
+          values[j]        = (*it_prob).first;
+          num_generated[j] = 0;
           ++j;
         }
         
