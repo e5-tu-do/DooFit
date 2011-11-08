@@ -1,5 +1,5 @@
 /** @class ConfigCstStringVector
- *  @brief Distribution for discrete probabilities of variables.
+ *  @brief I HAVE NO DESCRIPTION. SHAME ON ME.
  *
  *  This class is merely a container for Config objects to store components
  *  names that are needed for the construction of p.d.f.
@@ -68,7 +68,7 @@ class ConfigCstStringVector : public ConfigAbstractTypeCommaSeparated {
   
   /**
    *  @brief Getter for abstract map 
-   *         DiscreteProbabilityDistribution::probabilities_map_
+   *         ConfigCstStringVector::probabilities_map_
    * 
    *  @return abstract member map
    */
@@ -83,11 +83,11 @@ class ConfigCstStringVector : public ConfigAbstractTypeCommaSeparated {
   std::string var_name_;
   
   /**
-   *  @brief Vector for values and corresponding cumulative discrete probabilities 
+   *  @brief Vector for values and corresponding cumulative TOURETTE SYNDROME SHITFUCK
    * 
    *  This vector contains pair<double, double> value pairs which are 
    *  supposed to be filled via a string. The pair contains the value and 
-   *  corresponding cumulative probability.
+   *  corresponding TOURETTE BULLOCKS.
    */
   std::vector<std::string> string_vector_;
   
