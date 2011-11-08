@@ -33,7 +33,7 @@ RooGaussian* Pdf2WsStd::Mass::Gaussian(RooWorkspace* ws,
   // Check if object with name already exists on workspace. If so, stop and exit!
   if (ws->obj(pdf_name) != NULL){
     cerr << "Pdf2WsStd::Mass::Gaussian found an object with name " << pdf_name
-    << " on the workspace. Thus, creation of pdf with same name impossible! Exiting!" << endl;
+    << " on the workspace. Thus, creation of pdf with same name impossible!" << endl;
     throw;
   }
   

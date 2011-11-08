@@ -14,8 +14,9 @@ Variables
 
 CompSig "Signal Component" 
 {   
-  Mass
+  Mass "Gaussian"
   {
-    pdftype "Gaussian"
+    mean  "mean,m_0,5279,5200,5300,MeV/c^{2}"
+    sigma "sigma,#sigma,10,20,MeV/c^{2}"    
   }
 }
