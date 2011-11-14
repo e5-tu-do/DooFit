@@ -1,0 +1,1 @@
+add_library(PdfsMass DimMass.cpp DimMass.h)
