@@ -23,7 +23,7 @@ Dimensions
 ;  }
 }
 
-Categories ;Desc?
+Categories 
 { 
   Tag     "varTag"
   {
@@ -41,43 +41,14 @@ Categories ;Desc?
     types "t,1;u,0"
   }
 }
+
 SuperCategories
+{
   TriggerTag "catTrigTag"
   {
     desc    "Combined Trigger and Tagging category"
     subcats "catTrigger,catTagged"
-  } 
-  
-}
-
-; SYNTAX????
-PdfFull "pdfFull"
-{
-  Desc     "P(m)"
-  Simcats  None
-  Extended true 
-  
-  Components{
-    Sig "pdfSig"
-    { 
-      desc     "P_{Sig}"
-      Extended true
-      Dimensions{
-        varMass     "Gaussian"
-        varMassDau1 "Gaussian"
-      }
-    }
-    Pbg "pdfPbg"
-    {
-      varMass     "Gaussian"
-      varMassDau1 "Gaussian"
-    }
-    Lbg "pdfLbg"
-    {
-      varMass     "=PromptBkg"
-      vasMassDau1 "=Signal"
-    }
-  }
+  }  
 }
 
 
@@ -88,7 +59,7 @@ PdfFull "pdfFull"
   Simcats     "catTrigTrag"
   PdfsForCategories
   {
-    {B;t} "pdfFullBt"
+    Bt "pdfFullBt"
     {
       desc        "P_{B,t}"
       Extended    false
@@ -98,7 +69,8 @@ PdfFull "pdfFull"
         { 
           desc          "P_{Sig}"
           Extended      true
-          Dimensions{
+          Dimensions
+          {
             varMass     "Gaussian"
             varMassDau1 "Gaussian"
           }
@@ -126,3 +98,34 @@ PdfFull "pdfFull"
     }
   }
 } 
+
+
+;PdfFull "pdfFull"
+;{
+;  Desc     "P(m)"
+;  Simcats  None
+;  Extended true 
+;  Components
+;  {
+;    Sig "pdfSig"
+;    { 
+;      desc     "P_{Sig}"
+;      Extended true
+;      Dimensions
+;      {
+;        varMass     "Gaussian"
+;        varMassDau1 "Gaussian"
+;      }
+;    }
+;    Pbg "pdfPbg"
+;    {
+;      varMass     "Gaussian"
+;      varMassDau1 "Gaussian"
+;    }
+;    Lbg "pdfLbg"
+;    {
+;      varMass     "=PromptBkg"
+;      vasMassDau1 "=Signal"
+;    }
+;  }
+;}
