@@ -1,1 +1,1 @@
-add_library(PdfsCommon AbsDimension.cpp AbsDimension.h AbsDimensionReal.cpp AbsDimensionReal.h AbsDimensionCat.cpp AbsDimensionCat.cpp AbsPdf.cpp AbsPdf.h SimCategory.cpp SimCategory.h Component.cpp Component.h)
+add_library(Builder_Standard_PdfsCommon AbsDimension.cpp AbsDimension.h AbsDimensionReal.cpp AbsDimensionReal.h AbsDimensionCat.cpp AbsDimensionCat.cpp AbsPdf.cpp AbsPdf.h SimCategory.cpp SimCategory.h Component.cpp Component.h)
