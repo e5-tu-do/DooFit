@@ -1,5 +1,5 @@
-#ifndef ABSPDF_H
-#define ABSPDF_H
+#ifndef BUILDER_STANDARD_ABSPDF_H
+#define BUILDER_STANDARD_ABSPDF_H
 
 // from boost
 #include <boost/property_tree/ptree.hpp>
@@ -29,4 +29,4 @@ class AbsPdf{
 
 }}
 
-#endif // ABSPDF_H
+#endif // BUILDER_STANDARD_ABSPDF_H

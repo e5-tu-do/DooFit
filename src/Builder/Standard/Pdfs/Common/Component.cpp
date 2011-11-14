@@ -19,6 +19,7 @@ using namespace Builder::Standard;
 Component::Component() :
     initialized_(false)
   , name_("DummyCompName")
+  , dimensions_(NULL)
 {
   
 }
@@ -27,7 +28,7 @@ Component::~Component(){
   
 }
 
-void Component::Initialize( const ptree::value_type &pt_head, const map< string, shared_ptr<AbsDimension> > &map_dimensions )
+void Component::Initialize( const ptree::value_type &pt_head, map< string, shared_ptr<AbsDimension> >* map_dimensions )
 {
   // check if already initialized
   if (initialized_){
@@ -39,8 +40,9 @@ void Component::Initialize( const ptree::value_type &pt_head, const map< string,
   }
   
   
-  name_    = pt_head.second.get_value<string>();
+  name_       = pt_head.second.get_value<string>();
+  dimensions_ = map_dimensions;
   
   ptree pt = pt_head.second;
-
+  
 }

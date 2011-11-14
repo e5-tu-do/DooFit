@@ -1,5 +1,5 @@
-#ifndef ABSDIMENSION_H
-#define ABSDIMENSION_H
+#ifndef BUILDER_STANDARD_ABSDIMENSION_H
+#define BUILDER_STANDARD_ABSDIMENSION_H
 
 // from STL
 #include <string>
@@ -42,4 +42,4 @@ class AbsDimension{
 
 }}
 
-#endif // ABSDIMENSION_H
+#endif // BUILDER_STANDARD_ABSDIMENSION_H

@@ -39,6 +39,8 @@ void Constructor::load( const string& file_input ){
   // parse file input.
   ParseFileInput( file_input );
   CreateDimensions();
+//  CreateCategories();
+//  CreateSuperCategories();
   
   // Testing ground, to be put into a function
   bpt::ptree tree_simcategories = tree_main_.get_child("SimCategories");

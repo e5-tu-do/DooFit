@@ -1,5 +1,5 @@
-#ifndef DIMMASS_H
-#define DIMMASS_H
+#ifndef BUILDER_STANDARD_DIMMASS_H
+#define BUILDER_STANDARD_DIMMASS_H
 
 // from Project
 #include "Builder/Standard/Pdfs/Common/AbsDimensionReal.h"
@@ -15,4 +15,4 @@ class DimMass : public AbsDimensionReal{
 
 }}
 
-#endif // DIMMASS_H
+#endif // BUILDER_STANDARD_DIMMASS_H

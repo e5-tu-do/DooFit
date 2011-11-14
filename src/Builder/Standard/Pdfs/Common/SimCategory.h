@@ -1,5 +1,5 @@
-#ifndef SIMCATEGORY_H
-#define SIMCATEGORY_H
+#ifndef BUILDER_STANDARD_SIMCATEGORY_H
+#define BUILDER_STANDARD_SIMCATEGORY_H
 
 // from STL
 #include <map>
@@ -26,4 +26,4 @@ class SimCategory{
 
 
 
-#endif // SIMCATEGORY_H
+#endif // BUILDER_STANDARD_SIMCATEGORY_H

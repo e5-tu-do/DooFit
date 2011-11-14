@@ -1,5 +1,5 @@
-#ifndef COMPONENT_H
-#define COMPONENT_H
+#ifndef BUILDER_STANDARD_COMPONENT_H
+#define BUILDER_STANDARD_COMPONENT_H
 
 // from STL
 #include <map>
@@ -18,7 +18,7 @@ class Component{
   Component();
   ~Component();
   
-  void Initialize( const boost::property_tree::ptree::value_type &pt_head, const std::map< std::string,boost::shared_ptr<AbsDimension> > &map_dimensions );
+  void Initialize( const boost::property_tree::ptree::value_type &pt_head, std::map< std::string,boost::shared_ptr<AbsDimension> >* map_dimensions );
   
  protected:
   
@@ -27,9 +27,9 @@ class Component{
   bool extended_;
   
   std::string name_;
-  //std::map<std::string, AbsDimension*> dimensions_;
+  std::map< std::string,boost::shared_ptr<AbsDimension> >* dimensions_;
 };
 
 }}
 
-#endif // COMPONENT_H
+#endif // BUILDER_STANDARD_COMPONENT_H
