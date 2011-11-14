@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
   //cfg_tfac.set_argset_generation_observables(&argset_obs);
   
   cfg_tfac.set_workspace(ws);
-  cfg_tfac.set_generation_pdf_workspace("test2");
+  cfg_tfac.set_generation_pdf_workspace("pdf_add");
   cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
   
   ToyFactoryStd tfac(cfg_com, cfg_tfac);

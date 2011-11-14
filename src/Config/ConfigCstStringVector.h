@@ -1,5 +1,5 @@
 /** @class ConfigCstStringVector
- *  @brief I HAVE NO DESCRIPTION. SHAME ON ME.
+ *  @brief TOURETTE SUCKER, I HAVE NO DESCRIPTION. SHAME ON ME.
  *
  *  This class is merely a container for Config objects to store components
  *  names that are needed for the construction of p.d.f.

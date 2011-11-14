@@ -91,7 +91,7 @@ RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argse
   RooDataSet* data = NULL;
   
   if (PdfIsDecomposable(pdf)) {
-    // pdf needs to be decomposed and generated piece-wise
+    // pdf needs to be decomposed and generated piece-wise 
     if (PdfIsExtended(pdf)) {
       RooRealVar& yield = *((RooRealVar*)pdf.findServer(1));
       RooAbsPdf& sub_pdf = *((RooAbsPdf*)pdf.findServer(0));
