@@ -30,8 +30,8 @@
 #include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 #include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
 
-#include "ToyFactory/ToyFactoryStd/ToyFactoryStd.h"
-#include "ToyFactory/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "Toy/ToyFactoryStd/ToyFactoryStd.h"
+#include "Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
 #include "Utils/MsgStream.h"
 

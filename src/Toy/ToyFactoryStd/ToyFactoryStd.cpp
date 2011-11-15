@@ -1,4 +1,4 @@
-#include "ToyFactory/ToyFactoryStd/ToyFactoryStd.h"
+#include "Toy/ToyFactoryStd/ToyFactoryStd.h"
 
 // STL
 #include <cstring>
@@ -27,7 +27,7 @@
 
 // from Project
 #include "Config/CommonConfig.h"
-#include "ToyFactory/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 #include "Utils/MsgStream.h"
 
 using namespace ROOT;

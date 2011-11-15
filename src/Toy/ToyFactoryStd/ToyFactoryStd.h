@@ -19,7 +19,7 @@
 #include "RooAbsPdf.h"
 
 // from project
-#include "ToyFactory/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
 // forward declarations
 class CommonConfig; 

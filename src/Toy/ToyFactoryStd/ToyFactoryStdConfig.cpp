@@ -1,4 +1,4 @@
-#include "ToyFactory/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
 // STL
 #include <string>
