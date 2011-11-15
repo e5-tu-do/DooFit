@@ -1,20 +1,3 @@
-/** @class DiscreteProbabilityDistribution
- *  @brief Distribution for discrete probabilities of variables.
- *
- *  This class is merely a container for Config objects to store the discrete
- *  probability distribution of a certain variable. As it's inheriting from 
- *  ConfigAbstractTypeCommaSeparated, parsing from command line or config file
- *  is possible. 
- *
- *  It contains a variable name and a list of value and corresponding 
- *  probability pairs. String representation is 
- *  
- *  @verbatim var_name,value1,prob1,value2,prob2,...,valueN,probN @endverbatim
- * 
- *  @see ConfigAbstractTypeCommaSeparated
- *  @see ConfigTestAbstractType
- */
-
 #ifndef DISCRETEPROBABILTYDISTRIBUTION_h
 #define DISCRETEPROBABILTYDISTRIBUTION_h
 
@@ -27,6 +10,23 @@
 #endif /* __CINT __ */
 
 namespace Config {
+  /** @class DiscreteProbabilityDistribution
+   *  @brief Distribution for discrete probabilities of variables.
+   *
+   *  This class is merely a container for Config objects to store the discrete
+   *  probability distribution of a certain variable. As it's inheriting from 
+   *  ConfigAbstractTypeCommaSeparated, parsing from command line or config file
+   *  is possible. 
+   *
+   *  It contains a variable name and a list of value and corresponding 
+   *  probability pairs. String representation is 
+   *  
+   *  @verbatim var_name,value1,prob1,value2,prob2,...,valueN,probN @endverbatim
+   * 
+   *  @see ConfigAbstractTypeCommaSeparated
+   *  @see ConfigTestAbstractType
+   */
+  
   class DiscreteProbabilityDistribution : public ConfigAbstractTypeCommaSeparated {
   public:
     /**
