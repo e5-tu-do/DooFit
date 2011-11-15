@@ -40,11 +40,11 @@ namespace boost { namespace program_options {
 // from project
 #ifndef __CINT__
 #include "Config/AbsConfig.h"
-#include "Config/ConfigAbstractTypeCommaSeparated.h"
+#include "Config/AbsTypeCommaSeparated.h"
 #else
 // ROOT Cint hacks...
 #include "../../src/Config/AbsConfig.h"
-#include "../../src/Config/ConfigAbstractTypeCommaSeparated.h"
+#include "../../src/Config/AbsTypeCommaSeparated.h"
 #endif /* __CINT __ */
 
 // forward declarations
@@ -159,7 +159,7 @@ class ConfigTest : public Config::AbsConfig {
  *  @see std::ostream& operator<<(std::ostream&, const ConfigTestAbstractType&)
  *  @see ConfigTestSecond
  */
-class ConfigTestAbstractType : public Config::ConfigAbstractTypeCommaSeparated {
+class ConfigTestAbstractType : public Config::AbsTypeCommaSeparated {
 public:
   /**
    *  @brief Default constructor for ConfigTestAbstractType
@@ -187,7 +187,7 @@ public:
    *
    *  This function is used to print the object. Calling this function directly
    *  is not necessary as it can be streamed directly to any ostream via 
-   *  operator<<(std::ostream&, const ConfigAbstractTypeCommaSeparated&).
+   *  operator<<(std::ostream&, const AbsTypeCommaSeparated&).
    *
    *  @param os ostream to print to
    */

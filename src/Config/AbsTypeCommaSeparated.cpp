@@ -1,4 +1,4 @@
-#include "Config/ConfigAbstractTypeCommaSeparated.h"
+#include "Config/AbsTypeCommaSeparated.h"
 
 // from STL
 #include <string>
@@ -10,7 +10,7 @@
 using namespace std;
 using namespace Config;
 
-vector<string> ConfigAbstractTypeCommaSeparated::DecomposeString(string str) const {
+vector<string> AbsTypeCommaSeparated::DecomposeString(string str) const {
   vector<string> elements;
   
   using namespace boost;
@@ -24,14 +24,14 @@ vector<string> ConfigAbstractTypeCommaSeparated::DecomposeString(string str) con
   return elements;
 }
 
-std::istream& operator>>(std::istream& is, ConfigAbstractTypeCommaSeparated& arg) {
+std::istream& operator>>(std::istream& is, AbsTypeCommaSeparated& arg) {
   std::string s;
   is >> s;
   arg.Parse(s);
   return is;
 }
 
-std::ostream& operator<<(std::ostream& os, const ConfigAbstractTypeCommaSeparated& arg) {
+std::ostream& operator<<(std::ostream& os, const AbsTypeCommaSeparated& arg) {
   arg.Print(os);
   return os;
 }

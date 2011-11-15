@@ -3,10 +3,10 @@
 
 // from project
 #ifndef __CINT__
-#include "Config/ConfigAbstractTypeCommaSeparated.h"
+#include "Config/AbsTypeCommaSeparated.h"
 #else
 // ROOT Cint hacks...
-#include "../Config/ConfigAbstractTypeCommaSeparated.h"
+#include "../Config/AbsTypeCommaSeparated.h"
 #endif /* __CINT __ */
 
 namespace Config {
@@ -15,7 +15,7 @@ namespace Config {
    *
    *  This class is merely a container for Config objects to store the discrete
    *  probability distribution of a certain variable. As it's inheriting from 
-   *  ConfigAbstractTypeCommaSeparated, parsing from command line or config file
+   *  AbsTypeCommaSeparated, parsing from command line or config file
    *  is possible. 
    *
    *  It contains a variable name and a list of value and corresponding 
@@ -23,11 +23,11 @@ namespace Config {
    *  
    *  @verbatim var_name,value1,prob1,value2,prob2,...,valueN,probN @endverbatim
    * 
-   *  @see ConfigAbstractTypeCommaSeparated
+   *  @see AbsTypeCommaSeparated
    *  @see ConfigTestAbstractType
    */
   
-  class DiscreteProbabilityDistribution : public ConfigAbstractTypeCommaSeparated {
+  class DiscreteProbabilityDistribution : public AbsTypeCommaSeparated {
   public:
     /**
      *  @brief Default constructor for DiscreteProbabilityDistribution
@@ -60,7 +60,7 @@ namespace Config {
      *
      *  This function is used to print the object. Calling this function directly
      *  is not necessary as it can be streamed directly to any ostream via 
-     *  operator<<(std::ostream&, const ConfigAbstractTypeCommaSeparated&).
+     *  operator<<(std::ostream&, const AbsTypeCommaSeparated&).
      *
      *  @param os ostream to print to
      */

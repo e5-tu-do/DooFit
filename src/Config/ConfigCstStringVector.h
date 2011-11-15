@@ -4,7 +4,7 @@
  *  This class is merely a container for Config objects to store components
  *  names that are needed for the construction of p.d.f.
  * 
- *  @see ConfigAbstractTypeCommaSeparated
+ *  @see AbsTypeCommaSeparated
  */
 
 #ifndef CONFIGCSTSTRINGVECTOR_H
@@ -16,14 +16,14 @@
 
 // from project
 #ifndef __CINT__
-#include "Config/ConfigAbstractTypeCommaSeparated.h"
+#include "Config/AbsTypeCommaSeparated.h"
 #else
 // ROOT Cint hacks...
-#include "../Config/ConfigAbstractTypeCommaSeparated.h"
+#include "../Config/AbsTypeCommaSeparated.h"
 #endif /* __CINT __ */
 
 namespace Config {
-  class ConfigCstStringVector : public ConfigAbstractTypeCommaSeparated {
+  class ConfigCstStringVector : public AbsTypeCommaSeparated {
   public:
     /**
      *  @brief Default constructor for ConfigCstStringVector
@@ -55,7 +55,7 @@ namespace Config {
      *
      *  This function is used to print the object. Calling this function directly
      *  is not necessary as it can be streamed directly to any ostream via 
-     *  operator<<(std::ostream&, const ConfigAbstractTypeCommaSeparated&).
+     *  operator<<(std::ostream&, const AbsTypeCommaSeparated&).
      *
      *  @param os ostream to print to
      */

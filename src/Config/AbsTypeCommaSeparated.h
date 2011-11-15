@@ -1,11 +1,11 @@
-/** @class Config::ConfigAbstractTypeCommaSeparated
+/** @class Config::AbsTypeCommaSeparated
  *  @brief Abstract base class for complex Config members with comma-separated
  *         string representation
  *
  *  This abstract base class provides support for complex Config members that 
  *  have a comma-separated string representation for boost::program_options.
  *  The base class provides support for decomposition of the comma separated 
- *  list through ConfigAbstractTypeCommaSeparated::DecomposeString(std::string).
+ *  list through AbsTypeCommaSeparated::DecomposeString(std::string).
  */
 
 #ifndef CONFIGABSTRACTTYPECOMMASEPARATED_h
@@ -19,12 +19,12 @@
 #include "TObject.h"
 
 namespace Config {
-  class ConfigAbstractTypeCommaSeparated : public TObject {
+  class AbsTypeCommaSeparated : public TObject {
   public:
     /**
      *  \brief Destructor.
      */
-    virtual ~ConfigAbstractTypeCommaSeparated() {}
+    virtual ~AbsTypeCommaSeparated() {}
     
     /**
      *  @brief Function to parse the string into own members
@@ -42,7 +42,7 @@ namespace Config {
      *
      *  This function is used to print the object. Calling this function directly
      *  is not necessary as it can be streamed directly to any ostream via 
-     *  operator<<(std::ostream&, const ConfigAbstractTypeCommaSeparated&). Avoid
+     *  operator<<(std::ostream&, const AbsTypeCommaSeparated&). Avoid
      *  adding unnecessary newline characters at the end.
      *
      *  @param os ostream to print to
@@ -65,35 +65,35 @@ namespace Config {
     /**
      *  @brief ClassDef statement for CINT dictionary generation
      */
-    ClassDef(ConfigAbstractTypeCommaSeparated,1);
+    ClassDef(AbsTypeCommaSeparated,1);
   };
 }
   
 /**
- *  @brief Input stream operator for ConfigAbstractTypeCommaSeparated
+ *  @brief Input stream operator for AbsTypeCommaSeparated
  *
  *  This function is used to pass string representations of 
- *  ConfigAbstractTypeCommaSeparated via an istream into a 
- *  ConfigAbstractTypeCommaSeparated object.
+ *  AbsTypeCommaSeparated via an istream into a 
+ *  AbsTypeCommaSeparated object.
  *
  *  @param is the incoming input stream
- *  @param arg the ConfigAbstractTypeCommaSeparated to parse the string and fill 
+ *  @param arg the AbsTypeCommaSeparated to parse the string and fill 
  *             its members accordingly
  *  @return the rest of the input stream to pass along
  */
-std::istream& operator>>(std::istream& is, Config::ConfigAbstractTypeCommaSeparated& arg);
+std::istream& operator>>(std::istream& is, Config::AbsTypeCommaSeparated& arg);
 
 /**
- *  @brief Output stream operator for ConfigAbstractTypeCommaSeparated
+ *  @brief Output stream operator for AbsTypeCommaSeparated
  *
- *  This function is used to pass a ConfigAbstractTypeCommaSeparated object to 
+ *  This function is used to pass a AbsTypeCommaSeparated object to 
  *  an ostream for printing.
  *
  *  @param os the incoming output stream
- *  @param arg the ConfigAbstractTypeCommaSeparated to print
+ *  @param arg the AbsTypeCommaSeparated to print
  *  @return the rest of the output stream to pass along
  */
-std::ostream& operator<<(std::ostream& os, const Config::ConfigAbstractTypeCommaSeparated& arg);
+std::ostream& operator<<(std::ostream& os, const Config::AbsTypeCommaSeparated& arg);
 
 #endif // CONFIGABSTRACTTYPECOMMASEPARATED_h
 
