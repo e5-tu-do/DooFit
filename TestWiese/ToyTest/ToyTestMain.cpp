@@ -101,6 +101,8 @@ int main(int argc, char *argv[]) {
 //  
 //  sdebug << "C: " << sw.CpuTime() << ", R: " << sw.RealTime() << endmsg;
 
+  using namespace Toy;
+  
   CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
   
