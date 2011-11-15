@@ -24,7 +24,7 @@
 
 // forward declarations
 
-class BuilderS2bConfig : public Config {
+class BuilderS2bConfig : public Config::AbsConfig {
 public:
   /**
    *  \brief Standard constructor.

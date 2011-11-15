@@ -20,7 +20,7 @@ using namespace std;
 namespace po = boost::program_options;
 
 ConfigTest::ConfigTest(const std::string& name) :
-Config(name),
+Config::AbsConfig(name),
 my_test_switch_(false),
 my_test_int_(0)
 {
@@ -54,7 +54,7 @@ void ConfigTest::LoadOptions() {
 }
 
 ConfigTestSecond::ConfigTestSecond(const std::string& name) :
-Config(name),
+Config::AbsConfig(name),
 my_test_switch_(false),
 my_test_int_(0)
 {

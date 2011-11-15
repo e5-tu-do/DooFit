@@ -18,55 +18,57 @@
 // from ROOT
 #include "TObject.h"
 
-class ConfigAbstractTypeCommaSeparated : public TObject {
-public:
-  /**
-   *  \brief Destructor.
-   */
-  virtual ~ConfigAbstractTypeCommaSeparated() {}
+namespace Config {
+  class ConfigAbstractTypeCommaSeparated : public TObject {
+  public:
+    /**
+     *  \brief Destructor.
+     */
+    virtual ~ConfigAbstractTypeCommaSeparated() {}
+    
+    /**
+     *  @brief Function to parse the string into own members
+     *
+     *  This pure virtual function will be called to parse the string 
+     *  representation into own member variables. Calling this function is not 
+     *  necessary. It will be transparent though boost::program_options.
+     *
+     *  @param str string to parse
+     */
+    virtual void Parse(std::string str) = 0;
+    
+    /**
+     *  @brief Print this object to an std::ostream
+     *
+     *  This function is used to print the object. Calling this function directly
+     *  is not necessary as it can be streamed directly to any ostream via 
+     *  operator<<(std::ostream&, const ConfigAbstractTypeCommaSeparated&). Avoid
+     *  adding unnecessary newline characters at the end.
+     *
+     *  @param os ostream to print to
+     */
+    virtual void Print(std::ostream& os) const = 0;
+    
+  protected:  
+    /**
+     *  @brief Get string elements in vector.
+     *
+     *  Decompose the comma-separated string @a str into vector of strings.
+     *
+     *  @param str String to decompose
+     *  @return Decomposition of the comma-separated string as vector of strings.
+     */
+    std::vector<std::string> DecomposeString(std::string str) const;
+    
+  private:
+    
+    /**
+     *  @brief ClassDef statement for CINT dictionary generation
+     */
+    ClassDef(ConfigAbstractTypeCommaSeparated,1);
+  };
+}
   
-  /**
-   *  @brief Function to parse the string into own members
-   *
-   *  This pure virtual function will be called to parse the string 
-   *  representation into own member variables. Calling this function is not 
-   *  necessary. It will be transparent though boost::program_options.
-   *
-   *  @param str string to parse
-   */
-  virtual void Parse(std::string str) = 0;
-  
-  /**
-   *  @brief Print this object to an std::ostream
-   *
-   *  This function is used to print the object. Calling this function directly
-   *  is not necessary as it can be streamed directly to any ostream via 
-   *  operator<<(std::ostream&, const ConfigAbstractTypeCommaSeparated&). Avoid
-   *  adding unnecessary newline characters at the end.
-   *
-   *  @param os ostream to print to
-   */
-  virtual void Print(std::ostream& os) const = 0;
-  
-protected:  
-  /**
-   *  @brief Get string elements in vector.
-   *
-   *  Decompose the comma-separated string @a str into vector of strings.
-   *
-   *  @param str String to decompose
-   *  @return Decomposition of the comma-separated string as vector of strings.
-   */
-  std::vector<std::string> DecomposeString(std::string str) const;
-  
-private:
-  
-  /**
-   *  @brief ClassDef statement for CINT dictionary generation
-   */
-  ClassDef(ConfigAbstractTypeCommaSeparated,1);
-};
-
 /**
  *  @brief Input stream operator for ConfigAbstractTypeCommaSeparated
  *
@@ -79,7 +81,7 @@ private:
  *             its members accordingly
  *  @return the rest of the input stream to pass along
  */
-std::istream& operator>>(std::istream& is, ConfigAbstractTypeCommaSeparated& arg);
+std::istream& operator>>(std::istream& is, Config::ConfigAbstractTypeCommaSeparated& arg);
 
 /**
  *  @brief Output stream operator for ConfigAbstractTypeCommaSeparated
@@ -91,7 +93,7 @@ std::istream& operator>>(std::istream& is, ConfigAbstractTypeCommaSeparated& arg
  *  @param arg the ConfigAbstractTypeCommaSeparated to print
  *  @return the rest of the output stream to pass along
  */
-std::ostream& operator<<(std::ostream& os, const ConfigAbstractTypeCommaSeparated& arg);
+std::ostream& operator<<(std::ostream& os, const Config::ConfigAbstractTypeCommaSeparated& arg);
 
 #endif // CONFIGABSTRACTTYPECOMMASEPARATED_h
 

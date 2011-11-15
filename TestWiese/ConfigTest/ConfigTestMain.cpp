@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     config.CheckHelpFlagAndPrintHelp();
     
     // Print all set options for the user (optional).
-    Config::PrintAll();
+    Config::AbsConfig::PrintAll();
     
   } catch (std::exception& e) {
     // in case of parsing problems give an error message and throw exception further

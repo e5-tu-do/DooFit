@@ -50,7 +50,7 @@ namespace boost { namespace program_options {
 // forward declarations
 class ConfigTestAbstractType;
 
-class ConfigTest : public Config {
+class ConfigTest : public Config::AbsConfig {
  public:
   /**
    *  \brief Standard constructor.
@@ -159,7 +159,7 @@ class ConfigTest : public Config {
  *  @see std::ostream& operator<<(std::ostream&, const ConfigTestAbstractType&)
  *  @see ConfigTestSecond
  */
-class ConfigTestAbstractType : public ConfigAbstractTypeCommaSeparated {
+class ConfigTestAbstractType : public Config::ConfigAbstractTypeCommaSeparated {
 public:
   /**
    *  @brief Default constructor for ConfigTestAbstractType
@@ -233,7 +233,7 @@ private:
   ClassDef(ConfigTestAbstractType,1);
 };
 
-class ConfigTestSecond : public Config {
+class ConfigTestSecond : public Config::AbsConfig {
 public:
   /**
    *  \brief Standard constructor.

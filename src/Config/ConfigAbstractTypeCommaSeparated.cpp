@@ -8,6 +8,7 @@
 #include <boost/tokenizer.hpp>
 
 using namespace std;
+using namespace Config;
 
 vector<string> ConfigAbstractTypeCommaSeparated::DecomposeString(string str) const {
   vector<string> elements;

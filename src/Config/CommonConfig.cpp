@@ -18,12 +18,12 @@ using namespace std;
 namespace po = boost::program_options;
 
 CommonConfig::CommonConfig() :
-Config("empty_name")
+Config::AbsConfig("empty_name")
 {
 }
 
 CommonConfig::CommonConfig(const std::string& name) :
-Config(name)
+Config::AbsConfig(name)
 {
 }
 

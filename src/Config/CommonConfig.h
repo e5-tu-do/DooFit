@@ -29,7 +29,7 @@
 
 // forward declarations
 
-class CommonConfig : public Config {
+class CommonConfig : public Config::AbsConfig {
  public:
   /**
    *  @brief Default constructor for CommonConfig

@@ -8,6 +8,7 @@
 #include "Utils/MsgStream.h"
 
 using namespace std;
+using namespace Config;
 
 void ConfigCstStringVector::Parse(string str) {
   vector<string> elements = DecomposeString(str);

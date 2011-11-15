@@ -22,7 +22,7 @@ namespace po = boost::program_options;
 namespace pt = boost::property_tree;
 
 BuilderS2bConfig::BuilderS2bConfig(const std::string& name) :
-Config(name)
+Config::AbsConfig(name)
 {
 }
 

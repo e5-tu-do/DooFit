@@ -185,7 +185,7 @@ class ToyFactoryStd {
    *          must take care of proper deletion afterwards.
    *  @todo check for PDF arguments to be uncorrelated
    */
-  RooDataSet* GenerateDiscreteSample(const std::vector<DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield);
+  RooDataSet* GenerateDiscreteSample(const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield);
   ///@}
   
   /**

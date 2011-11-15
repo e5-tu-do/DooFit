@@ -26,7 +26,7 @@ using namespace std;
 namespace po = boost::program_options;
 
 ToyFactoryStdConfig::ToyFactoryStdConfig() : 
-Config("empty_name"),
+Config::AbsConfig("empty_name"),
 generation_pdf_(NULL),
 expected_yield_(0),
 argset_generation_observables_(NULL),
@@ -39,7 +39,7 @@ random_seed_(0)
 }
 
 ToyFactoryStdConfig::ToyFactoryStdConfig(const std::string& name) :
-Config(name),
+Config::AbsConfig(name),
 generation_pdf_(NULL),
 expected_yield_(0),
 argset_generation_observables_(NULL),
@@ -140,7 +140,7 @@ void ToyFactoryStdConfig::PrintOptions() const {
   
   
   
-  for (vector<DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities_.begin(); it != discrete_probabilities_.end(); ++it) {
+  for (vector<Config::DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities_.begin(); it != discrete_probabilities_.end(); ++it) {
     scfg << "Discrete probability: " << *it << endmsg;
   }
 }
@@ -157,7 +157,7 @@ void ToyFactoryStdConfig::DefineOptions() {
    "Name of PDF to generate for on linked workspace")
   (GetOptionString("argset_name_ws").c_str(), po::value<string>(&argset_generation_observables_workspace_),
    "Name of variables argset to generate for on linked workspace")
-  (GetOptionString("discrete_probabilities").c_str(), po::value<vector<DiscreteProbabilityDistribution> >(&discrete_probabilities_)->composing(), "Discrete probability distribution for variables (can be multiply defined). The string representation is var_name,value1,prob1,value2,prob2,...,valueN,probN");
+  (GetOptionString("discrete_probabilities").c_str(), po::value<vector<Config::DiscreteProbabilityDistribution> >(&discrete_probabilities_)->composing(), "Discrete probability distribution for variables (can be multiply defined). The string representation is var_name,value1,prob1,value2,prob2,...,valueN,probN");
   
   descs_visible_.push_back(generation);
 }

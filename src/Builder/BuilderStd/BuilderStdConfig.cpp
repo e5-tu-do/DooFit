@@ -23,7 +23,7 @@ namespace po = boost::program_options;
 namespace pt = boost::property_tree;
 
 BuilderStdConfig::BuilderStdConfig(const std::string& name) :
-Config(name)
+Config::AbsConfig(name)
 {
 }
 

@@ -39,7 +39,7 @@
 
 
 
-class ToyFactoryStdConfig : public Config {
+class ToyFactoryStdConfig : public Config::AbsConfig {
  public:
   /**
    *  @brief Default constructor for ToyFactoryStdConfig
@@ -93,7 +93,7 @@ class ToyFactoryStdConfig : public Config {
    *
    *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
    */
-  const std::vector<DiscreteProbabilityDistribution>& discrete_probabilities() const {return discrete_probabilities_;}
+  const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities() const {return discrete_probabilities_;}
   ///@}
   
   /** @name Setter actual options
@@ -195,7 +195,7 @@ class ToyFactoryStdConfig : public Config {
    *
    *  @param prop_dists vector of DiscreteProbabilityDistribution to use
    */
-  void set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>& prop_dists) {discrete_probabilities_ = prop_dists;}
+  void set_discrete_probabilities(const std::vector<Config::DiscreteProbabilityDistribution>& prop_dists) {discrete_probabilities_ = prop_dists;}
   /**
    *  \brief Add a discrete probability distribution
    *
@@ -209,7 +209,7 @@ class ToyFactoryStdConfig : public Config {
    *
    *  @param prop_dist DiscreteProbabilityDistribution to use
    */
-  void AddDiscreteProbability(const DiscreteProbabilityDistribution& prop_dist) {discrete_probabilities_.push_back(prop_dist);}
+  void AddDiscreteProbability(const Config::DiscreteProbabilityDistribution& prop_dist) {discrete_probabilities_.push_back(prop_dist);}
   ///@}
   
  protected:
@@ -296,7 +296,7 @@ private:
    *
    *  @see DiscreteProbabilityDistribution
    */
-  std::vector<DiscreteProbabilityDistribution> discrete_probabilities_;
+  std::vector<Config::DiscreteProbabilityDistribution> discrete_probabilities_;
   ///@}
   
   /**

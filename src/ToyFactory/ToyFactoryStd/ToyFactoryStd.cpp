@@ -62,7 +62,7 @@ RooDataSet* ToyFactoryStd::Generate() {
   RooDataSet* data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield());
   
   
-  const std::vector<DiscreteProbabilityDistribution>& discrete_probabilities = config_toyfactory_.discrete_probabilities();
+  const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities = config_toyfactory_.discrete_probabilities();
   
   RooDataSet* data_discrete = GenerateDiscreteSample(config_toyfactory_.discrete_probabilities(), *(config_toyfactory_.argset_generation_observables()), *(data->get()), data->numEntries());
   
@@ -221,7 +221,7 @@ RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet
   return data;
 }
 
-RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield) {
+RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield) {
   // Vector containing necessary information for discrete variable generation.
   // Tuple contents:
   //  1. The variable as RooAbsArg* itself
@@ -238,7 +238,7 @@ RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<DiscreteProb
   //  - add to relevant arg sets
   RooArgSet disc_argset;
   RooArgSet disc_cat_argset;
-  for (std::vector<DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities.begin(); it != discrete_probabilities.end(); ++it) {
+  for (std::vector<Config::DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities.begin(); it != discrete_probabilities.end(); ++it) {
     RooAbsArg* disc_var = config_toyfactory_.argset_generation_observables()->find((*it).var_name().c_str());
     
     if (disc_var == NULL) {
