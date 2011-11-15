@@ -1,152 +1,11 @@
-/** \class Config::AbsConfig
- *  \brief DooFit abstract Config base class.
+/** @namespace Config
  *
- *  This is the abstract base class for all DooFit config objects. It offers
- *  configuration via the boost::program_options package. All derived classes 
- *  \a must define AbsConfig::DefineOptions() and AbsConfig::LoadOptions() as well as
- *  the AbsConfig::PrintOptions() function.
+ *  @brief Config subsystem namespace.
  *
- *  Furthermore, the AbsConfig::help_flag_ option and AbsConfig::config_file_ should 
- *  be set by the derived class accordingly. AbsConfig::CheckHelpFlagAndPrintHelp()
- *  can be used to capture the set help flag and print a help message. Both \a 
- *  must be defined by the first AbsConfig object to be initialized.
+ *  This namespace contains all objects relevant for the Config system of 
+ *  DooFit, but not actual Config objects for other modules. These are to 
+ *  remain in the namespace of the module itself.
  *
- *  Also check if you need to implement a copy constructor inside your derived
- *  class (will be generated automatically by C++, but this might behave 
- *  incorrectly). A default (i.e. argumentless) constructor is not wanted in 
- *  general, but might be needed for ROOT CINT and .root file streaming (see 
- *  below).
- *
- *  Usage examples can be found in ConfigTest and ConfigTestSecond as well as in
- *  file ConfigTestMain.cpp.
- *
- *  @section defining Defining options to be parsed
- *
- *  Options for parsing are defined in AbsConfig::DefineOptions() using 
- *  boost::program_options::options_description. See boost documentation for 
- *  more details on that or ConfigTest and ConfigTestSecond for an example. The
- *  usage of AbsConfig::GetOptionString(std::string, std::string) is also 
- *  recommended to group options into sections defined by the config object's
- *  name.
- *
- *  @see Config::AbsConfig::desc_visible_
- *  @see Config::AbsConfig::desc_hidden_
- *
- *  Usage example:
- *
- *  @code
- *  void MyConfig::DefineOptions() {
- *    po::options_description* generic = new po::options_description("Generic options");
- *    generic->add_options()
- *    ("help", "produce help message")
- *    ("config-file", po::value<string>(&config_file_)->default_value(""), "config file to parse")
- *    (GetOptionString("my-test-switch","s").c_str(), po::value<bool>(&my_test_switch_)->default_value(false), "my test bool switch")
- *    (GetOptionString("my-test-int","i").c_str(), po::value<int>()->default_value(0), "my test integer");
- *  
- *    descs_visible_.push_back(generic);
- *  }
- *  @endcode
- *
- *  @section parsing Parsing command line and config file
- *
- *  Parsing command line and an optional config file (see Config::AbsConfig::config_file_)
- *  is very simple through Config::AbsConfig::InitializeOptions(const AbsConfig&) and 
- *  Config::AbsConfig::InitializeOptions(int, char* []). 
- *
- *  Usage example:
- *
- *  @code
- *  // instantiate first config object
- *  MyConfig1 config1("MyConfig1");
- *  
- *  // initialize config object via argc and argv
- *  config1.InitializeOptions(argc, argv);
- *  
- *  // instantiate second config object
- *  MyConfig2 config2("MyConfig2");
- *  
- *  // Initialize config object via previously initialized config object.
- *  // See Config::AbsConfig::InitializeOptions() why you should avoid initializing via 
- *  // argc and argv again.
- *  config2.InitializeOptions(config);
- *
- *  // instantiate third config object
- *  MyConfig3 config3("MyConfig3");
- *  
- *  // Initialize config object via previously initialized config object.
- *  // See Config::AbsConfig::InitializeOptions() why you should avoid initializing via 
- *  // argc and argv again.
- *  config3.InitializeOptions(config2);  
- *  
- *  // More or less mandatory step after initialization of all config objects.
- *  // Check if the help flag is set and (if so) print a help message.
- *  config1.CheckHelpFlagAndPrintHelp();
- *  
- *  // Print all set options for the user (optional).
- *  Config::AbsConfig::PrintAll();
- *  @endcode
- *
- *  @section loading Loading parsed options
- *
- *  Parsed options can be loaded into specific member variables via 
- *  Config::AbsConfig::LoadOptions(). Again, see boost documentation on how to get the 
- *  parsed options.
- *
- *  Usage example:
- *
- *  @code
- *  void MyConfig::LoadOptions() {
- *    set_my_test_int(var_map_[GetOptionString("my-test-int")].as<int>());
- *    
- *    if (var_map_.count("help")) help_flag_ = true;
- *  }
- *  @endcode
- *
- *  @section root-files ROOT file streaming
- *
- *  To be able to stream config objects into ROOT files and read them afterwards
- *  a dictionary for the derived class needs to be created. See the ROOT 
- *  documentation for details. In general, adding a ClassDef statement to the 
- *  class definition and generating the dictionary via rootcint (can be 
- *  automated via CMake through the root_generate_dictionaries macro in 
- *  FindROOT.cmake) should be enough.
- *
- *  Some hacks with #ifndef macros might be required for rootcint to find 
- *  certain headers and not see certain things it cannot cope with.
- *  
- *  AbsConfig itself is prepared for dictionary building. However, all boost 
- *  related member variables for program options had to be masked from rootcint.
- *  This means that these members will not be saved to and read from ROOT files!
- *
- *  Example:
- *
- *  @code
- *  // RooFit
- *  // forward declaration not enough as rootcint dictionary will fail compiling if 
- *  // not included
- *  #include "RooAbsPdf.h"
- *  #include "RooArgSet.h"
- *  
- *  // from project
- *  #ifndef __CINT__
- *  #include "Config/AbsConfig.h"
- *  #else
- *  // ROOT Cint hacks...
- *  #include "../../Config/AbsConfig.h"
- *  #endif // __CINT __
- *  
- *  class MyConfig : public Config::AbsConfig {
- *  ...
- *    ClassDef(MyConfig, 42);
- *  };
- *  @endcode
- *
- *  @author Florian Kruse
- *  @author Julian Wishahi
- *
- *  @see ConfigTest
- *  @see ConfigTestSecond
- *  @see ConfigTestMain.cpp
  */
 
 #ifndef CONFIG_h
@@ -175,6 +34,157 @@ namespace boost { namespace program_options {
 // from RooFit
 
 namespace Config {
+  /** \class Config::AbsConfig
+   *  \brief DooFit abstract Config base class.
+   *
+   *  This is the abstract base class for all DooFit config objects. It offers
+   *  configuration via the boost::program_options package. All derived classes 
+   *  \a must define AbsConfig::DefineOptions() and AbsConfig::LoadOptions() as well as
+   *  the AbsConfig::PrintOptions() function.
+   *
+   *  Furthermore, the AbsConfig::help_flag_ option and AbsConfig::config_file_ should 
+   *  be set by the derived class accordingly. AbsConfig::CheckHelpFlagAndPrintHelp()
+   *  can be used to capture the set help flag and print a help message. Both \a 
+   *  must be defined by the first AbsConfig object to be initialized.
+   *
+   *  Also check if you need to implement a copy constructor inside your derived
+   *  class (will be generated automatically by C++, but this might behave 
+   *  incorrectly). A default (i.e. argumentless) constructor is not wanted in 
+   *  general, but might be needed for ROOT CINT and .root file streaming (see 
+   *  below).
+   *
+   *  Usage examples can be found in ConfigTest and ConfigTestSecond as well as in
+   *  file ConfigTestMain.cpp.
+   *
+   *  @section defining Defining options to be parsed
+   *
+   *  Options for parsing are defined in AbsConfig::DefineOptions() using 
+   *  boost::program_options::options_description. See boost documentation for 
+   *  more details on that or ConfigTest and ConfigTestSecond for an example. The
+   *  usage of AbsConfig::GetOptionString(std::string, std::string) is also 
+   *  recommended to group options into sections defined by the config object's
+   *  name.
+   *
+   *  @see Config::AbsConfig::desc_visible_
+   *  @see Config::AbsConfig::desc_hidden_
+   *
+   *  Usage example:
+   *
+   *  @code
+   *  void MyConfig::DefineOptions() {
+   *    po::options_description* generic = new po::options_description("Generic options");
+   *    generic->add_options()
+   *    ("help", "produce help message")
+   *    ("config-file", po::value<string>(&config_file_)->default_value(""), "config file to parse")
+   *    (GetOptionString("my-test-switch","s").c_str(), po::value<bool>(&my_test_switch_)->default_value(false), "my test bool switch")
+   *    (GetOptionString("my-test-int","i").c_str(), po::value<int>()->default_value(0), "my test integer");
+   *  
+   *    descs_visible_.push_back(generic);
+   *  }
+   *  @endcode
+   *
+   *  @section parsing Parsing command line and config file
+   *
+   *  Parsing command line and an optional config file (see Config::AbsConfig::config_file_)
+   *  is very simple through Config::AbsConfig::InitializeOptions(const AbsConfig&) and 
+   *  Config::AbsConfig::InitializeOptions(int, char* []). 
+   *
+   *  Usage example:
+   *
+   *  @code
+   *  // instantiate first config object
+   *  MyConfig1 config1("MyConfig1");
+   *  
+   *  // initialize config object via argc and argv
+   *  config1.InitializeOptions(argc, argv);
+   *  
+   *  // instantiate second config object
+   *  MyConfig2 config2("MyConfig2");
+   *  
+   *  // Initialize config object via previously initialized config object.
+   *  // See Config::AbsConfig::InitializeOptions() why you should avoid initializing via 
+   *  // argc and argv again.
+   *  config2.InitializeOptions(config);
+   *
+   *  // instantiate third config object
+   *  MyConfig3 config3("MyConfig3");
+   *  
+   *  // Initialize config object via previously initialized config object.
+   *  // See Config::AbsConfig::InitializeOptions() why you should avoid initializing via 
+   *  // argc and argv again.
+   *  config3.InitializeOptions(config2);  
+   *  
+   *  // More or less mandatory step after initialization of all config objects.
+   *  // Check if the help flag is set and (if so) print a help message.
+   *  config1.CheckHelpFlagAndPrintHelp();
+   *  
+   *  // Print all set options for the user (optional).
+   *  Config::AbsConfig::PrintAll();
+   *  @endcode
+   *
+   *  @section loading Loading parsed options
+   *
+   *  Parsed options can be loaded into specific member variables via 
+   *  Config::AbsConfig::LoadOptions(). Again, see boost documentation on how to get the 
+   *  parsed options.
+   *
+   *  Usage example:
+   *
+   *  @code
+   *  void MyConfig::LoadOptions() {
+   *    set_my_test_int(var_map_[GetOptionString("my-test-int")].as<int>());
+   *    
+   *    if (var_map_.count("help")) help_flag_ = true;
+   *  }
+   *  @endcode
+   *
+   *  @section root-files ROOT file streaming
+   *
+   *  To be able to stream config objects into ROOT files and read them afterwards
+   *  a dictionary for the derived class needs to be created. See the ROOT 
+   *  documentation for details. In general, adding a ClassDef statement to the 
+   *  class definition and generating the dictionary via rootcint (can be 
+   *  automated via CMake through the root_generate_dictionaries macro in 
+   *  FindROOT.cmake) should be enough.
+   *
+   *  Some hacks with #ifndef macros might be required for rootcint to find 
+   *  certain headers and not see certain things it cannot cope with.
+   *  
+   *  AbsConfig itself is prepared for dictionary building. However, all boost 
+   *  related member variables for program options had to be masked from rootcint.
+   *  This means that these members will not be saved to and read from ROOT files!
+   *
+   *  Example:
+   *
+   *  @code
+   *  // RooFit
+   *  // forward declaration not enough as rootcint dictionary will fail compiling if 
+   *  // not included
+   *  #include "RooAbsPdf.h"
+   *  #include "RooArgSet.h"
+   *  
+   *  // from project
+   *  #ifndef __CINT__
+   *  #include "Config/AbsConfig.h"
+   *  #else
+   *  // ROOT Cint hacks...
+   *  #include "../../Config/AbsConfig.h"
+   *  #endif // __CINT __
+   *  
+   *  class MyConfig : public Config::AbsConfig {
+   *  ...
+   *    ClassDef(MyConfig, 42);
+   *  };
+   *  @endcode
+   *
+   *  @author Florian Kruse
+   *  @author Julian Wishahi
+   *
+   *  @see ConfigTest
+   *  @see ConfigTestSecond
+   *  @see ConfigTestMain.cpp
+   */
+  
   // forward declarations
   class AbsConfig;
   
