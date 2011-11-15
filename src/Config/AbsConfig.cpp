@@ -33,7 +33,7 @@ namespace Config {
   {
     if (config_container_.count(id_) > 0) {
       serr << "ERROR in AbsConfig::AbsConfig(const std::string&): Config object with ID " << id_ << " already existing." << endmsg;
-      throw ConfigNameDuplicationException() << ConfigName(name_); 
+      throw NameDuplicationException() << ConfigName(name_); 
     }
     
     config_container_[id_] = this;
@@ -121,7 +121,7 @@ namespace Config {
       
       initialized_ = true;
     } else {
-      throw ConfigAlreadyInitializedException() << ConfigName(name_);
+      throw AlreadyInitializedException() << ConfigName(name_);
     }
   }
   
@@ -136,7 +136,7 @@ namespace Config {
       
       initialized_ = true;
     } else {
-      throw ConfigAlreadyInitializedException() << ConfigName(name_);
+      throw AlreadyInitializedException() << ConfigName(name_);
     }
   }
   

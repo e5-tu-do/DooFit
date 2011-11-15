@@ -520,26 +520,26 @@ namespace Config {
   /// boost error_info for the name of the config file (see boost::exception for reference)
   typedef boost::error_info<struct tag_my_info,std::string> ConfigName;
   
-  /** \struct ConfigNameDuplicationException
+  /** \struct NameDuplicationException
    *  \brief Exception for name duplication in Config objects.
    */
-  struct ConfigNameDuplicationException: public virtual boost::exception, public virtual std::exception { 
+  struct NameDuplicationException: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Name duplication"; }
   };
   
-  /** \struct ConfigCmdArgsUsedTwiceException
+  /** \struct CmdArgsUsedTwiceException
    *  \brief Exception for second (and therefore unallowed) use of argc and argv 
    *         for initialization of AbsConfig object.
    */
-  struct ConfigCmdArgsUsedTwiceException: public virtual boost::exception, public virtual std::exception { 
+  struct CmdArgsUsedTwiceException: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Command line arguments argc and argv used multiple times."; }
   };
   
-  /** \struct ConfigAlreadyInitializedException
+  /** \struct AlreadyInitializedException
    *  \brief Exception for initialization attempt of already initialized AbsConfig 
    *         object
    */
-  struct ConfigAlreadyInitializedException: public virtual boost::exception, public virtual std::exception { 
+  struct AlreadyInitializedException: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Object already initialized."; }
   };
 #endif /* __CINT __ */
