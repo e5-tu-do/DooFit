@@ -1,4 +1,4 @@
-/** @class ConfigAbstractTypeCommaSeparated
+/** @class Config::ConfigAbstractTypeCommaSeparated
  *  @brief Abstract base class for complex Config members with comma-separated
  *         string representation
  *

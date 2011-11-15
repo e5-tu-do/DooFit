@@ -20,7 +20,7 @@
 // RooFit
 
 // from project
-#include "Config/Config.h"
+#include "Config/AbsConfig.h"
 
 // forward declarations
 

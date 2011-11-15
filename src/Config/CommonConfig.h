@@ -4,7 +4,7 @@
  *  This common Config object is responsible for all options common to all 
  *  DooFit applications.
  *
- *  \see Config
+ *  \see Config::AbsConfig
  */
 
 
@@ -21,10 +21,10 @@
 
 // from project
 #ifndef __CINT__
-#include "Config/Config.h"
+#include "Config/AbsConfig.h"
 #else
 // ROOT Cint hacks...
-#include "Config.h"
+#include "AbsConfig.h"
 #endif /* __CINT __ */
 
 // forward declarations

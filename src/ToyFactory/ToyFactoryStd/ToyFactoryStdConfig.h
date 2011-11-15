@@ -26,11 +26,11 @@
 
 // from project
 #ifndef __CINT__
-#include "Config/Config.h"
+#include "Config/AbsConfig.h"
 #include "Config/DiscreteProbabilityDistribution.h"
 #else
 // ROOT Cint hacks...
-#include "../../Config/Config.h"
+#include "../../Config/AbsConfig.h"
 #include "../../Config/DiscreteProbabilityDistribution.h"
 
 #endif /* __CINT __ */
