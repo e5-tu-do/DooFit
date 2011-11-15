@@ -1,6 +1,14 @@
 #ifndef TOYFACTORYSTD_h
 #define TOYFACTORYSTD_h
 
+/** @namespace Toy
+ *
+ *  @brief Toy subsystem namespace.
+ *
+ *  This namespace is responsible for toy sample creation and toy studies.
+ *
+ */
+
 // STL
 #include <cstring>
 
