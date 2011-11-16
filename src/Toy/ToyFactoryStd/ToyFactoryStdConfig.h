@@ -21,11 +21,12 @@
 #ifndef __CINT__
 #include "Config/AbsConfig.h"
 #include "Config/DiscreteProbabilityDistribution.h"
+#include "Config/CommaSeparatedPair.h"
 #else
 // ROOT Cint hacks...
 #include "../../Config/AbsConfig.h"
 #include "../../Config/DiscreteProbabilityDistribution.h"
-
+#include "../../Config/CommaSeparatedPair.h"
 #endif /* __CINT __ */
 
 // forward declarations
@@ -296,6 +297,15 @@ namespace Toy {
      *  @see DiscreteProbabilityDistribution
      */
     std::vector<Config::DiscreteProbabilityDistribution> discrete_probabilities_;
+    /**
+     *  @brief Vector of section names for proto datasets.
+     *
+     *  Refer to Toy::ToyFactoryStd for documentation.
+     *
+     *  @see Toy::ToyFactoryStd
+     *  @see CommaSeparatedPair
+     */
+    std::vector<Config::CommaSeparatedPair> proto_sections_;
     ///@}
     
     /**

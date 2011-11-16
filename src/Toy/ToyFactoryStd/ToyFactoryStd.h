@@ -34,6 +34,25 @@ namespace Toy {
    *  should be as smart as possible involving automatic decomposition of more 
    *  complex pdfs and generation of proto datasets based on given distributions.
    * 
+   *  @section General usage
+   *
+   *  General configuration is handled via Toy::ToyFactoryStdConfig. One needs
+   *  to set the PDF for generation (either via pointer to a RooAbsPdf or via 
+   *  combination of workspace pointer and PDF name on workspace). The set of 
+   *  observables to generate the toy dataset needs to be set as well (again 
+   *  either directly or via name on workspace). 
+   *
+   *  @section Proto dataset generation
+   *
+   *  The need for proto datasets cannot be detected automatically. Therefore, 
+   *  one needs to specify for each sub PDF a section name. This section has to
+   *  be included in the config file used to configure the toy factory. The toy
+   *  factory will read the specified section and create a new toy factory based
+   *  on the settings in this section to create the proto data. The generated 
+   *  proto data will then be used for the specified sub PDF.
+   *
+   *  @see Toy::ToyFactoryStdConfig::set_proto_sections(const std::vector<Config::CommaSeparatedPair>&)
+   *  @see Toy::ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
    */
   
   class ToyFactoryStd {
