@@ -91,9 +91,22 @@ namespace Toy {
     /**
      *  @brief Getter for discrete probability distributions
      *
+     *  @see discrete_probabilities_
+     *  @see Config::DiscreteProbabilityDistribution
      *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
+     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const DiscreteProbabilityDistribution&)
      */
     const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities() const {return discrete_probabilities_;}
+    /**
+     *  @brief Getter for proto dataset sections
+     *
+     *  @see @ref proto-sets
+     *  @see proto_sections_
+     *  @see Config::CommaSeparatedPair
+     *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<Config::CommaSeparatedPair>&)
+     *  @see ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
+     */
+    const std::vector<Config::CommaSeparatedPair>& proto_sections() const {return proto_sections_;}
     ///@}
     
     /** @name Setter actual options
@@ -190,12 +203,26 @@ namespace Toy {
      *  entry for which the variable is also in the argument set to generate a 
      *  discrete distribution data set will be generated.
      *
-     *  @see DiscreteProbabilityDistribution
+     *  @see Config::DiscreteProbabilityDistribution
      *  @see ToyFactoryStdConfig::AddDiscreteProbability(const DiscreteProbabilityDistribution&)
      *
-     *  @param prop_dists vector of DiscreteProbabilityDistribution to use
+     *  @param prop_dists vector of Config::DiscreteProbabilityDistribution to use
      */
     void set_discrete_probabilities(const std::vector<Config::DiscreteProbabilityDistribution>& prop_dists) {discrete_probabilities_ = prop_dists;}
+    /**
+     *  \brief Setter for proto dataset sections
+     *
+     *  Directly set the vector of proto dataset sections. For each sub PDF name
+     *  in this vector a proto dataset will be generated according to the 
+     *  corresponding section name in the config file.
+     *
+     *  @see @ref proto-sets
+     *  @see Config::CommaSeparatedPair
+     *  @see ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
+     *
+     *  @param proto_sections vector of Config::CommaSeparatedPair to use
+     */
+    void set_proto_sections(const std::vector<Config::CommaSeparatedPair>& proto_sections) {proto_sections_ = proto_sections;}
     /**
      *  \brief Add a discrete probability distribution
      *
@@ -204,12 +231,26 @@ namespace Toy {
      *  argument set to generate a discrete distribution data set will be 
      *  generated.
      *
-     *  @see DiscreteProbabilityDistribution
+     *  @see Config::DiscreteProbabilityDistribution
      *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
      *
-     *  @param prop_dist DiscreteProbabilityDistribution to use
+     *  @param prop_dist Config::DiscreteProbabilityDistribution to add
      */
     void AddDiscreteProbability(const Config::DiscreteProbabilityDistribution& prop_dist) {discrete_probabilities_.push_back(prop_dist);}
+    /**
+     *  \brief Add a proto dataset section
+     *
+     *  Add a proto dataset section to the according vector. For each sub PDF 
+     *  name in this vector a proto dataset will be generated according to the 
+     *  corresponding section name in the config file.
+     *
+     *  @see @ref proto-sets
+     *  @see Config::CommaSeparatedPair
+     *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<Config::CommaSeparatedPair>&)
+     *
+     *  @param proto_section Config::CommaSeparatedPair to add
+     */
+    void AddProtoSections(const Config::CommaSeparatedPair& proto_section) {proto_sections_.push_back(proto_section);}
     ///@}
     
   protected:
@@ -300,7 +341,8 @@ namespace Toy {
     /**
      *  @brief Vector of section names for proto datasets.
      *
-     *  Refer to Toy::ToyFactoryStd for documentation.
+     *  Refer to Toy::ToyFactoryStd for usage documentation. First string is sub
+     *  PDF name, second the section to use.
      *
      *  @see @ref proto-sets
      *  @see Config::CommaSeparatedPair
