@@ -336,8 +336,8 @@ namespace Toy {
      *  @brief Vector of discrete probability distributions
      *
      *  @see Config::DiscreteProbabilityDistribution
-     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
-     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const DiscreteProbabilityDistribution&)
+     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<Config::DiscreteProbabilityDistribution>&)
+     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const Config::DiscreteProbabilityDistribution&)
      */
     std::vector<Config::DiscreteProbabilityDistribution> discrete_probabilities_;
     /**
