@@ -25,7 +25,7 @@ Dimensions
 
 Categories 
 { 
-  BasicCategories
+  Basic
   {
     Tag     "varTag"
     {
@@ -43,7 +43,7 @@ Categories
       types "t,1;u,0"
     }
   }
-  SuperCategories
+  Super
   {
     TriggerTag "catTrigTag"
     {

@@ -131,7 +131,7 @@ void Constructor::CreateCategories(){
   }
   
   try {
-    BOOST_FOREACH(bpt::ptree::value_type &tree_cat, tree_categories){    
+    BOOST_FOREACH(bpt::ptree::value_type &tree_cat, tree_categories.get_child("Basic")){    
       string cat_type = tree_cat.first;
       string cat_name = tree_cat.second.get_value<string>();
     

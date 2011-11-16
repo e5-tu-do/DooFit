@@ -7,6 +7,7 @@
 
 
 using namespace Builder::Standard;
+using namespace boost::property_tree;
 
 using namespace std;
 
@@ -27,6 +28,10 @@ CategoryBasic::~CategoryBasic(){
 
 void CategoryBasic::Initialize( const boost::property_tree::ptree::value_type& pt_head ){
   
-  cout << "I hate you" << endl;
+  name_    = pt_head.second.get_value<string>();
   
+  ptree pt = pt_head.second;
+  desc_    = pt.get<string>("desc");
+  
+  cout << name_ << " / " << desc_ << endl;  
 }
