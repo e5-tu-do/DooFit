@@ -346,6 +346,8 @@ namespace Toy {
      *
      *  @see @ref proto-sets
      *  @see Config::CommaSeparatedPair
+     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
+     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const DiscreteProbabilityDistribution&)
      */
     std::vector<Config::CommaSeparatedPair> proto_sections_;
     ///@}
