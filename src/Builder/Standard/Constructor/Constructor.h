@@ -12,11 +12,15 @@
 // from project
 
 
-namespace Builder { 
-  namespace Standard {
+// from RooFit
 
-// forward declarations
+// forward declarations outside project
+class RooWorkspace;
+
+namespace Builder { namespace Standard {
+// forward declarations inside project
 class AbsDimension;
+class CategoryBasic;
 
 
 
@@ -33,12 +37,16 @@ class Constructor{
   void set_tree_main( const boost::property_tree::ptree& tree_main);
   const boost::property_tree::ptree& tree_main();
   
+  void DumpToRooWorkspace( RooWorkspace& ws);
+  
  protected:
   
  private:
   boost::property_tree::ptree tree_main_;
   
-  std::map < std::string, boost::shared_ptr<AbsDimension> > map_dimensions_;
+  std::map < std::string, boost::shared_ptr<AbsDimension> >  map_dimensions_;
+  std::map < std::string, boost::shared_ptr<CategoryBasic> > map_categories_;
+  
   
   void ParseFileInput( const std::string& file_input );
   
@@ -55,9 +63,8 @@ class Constructor{
 
   
 };
-
-  }
-}
+ 
+}}
 
 
 #endif // BUILDER_STANDARD_CONSTRUCTOR_H

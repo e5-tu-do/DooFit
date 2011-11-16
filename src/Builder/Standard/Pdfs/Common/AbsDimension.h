@@ -9,7 +9,8 @@
 
 // forward declarations
 class RooWorkspace;
-class RooRealVar;  
+class RooRealVar;
+
 
 namespace Builder { namespace Standard {
 
@@ -31,8 +32,6 @@ class AbsDimension{
   void set_desc( const std::string& desc ){ desc_ = desc; };
   
  protected:
-  bool initialized_;
-   
   std::string name_;
   std::string desc_;
 

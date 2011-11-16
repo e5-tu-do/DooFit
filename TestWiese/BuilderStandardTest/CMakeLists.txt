@@ -5,6 +5,7 @@ add_executable(BuilderStandardTest BuilderStandardTest.cpp)
 
 set(PDFS_LIBS Builder_Standard_PdfsCommon Builder_Standard_PdfsMass)
 set(BUILDER_LIBS Builder_Standard_Constructor)
+set(UTILS_LIBS Utils)
 
 # Linker information
-target_link_libraries(BuilderStandardTest ${BUILDER_LIBS} ${PDFS_LIBS} ${ROOFIT_LIBRARIES} ${ROOT_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(BuilderStandardTest ${BUILDER_LIBS} ${PDFS_LIBS} ${UTILS_LIBS} ${ROOFIT_LIBRARIES} ${ROOT_LIBRARIES} ${Boost_LIBRARIES})

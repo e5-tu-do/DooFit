@@ -28,17 +28,7 @@ AbsDimensionReal::AbsDimensionReal() :
 
 AbsDimensionReal::~AbsDimensionReal(){}
 
-void AbsDimensionReal::Initialize( const boost::property_tree::ptree::value_type &pt_head ){
-  // check if already initialized
-  if (initialized_){
-    cout << "You tried to initialize Dimension '" << name_ << "' twice. ABORT." << endl;
-    throw;
-  }
-  else{
-    initialized_ = true;
-  }
-  
-  
+void AbsDimensionReal::Initialize( const boost::property_tree::ptree::value_type &pt_head ){  
   name_    = pt_head.second.get_value<string>();
   
   ptree pt = pt_head.second;

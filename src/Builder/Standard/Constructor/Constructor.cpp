@@ -12,9 +12,14 @@
 #include <boost/property_tree/json_parser.hpp>
 
 // from project
+#include "Utils/MsgStream.h"
+
+// from Builder/Standard subproject
 #include "Builder/Standard/Pdfs/Common/Component.h"
-#include "Builder/Standard/Pdfs/Common/SimCategory.h"
+#include "Builder/Standard/Pdfs/Common/CategoryBasic.h"
 #include "Builder/Standard/Pdfs/Mass/DimMass.h"
+#include "Builder/Standard/Pdfs/Common/SimCategory.h"
+
 
 using namespace std;
 using namespace boost;
@@ -25,28 +30,29 @@ using namespace Builder::Standard;
 Constructor::Constructor() :
    tree_main_()
  , map_dimensions_()
+ , map_categories_()
 {
   
 }
 
 Constructor::~Constructor(){
-  
+  map_dimensions_.clear();
   map_dimensions_.clear();
 }
 
 void Constructor::load( const string& file_input ){
   
   // parse file input.
-  ParseFileInput( file_input );
+  ParseFileInput( file_input ); 
   CreateDimensions();
-//  CreateCategories();
+  CreateCategories();
 //  CreateSuperCategories();
   
   // Testing ground, to be put into a function
-  bpt::ptree tree_simcategories = tree_main_.get_child("SimCategories");
-  BOOST_FOREACH(bpt::ptree::value_type &tree_simcat, tree_simcategories){
-    cout << tree_simcat.first << " " << endl;
-  }  
+  // bpt::ptree tree_simcategories = tree_main_.get_child("SimCategories");
+  //   BOOST_FOREACH(bpt::ptree::value_type &tree_simcat, tree_simcategories){
+  //     cout << tree_simcat.first << " " << endl;
+  //   }  
   
   
 } 
@@ -54,28 +60,29 @@ void Constructor::load( const string& file_input ){
 void Constructor::ParseFileInput( const string& file_input ){
   // try to parse file
   try {
-    cout << "Trying to parse " << file_input << " as INFO file. ";
+    sinfo << "Trying to parse " << file_input << " as INFO file. ";
     read_info(file_input, tree_main_);
   }
   catch (std::exception const& exc_info ) {
     try {
-      cout << "Failed!" << endl;
-      cout << "Trying to parse " << file_input << " as JSON file. ";
+      sinfo << "Failed!" << endmsg;
+      sinfo << "Trying to parse " << file_input << " as JSON file. ";
       read_json(file_input, tree_main_);
     }
     catch (std::exception const& exc_json ) {
       try {
-        cout << "Failed!" << endl;
-        cout << "Trying to parse " << file_input << " as XML  file. ";
+        sinfo << "Failed!" << endmsg;
+        sinfo << "Trying to parse " << file_input << " as XML  file. ";
         read_xml(file_input, tree_main_);
       }
       catch (std::exception const& exc_xml ) {
-        cout << "Failed!" << endl;
+        sinfo << "Failed!" << endmsg;
+        serr  << "Failed to parse " << file_input << "." << endmsg;
         throw;
       }
     }
   }
-  cout << "Success!" << endl;
+  sinfo << "Success!" << endmsg;
 }
 
 void Constructor::CreateDimensions(){
@@ -90,7 +97,7 @@ void Constructor::CreateDimensions(){
     pair<map<string,shared_ptr<AbsDimension> >::iterator,bool> ret;
     ret = map_dimensions_.insert(pair<string,shared_ptr<AbsDimension> >( dim_name, CreateDimension(dim_type))) ;
     if ( ret.second == false ){
-      cout << "Constructor: Tried to insert dimension of type '" << dim_type << "' and name '" << dim_name << "' to map twice. ABORTING." << endl;
+      cout << "Constructor: Tried to insert dimension of type '" << dim_type << "' and name '" << dim_name << "' to map_dimensions_ twice. ABORTING." << endl;
       throw;
     }
     map_dimensions_[dim_name]->Initialize(tree_dim);
@@ -98,12 +105,57 @@ void Constructor::CreateDimensions(){
 }
 
 shared_ptr<AbsDimension> const Constructor::CreateDimension( std::string dim_type ){
+  // Real dimensions
   if ( dim_type == "Mass" )       return shared_ptr<AbsDimension>(new DimMass);       
   //if ( dim_type == "Propertime" ) return shared_ptr<AbsDimension>(new DimPropertime);
-
+  
+  // Category dimensions
+  //if ( dim_type == "Tag" ) return shared_ptr<AbsDimension>(new DimTag);
+  
+  
   else{
     cout << "Could not identify dimension type '" << dim_type << "'. ABORT." << endl;
     throw;    
   }
-
 }
+
+void Constructor::CreateCategories(){
+  // Test if categories were specified
+  bpt::ptree tree_categories;
+  try {
+    tree_categories = tree_main_.get_child("Categories");
+  }
+  catch ( const std::exception &cat_ex ) {
+      swarn << "Constructor: Could not find 'Categories' in property tree. Assuming that no categories were defined." << endmsg;
+      return;     
+  }
+  
+  try {
+    BOOST_FOREACH(bpt::ptree::value_type &tree_cat, tree_categories){    
+      string cat_type = tree_cat.first;
+      string cat_name = tree_cat.second.get_value<string>();
+    
+      shared_ptr<CategoryBasic> cat_obj_temp(new CategoryBasic());
+      pair< map< string, shared_ptr< CategoryBasic > >::iterator, bool > ret; 
+      ret = map_categories_.insert(pair< string, shared_ptr<CategoryBasic> >( cat_name, cat_obj_temp ));
+      if ( ret.second == false ){
+        serr << "Constructor: Tried to insert category of type '" << cat_type << "' and name '" << cat_name << "' to map_categories_ twice." << endmsg;
+        throw;
+      }
+      
+      map_categories_[cat_name]->Initialize(tree_cat);
+    }  
+  }
+  catch(...){
+    serr << "Constructor: Something went wrong in the parsing of categories." << endmsg;
+    throw;
+  }
+
+  
+  // Create normal categories
+  
+  
+  // Create SuperCategories
+  
+}
+

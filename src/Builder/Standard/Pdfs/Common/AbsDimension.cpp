@@ -10,8 +10,7 @@ using namespace Builder::Standard;
 
 
 AbsDimension::AbsDimension() :
-    initialized_(false)
-  , name_("varDummyName")
+    name_("varDummyName")
   , desc_("Dummy description for a dimension variable.")
 {
   

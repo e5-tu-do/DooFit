@@ -25,32 +25,33 @@ Dimensions
 
 Categories 
 { 
-  Tag     "varTag"
+  BasicCategories
   {
-    desc  "d"
-    types "B0,1;B0bar,-1"
-  }  
-  Trigger "catTrigger"
-  {
-    desc  "Trigger categories"
-    types "B,1;U,2"
+    Tag     "varTag"
+    {
+      desc  "d"
+      types "B0,1;B0bar,-1"
+    }  
+    Trigger "catTrigger"
+    {
+      desc  "Trigger categories"
+      types "B,1;U,2"
+    }
+    Tagged "catTagged"
+    {
+      desc  "Tagging categories"
+      types "t,1;u,0"
+    }
   }
-  Tagged "catTagged"
+  SuperCategories
   {
-    desc  "Tagging categories"
-    types "t,1;u,0"
+    TriggerTag "catTrigTag"
+    {
+      desc    "Combined Trigger and Tagging category"
+      subcats "catTrigger,catTagged"
+    }  
   }
 }
-
-SuperCategories
-{
-  TriggerTag "catTrigTag"
-  {
-    desc    "Combined Trigger and Tagging category"
-    subcats "catTrigger,catTagged"
-  }  
-}
-
 
 PdfFull "pdfFull"
 {
