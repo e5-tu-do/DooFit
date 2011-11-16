@@ -302,7 +302,7 @@ namespace Toy {
      *
      *  Refer to Toy::ToyFactoryStd for documentation.
      *
-     *  @see Toy::ToyFactoryStd
+     *  @see Toy::ToyFactoryStd::proto-sets
      *  @see CommaSeparatedPair
      */
     std::vector<Config::CommaSeparatedPair> proto_sections_;
