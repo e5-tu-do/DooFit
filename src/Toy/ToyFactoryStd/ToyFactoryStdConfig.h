@@ -93,8 +93,8 @@ namespace Toy {
      *
      *  @see discrete_probabilities_
      *  @see Config::DiscreteProbabilityDistribution
-     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
-     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const DiscreteProbabilityDistribution&)
+     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<Config::DiscreteProbabilityDistribution>&)
+     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const Config::DiscreteProbabilityDistribution&)
      */
     const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities() const {return discrete_probabilities_;}
     /**
@@ -204,7 +204,7 @@ namespace Toy {
      *  discrete distribution data set will be generated.
      *
      *  @see Config::DiscreteProbabilityDistribution
-     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const DiscreteProbabilityDistribution&)
+     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const Config::DiscreteProbabilityDistribution&)
      *
      *  @param prop_dists vector of Config::DiscreteProbabilityDistribution to use
      */
@@ -232,7 +232,7 @@ namespace Toy {
      *  generated.
      *
      *  @see Config::DiscreteProbabilityDistribution
-     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
+     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<Config::DiscreteProbabilityDistribution>&)
      *
      *  @param prop_dist Config::DiscreteProbabilityDistribution to add
      */
@@ -335,7 +335,9 @@ namespace Toy {
     /**
      *  @brief Vector of discrete probability distributions
      *
-     *  @see DiscreteProbabilityDistribution
+     *  @see Config::DiscreteProbabilityDistribution
+     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
+     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const DiscreteProbabilityDistribution&)
      */
     std::vector<Config::DiscreteProbabilityDistribution> discrete_probabilities_;
     /**
@@ -346,8 +348,8 @@ namespace Toy {
      *
      *  @see @ref proto-sets
      *  @see Config::CommaSeparatedPair
-     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<DiscreteProbabilityDistribution>&)
-     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const DiscreteProbabilityDistribution&)
+     *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<Config::CommaSeparatedPair>&)
+     *  @see ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
      */
     std::vector<Config::CommaSeparatedPair> proto_sections_;
     ///@}
