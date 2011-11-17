@@ -30,32 +30,21 @@ Dimensions
 
 Categories 
 { 
-  Basic
+  Basic "catTrigger"
   {
-    Tag     "varTag"
-    {
-      desc  "d"
-      types "B0,1;B0bar,-1"
-    }  
-    Trigger "catTrigger"
-    {
-      desc  "Trigger categories"
-      types "B,1;U,2"
-    }
-    Tagged "catTagged"
-    {
-      desc  "Tagging categories"
-      types "t,1;u,0"
-    }
+    desc  "Trigger categories"
+    types "B,1;U,2"
   }
-  Super
+  Basic "catTagged"
   {
-    TriggerTag "catTrigTag"
-    {
-      desc    "Combined Trigger and Tagging category"
-      subcats "catTrigger,catTagged"
-    }  
+    desc  "Tagging categories"
+    types "t,1;u,0"
   }
+  Super "catTrigTag"
+  {
+    desc    "Combined Trigger and Tagging category"
+    subcats "catTrigger,catTagged"
+  }  
 }
 
 PdfFull "pdfFull"
@@ -65,7 +54,7 @@ PdfFull "pdfFull"
   Simcats     "catTrigTrag"
   PdfsForCategories
   {
-    Bt "pdfFullBt"
+    "{B;t}" "pdfFullBt"
     {
       desc        "P_{B,t}"
       Extended    false

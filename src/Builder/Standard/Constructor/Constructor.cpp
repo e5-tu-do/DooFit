@@ -17,6 +17,7 @@
 // from Builder/Standard subproject
 #include "Builder/Standard/Pdfs/Common/Component.h"
 #include "Builder/Standard/Pdfs/Common/CategoryBasic.h"
+#include "Builder/Standard/Pdfs/Common/CategorySuper.h"
 #include "Builder/Standard/Pdfs/Common/SimCategory.h"
 #include "Builder/Standard/Pdfs/Mass/DimMass.h"
 #include "Builder/Standard/Pdfs/Tag/DimTag.h"
@@ -32,7 +33,8 @@ using namespace Builder::Standard;
 Constructor::Constructor() :
    tree_main_()
  , map_dimensions_()
- , map_categories_()
+ , map_categories_basic_()
+ , map_categories_super_()
 {
   
 }
@@ -133,19 +135,32 @@ void Constructor::CreateCategories(){
   }
   
   try {
-    BOOST_FOREACH(bpt::ptree::value_type &tree_cat, tree_categories.get_child("Basic")){    
+    BOOST_FOREACH(bpt::ptree::value_type &tree_cat, tree_categories){    
       string cat_type = tree_cat.first;
       string cat_name = tree_cat.second.get_value<string>();
-    
-      shared_ptr<CategoryBasic> cat_obj_temp(new CategoryBasic());
-      pair< map< string, shared_ptr< CategoryBasic > >::iterator, bool > ret; 
-      ret = map_categories_.insert(pair< string, shared_ptr<CategoryBasic> >( cat_name, cat_obj_temp ));
-      if ( ret.second == false ){
-        serr << "Constructor: Tried to insert category of type '" << cat_type << "' and name '" << cat_name << "' to map_categories_ twice." << endmsg;
-        throw;
-      }
       
-      map_categories_[cat_name]->Initialize(tree_cat);
+      if ( cat_type == "Basic"){
+        shared_ptr<CategoryBasic> cat_basic_obj_temp(new CategoryBasic());
+        pair< map< string, shared_ptr< CategoryBasic > >::iterator, bool > ret; 
+        ret = map_categories_basic_.insert(pair< string, shared_ptr<CategoryBasic> >( cat_name, cat_basic_obj_temp ));
+        if ( ret.second == false ){
+          serr << "Constructor: Tried to insert category of type '" << cat_type << "' and name '" << cat_name << "' to categories' map twice." << endmsg;
+          throw;
+        }
+
+        map_categories_basic_[cat_name]->Initialize(tree_cat);
+      }
+      else if ( cat_type == "Super" ){
+        shared_ptr<CategorySuper> cat_super_obj_temp(new CategorySuper());
+        pair< map< string, shared_ptr< CategorySuper > >::iterator, bool > ret; 
+        ret = map_categories_super_.insert(pair< string, shared_ptr<CategorySuper> >( cat_name, cat_super_obj_temp ));
+        if ( ret.second == false ){
+          serr << "Constructor: Tried to insert category of type '" << cat_type << "' and name '" << cat_name << "' to map_categories_ twice." << endmsg;
+          throw;
+        }
+
+        map_categories_super_[cat_name]->Initialize(tree_cat, map_categories_basic_);
+      }
     }  
   }
   catch(...){

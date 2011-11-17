@@ -21,6 +21,7 @@ namespace Builder { namespace Standard {
 // forward declarations inside project
 class AbsDimension;
 class CategoryBasic;
+class CategorySuper;
 
 
 
@@ -45,8 +46,8 @@ class Constructor{
   boost::property_tree::ptree tree_main_;
   
   std::map < std::string, boost::shared_ptr<AbsDimension> >  map_dimensions_;
-  std::map < std::string, boost::shared_ptr<CategoryBasic> > map_categories_;
-  
+  std::map < std::string, boost::shared_ptr<CategoryBasic> > map_categories_basic_;
+  std::map < std::string, boost::shared_ptr<CategorySuper> > map_categories_super_;
   
   void ParseFileInput( const std::string& file_input );
   
