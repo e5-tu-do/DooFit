@@ -17,8 +17,10 @@
 // from Builder/Standard subproject
 #include "Builder/Standard/Pdfs/Common/Component.h"
 #include "Builder/Standard/Pdfs/Common/CategoryBasic.h"
-#include "Builder/Standard/Pdfs/Mass/DimMass.h"
 #include "Builder/Standard/Pdfs/Common/SimCategory.h"
+#include "Builder/Standard/Pdfs/Mass/DimMass.h"
+#include "Builder/Standard/Pdfs/Tag/DimTag.h"
+
 
 
 using namespace std;
@@ -110,7 +112,7 @@ shared_ptr<AbsDimension> const Constructor::CreateDimension( std::string dim_typ
   //if ( dim_type == "Propertime" ) return shared_ptr<AbsDimension>(new DimPropertime);
   
   // Category dimensions
-  //if ( dim_type == "Tag" ) return shared_ptr<AbsDimension>(new DimTag);
+  if ( dim_type == "Tag" ) return shared_ptr<AbsDimension>(new DimTag);
   
   
   else{

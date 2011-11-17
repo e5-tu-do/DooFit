@@ -23,17 +23,20 @@ class AbsDimension{
   
   
   // Getter
-  const std::string&  name()      const{ return name_; };
-  const std::string&  desc()      const{ return desc_; };
+  const std::string&  name()      const{ return name_;   };
+  const std::string&  desc()      const{ return desc_;   };
+  const std::string&  types()     const{ return types_; };
   
   
   // Setter, only for debugging, to be deleted
   void set_name( const std::string& name ){ name_ = name; };
   void set_desc( const std::string& desc ){ desc_ = desc; };
+  void set_types( const std::string& types ){ types_ = types; };
   
  protected:
   std::string name_;
   std::string desc_;
+  std::string types_;
 
  private:
 

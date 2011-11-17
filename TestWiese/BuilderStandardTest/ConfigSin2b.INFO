@@ -21,6 +21,11 @@ Dimensions
 ;	   val_max  14
 ;	   unit     "ps"
 ;  }
+  Tag        "varTag"
+  {
+    desc     "d"
+    types    "B0,1;B0bar,-1"
+  }
 }
 
 Categories 

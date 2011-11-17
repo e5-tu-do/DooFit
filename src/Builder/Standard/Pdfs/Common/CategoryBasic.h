@@ -24,10 +24,11 @@ class CategoryBasic{
  private:
   std::string name_;
   std::string desc_;
+  std::string types_;
    
   std::map < std::string, int > map_types_;
   
-  void CreateTypes();
+  void CreateTypes( const std::string &types );
 };
 
 

@@ -1,10 +1,11 @@
 #ifndef BUILDER_STANDARD_ABSDIMENSIONREAL_H
 #define BUILDER_STANDARD_ABSDIMENSIONREAL_H
 
-// forward declarations
 
 // from project
 #include "Builder/Standard/Pdfs/Common/AbsDimension.h"
+
+// forward declarations
 
 namespace Builder { namespace Standard {
 
