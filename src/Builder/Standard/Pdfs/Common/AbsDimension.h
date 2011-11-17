@@ -14,6 +14,11 @@ class RooRealVar;
 
 namespace Builder { namespace Standard {
 
+/** 
+ *  @class AbsDimension
+ *  @brief Abstract class for dimensions.
+ *  
+ */
 class AbsDimension{
  public:
   AbsDimension();
