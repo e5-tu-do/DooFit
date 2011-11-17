@@ -38,7 +38,8 @@ class CategorySuper;
  *
  *  This Builder class is meant as standard implementation. The configuration of
  *  the Constructor is based on a combination of a @Config and a 
- *  boost::property_tree.  
+ *  boost::property_tree.
+ * 
  */
 
 class Constructor{
@@ -130,11 +131,28 @@ class Constructor{
    */
   void ParseFileInput( const std::string& file_input );
   
+  /**
+   *  @brief Adds all dimensions defined in property_tree to map_dimensions_.
+   */
   void CreateDimensions();
+  
+  /**
+   *  @brief Central function for association of dimension key to dimensions.
+   *
+   *  This function calls dimension constructors based on the dimension keys 
+   *  used in the property_tree. It returns a shared pointer for the map
+   *  insertion in CreateDimensions() @see CreateDimensions.
+   */
   boost::shared_ptr<AbsDimension> const CreateDimension( std::string dim_type );
   
+  /**
+   *  @brief Creates CategoryBasic and CategorySuper objects.
+   */
   void CreateCategories();  
   
+  /**
+   *  @brief Creates the actual full pdf based on dimensions and categories.
+   */
   void CreatePdfFull();  
 };
  
