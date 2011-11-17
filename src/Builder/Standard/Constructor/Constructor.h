@@ -1,3 +1,12 @@
+/** @namespace Builder::Standard
+ *
+ *  @brief DooFit Builder::Standard namespace for all classes related to the Builder
+ *  Standard implementation.
+ *  @see Builder::Standard::Constructor
+ *
+ */
+
+
 #ifndef BUILDER_STANDARD_CONSTRUCTOR_H
 #define BUILDER_STANDARD_CONSTRUCTOR_H
 
@@ -24,9 +33,22 @@ class CategoryBasic;
 class CategorySuper;
 
 
+/** @class Constructor
+ *  @brief Standard Builder. Adds all necessary objects to a RooWorkspace.
+ *
+ *  This Builder class is meant as standard implementation. The configuration of
+ *  the Constructor is based on a combination of a @Config and a 
+ *  boost::property_tree.  
+ */
 
 class Constructor{
  public:
+  /** @brief Standard constructor.
+   *  
+   *  Takes no arguments.
+   *  @todo Add Constructor constuctor with CommonConfig and ConstructorConfig 
+   *  as parameters.
+   */
   Constructor();
   ~Constructor();
   
