@@ -94,17 +94,40 @@ class Constructor{
    */
   const boost::property_tree::ptree& tree_main();
   
+  /**
+   *  @brief Fill workspace based on configuration of the Constructor.
+   */
   void DumpToRooWorkspace( RooWorkspace& ws);
   
  protected:
   
  private:
+  /**
+   *  @brief The main property_tree used for the configuration.
+   */
   boost::property_tree::ptree tree_main_;
   
+  /**
+   *  @brief A map of AbsDimension for configuration of dimension variables.
+   */
   std::map < std::string, boost::shared_ptr<AbsDimension> >  map_dimensions_;
+  
+  /**
+   *  @brief A map of CategoryBasic for configuration of RooCategory.
+   */  
   std::map < std::string, boost::shared_ptr<CategoryBasic> > map_categories_basic_;
+  
+  /**
+   *  @brief A map of CategorySuper for configuration of RooSuperCategory.
+   */
   std::map < std::string, boost::shared_ptr<CategorySuper> > map_categories_super_;
   
+  /**
+   *  @brief Parses the file_input.
+   *
+   *  Tries to parse files in INFO/XML/JSON format to property_tree. Called by
+   *  load @see load.
+   */
   void ParseFileInput( const std::string& file_input );
   
   void CreateDimensions();
