@@ -34,7 +34,7 @@ class CategorySuper;
 
 
 /** @class Constructor
- *  @brief Standard Builder. Adds all necessary objects to a RooWorkspace.
+ *  @brief A standard builder. Adds all necessary objects to a RooWorkspace.
  *
  *  This Builder class is meant as standard implementation. The configuration of
  *  the Constructor is based on a combination of a @Config and a 
@@ -50,8 +50,18 @@ class Constructor{
    *  as parameters.
    */
   Constructor();
+  
+  /** @brief Destructor for Constructor.
+   */
   ~Constructor();
   
+  /** @brief Loads configuration from a INFO/XML/JSON file.
+   *
+   *  Prepares configuration from a boost::property_tree saved in INFO, XML, or
+   *  JSON format.
+   *  
+   *  @param file_input Input file that can be parsed with boost::property_tree.
+   */
   void load( const std::string& file_input );  
   void save( const std::string& file_input );
   
