@@ -43,7 +43,8 @@ class CategorySuper;
 
 class Constructor{
  public:
-  /** @brief Standard constructor.
+  /** 
+   *  @brief The standard constructor.
    *  
    *  Takes no arguments.
    *  @todo Add Constructor constuctor with CommonConfig and ConstructorConfig 
@@ -51,23 +52,46 @@ class Constructor{
    */
   Constructor();
   
-  /** @brief Destructor for Constructor.
+  /** 
+   *  @brief The destructor for Constructor.
    */
   ~Constructor();
   
-  /** @brief Loads configuration from a INFO/XML/JSON file.
+  /** 
+   *  @brief Loads configuration from a INFO/XML/JSON file.
    *
    *  Prepares configuration from a boost::property_tree saved in INFO, XML, or
    *  JSON format.
    *  
    *  @param file_input Input file that can be parsed with boost::property_tree.
    */
-  void load( const std::string& file_input );  
-  void save( const std::string& file_input );
+  void load( const std::string& file_input );
   
+  /** @brief Saves configuration to an INFO/XML/JSON file.
+   *
+   *  Saves configuration to a boost::property_tree in INFO, XML, or
+   *  JSON format.
+   *  
+   *  @param file_output Output file for saving configuration.
+   */
+  void save( const std::string& file_output );
+  
+  /** 
+   *  @brief Creates a configuration skeleton.
+   *  
+   *  Can be used to create a basic configuration that can be easily saved to
+   *  a file.
+   */
   void BuildSkeleton();
   
-  void set_tree_main( const boost::property_tree::ptree& tree_main);
+  /**
+   *  @brief Set the main property_tree @see tree_main_ manually.
+   */
+  void set_tree_main( const boost::property_tree::ptree& tree_main ){ tree_main_ = tree_main; };
+  
+  /**
+   *  @brief Get the main property_tree @see tree_main_.
+   */
   const boost::property_tree::ptree& tree_main();
   
   void DumpToRooWorkspace( RooWorkspace& ws);
