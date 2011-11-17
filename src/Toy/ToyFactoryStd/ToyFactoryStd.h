@@ -42,7 +42,7 @@ namespace Toy {
    *  observables to generate the toy dataset needs to be set as well (again 
    *  either directly or via name on workspace). 
    *
-   *  Generation of the dataset can be invoked via ToyFactory::Generate().
+   *  Generation of the dataset can be invoked via Toy::ToyFactory::Generate().
    *
    *  @section proto-sets Proto dataset generation
    *
