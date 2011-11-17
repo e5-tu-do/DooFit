@@ -18,6 +18,7 @@
 #include "Builder/Standard/Pdfs/Common/Component.h"
 #include "Builder/Standard/Pdfs/Common/CategoryBasic.h"
 #include "Builder/Standard/Pdfs/Common/CategorySuper.h"
+#include "Builder/Standard/Pdfs/Common/PdfFull.h"
 #include "Builder/Standard/Pdfs/Common/SimCategory.h"
 #include "Builder/Standard/Pdfs/Mass/DimMass.h"
 #include "Builder/Standard/Pdfs/Tag/DimTag.h"
@@ -50,7 +51,7 @@ void Constructor::load( const string& file_input ){
   ParseFileInput( file_input ); 
   CreateDimensions();
   CreateCategories();
-//  CreateSuperCategories();
+  CreatePdfFull();
   
   // Testing ground, to be put into a function
   // bpt::ptree tree_simcategories = tree_main_.get_child("SimCategories");
@@ -138,7 +139,7 @@ void Constructor::CreateCategories(){
     BOOST_FOREACH(bpt::ptree::value_type &tree_cat, tree_categories){    
       string cat_type = tree_cat.first;
       string cat_name = tree_cat.second.get_value<string>();
-      
+      // Create normal categories
       if ( cat_type == "Basic"){
         shared_ptr<CategoryBasic> cat_basic_obj_temp(new CategoryBasic());
         pair< map< string, shared_ptr< CategoryBasic > >::iterator, bool > ret; 
@@ -150,6 +151,7 @@ void Constructor::CreateCategories(){
 
         map_categories_basic_[cat_name]->Initialize(tree_cat);
       }
+      // Create SuperCategories
       else if ( cat_type == "Super" ){
         shared_ptr<CategorySuper> cat_super_obj_temp(new CategorySuper());
         pair< map< string, shared_ptr< CategorySuper > >::iterator, bool > ret; 
@@ -161,18 +163,18 @@ void Constructor::CreateCategories(){
 
         map_categories_super_[cat_name]->Initialize(tree_cat, map_categories_basic_);
       }
+      else{
+        serr << "Constructor: Category type '" << cat_type << "' unknown!" << endmsg;
+      }
     }  
   }
   catch(...){
     serr << "Constructor: Something went wrong in the parsing of categories." << endmsg;
     throw;
-  }
+  }  
+}
 
-  
-  // Create normal categories
-  
-  
-  // Create SuperCategories
+void Constructor::CreatePdfFull(){
   
 }
 

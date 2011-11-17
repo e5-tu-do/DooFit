@@ -54,15 +54,9 @@ class Constructor{
   void CreateDimensions();
   boost::shared_ptr<AbsDimension> const CreateDimension( std::string dim_type );
   
-  void CreateCategories();
-  void CreateSuperCategories();
+  void CreateCategories();  
   
-  
-  void CreateSimCategories();
-  void CreateComponents();
-
-
-  
+  void CreatePdfFull();  
 };
  
 }}

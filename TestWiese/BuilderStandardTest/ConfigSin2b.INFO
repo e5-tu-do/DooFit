@@ -51,8 +51,7 @@ PdfFull "pdfFull"
 {
   desc        "P"
   Extended    false 
-  Simcats     "catTrigTrag"
-  PdfsForCategories
+  PdfsForCategory "catTrigTrag"
   {
     "{B;t}" "pdfFullBt"
     {
