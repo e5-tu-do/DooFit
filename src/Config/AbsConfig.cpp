@@ -143,9 +143,9 @@ namespace Config {
   void AbsConfig::Print() const {
     scfg.Ruler();
     scfg << "Config object " << name_ << ":" << endmsg;
-    scfg.set_indent(2);
+    scfg.set_indent(scfg.indent()+2);
     PrintOptions();
-    scfg.set_indent(0);
+    scfg.set_indent(scfg.indent()-2);
   }
   
   void AbsConfig::PrintAll() {

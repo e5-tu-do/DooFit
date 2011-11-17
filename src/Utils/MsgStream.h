@@ -34,11 +34,11 @@ public:
    *
    *  @param color The color to be used for this stream
    */
-  MsgStream(Utils::TerminalColor color) : text_color_(color), is_active_(true), indent_(0) {}
+  MsgStream(Utils::TerminalColor color) : text_color_(color), is_active_(true) {}
   /**
    *  \brief Default constructor for standard uncolored output
    */
-  MsgStream() : text_color_(Utils::kTextNone), is_active_(true), indent_(0) {}
+  MsgStream() : text_color_(Utils::kTextNone), is_active_(true) {}
   
   /**
    *  \brief Get the internal std::ostringstream
@@ -97,7 +97,9 @@ public:
    *  \brief Output a horizontal ruler
    */
   void Ruler() {
-    os_ << "==============================================================================================================";
+    for (int i=indent_; i<120; ++i) {
+      os_ << "=";
+    }
     doOutput();
   }
   
@@ -147,7 +149,7 @@ protected:
   /**
    *  \brief Indent for new lines.
    */
-  int indent_;
+  static int indent_;
 };
 
 /// \brief MsgStream function to end a message (i.e. newline) and force the output. 

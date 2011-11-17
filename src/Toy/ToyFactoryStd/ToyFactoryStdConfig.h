@@ -83,6 +83,10 @@ namespace Toy {
      */
     const RooArgSet* argset_generation_observables() const; 
     /**
+     *  @brief Getter for workspace to use
+     */
+    RooWorkspace* workspace() const {return workspace_;}
+    /**
      *  \brief Getter for random seed
      *
      *  \see ToyFactoryStdConfig::set_random_seed(int)
@@ -359,6 +363,23 @@ namespace Toy {
      */
     ClassDef(ToyFactoryStdConfig,1);
   };
+  
+  // let ROOT Cint not bother about this
+#ifndef __CINT__
+  /** \struct PdfNotSetException
+   *  \brief Exception for not set PDF in ToyFactoryStdConfig
+   */
+  struct PdfNotSetException: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "PDF to generate not set"; }
+  };
+  
+  /** \struct ArgSetNotSetException
+   *  \brief Exception for not set RooArgSet in ToyFactoryStdConfig
+   */
+  struct ArgSetNotSetException: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "Observables argument set not set"; }
+  };
+#endif /* __CINT __ */
 }
 
 #endif // TOYFACTORYSTDCONFIG_h

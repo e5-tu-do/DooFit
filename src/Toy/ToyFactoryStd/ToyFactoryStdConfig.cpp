@@ -59,8 +59,7 @@ namespace Toy {
     } else if (generation_pdf_workspace_.length() > 0 && workspace_ && workspace_->pdf(generation_pdf_workspace_.c_str())) {
       return workspace_->pdf(generation_pdf_workspace_.c_str());
     } else {
-      serr << "ERROR: PDF to generate not set and attempt to load from workspace not successful." << endmsg;
-      throw;
+      throw PdfNotSetException();
     }  
   }
   
@@ -70,8 +69,7 @@ namespace Toy {
     } else if (argset_generation_observables_workspace_.length() > 0 && workspace_ && workspace_->set(argset_generation_observables_workspace_.c_str())) {
       return workspace_->set(argset_generation_observables_workspace_.c_str());
     } else {
-      serr << "ERROR: Obervables argument set to generate not set and attempt to load from workspace not successful." << endmsg;
-      throw;
+      throw ArgSetNotSetException();
     }  
   }
   
@@ -98,7 +96,7 @@ namespace Toy {
       scfg << "Generation PDF:            " << generation_pdf()->IsA()->GetName() << ":"
       << generation_pdf()->GetName() << " (" << generation_pdf()->GetTitle()
       << ")" << endmsg;
-    } catch (...) {
+    } catch (const PdfNotSetException& e) {
       scfg << "Generation PDF not set." << endmsg;
     }
     
@@ -110,7 +108,7 @@ namespace Toy {
     }
     
     scfg << "Observables to generate directly: ";
-    if (argset_generation_observables() != NULL) {
+    try {
       TIterator* arg_it = argset_generation_observables()->createIterator();
       RooAbsArg* arg = NULL;
       bool first = true;
@@ -125,7 +123,7 @@ namespace Toy {
         scfg << arg->GetName();
       }
       scfg << endmsg;
-    } else {
+    } catch (const ArgSetNotSetException& e) {
       scfg << "(not set)" << endmsg;
     }
     

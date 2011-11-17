@@ -42,6 +42,10 @@ namespace Toy {
    *  observables to generate the toy dataset needs to be set as well (again 
    *  either directly or via name on workspace). 
    *
+   *  Although a workspace is not necessarily needed for generation, some 
+   *  features (like proto dataset generation) need a workspace to contain PDFs
+   *  and argument sets.
+   *
    *  Generation of the dataset can be invoked via ToyFactoryStd::Generate().
    *
    *  @section proto-sets Proto dataset generation
@@ -145,6 +149,22 @@ namespace Toy {
     }
     ///@}
     
+    /** @name Proto dataset functions
+     *  Functions specific fot proto dataset generation
+     */
+    ///@{
+    /**
+     *  @brief Check if PDF name has an entry in proto sections and return those
+     *
+     *  For a given PDF name the vector of proto section is checked for a match.
+     *  The sub vector of matches is returned.
+     *
+     *  @param pdf_name The PDF name to be tested
+     *  @return the sub vector of sections for this PDF name
+     */
+    std::vector<Config::CommaSeparatedPair> GetPdfProtoSections(const std::string& pdf_name) const;
+    ///@}
+    
     /** @name Generator functions
      *  Functions to generate toy samples for specific PDF (types).
      */
@@ -226,6 +246,13 @@ namespace Toy {
      *  \brief ToyFactoryStdConfig instance to use
      */
     const ToyFactoryStdConfig& config_toyfactory_;
+  };
+  
+  /** \struct NotGeneratingDataException
+   *  \brief Exception for not generating any data
+   */
+  struct NotGeneratingDataException: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "Not generating any data"; }
   };
 }
 

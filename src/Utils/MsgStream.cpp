@@ -1,5 +1,6 @@
 #include "MsgStream.h"
 
+int MsgStream::indent_ = 0;
 
 MsgStream serr   (Utils::kTextRed);
 MsgStream swarn  (Utils::kTextYellow);

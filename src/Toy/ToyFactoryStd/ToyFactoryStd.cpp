@@ -46,33 +46,53 @@ namespace Toy {
   }
   
   RooDataSet* ToyFactoryStd::Generate() {
-    if (config_toyfactory_.generation_pdf() == NULL) {
-      serr << "Generation PDF not set. Cannot generate toy sample." << endmsg;
-      throw;
-    }
-    if (config_toyfactory_.argset_generation_observables() == NULL) {
-      serr << "Generation observables argset not set. Cannot generate toy sample." << endmsg;
-      throw;
-    }
-    
     sinfo << endmsg;
     sinfo.Ruler();
     TStopwatch sw;
     sw.Start();
     
-    RooDataSet* data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield());
-    
-    
+    // try to generate with PDF (if set)
+    RooDataSet* data = NULL;
+    try {
+      data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield());
+    } catch (const PdfNotSetException& e) {
+      if (config_toyfactory_.discrete_probabilities().size() == 0) {
+        // could not generate continous sample via PDF, nor is a discrete sample requested
+        serr << "Not generating any data as neither PDF if set nor discrete variables are requested." << endmsg;
+        throw NotGeneratingDataException();
+      }
+    } catch (const ArgSetNotSetException& e) {
+      serr << "Cannot generate any data as observables argument set is not set." << endmsg;
+      throw e;
+    }
+      
     const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities = config_toyfactory_.discrete_probabilities();
     
-    RooDataSet* data_discrete = GenerateDiscreteSample(config_toyfactory_.discrete_probabilities(), *(config_toyfactory_.argset_generation_observables()), *(data->get()), data->numEntries());
+    // determine yield and already generated argset for discrete dataset
+    double discrete_yield = 0;
+    const RooArgSet* argset_already_generated;
+    if (data != NULL) {
+      // continous PDF was generated, take args and yield from there
+      discrete_yield = data->numEntries();
+      argset_already_generated = data->get();
+    } else {
+      // no PDF set, get a Poisson distributed yield and empty argset for 
+      // discrete variables.
+      discrete_yield = RooRandom::randomGenerator()->Poisson(config_toyfactory_.expected_yield());
+      argset_already_generated = new RooArgSet();
+    }
     
+    RooDataSet* data_discrete = GenerateDiscreteSample(config_toyfactory_.discrete_probabilities(), *(config_toyfactory_.argset_generation_observables()), *argset_already_generated, discrete_yield);
     
-    data->merge(data_discrete);
-    delete data_discrete;
+    // merge if necessary
+    if (data != NULL) {
+      data->merge(data_discrete);
+      delete data_discrete;
+    } else {
+      data = data_discrete;
+    }
     
     sinfo << "Generation of this sample took " << sw << endmsg;
-    
     sinfo.Ruler();
     return data;
   }
@@ -88,8 +108,40 @@ namespace Toy {
     }
   }
   
+  std::vector<Config::CommaSeparatedPair> ToyFactoryStd::GetPdfProtoSections(const std::string& pdf_name) const {
+    const std::vector<Config::CommaSeparatedPair>& proto_sections = config_toyfactory_.proto_sections();
+    std::vector<Config::CommaSeparatedPair> matched_sections;
+    
+    for (std::vector<Config::CommaSeparatedPair>::const_iterator it=proto_sections.begin(); it != proto_sections.end(); ++it) {
+      if (pdf_name.compare((*it).first()) == 0) {
+        matched_sections.push_back(*it);
+      }
+    }
+    return matched_sections;
+  }
+  
   RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended) {
     RooDataSet* data = NULL;
+    
+    const std::vector<Config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
+    for (std::vector<Config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
+      // TODO: If PDF ist extended AND no yield is set, we need to get yield from
+      //       PDF itself here.
+      
+      sinfo.set_indent(sinfo.indent()+2);
+      ToyFactoryStdConfig cfg_tfac_proto((*it).second());
+      cfg_tfac_proto.InitializeOptions(config_common_);
+      
+      if (config_toyfactory_.workspace() != NULL) cfg_tfac_proto.set_workspace(config_toyfactory_.workspace());
+      cfg_tfac_proto.set_argset_generation_observables(config_toyfactory_.argset_generation_observables());
+      cfg_tfac_proto.set_expected_yield(expected_yield);
+            
+      ToyFactoryStd tfac_proto(config_common_, cfg_tfac_proto);
+      
+      RooDataSet* data = tfac_proto.Generate();
+      sinfo.set_indent(sinfo.indent()-2);
+    }
+    
     
     if (PdfIsDecomposable(pdf)) {
       // pdf needs to be decomposed and generated piece-wise 
