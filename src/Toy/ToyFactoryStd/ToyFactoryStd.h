@@ -179,6 +179,9 @@ namespace Toy {
      *                                       dimensions to generate
      *  @param expected_yield Expected yield to generate (if equals 0, then get 
      *                        yield from PDF itself)
+     *  @param extended determine if PDF is to be generated with Extended() 
+     *                  RooCmdArg. If so, the generated yield will be poisson 
+     *                  distributed around the expected value.
      *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
@@ -195,6 +198,9 @@ namespace Toy {
      *                                       dimensions to generate
      *  @param expected_yield Expected yield to generate (if equals 0, then get 
      *                        yield from PDF itself)
+     *  @param extended determine if PDF is to be generated with Extended() 
+     *                  RooCmdArg. If so, the generated yield will be poisson 
+     *                  distributed around the expected value.
      *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
@@ -211,6 +217,9 @@ namespace Toy {
      *                                       dimensions to generate
      *  @param expected_yield Expected yield to generate (if equals 0, then get 
      *                        yield from PDF itself)
+     *  @param extended determine if PDF is to be generated with Extended() 
+     *                  RooCmdArg. If so, the generated yield will be poisson 
+     *                  distributed around the expected value.
      *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.

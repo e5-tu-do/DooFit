@@ -46,7 +46,6 @@ namespace Toy {
   }
   
   RooDataSet* ToyFactoryStd::Generate() {
-    sinfo << endmsg;
     sinfo.Ruler();
     TStopwatch sw;
     sw.Start();
@@ -122,24 +121,37 @@ namespace Toy {
   
   RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended) {
     RooDataSet* data = NULL;
+    RooDataSet* proto_data = NULL;
     
     const std::vector<Config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
-    for (std::vector<Config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
-      // TODO: If PDF ist extended AND no yield is set, we need to get yield from
-      //       PDF itself here.
+    if (matched_proto_sections.size() > 0) {
+      int proto_size = expected_yield+10*TMath::Sqrt(expected_yield);
       
-      sinfo.set_indent(sinfo.indent()+2);
-      ToyFactoryStdConfig cfg_tfac_proto((*it).second());
-      cfg_tfac_proto.InitializeOptions(config_common_);
-      
-      if (config_toyfactory_.workspace() != NULL) cfg_tfac_proto.set_workspace(config_toyfactory_.workspace());
-      cfg_tfac_proto.set_argset_generation_observables(config_toyfactory_.argset_generation_observables());
-      cfg_tfac_proto.set_expected_yield(expected_yield);
-            
-      ToyFactoryStd tfac_proto(config_common_, cfg_tfac_proto);
-      
-      RooDataSet* data = tfac_proto.Generate();
-      sinfo.set_indent(sinfo.indent()-2);
+      for (std::vector<Config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
+        // TODO: If PDF ist extended AND no yield is set, we need to get yield from
+        //       PDF itself here.
+        sinfo << "Generating proto data for PDF " << pdf.GetName() << " using config section " << (*it).second() << endmsg;
+        sinfo.set_indent(sinfo.indent()+2);
+        ToyFactoryStdConfig cfg_tfac_proto((*it).second());
+        cfg_tfac_proto.InitializeOptions(config_common_);
+        
+        if (config_toyfactory_.workspace() != NULL) cfg_tfac_proto.set_workspace(config_toyfactory_.workspace());
+        cfg_tfac_proto.set_argset_generation_observables(config_toyfactory_.argset_generation_observables());
+        cfg_tfac_proto.set_expected_yield(proto_size);
+        
+        ToyFactoryStd tfac_proto(config_common_, cfg_tfac_proto);
+        
+        RooDataSet* temp_data = tfac_proto.Generate();
+        
+        // merge proto sets if necessary
+        if (proto_data == NULL) {
+          proto_data = temp_data;
+        } else {
+          proto_data->merge(temp_data);
+          delete temp_data;
+        }
+        sinfo.set_indent(sinfo.indent()-2);
+      }
     }
     
     
@@ -152,12 +164,12 @@ namespace Toy {
         sinfo << "RooExtendPdf " << pdf.GetName() << "(" << sub_pdf.GetName() << "," << yield.GetName() << "=" << yield.getVal() << ") will be decomposed." << endmsg;
         
         sinfo.set_indent(sinfo.indent()+2);
-        data = GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield>0 ? expected_yield : yield.getVal());
+        data = GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield>0 ? expected_yield : yield.getVal(), extended);
         sinfo.set_indent(sinfo.indent()-2);
       } else if (PdfIsAdded(pdf)) {
-        data = GenerateForAddedPdf(pdf, argset_generation_observables, expected_yield);
+        data = GenerateForAddedPdf(pdf, argset_generation_observables, expected_yield, extended);
       } else if (PdfIsProduct(pdf)) {
-        data = GenerateForProductPdf(pdf, argset_generation_observables, expected_yield);
+        data = GenerateForProductPdf(pdf, argset_generation_observables, expected_yield, extended);
       } else {
         serr << "PDF is decomposable, but decomposition is not yet implemented. Giving up." << endmsg;
         throw;
