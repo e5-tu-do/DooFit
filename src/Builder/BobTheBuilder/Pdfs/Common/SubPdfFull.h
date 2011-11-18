@@ -1,5 +1,5 @@
-#ifndef BUILDER_BOBTHEBUILDER_SIMCATEGORY_H
-#define BUILDER_BOBTHEBUILDER_SIMCATEGORY_H
+#ifndef BUILDER_BOBTHEBUILDER_SUBPDFFULL_H
+#define BUILDER_BOBTHEBUILDER_SUBPDFFULL_H
 
 // from STL
 #include <map>
@@ -11,12 +11,12 @@
 // forward declarations
 class Component;
 
-class SimCategory{
+class SubPdfFull{
  public:
-  SimCategory( const boost::property_tree::ptree &pt );
-  ~SimCategory();
+  SubPdfFull();
+  ~SubPdfFull();
   
-  void CreatePdf();
+  void Initialize( const boost::property_tree::ptree &pt );
   
  protected:
  private:
@@ -26,4 +26,4 @@ class SimCategory{
 
 
 
-#endif // BUILDER_BOBTHEBUILDER_SIMCATEGORY_H
+#endif // BUILDER_BOBTHEBUILDER_SUBPDFFULL_H
