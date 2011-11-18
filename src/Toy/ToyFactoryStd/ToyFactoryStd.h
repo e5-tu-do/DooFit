@@ -182,11 +182,12 @@ namespace Toy {
      *  @param extended determine if PDF is to be generated with Extended() 
      *                  RooCmdArg. If so, the generated yield will be poisson 
      *                  distributed around the expected value.
+     *  @param proto_data Proto dataset to use for this PDF. 
      *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true);
+    RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL);
     
     /**
      *  @brief Generate a toy sample for a given RooAddPdf.
@@ -201,11 +202,12 @@ namespace Toy {
      *  @param extended determine if PDF is to be generated with Extended() 
      *                  RooCmdArg. If so, the generated yield will be poisson 
      *                  distributed around the expected value.
+     *  @param proto_data Proto dataset to use for this PDF. 
      *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true);
+    RooDataSet* GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL);
     
     /**
      *  @brief Generate a toy sample for a given RooProdPdf.
@@ -220,12 +222,13 @@ namespace Toy {
      *  @param extended determine if PDF is to be generated with Extended() 
      *                  RooCmdArg. If so, the generated yield will be poisson 
      *                  distributed around the expected value.
+     *  @param proto_data Proto dataset to use for this PDF. 
      *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      *  @todo check for PDF arguments to be uncorrelated
      */
-    RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true);
+    RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL);
     
     /**
      *  @brief Generate a toy sample for discrete variables.

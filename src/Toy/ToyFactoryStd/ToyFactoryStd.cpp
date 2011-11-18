@@ -124,9 +124,8 @@ namespace Toy {
     return matched_sections;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended) {
+  RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) {
     RooDataSet* data = NULL;
-    RooDataSet* proto_data = NULL;
     
     const std::vector<Config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
     if (matched_proto_sections.size() > 0) {
@@ -170,32 +169,43 @@ namespace Toy {
         sinfo << "RooExtendPdf " << pdf.GetName() << "(" << sub_pdf.GetName() << "," << yield.GetName() << "=" << yield.getVal() << ") will be decomposed." << endmsg;
         
         sinfo.set_indent(sinfo.indent()+2);
-        data = GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield>0 ? expected_yield : yield.getVal(), extended);
+        data = GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield>0 ? expected_yield : yield.getVal(), extended, proto_data);
         sinfo.set_indent(sinfo.indent()-2);
       } else if (PdfIsAdded(pdf)) {
-        data = GenerateForAddedPdf(pdf, argset_generation_observables, expected_yield, extended);
+        data = GenerateForAddedPdf(pdf, argset_generation_observables, expected_yield, extended, proto_data);
       } else if (PdfIsProduct(pdf)) {
-        data = GenerateForProductPdf(pdf, argset_generation_observables, expected_yield, extended);
+        data = GenerateForProductPdf(pdf, argset_generation_observables, expected_yield, extended, proto_data);
       } else {
         serr << "PDF is decomposable, but decomposition is not yet implemented. Giving up." << endmsg;
         throw;
       }
     } else {
       // pdf can be generated straightly
-      sinfo << "Generating for PDF " << pdf.GetName() << " (" << pdf.IsA()->GetName() << "). Expected yield: " << expected_yield << " events." << endmsg;
+      sinfo << "Generating for PDF " << pdf.GetName() << " (" << pdf.IsA()->GetName() << "). Expected yield: " << expected_yield << " events.";
+      if (proto_data != NULL) {
+        sinfo << " Proto dataset is available with " << proto_data->numEntries() << " entries.";
+      }
+      sinfo << endmsg;
       
       RooCmdArg extend_arg = RooCmdArg::none();
       if (extended) {
         extend_arg = Extended();
       }
+      RooCmdArg proto_arg = RooCmdArg::none();
+      if (proto_data != NULL) {
+        proto_arg = ProtoData(*proto_data);
+      }
       
-      data = pdf.generate(*(pdf.getObservables(argset_generation_observables)), expected_yield, extend_arg);
+      data = pdf.generate(*(pdf.getObservables(argset_generation_observables)), expected_yield, extend_arg, proto_arg);
     }
     sinfo << "Generated " << data->numEntries() << " events for PDF " << pdf.GetName() << endmsg;
+    
+    data->Print();
+    
     return data;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended) {
+  RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) {
     sinfo << "RooAddPdf " << pdf.GetName();
     
     RooAddPdf& add_pdf = dynamic_cast<RooAddPdf&>(pdf);
@@ -261,7 +271,7 @@ namespace Toy {
     return data;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended) {
+  RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) {
     sinfo << "RooProdPdf " << pdf.GetName() << " will be decomposed." << endmsg;
     sinfo.set_indent(sinfo.indent()+2);
     
