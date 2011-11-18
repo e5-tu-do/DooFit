@@ -2,4 +2,4 @@
 #add_subdirectory(ProgramOptions)
 add_subdirectory(ConfigTest)
 add_subdirectory(ToyTest)
-add_subdirectory(BuilderStandardTest)
+add_subdirectory(BobTheBuilderTest)
