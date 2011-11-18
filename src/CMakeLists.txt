@@ -1,7 +1,6 @@
 add_subdirectory(Config)
 add_subdirectory(Fitter)
 add_subdirectory(Builder)
-add_subdirectory(BuilderSim)
 add_subdirectory(Pdf2Ws)
 add_subdirectory(Data)
 add_subdirectory(Plotter)
