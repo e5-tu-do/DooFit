@@ -53,7 +53,7 @@ namespace Toy {
     // try to generate with PDF (if set)
     RooDataSet* data = NULL;
     try {
-      data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield());
+      data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield(), !config_toyfactory_.dataset_size_fixed());
     } catch (const PdfNotSetException& e) {
       if (config_toyfactory_.discrete_probabilities().size() == 0) {
         // could not generate continous sample via PDF, nor is a discrete sample requested
@@ -75,9 +75,14 @@ namespace Toy {
       discrete_yield = data->numEntries();
       argset_already_generated = data->get();
     } else {
-      // no PDF set, get a Poisson distributed yield and empty argset for 
-      // discrete variables.
-      discrete_yield = RooRandom::randomGenerator()->Poisson(config_toyfactory_.expected_yield());
+      // no PDF set, get a Poisson distributed yield (if necessary) and empty 
+      // argset for discrete variables.
+      if (config_toyfactory_.dataset_size_fixed()) {
+        discrete_yield = config_toyfactory_.expected_yield();
+      } else {
+        discrete_yield = RooRandom::randomGenerator()->Poisson(config_toyfactory_.expected_yield());
+      }
+      
       argset_already_generated = new RooArgSet();
     }
     
@@ -138,6 +143,7 @@ namespace Toy {
         if (config_toyfactory_.workspace() != NULL) cfg_tfac_proto.set_workspace(config_toyfactory_.workspace());
         cfg_tfac_proto.set_argset_generation_observables(config_toyfactory_.argset_generation_observables());
         cfg_tfac_proto.set_expected_yield(proto_size);
+        cfg_tfac_proto.set_dataset_size_fixed(true);
         
         ToyFactoryStd tfac_proto(config_common_, cfg_tfac_proto);
         

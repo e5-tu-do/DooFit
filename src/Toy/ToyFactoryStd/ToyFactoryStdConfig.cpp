@@ -137,6 +137,7 @@ namespace Toy {
       scfg << "(is not set)" << endmsg;
     }
     
+    scfg << "Fixed size dataset:        " << dataset_size_fixed_ << endmsg;
     
     
     for (vector<Config::DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities_.begin(); it != discrete_probabilities_.end(); ++it) {
@@ -160,7 +161,8 @@ namespace Toy {
     (GetOptionString("argset_name_ws").c_str(), po::value<string>(&argset_generation_observables_workspace_),
      "Name of variables argset to generate for on linked workspace")
     (GetOptionString("discrete_probabilities").c_str(), po::value<vector<Config::DiscreteProbabilityDistribution> >(&discrete_probabilities_)->composing(), "Discrete probability distribution for variables (can be multiply defined). The string representation is var_name,value1,prob1,value2,prob2,...,valueN,probN")
-    (GetOptionString("proto_section").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&proto_sections_)->composing(), "Proto dataset generation section. Specify sub PDF name and config section to use for proto data for this PDF. String representation is pdf_name,section");
+    (GetOptionString("proto_section").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&proto_sections_)->composing(), "Proto dataset generation section. Specify sub PDF name and config section to use for proto data for this PDF. String representation is pdf_name,section")
+    (GetOptionString("dataset_size_fixed").c_str(), po::value<bool>(&dataset_size_fixed_)->default_value(false),"Set to true to generate a fixed size dataset (instead of poisson distributed size which is default)");
     
     descs_visible_.push_back(generation);
   }

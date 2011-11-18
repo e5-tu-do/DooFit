@@ -111,6 +111,13 @@ namespace Toy {
      *  @see ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
      */
     const std::vector<Config::CommaSeparatedPair>& proto_sections() const {return proto_sections_;}
+    /**
+     *  @brief Getter for fixed data set size (in contrast to poisson smearing)
+     *
+     *  @see ToyFactoryStd::set_dataset_size_fixed(bool)
+     *  @return current value of dataset_size_fixed_
+     */
+    bool dataset_size_fixed() const {return dataset_size_fixed_;}
     ///@}
     
     /** @name Setter actual options
@@ -227,6 +234,18 @@ namespace Toy {
      *  @param proto_sections vector of Config::CommaSeparatedPair to use
      */
     void set_proto_sections(const std::vector<Config::CommaSeparatedPair>& proto_sections) {proto_sections_ = proto_sections;}
+    /**
+     *  @brief Setter for fixed data set size (in contrast to poisson smearing)
+     *
+     *  This option determines if the size of the dataset is to be fixed or 
+     *  varied according to a poisson distribution. For extended fits the latter
+     *  is normally the case. However, one might want to generate a sample with 
+     *  a fixed and well defined size.
+     *
+     *  @param dataset_size_fixed flag if a fixed size is to be generated (true)
+     *                            or not (false)
+     */
+    void set_dataset_size_fixed(bool dataset_size_fixed) {dataset_size_fixed_ = dataset_size_fixed;} 
     /**
      *  \brief Add a discrete probability distribution
      *
@@ -356,6 +375,15 @@ namespace Toy {
      *  @see ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
      */
     std::vector<Config::CommaSeparatedPair> proto_sections_;
+    /**
+     *  @brief Option for fixed data set size (in contrast to poisson smearing)
+     *
+     *  This option determines if the size of the dataset is to be fixed or 
+     *  varied according to a poisson distribution. For extended fits the latter
+     *  is normally the case. However, one might want to generate a sample with 
+     *  a fixed and well defined size.
+     */
+    bool dataset_size_fixed_;
     ///@}
     
     /**
