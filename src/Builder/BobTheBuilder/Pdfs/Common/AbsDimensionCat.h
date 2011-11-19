@@ -19,6 +19,7 @@ class AbsDimensionCat : public AbsDimension{
   virtual ~AbsDimensionCat();
   
   void Initialize(  const boost::property_tree::ptree::value_type &pt_head );
+  bool AddToWorkspace( RooWorkspace* ws );
   
  protected:
   std::string types_;

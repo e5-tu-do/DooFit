@@ -25,7 +25,7 @@ class AbsDimension{
   virtual ~AbsDimension();
   
   virtual void Initialize( const boost::property_tree::ptree::value_type& pt_head ) = 0;
-  
+  virtual bool AddToWorkspace( RooWorkspace* ws ) = 0;
   
   // Getter
   const std::string&  name()      const{ return name_;   };

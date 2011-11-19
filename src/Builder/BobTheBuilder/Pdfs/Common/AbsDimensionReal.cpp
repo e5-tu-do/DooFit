@@ -41,7 +41,7 @@ void AbsDimensionReal::Initialize( const boost::property_tree::ptree::value_type
 }
 
 
-RooRealVar* const AbsDimensionReal::add_to_workspace( RooWorkspace* const ws ){
+bool AbsDimensionReal::AddToWorkspace( RooWorkspace* ws ){
   RooRealVar dim_temp(name_.c_str(), desc_.c_str(), val_min_, val_max_, unit_.c_str());
   
   // Check if object with this name exists on workspace, else create one.
@@ -53,5 +53,5 @@ RooRealVar* const AbsDimensionReal::add_to_workspace( RooWorkspace* const ws ){
     ws->import(dim_temp);
   }
 
-  return ws->var(name_.c_str());
+  return true;
 }

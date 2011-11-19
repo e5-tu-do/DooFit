@@ -10,6 +10,10 @@
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
 
+// from RooFit
+#include "RooCategory.h"
+#include "RooWorkspace.h"
+
 // from project
 #include "Utils/MsgStream.h"
 
@@ -39,6 +43,26 @@ void AbsDimensionCat::Initialize( const boost::property_tree::ptree::value_type 
   types_   = pt.get<string>("types");
   
   CreateTypes( types_ );
+}
+
+bool AbsDimensionCat::AddToWorkspace( RooWorkspace* ws ){
+  RooCategory dim_temp(name_.c_str(), desc_.c_str());
+  
+  typedef pair<string,int> type_pair;
+  BOOST_FOREACH( type_pair type , map_types_ ){
+    dim_temp.defineType(type.first.c_str(), type.second);
+  }
+  
+  // Check if object with this name exists on workspace, else create one.
+  if (ws->obj(name_.c_str()) != NULL){
+    cout << "AbsDimensionCat: Tried to add already existing dimension variable with name '" << name_ << "' to the workspace! FAILED." << endl;
+    throw;
+  }
+  else{
+    ws->import(dim_temp);
+  }
+  
+  return true;
 }
 
 void AbsDimensionCat::CreateTypes( const std::string &type_string ){

@@ -16,7 +16,7 @@ class AbsDimensionReal : public AbsDimension{
   virtual ~AbsDimensionReal();
   
   void Initialize(  const boost::property_tree::ptree::value_type &pt_head );
-  
+  bool AddToWorkspace( RooWorkspace* ws );
   
   // Getter
   const double        val_min()   const{ return val_min_; };
@@ -30,7 +30,7 @@ class AbsDimensionReal : public AbsDimension{
   void set_unit( const std::string& unit ){ unit_ = unit; };
   
 
-  RooRealVar* const add_to_workspace( RooWorkspace* const ws ); 
+   
 
  protected:
   double      val_min_;
