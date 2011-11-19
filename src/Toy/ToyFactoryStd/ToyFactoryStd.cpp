@@ -67,33 +67,34 @@ namespace Toy {
       
     const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities = config_toyfactory_.discrete_probabilities();
     
-    // determine yield and already generated argset for discrete dataset
-    double discrete_yield = 0;
-    const RooArgSet* argset_already_generated;
-    if (data != NULL) {
-      // continous PDF was generated, take args and yield from there
-      discrete_yield = data->numEntries();
-      argset_already_generated = data->get();
-    } else {
-      // no PDF set, get a Poisson distributed yield (if necessary) and empty 
-      // argset for discrete variables.
-      if (config_toyfactory_.dataset_size_fixed()) {
-        discrete_yield = config_toyfactory_.expected_yield();
+    if (discrete_probabilities.size() > 0) {
+      // determine yield and already generated argset for discrete dataset
+      double discrete_yield = 0;
+      const RooArgSet* argset_already_generated;
+      if (data != NULL) {
+        // continous PDF was generated, take args and yield from there
+        discrete_yield = data->numEntries();
+        argset_already_generated = data->get();
       } else {
-        discrete_yield = RooRandom::randomGenerator()->Poisson(config_toyfactory_.expected_yield());
+        // no PDF set, get a Poisson distributed yield (if necessary) and empty 
+        // argset for discrete variables.
+        if (config_toyfactory_.dataset_size_fixed()) {
+          discrete_yield = config_toyfactory_.expected_yield();
+        } else {
+          discrete_yield = RooRandom::randomGenerator()->Poisson(config_toyfactory_.expected_yield());
+        }
+        
+        argset_already_generated = new RooArgSet();
       }
       
-      argset_already_generated = new RooArgSet();
-    }
-    
-    RooDataSet* data_discrete = GenerateDiscreteSample(config_toyfactory_.discrete_probabilities(), *(config_toyfactory_.argset_generation_observables()), *argset_already_generated, discrete_yield);
-    
-    // merge if necessary
-    if (data != NULL) {
-      data->merge(data_discrete);
-      delete data_discrete;
-    } else {
-      data = data_discrete;
+      RooDataSet* data_discrete = GenerateDiscreteSample(discrete_probabilities, *(config_toyfactory_.argset_generation_observables()), *argset_already_generated, discrete_yield);
+      
+      // merge if necessary
+      if (data != NULL) {
+        MergeDatasets(data, data_discrete);
+      } else {
+        data = data_discrete;
+      }
     }
     
     sinfo << "Generation of this sample took " << sw << endmsg;
@@ -110,6 +111,44 @@ namespace Toy {
     } else {
       return false;
     }
+  }
+  
+  void ToyFactoryStd::MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const {
+    // sanity check
+    if (master_dataset->get()->overlaps(*slave_dataset->get())) {
+      serr << "Attempting two merge two non-disjoint datasets. Unable to cope with that. Giving up." << endmsg;
+      throw DatasetsNotDisjointException();
+    }
+    
+    master_dataset->merge(slave_dataset);
+    delete slave_dataset;
+  }
+  
+  void ToyFactoryStd::AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const {
+    // sanity check
+    const RooArgSet& master_argset = *master_dataset->get();
+    const RooArgSet& slave_argset  = *slave_dataset->get();
+    
+    if (master_argset.getSize() != slave_argset.getSize()) {
+      serr << "Attempting two append two datasets with mixed column number. Unable to cope with that. Giving up." << endmsg;
+      serr << "Cannot merge " << master_argset << " with " << slave_argset << endmsg;
+      throw DatasetsNotAppendableException();
+    }
+    
+    // happy fun time using TIterator, yay!
+    TIterator* iter   = slave_argset.createIterator();
+    RooAbsArg* column = NULL;
+    while ((column = (RooAbsArg*)iter->Next())) {
+      if (!master_argset.contains(*column)) {
+        serr << "Attempting two append two datasets with non-identical columns. Unable to cope with that. Giving up." << endmsg;
+        serr << "Cannot merge " << master_argset << " with " << slave_argset << endmsg;
+        throw DatasetsNotAppendableException();
+      }
+    }
+    
+    // if we reached this, both datasets are compatible
+    master_dataset->append(*slave_dataset);
+    delete slave_dataset;
   }
   
   std::vector<Config::CommaSeparatedPair> ToyFactoryStd::GetPdfProtoSections(const std::string& pdf_name) const {
@@ -129,11 +168,11 @@ namespace Toy {
     
     const std::vector<Config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
     if (matched_proto_sections.size() > 0) {
+      // @todo If PDF ist extended AND no yield is set, we need to get yield from
+      //       PDF itself for proto .
       int proto_size = expected_yield+10*TMath::Sqrt(expected_yield);
       
       for (std::vector<Config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
-        // TODO: If PDF ist extended AND no yield is set, we need to get yield from
-        //       PDF itself here.
         sinfo << "Generating proto data for PDF " << pdf.GetName() << " using config section " << (*it).second() << endmsg;
         sinfo.set_indent(sinfo.indent()+2);
         ToyFactoryStdConfig cfg_tfac_proto((*it).second());
@@ -152,8 +191,7 @@ namespace Toy {
         if (proto_data == NULL) {
           proto_data = temp_data;
         } else {
-          proto_data->merge(temp_data);
-          delete temp_data;
+          MergeDatasets(proto_data, temp_data);
         }
         sinfo.set_indent(sinfo.indent()-2);
       }
@@ -199,9 +237,7 @@ namespace Toy {
       data = pdf.generate(*(pdf.getObservables(argset_generation_observables)), expected_yield, extend_arg, proto_arg);
     }
     sinfo << "Generated " << data->numEntries() << " events for PDF " << pdf.GetName() << endmsg;
-    
-    data->Print();
-    
+        
     return data;
   }
   
@@ -259,8 +295,7 @@ namespace Toy {
         
         if (data) {
           RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield);
-          data->append(*data_temp);
-          delete data_temp;
+          AppendDatasets(data, data_temp);
         } else {
           data = (GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield));
         }
@@ -291,8 +326,8 @@ namespace Toy {
     while ((sub_pdf = (RooAbsPdf*)it->Next())) {
       if (data) {
         RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false);
-        data->merge(data_temp);
-        delete data_temp;
+        
+        MergeDatasets(data, data_temp);
       } else {
         data = (GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false));
       }
@@ -325,7 +360,7 @@ namespace Toy {
       if (disc_var == NULL) {
         serr << "ERROR: Discrete probability for " << (*it).var_name() 
         << " is requested for generation but is not in the generation argument set. Cannot generate." << endmsg;
-        throw;
+        throw NotGeneratingDiscreteData();
       } else {
         if (argset_already_generated.contains(*disc_var)) {
           serr << "ERROR: Discrete probability for " << (*it).var_name() 

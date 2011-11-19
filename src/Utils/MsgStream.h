@@ -7,6 +7,8 @@
 #include <cstring>
 
 #include "TStopwatch.h"
+#include "RooArgSet.h"
+#include "TIterator.h"
 
 /*! \class MsgStream 
  * \brief A class for message output using different messages and colors.
@@ -189,12 +191,35 @@ inline MsgStream& operator<<(MsgStream& lhs, bool b) {
  *
  *  This function includes stop of stopwatch and reset after printing.
  */
-inline MsgStream& operator<<(MsgStream& lhs, TStopwatch sw) {
+inline MsgStream& operator<<(MsgStream& lhs, TStopwatch& sw) {
   sw.Stop();
   
   lhs.stream() << "t(CPU) = " << sw.CpuTime() << " s; t(Real) = " << sw.RealTime() << " s.";
   
   sw.Reset();
+  return lhs;
+}
+
+/**
+ *  @brief Function to output RooArgSets directly and nicely into MsgStreams
+ *
+ *  This function just prints all arguments in an RooArgSet nicely.
+ */
+inline MsgStream& operator<<(MsgStream& lhs, const RooArgSet& argset) {
+  if (argset.getSize() > 0) {
+    lhs.stream() << "(";
+    
+    // happy fun time using TIterator, yay!
+    TIterator* iter = argset.createIterator();
+    RooAbsArg* arg  = (RooAbsArg*)iter->Next();
+    lhs.stream() << arg->GetName();
+    
+    while ((arg = (RooAbsArg*)iter->Next())) {
+      lhs.stream() << "," << arg->GetName();
+    }
+    lhs.stream() << ")";
+  }
+  
   return lhs;
 }
 

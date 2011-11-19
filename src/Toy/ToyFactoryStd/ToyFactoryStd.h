@@ -59,6 +59,9 @@ namespace Toy {
    *
    *  @see Toy::ToyFactoryStdConfig::set_proto_sections(const std::vector<Config::CommaSeparatedPair>&)
    *  @see Toy::ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
+   *
+   *  @todo Proto sets need to be split for sub PDFs.
+   *  @todo Test proto generation without externally set yield.
    */
   
   class ToyFactoryStd {
@@ -147,6 +150,36 @@ namespace Toy {
         return false;
       }
     }
+    ///@}
+    
+    /** @name Dataset combination functions
+     *  Functions to combine sub datasets together (merge, append)
+     */
+    ///@{
+    /**
+     *  @brief Merge two datasets
+     *
+     *  This functions merges a dataset into another. A sanity check for 
+     *  compatibility is applied (if not, a DatasetsNotDisjointException is 
+     *  thrown). After merging, the second or slave dataset is deleted.
+     *
+     *  @param master_dataset first dataset to merge the second dataset into
+     *  @param slave_dataset second dataset to merge into the first
+     */
+    void MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
+    
+    /**
+     *  @brief Append a dataset to another
+     *
+     *  This functions appends a dataset to another. A sanity check for 
+     *  compatibility is applied (i.e. if datasets contain identical columns; if
+     *  not, a DatasetsNotAppendableException is thrown). After appending, the 
+     *  second or slave dataset is deleted.
+     *
+     *  @param master_dataset first dataset to append the second dataset to
+     *  @param slave_dataset second dataset to append to the first
+     */
+    void AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
     ///@}
     
     /** @name Proto dataset functions
@@ -265,6 +298,27 @@ namespace Toy {
    */
   struct NotGeneratingDataException: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Not generating any data"; }
+  };
+  
+  /** \struct NotGeneratingDiscreteData
+   *  \brief Exception for not generating discrete data
+   */
+  struct NotGeneratingDiscreteData: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "Not generating discrete data"; }
+  };
+  
+  /** \struct DatasetsNotDisjointException
+   *  \brief Exception for trying to merge non-disjoint datasets
+   */
+  struct DatasetsNotDisjointException: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "Trying to merge non-disjoint datasets"; }
+  };
+  
+  /** \struct DatasetsNotAppendableException
+   *  \brief Exception for trying to merge non-appendable datasets
+   */
+  struct DatasetsNotAppendableException: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "Trying to merge non-appendable datasets"; }
   };
 }
 
