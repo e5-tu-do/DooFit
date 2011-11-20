@@ -113,11 +113,42 @@ namespace Toy {
     }
   }
   
-  void ToyFactoryStd::MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const {
+  void ToyFactoryStd::MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const RooArgSet* ignore_argset) const {
     // sanity check
+    const RooArgSet& master_argset = *master_dataset->get();
+    const RooArgSet& slave_argset  = *slave_dataset->get();
+    
     if (master_dataset->get()->overlaps(*slave_dataset->get())) {
-      serr << "Attempting two merge two non-disjoint datasets. Unable to cope with that. Giving up." << endmsg;
-      throw DatasetsNotDisjointException();
+      // there is an overlap in both datasets, if the overlap is in columns 
+      // which are also in ignore_argset this is no problem; need to check for 
+      // that.
+      // First assume datasets are not mergable.
+      bool not_mergable = true;
+      
+      if (ignore_argset != NULL) {
+        // there is an ignore argset, might be mergable
+        not_mergable = false;
+        // Happy fun time using TIterator, yay!
+        TIterator* iter   = slave_argset.createIterator();
+        RooAbsArg* column = NULL;
+        while ((column = (RooAbsArg*)iter->Next())) {
+          // If any overlaping column is not in ignore_argset, datasets are not
+          // mergable.
+          if (master_argset.contains(*column) && !(ignore_argset->contains(*column))) {
+            not_mergable = true;
+          }
+        }
+      }
+      
+      if (not_mergable) {
+        serr << "Attempting two merge two non-disjoint datasets. Unable to cope with that. Giving up." << endmsg;
+        serr << "Cannot merge " << master_argset << " with " << slave_argset;
+        if (ignore_argset != NULL) {
+          serr << " (ignoring " << ignore_argset << ")";
+        }
+        serr << endmsg;
+        throw DatasetsNotDisjointException();
+      }
     }
     
     master_dataset->merge(slave_dataset);
@@ -131,17 +162,17 @@ namespace Toy {
     
     if (master_argset.getSize() != slave_argset.getSize()) {
       serr << "Attempting two append two datasets with mixed column number. Unable to cope with that. Giving up." << endmsg;
-      serr << "Cannot merge " << master_argset << " with " << slave_argset << endmsg;
+      serr << "Cannot append " << slave_argset << " to " << master_argset << endmsg;
       throw DatasetsNotAppendableException();
     }
     
-    // happy fun time using TIterator, yay!
+    // Happy fun time using TIterator, yay!
     TIterator* iter   = slave_argset.createIterator();
     RooAbsArg* column = NULL;
     while ((column = (RooAbsArg*)iter->Next())) {
       if (!master_argset.contains(*column)) {
         serr << "Attempting two append two datasets with non-identical columns. Unable to cope with that. Giving up." << endmsg;
-        serr << "Cannot merge " << master_argset << " with " << slave_argset << endmsg;
+        serr << "Cannot append " << slave_argset << " to " << master_argset << endmsg;
         throw DatasetsNotAppendableException();
       }
     }
@@ -301,7 +332,7 @@ namespace Toy {
     RooProdPdf& prod_pdf = dynamic_cast<RooProdPdf&>(pdf);
     
     TIterator* it = prod_pdf.getComponents()->createIterator();
-    // the first component is the RooAddPdf itself, get rid of it
+    // the first component is the RooProdPdf itself, get rid of it
     it->Next();
     
     RooAbsPdf* sub_pdf = NULL;
@@ -313,11 +344,11 @@ namespace Toy {
     
     while ((sub_pdf = (RooAbsPdf*)it->Next())) {
       if (data) {
-        RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false);
+        RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false, proto_data);
         
-        MergeDatasets(data, data_temp);
+        MergeDatasets(data, data_temp, proto_data->get());
       } else {
-        data = (GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false));
+        data = (GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false, proto_data));
       }
     }
     
@@ -356,7 +387,7 @@ namespace Toy {
           << config_toyfactory_.generation_pdf()->GetName() 
           << " (" << config_toyfactory_.generation_pdf()->IsA()->GetName() 
           << ")." << endmsg;
-          throw;
+          throw NotGeneratingDiscreteData();
         } else {
           const std::vector<std::pair<double,double> >& prob_map = (*it).probabilities();
           // create some simple arrays for faster generation (looping over arrays 

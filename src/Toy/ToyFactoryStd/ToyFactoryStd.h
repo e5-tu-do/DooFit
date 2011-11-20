@@ -165,10 +165,17 @@ namespace Toy {
      *  compatibility is applied (if not, a DatasetsNotDisjointException is 
      *  thrown). After merging, the second or slave dataset is deleted.
      *
+     *  For some columns overlap might be acceptable (e.g. for proto datasets).
+     *  An ignore argset can be supplied. Any column which is also in the ifnore
+     *  set will not create an exception. The caller must make sure that the 
+     *  data with these columns is identical in both datasets (otherwise, 
+     *  merging does not make sense).
+     *
      *  @param master_dataset first dataset to merge the second dataset into
      *  @param slave_dataset second dataset to merge into the first
+     *  @param ignore_argset argset with columns to ignore in sanity check
      */
-    void MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
+    void MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const RooArgSet* ignore_argset=NULL) const;
     
     /**
      *  @brief Append a dataset to another
