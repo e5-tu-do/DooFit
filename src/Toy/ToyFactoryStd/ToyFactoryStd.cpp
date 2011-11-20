@@ -163,7 +163,7 @@ namespace Toy {
     return matched_sections;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) {
+  RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) const {
     RooDataSet* data = NULL;
     
     const std::vector<Config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
@@ -173,19 +173,7 @@ namespace Toy {
       int proto_size = expected_yield+10*TMath::Sqrt(expected_yield);
       
       for (std::vector<Config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
-        sinfo << "Generating proto data for PDF " << pdf.GetName() << " using config section " << (*it).second() << endmsg;
-        sinfo.set_indent(sinfo.indent()+2);
-        ToyFactoryStdConfig cfg_tfac_proto((*it).second());
-        cfg_tfac_proto.InitializeOptions(config_common_);
-        
-        if (config_toyfactory_.workspace() != NULL) cfg_tfac_proto.set_workspace(config_toyfactory_.workspace());
-        cfg_tfac_proto.set_argset_generation_observables(config_toyfactory_.argset_generation_observables());
-        cfg_tfac_proto.set_expected_yield(proto_size);
-        cfg_tfac_proto.set_dataset_size_fixed(true);
-        
-        ToyFactoryStd tfac_proto(config_common_, cfg_tfac_proto);
-        
-        RooDataSet* temp_data = tfac_proto.Generate();
+        RooDataSet* temp_data = GenerateProtoSample(pdf, *it, argset_generation_observables, config_toyfactory_.workspace(), proto_size);
         
         // merge proto sets if necessary
         if (proto_data == NULL) {
@@ -241,7 +229,7 @@ namespace Toy {
     return data;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) {
+  RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) const {
     sinfo << "RooAddPdf " << pdf.GetName();
     
     RooAddPdf& add_pdf = dynamic_cast<RooAddPdf&>(pdf);
@@ -306,7 +294,7 @@ namespace Toy {
     return data;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) {
+  RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) const {
     sinfo << "RooProdPdf " << pdf.GetName() << " will be decomposed." << endmsg;
     sinfo.set_indent(sinfo.indent()+2);
     
@@ -337,7 +325,7 @@ namespace Toy {
     return data;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield) {
+  RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield) const {
     // Vector containing necessary information for discrete variable generation.
     // Tuple contents:
     //  1. The variable as RooAbsArg* itself
@@ -462,5 +450,21 @@ namespace Toy {
     }
     
     return data_discrete;
+  }
+  
+  RooDataSet* ToyFactoryStd::GenerateProtoSample(const RooAbsPdf& pdf, const Config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, RooWorkspace* workspace, int yield) const {
+    sinfo << "Generating proto data for PDF " << pdf.GetName() << " using config section " << proto_section.second() << endmsg;
+    sinfo.set_indent(sinfo.indent()+2);
+    ToyFactoryStdConfig cfg_tfac_proto(proto_section.second());
+    cfg_tfac_proto.InitializeOptions(config_common_);
+    
+    if (workspace != NULL) cfg_tfac_proto.set_workspace(workspace);
+    cfg_tfac_proto.set_argset_generation_observables(&argset_generation_observables);
+    cfg_tfac_proto.set_expected_yield(yield);
+    cfg_tfac_proto.set_dataset_size_fixed(true);
+    
+    ToyFactoryStd tfac_proto(config_common_, cfg_tfac_proto);
+    
+    return tfac_proto.Generate();
   }
 }

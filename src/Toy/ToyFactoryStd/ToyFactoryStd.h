@@ -51,11 +51,13 @@ namespace Toy {
    *  @section proto-sets Proto dataset generation
    *
    *  The need for proto datasets cannot be detected automatically. Therefore, 
-   *  one needs to specify for each sub PDF a section name. This section has to
-   *  be included in the config file used to configure the toy factory. The toy
-   *  factory will read the specified section and create a new toy factory based
-   *  on the settings in this section to create the proto data. The generated 
-   *  proto data will then be used for the specified sub PDF.
+   *  one needs to specify for each sub PDF a section name. Based on the 
+   *  settings in this section in the config file, a new toy factory will be 
+   *  created to generate the proto dataset. Workspace and observables argset 
+   *  are taken from the mother toy factory. Yield and fixed size are set 
+   *  automatically. The toy factory will read other settings from the specified 
+   *  section. The generated proto data will then be used for the specified 
+   *  sub PDF.
    *
    *  @see Toy::ToyFactoryStdConfig::set_proto_sections(const std::vector<Config::CommaSeparatedPair>&)
    *  @see Toy::ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
@@ -220,7 +222,7 @@ namespace Toy {
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL);
+    RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL) const;
     
     /**
      *  @brief Generate a toy sample for a given RooAddPdf.
@@ -240,7 +242,7 @@ namespace Toy {
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL);
+    RooDataSet* GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL) const;
     
     /**
      *  @brief Generate a toy sample for a given RooProdPdf.
@@ -261,7 +263,7 @@ namespace Toy {
      *          must take care of proper deletion afterwards.
      *  @todo check for PDF arguments to be uncorrelated
      */
-    RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL);
+    RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL) const;
     
     /**
      *  @brief Generate a toy sample for discrete variables.
@@ -280,7 +282,30 @@ namespace Toy {
      *          must take care of proper deletion afterwards.
      *  @todo check for PDF arguments to be uncorrelated
      */
-    RooDataSet* GenerateDiscreteSample(const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield);
+    RooDataSet* GenerateDiscreteSample(const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield) const;
+    
+    /**
+     *  @brief Generate a proto sample for a given proto section
+     *
+     *  Helper function to be used by ToyFactoryStd::GenerateForPdf(). For a 
+     *  given proto section as Config::CommaSeparatedPair it will create a new
+     *  ToyFactoryStd that will generate the proto set itself. The proto_section
+     *  is a section in the config file that configures this proto set. 
+     *  Workspace and observables argset are taken from this toy factory. Yield 
+     *  and fixed size are set automatically.
+     *
+     *  @param pdf PDF to generate sample for
+     *  @param proto_section Section in the config file to configure the proto
+     *                       dataset
+     *  @param argset_generation_observables Argument set with variables in which 
+     *                                       dimensions to generate
+     *  @param workspace RooWorkspace to use for generation
+     *  @param yield Yield to generate
+     *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
+     *          ownership of this sample. Therefore, the invoker of this function
+     *          must take care of proper deletion afterwards.
+     */
+    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const Config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, RooWorkspace* workspace, int yield) const;
     ///@}
     
     /**
