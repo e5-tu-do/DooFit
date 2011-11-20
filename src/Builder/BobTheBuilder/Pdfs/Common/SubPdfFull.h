@@ -19,8 +19,10 @@ class SubPdfFull{
   void Initialize( const boost::property_tree::ptree &pt );
   
  protected:
+  
  private:
   std::string name_;
+  std::string desc_;
   std::map <std::string, Component*> components_;
 };
 
