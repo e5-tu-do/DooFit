@@ -8,6 +8,9 @@
 // from boost
 #include <boost/property_tree/ptree.hpp>
 
+// forward declarations
+class RooWorkspace;
+
 
 namespace Builder { namespace BobTheBuilder {
 
@@ -17,6 +20,7 @@ class CategoryBasic{
   ~CategoryBasic();
   
   void Initialize( const boost::property_tree::ptree::value_type& pt_head );
+  bool AddToWorkspace( RooWorkspace* ws);
   
   const std::map< std::string, int >& map_types(){ return map_types_; };
   

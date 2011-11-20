@@ -10,6 +10,9 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/shared_ptr.hpp>
 
+// forward declarations
+class RooWorkspace;
+
 namespace Builder { namespace BobTheBuilder {
 
 // forward declarations in project
@@ -21,6 +24,7 @@ class CategorySuper{
   ~CategorySuper();
   
   void Initialize( const boost::property_tree::ptree::value_type& pt_head, const std::map< std::string, boost::shared_ptr< CategoryBasic > > &map_category_basic );
+  bool AddToWorkspace( RooWorkspace* ws );
   
  protected:
   

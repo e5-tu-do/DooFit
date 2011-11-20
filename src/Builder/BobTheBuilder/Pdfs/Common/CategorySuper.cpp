@@ -6,6 +6,12 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 
+// from RooFit
+#include "RooArgSet.h"
+#include "RooCategory.h"
+#include "RooSuperCategory.h"
+#include "RooWorkspace.h"
+
 // from project
 #include "Utils/MsgStream.h"
 
@@ -84,7 +90,7 @@ void CategorySuper::CreateTypes( const string &subcats, const map< string, share
   }
 }
 
-vector< string > CategorySuper::CombineTypes( const vector< string > &subcat_one_types, const vector< string > &subcat_two_types){
+vector< string > CategorySuper::CombineTypes( const vector< string > &subcat_one_types, const vector< string > &subcat_two_types ){
   string sep   = ";";
   vector< string > temp_comb_types;
   BOOST_FOREACH(string type_one, subcat_one_types){
@@ -97,5 +103,34 @@ vector< string > CategorySuper::CombineTypes( const vector< string > &subcat_one
   }
   return temp_comb_types;  
 }
+
+bool CategorySuper::AddToWorkspace( RooWorkspace* ws ){
+  // create RooArgSet of subcategories
+  RooArgSet cat_set;
+  BOOST_FOREACH( string subcat_name, list_subcats_ ){
+    RooCategory* subcat = ws->cat(subcat_name.c_str());
+    if (subcat == NULL){
+      serr << "CategorySuper: RooCategory '" << subcat << "' does not exist on workspace. Unable to create SuperCategory '" << name_ << "'." << endmsg;
+      throw;
+    }
+    else{
+      cat_set.add(*subcat);
+    }
+  }
+  // create RooSuperCategory
+  RooSuperCategory super_cat(name_.c_str(),desc_.c_str(),cat_set);
+  
+  // check if object with same name already exists on workspace
+  if (ws->obj(name_.c_str()) != NULL){
+    cout << "CategorySuper: Tried to add RooSuperCategory with name '" << name_ << "' to the workspace! Object with this name already exists on the workspace. FAILED." << endl;
+    throw;
+  }
+  else{
+    ws->import(super_cat);
+  }
+  
+  return true;
+}
+
 
 

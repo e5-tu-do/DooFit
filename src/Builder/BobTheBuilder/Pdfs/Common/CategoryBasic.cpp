@@ -11,6 +11,11 @@
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
 
+// from RooFit
+#include "RooCategory.h"
+#include "RooWorkspace.h"
+
+
 // from project
 #include "Utils/MsgStream.h"
 
@@ -63,4 +68,24 @@ void CategoryBasic::CreateTypes( const std::string &type_string ){
       throw;
     }
   }
+}
+
+bool CategoryBasic::AddToWorkspace( RooWorkspace* ws){
+  RooCategory cat_temp(name_.c_str(), desc_.c_str());
+  
+  typedef pair<string,int> type_pair;
+  BOOST_FOREACH( type_pair type , map_types_ ){
+    cat_temp.defineType(type.first.c_str(), type.second);
+  }
+  
+  // Check if object with this name exists on workspace, else create one.
+  if (ws->obj(name_.c_str()) != NULL){
+    cout << "CategoryBasic: Tried to add RooCategory with name '" << name_ << "' to the workspace! Object with this name already exists on the workspace. FAILED." << endl;
+    throw;
+  }
+  else{
+    ws->import(cat_temp);
+  }
+  
+  return true;
 }
