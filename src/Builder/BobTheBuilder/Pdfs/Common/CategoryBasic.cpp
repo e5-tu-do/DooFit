@@ -49,7 +49,10 @@ void CategoryBasic::Initialize( const boost::property_tree::ptree::value_type& p
   desc_    = pt.get<string>("desc");
   types_   = pt.get<string>("types");
 
-  CreateTypes( types_ );  
+  CreateTypes( types_ ); 
+  
+  sinfo << "desc  \"" << desc_    << "\"" << endmsg;
+  sinfo << "types \"" << types_   << "\"" << endmsg;
 }
 
 void CategoryBasic::CreateTypes( const std::string &type_string ){
@@ -88,4 +91,13 @@ bool CategoryBasic::AddToWorkspace( RooWorkspace* ws){
   }
   
   return true;
+}
+
+std::vector< std::string > CategoryBasic::GetTypesVector(){
+  vector<string> vector_temp;
+  typedef pair<string,int> type_pair;
+  BOOST_FOREACH( type_pair type , map_types_ ){
+    vector_temp.push_back(type.first);
+  }
+  return vector_temp;
 }

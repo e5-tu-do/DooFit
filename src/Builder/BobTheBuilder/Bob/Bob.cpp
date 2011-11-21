@@ -18,7 +18,6 @@
 #include "Builder/BobTheBuilder/Pdfs/Common/Component.h"
 #include "Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
 #include "Builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
-#include "Builder/BobTheBuilder/Pdfs/Common/PdfFull.h"
 #include "Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
 #include "Builder/BobTheBuilder/Pdfs/Mass/DimMass.h"
 #include "Builder/BobTheBuilder/Pdfs/Tag/DimTag.h"
@@ -36,6 +35,7 @@ Bob::Bob() :
  , map_dimensions_()
  , map_categories_basic_()
  , map_categories_super_()
+ , pdf_full_()
 {
   
 }
@@ -48,11 +48,18 @@ Bob::~Bob(){
 void Bob::load( const string& file_input ){
   
   // parse file input.
-  ParseFileInput( file_input ); 
+  ParseFileInput( file_input );
+  
+  sinfo.Ruler();  
+  sinfo << "The property tree in " << file_input << " is now being translated. " << endmsg; 
+  sinfo.Ruler();
+  sinfo.set_indent(0);
+
   CreateDimensions();
   CreateCategories();
   CreatePdfFull();
   
+  sinfo.Ruler();
   // Testing ground, to be put into a function
   // bpt::ptree tree_simcategories = tree_main_.get_child("SimCategories");
   //   BOOST_FOREACH(bpt::ptree::value_type &tree_simcat, tree_simcategories){
@@ -93,10 +100,18 @@ void Bob::ParseFileInput( const string& file_input ){
 void Bob::CreateDimensions(){
   bpt::ptree tree_dimensions = tree_main_.get_child("Dimensions");
   
+  sinfo << "Dimensions" << endmsg;
+  sinfo << "{" << endmsg;
+  sinfo.increment_indent(+2);
+  
   // loop over dimensions tree and add dimensions to map
   BOOST_FOREACH(bpt::ptree::value_type &tree_dim, tree_dimensions){
     string dim_type = tree_dim.first;
     string dim_name = tree_dim.second.get_value<string>();
+    
+    sinfo << dim_type << " \"" << dim_name << "\"" << endmsg;
+    sinfo << "{" << endmsg;
+    sinfo.increment_indent(+2);
     
     // insert to map and check for duplicates
     pair<map<string,shared_ptr<AbsDimension> >::iterator,bool> ret;
@@ -106,7 +121,12 @@ void Bob::CreateDimensions(){
       throw;
     }
     map_dimensions_[dim_name]->Initialize(tree_dim);
+    
+    sinfo.increment_indent(-2);
+    sinfo << "}" << endmsg;
   }
+  sinfo.increment_indent(-2);
+  sinfo << "}" << endmsg;
 }
 
 shared_ptr<AbsDimension> const Bob::CreateDimension( std::string dim_type ){
@@ -135,10 +155,18 @@ void Bob::CreateCategories(){
       return;     
   }
   
+  sinfo << "Categories" << endmsg;
+  sinfo << "{" << endmsg;
+  sinfo.increment_indent(+2);
+  
   try {
     BOOST_FOREACH(bpt::ptree::value_type &tree_cat, tree_categories){    
       string cat_type = tree_cat.first;
       string cat_name = tree_cat.second.get_value<string>();
+      sinfo << cat_type << " \"" << cat_name << "\"" << endmsg;
+      sinfo << "{" << endmsg;
+      sinfo.increment_indent(+2);
+      
       // Create normal categories
       if ( cat_type == "Basic"){
         shared_ptr<CategoryBasic> cat_basic_obj_temp(new CategoryBasic());
@@ -150,9 +178,13 @@ void Bob::CreateCategories(){
         }
 
         map_categories_basic_[cat_name]->Initialize(tree_cat);
+        
+        sinfo.increment_indent(-2);
+        sinfo << "}" << endmsg;
       }
-      // Create SuperCategories
-      else if ( cat_type == "Super" ){
+      
+      // Create SuperCategories     
+      else if ( cat_type == "Super" ){       
         shared_ptr<CategorySuper> cat_super_obj_temp(new CategorySuper());
         pair< map< string, shared_ptr< CategorySuper > >::iterator, bool > ret; 
         ret = map_categories_super_.insert(pair< string, shared_ptr<CategorySuper> >( cat_name, cat_super_obj_temp ));
@@ -162,6 +194,9 @@ void Bob::CreateCategories(){
         }
 
         map_categories_super_[cat_name]->Initialize(tree_cat, map_categories_basic_);
+        
+        sinfo.increment_indent(-2);
+        sinfo << "}" << endmsg;
       }
       else{
         serr << "Bob: Category type '" << cat_type << "' unknown!" << endmsg;
@@ -171,10 +206,22 @@ void Bob::CreateCategories(){
   catch(...){
     serr << "Bob: Something went wrong in the parsing of categories." << endmsg;
     throw;
-  }  
+  }
+  sinfo.increment_indent(-2);
+  sinfo << "}" << endmsg;
 }
 
 void Bob::CreatePdfFull(){
+  bpt::ptree tree_pdffull;
+  try {
+    tree_pdffull = tree_main_.get_child("PdfFull");
+  }
+  catch (...) {
+    swarn << "Bob: Could not find 'PdfFull' in property tree." << endmsg;
+    throw; 
+  }
+  
+  pdf_full_.Initialize(tree_pdffull, map_dimensions_, map_categories_basic_, map_categories_super_);
   
 }
 

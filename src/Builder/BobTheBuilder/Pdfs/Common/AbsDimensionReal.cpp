@@ -1,5 +1,6 @@
 // from project
 #include "Builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
+#include "Utils/MsgStream.h"
 
 // from STL
 #include <iostream>
@@ -37,7 +38,10 @@ void AbsDimensionReal::Initialize( const boost::property_tree::ptree::value_type
   val_max_ = pt.get<double>("val_max");
   unit_    = pt.get<string>("unit");
   
-  cout << name_ << " / " << desc_ << " / " << val_min_ << " / " << val_max_ <<" / " << unit_ << endl;
+  sinfo << "desc    \"" << desc_    << "\"" << endmsg;
+  sinfo << "val_min \"" << val_min_ << "\"" << endmsg;
+  sinfo << "val_max \"" << val_max_ << "\"" << endmsg;
+  sinfo << "unit    \"" << unit_    << "\"" << endmsg;
 }
 
 

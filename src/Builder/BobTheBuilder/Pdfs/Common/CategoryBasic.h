@@ -4,6 +4,7 @@
 // from STL
 #include <map>
 #include <string>
+#include <vector>
 
 // from boost
 #include <boost/property_tree/ptree.hpp>
@@ -23,6 +24,12 @@ class CategoryBasic{
   bool AddToWorkspace( RooWorkspace* ws);
   
   const std::map< std::string, int >& map_types(){ return map_types_; };
+  
+  /** 
+   *  @brief Returns a vector of category types
+   *
+   */
+  std::vector< std::string > GetTypesVector();
   
  protected:
 

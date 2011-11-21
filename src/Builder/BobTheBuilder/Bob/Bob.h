@@ -19,7 +19,7 @@
 #include <boost/shared_ptr.hpp>
 
 // from project
-
+#include "Builder/BobTheBuilder/Pdfs/Common/PdfFull.h"
 
 // from RooFit
 
@@ -122,6 +122,8 @@ class Bob{
    *  @brief A map of CategorySuper for configuration of RooSuperCategory.
    */
   std::map < std::string, boost::shared_ptr<CategorySuper> > map_categories_super_;
+  
+  PdfFull pdf_full_;
   
   /**
    *  @brief Parses the file_input.

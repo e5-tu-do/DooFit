@@ -49,15 +49,16 @@ Categories
 
 PdfFull "pdfFull"
 {
-  desc        "P"
-  Extended    false 
-  PdfsForCategory "catTrigTrag"
+  desc          "P"
+  Extended      false
+  Simultaneous  true
+  SimCatSubPdfs "catTrigTrag"
   {
     "{B;t}" "pdfFullBt"
     {
       desc        "P_{B,t}"
       Extended    false
-      Components
+      Components  true
       {
         Sig "pdfSig"
         { 

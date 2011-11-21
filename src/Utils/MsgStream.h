@@ -134,6 +134,13 @@ public:
    */
   int indent() const {return indent_;}
   
+  /**
+   *  @brief Increment indent for new lines
+   *  
+   *  @param additional number of spaces to be used
+   */  
+  void increment_indent(int indent_add){indent_ += indent_add;}
+  
 protected:
   /**
    *  \brief Flush the internal std::ostringstream and output.

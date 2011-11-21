@@ -43,6 +43,9 @@ void AbsDimensionCat::Initialize( const boost::property_tree::ptree::value_type 
   types_   = pt.get<string>("types");
   
   CreateTypes( types_ );
+  
+  sinfo << "desc  \"" << desc_    << "\"" << endmsg;
+  sinfo << "types \"" << types_   << "\"" << endmsg;
 }
 
 bool AbsDimensionCat::AddToWorkspace( RooWorkspace* ws ){
