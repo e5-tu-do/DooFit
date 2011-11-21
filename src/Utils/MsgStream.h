@@ -137,9 +137,9 @@ public:
   /**
    *  @brief Increment indent for new lines
    *  
-   *  @param additional number of spaces to be used
+   *  @param indent_add additional number of spaces to be used
    */  
-  void increment_indent(int indent_add){indent_ += indent_add;}
+  void increment_indent(int indent_add) {indent_ += indent_add;}
   
 protected:
   /**
