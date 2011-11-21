@@ -163,7 +163,8 @@ namespace Toy {
      *
      *  This functions merges a dataset into another. A sanity check for 
      *  compatibility is applied (if not, a DatasetsNotDisjointException is 
-     *  thrown). After merging, the second or slave dataset is deleted.
+     *  thrown). After merging, the second or slave dataset is deleted (if not
+     *  specified otherwise).
      *
      *  For some columns overlap might be acceptable (e.g. for proto datasets).
      *  An ignore argset can be supplied. Any column which is also in the ifnore
@@ -174,8 +175,10 @@ namespace Toy {
      *  @param master_dataset first dataset to merge the second dataset into
      *  @param slave_dataset second dataset to merge into the first
      *  @param ignore_argset argset with columns to ignore in sanity check
+     *  @param delete_slave whether slave dataset is to be deleted (default: 
+     *                      yes)
      */
-    void MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const RooArgSet* ignore_argset=NULL) const;
+    void MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const RooArgSet* ignore_argset=NULL, bool delete_slave=true) const;
     
     /**
      *  @brief Append a dataset to another
@@ -189,6 +192,20 @@ namespace Toy {
      *  @param slave_dataset second dataset to append to the first
      */
     void AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
+    
+    /**
+     *  @brief Merge dataset vector into new dataset
+     *
+     *  This functions merges separate datasets in a dataset vector into a new
+     *  dataset. The new dataset has no connection to the datasets in the 
+     *  vector. The caller takes ownership of this new dataset and is 
+     *  responsible for deleting it after use. Deleting this dataset will not
+     *  affect the datasets in the vector.
+     *
+     *  @param datasets vectors of datasets to merge
+     *  @return a new dataset merged from all elements of the vector 
+     */
+    RooDataSet* MergeDatasetVector(const std::vector<RooDataSet*>& datasets) const;
     ///@}
     
     /** @name Proto dataset functions
@@ -229,7 +246,7 @@ namespace Toy {
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL) const;
+    RooDataSet* GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, std::vector<RooDataSet*> proto_data=std::vector<RooDataSet*>()) const;
     
     /**
      *  @brief Generate a toy sample for a given RooAddPdf.
@@ -249,7 +266,7 @@ namespace Toy {
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL) const;
+    RooDataSet* GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, std::vector<RooDataSet*> proto_data=std::vector<RooDataSet*>()) const;
     
     /**
      *  @brief Generate a toy sample for a given RooProdPdf.
@@ -270,7 +287,7 @@ namespace Toy {
      *          must take care of proper deletion afterwards.
      *  @todo check for PDF arguments to be uncorrelated
      */
-    RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, RooDataSet* proto_data=NULL) const;
+    RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, std::vector<RooDataSet*> proto_data=std::vector<RooDataSet*>()) const;
     
     /**
      *  @brief Generate a toy sample for discrete variables.

@@ -113,10 +113,15 @@ namespace Toy {
     }
   }
   
-  void ToyFactoryStd::MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const RooArgSet* ignore_argset) const {
+  void ToyFactoryStd::MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const RooArgSet* ignore_argset, bool delete_slave) const {
     // sanity check
     const RooArgSet& master_argset = *master_dataset->get();
     const RooArgSet& slave_argset  = *slave_dataset->get();
+    
+    if (master_dataset->numEntries() != slave_dataset->numEntries()) {
+      serr << "Attempting two merge two datasets without equal size. Unable to cope with that. Giving up." << endmsg;
+      throw DatasetsNotDisjointException();
+    }
     
     if (master_dataset->get()->overlaps(*slave_dataset->get())) {
       // there is an overlap in both datasets, if the overlap is in columns 
@@ -138,6 +143,7 @@ namespace Toy {
             not_mergable = true;
           }
         }
+        delete iter;
       }
       
       if (not_mergable) {
@@ -152,7 +158,7 @@ namespace Toy {
     }
     
     master_dataset->merge(slave_dataset);
-    delete slave_dataset;
+    if (delete_slave) delete slave_dataset;
   }
   
   void ToyFactoryStd::AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const {
@@ -176,10 +182,26 @@ namespace Toy {
         throw DatasetsNotAppendableException();
       }
     }
+    delete iter;
     
     // if we reached this, both datasets are compatible
     master_dataset->append(*slave_dataset);
     delete slave_dataset;
+  }
+  
+  RooDataSet* ToyFactoryStd::MergeDatasetVector(const std::vector<RooDataSet*>& datasets) const {
+    if (datasets.size() == 0) {
+      serr << "Cannot merge datasets in empty vector." << endmsg;
+      throw;
+    } 
+    RooDataSet* new_dataset = new RooDataSet(*datasets[0]);
+    
+    if (datasets.size() > 1) {
+      for (std::vector<RooDataSet*>::const_iterator it=datasets.begin()+1; it!=datasets.end(); ++it) {
+        MergeDatasets(new_dataset, *it, NULL, false);
+      }
+    }
+    return new_dataset;
   }
   
   std::vector<Config::CommaSeparatedPair> ToyFactoryStd::GetPdfProtoSections(const std::string& pdf_name) const {
@@ -194,28 +216,42 @@ namespace Toy {
     return matched_sections;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) const {
+  RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     RooDataSet* data = NULL;
-    
+    bool have_to_delete_proto_data = false;
+        
     const std::vector<Config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
     if (matched_proto_sections.size() > 0) {
       // @todo If PDF ist extended AND no yield is set, we need to get yield from
-      //       PDF itself for proto .
-      int proto_size = expected_yield+10*TMath::Sqrt(expected_yield);
+      //       PDF itself for proto.
+      
+      int proto_size;
+      if (proto_data.size() > 0) {
+        proto_size = proto_data[0]->numEntries();
+      } else {
+        proto_size = expected_yield+10*TMath::Sqrt(expected_yield);
+      }
+      
+      // Store only proto data specific for this PDF (remember, there might be 
+      // proto data already coming along from higher PDFs).
+      RooDataSet* proto_data_this_pdf = NULL;
       
       for (std::vector<Config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
         RooDataSet* temp_data = GenerateProtoSample(pdf, *it, argset_generation_observables, config_toyfactory_.workspace(), proto_size);
         
         // merge proto sets if necessary
-        if (proto_data == NULL) {
-          proto_data = temp_data;
+        if (proto_data_this_pdf == NULL) {
+          proto_data_this_pdf = temp_data;
         } else {
-          MergeDatasets(proto_data, temp_data);
+          MergeDatasets(proto_data_this_pdf, temp_data);
         }
         sinfo.set_indent(sinfo.indent()-2);
       }
-    }
-    
+      
+      // merge this proto data at the end of already existing proto data
+      proto_data.push_back(proto_data_this_pdf);
+      have_to_delete_proto_data = true;
+    }    
     
     if (PdfIsDecomposable(pdf)) {
       // pdf needs to be decomposed and generated piece-wise 
@@ -239,8 +275,10 @@ namespace Toy {
     } else {
       // pdf can be generated straightly
       sinfo << "Generating for PDF " << pdf.GetName() << " (" << pdf.IsA()->GetName() << "). Expected yield: " << expected_yield << " events.";
-      if (proto_data != NULL) {
-        sinfo << " Proto dataset is available with " << proto_data->numEntries() << " entries.";
+      RooDataSet * proto_set = NULL;
+      if (proto_data.size() > 0) {
+        proto_set = MergeDatasetVector(proto_data);
+        sinfo << " Proto dataset is available with " << proto_set->numEntries() << " entries.";
       }
       sinfo << endmsg;
       
@@ -249,18 +287,27 @@ namespace Toy {
         extend_arg = Extended();
       }
       RooCmdArg proto_arg = RooCmdArg::none();
-      if (proto_data != NULL) {
-        proto_arg = ProtoData(*proto_data);
+      if (proto_set != NULL) {
+        proto_arg = ProtoData(*proto_set);
       }
       
-      data = pdf.generate(*(pdf.getObservables(argset_generation_observables)), expected_yield, extend_arg, proto_arg);
+      RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
+      data = pdf.generate(*obs_argset, expected_yield, extend_arg, proto_arg);
+      delete obs_argset;
+      if (proto_set != NULL) {
+        delete proto_set;
+      }
     }
     sinfo << "Generated " << data->numEntries() << " events for PDF " << pdf.GetName() << endmsg;
-        
+    
+    if (have_to_delete_proto_data) {
+      delete proto_data.back();
+      proto_data.pop_back(); 
+    }    
     return data;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) const {
+  RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     sinfo << "RooAddPdf " << pdf.GetName();
     
     RooAddPdf& add_pdf = dynamic_cast<RooAddPdf&>(pdf);
@@ -292,6 +339,12 @@ namespace Toy {
     int coef_i = 0;
     double sum_coef = 0.0;
     
+    RooDataSet* proto_dataset = NULL;
+    int proto_dataset_pos = 0;
+    if (proto_data.size() > 0) {
+      proto_dataset = MergeDatasetVector(proto_data);
+    }
+    
     while ((sub_pdf = (RooAbsPdf*)it->Next())) {
       if (sub_pdf->IsA()->InheritsFrom("RooAbsPdf")) {
         double sub_yield, coef;
@@ -310,28 +363,53 @@ namespace Toy {
           }
           sum_coef += coef;
         }
-        sub_yield = coef*expected_yield;
+        if (extended) {
+          sub_yield = RooRandom::randomGenerator()->Poisson(coef*expected_yield);
+        } else {
+          sub_yield = coef*expected_yield;
+        }
+        
+        // check for need to pass proto set
+        RooDataSet* sub_proto_dataset = NULL;
+        std::vector<RooDataSet*> sub_proto_data;
+        if (proto_dataset != NULL) {
+          sub_proto_dataset = new RooDataSet("sub_proto_dataset","sub_proto_dataset", *proto_dataset->get());
+          for (int i=proto_dataset_pos; i<(proto_dataset_pos+sub_yield); ++i) {
+            sub_proto_dataset->addFast(*proto_dataset->get(i));
+          }
+          proto_dataset_pos += sub_yield;
+          sub_proto_data.push_back(sub_proto_dataset);
+        }
         
         if (data) {
-          RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield);
+          RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield, false, sub_proto_data);
           AppendDatasets(data, data_temp);
         } else {
-          data = (GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield));
+          data = (GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield, false, sub_proto_data));
+        }
+        
+        if (sub_proto_dataset != NULL) {
+          delete sub_proto_dataset;
         }
       }
+    }
+    delete it;
+    if (proto_dataset != NULL) {
+      delete proto_dataset;
     }
     
     sinfo.set_indent(sinfo.indent()-2);
     return data;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, RooDataSet* proto_data) const {
+  RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     sinfo << "RooProdPdf " << pdf.GetName() << " will be decomposed." << endmsg;
     sinfo.set_indent(sinfo.indent()+2);
     
     RooProdPdf& prod_pdf = dynamic_cast<RooProdPdf&>(pdf);
     
-    TIterator* it = prod_pdf.getComponents()->createIterator();
+    RooArgSet* comp_argset = prod_pdf.getComponents();
+    TIterator* it = comp_argset->createIterator();
     // the first component is the RooProdPdf itself, get rid of it
     it->Next();
     
@@ -346,11 +424,17 @@ namespace Toy {
       if (data) {
         RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false, proto_data);
         
-        MergeDatasets(data, data_temp, proto_data->get());
+        if (proto_data.size() > 0) {
+          MergeDatasets(data, data_temp, proto_data[0]->get());
+        } else {
+          MergeDatasets(data, data_temp);
+        }
       } else {
         data = (GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false, proto_data));
       }
     }
+    delete it;
+    delete comp_argset;
     
     sinfo.set_indent(sinfo.indent()-2);
     return data;

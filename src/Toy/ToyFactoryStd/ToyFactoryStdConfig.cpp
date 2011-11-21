@@ -123,6 +123,7 @@ namespace Toy {
         scfg << arg->GetName();
       }
       scfg << endmsg;
+      delete arg_it;
     } catch (const ArgSetNotSetException& e) {
       scfg << "(not set)" << endmsg;
     }
