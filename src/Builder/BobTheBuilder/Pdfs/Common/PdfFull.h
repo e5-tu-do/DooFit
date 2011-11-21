@@ -27,7 +27,7 @@ class PdfFull{
   ~PdfFull();
   
   
-  void Initialize( const boost::property_tree::ptree& pt_head, 
+  void Initialize( const boost::property_tree::ptree& tree_pdffull, 
                    const std::map< std::string, boost::shared_ptr<AbsDimension> >& map_dimensions,
                    const std::map< std::string, boost::shared_ptr<CategoryBasic> >& map_cats_basic,
                    const std::map< std::string, boost::shared_ptr<CategorySuper> >& map_cats_super );
@@ -40,8 +40,8 @@ class PdfFull{
   std::string desc_;
   bool extended_;
  
-  std::string simcat_;
   bool simultaneous_;
+  std::string simcat_name_;
   
   std::map< std::string, boost::shared_ptr< SubPdfFull > > map_subpdfs_;
   

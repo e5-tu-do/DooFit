@@ -33,12 +33,12 @@ Categories
   Basic "catTrigger"
   {
     desc  "Trigger categories"
-    types "B,1;U,2"
+    types "B,1" ;U,2"
   }
   Basic "catTagged"
   {
     desc  "Tagging categories"
-    types "t,1;u,0"
+    types "t,1" ;u,0"
   }
   Super "catTrigTag"
   {
@@ -47,18 +47,18 @@ Categories
   }  
 }
 
-PdfFull "pdfFull"
+PdfFull ;"pdfFull"
 {
-  desc          "P"
+  ;desc          "P"
   Extended      false
   Simultaneous  true
-  SimCatSubPdfs "catTrigTrag"
+  SimCatSubPdfs "catTrigTag"
   {
-    "{B;t}" "pdfFullBt"
+    "{B;t}" ;"pdfFullBt"
     {
-      desc        "P_{B,t}"
+      ;desc       "P_{B,t}"
       Extended    false
-      Components  true
+      Components  
       {
         Sig "pdfSig"
         { 
