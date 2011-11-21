@@ -20,6 +20,7 @@
 
 // from Project
 #include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
+#include "Utils/MsgStream.h"
 
 
 using namespace std;
@@ -32,8 +33,8 @@ RooGaussian* Pdf2WsStd::Mass::Gaussian(RooWorkspace* ws,
                                const TString& par_mean_name, const TString& par_sigma_name){
   // Check if object with name already exists on workspace. If so, stop and exit!
   if (ws->obj(pdf_name) != NULL){
-    cerr << "Pdf2WsStd::Mass::Gaussian found an object with name " << pdf_name
-    << " on the workspace. Thus, creation of pdf with same name impossible!" << endl;
+    serr << "Pdf2WsStd::Mass::Gaussian found an object with name " << pdf_name
+    << " on the workspace. Thus, creation of pdf with same name impossible!" << endmsg;
     throw;
   }
   
