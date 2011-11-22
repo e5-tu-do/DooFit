@@ -39,6 +39,7 @@ class AbsDimension{
   void set_types( const std::string& types ){ types_ = types; };
   
  protected:
+  std::string dim_id_;
   std::string name_;
   std::string desc_;
   std::string types_;

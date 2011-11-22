@@ -107,23 +107,17 @@ void Bob::CreateDimensions(){
   // loop over dimensions tree and add dimensions to map
   BOOST_FOREACH(bpt::ptree::value_type &tree_dim, tree_dimensions){
     string dim_type = tree_dim.first;
-    string dim_name = tree_dim.second.get_value<string>();
-    
-    sinfo << dim_type << " \"" << dim_name << "\"" << endmsg;
-    sinfo << "{" << endmsg;
-    sinfo.increment_indent(+2);
+    string dim_id   = tree_dim.second.get_value<string>();
     
     // insert to map and check for duplicates
     pair<map<string,shared_ptr<AbsDimension> >::iterator,bool> ret;
-    ret = map_dimensions_.insert(pair<string,shared_ptr<AbsDimension> >( dim_name, CreateDimension(dim_type))) ;
+    ret = map_dimensions_.insert(pair<string,shared_ptr<AbsDimension> >( dim_id, CreateDimension(dim_type))) ;
     if ( ret.second == false ){
-      cout << "Bob: Tried to insert dimension of type '" << dim_type << "' and name '" << dim_name << "' to map_dimensions_ twice. ABORTING." << endl;
+      cout << "Bob: Tried to insert dimension of type '" << dim_type << "' and id '" << dim_id << "' to map_dimensions_ twice. ABORTING." << endl;
       throw;
     }
-    map_dimensions_[dim_name]->Initialize(tree_dim);
+    map_dimensions_[dim_id]->Initialize(tree_dim);
     
-    sinfo.increment_indent(-2);
-    sinfo << "}" << endmsg;
   }
   sinfo.increment_indent(-2);
   sinfo << "}" << endmsg;

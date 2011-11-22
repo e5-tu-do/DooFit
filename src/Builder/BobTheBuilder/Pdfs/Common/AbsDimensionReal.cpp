@@ -30,18 +30,27 @@ AbsDimensionReal::AbsDimensionReal() :
 AbsDimensionReal::~AbsDimensionReal(){}
 
 void AbsDimensionReal::Initialize( const boost::property_tree::ptree::value_type &pt_head ){  
-  name_    = pt_head.second.get_value<string>();
+  dim_id_ = pt_head.second.get_value<string>();
+  
+  sinfo << pt_head.first << " \"" << dim_id_ << "\"" << endmsg;
+  sinfo << "{" << endmsg;
+  sinfo.increment_indent(+2);
   
   ptree pt = pt_head.second;
+  name_    = pt.get<string>("name",string("var")+dim_id_);
   desc_    = pt.get<string>("desc");
   val_min_ = pt.get<double>("val_min");
   val_max_ = pt.get<double>("val_max");
   unit_    = pt.get<string>("unit");
   
+  sinfo << "name    \"" << name_    << "\"" << endmsg;
   sinfo << "desc    \"" << desc_    << "\"" << endmsg;
   sinfo << "val_min \"" << val_min_ << "\"" << endmsg;
   sinfo << "val_max \"" << val_max_ << "\"" << endmsg;
   sinfo << "unit    \"" << unit_    << "\"" << endmsg;
+  
+  sinfo.increment_indent(-2);
+  sinfo << "}" << endmsg;
 }
 
 

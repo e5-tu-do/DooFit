@@ -10,7 +10,8 @@ using namespace Builder::BobTheBuilder;
 
 
 AbsDimension::AbsDimension() :
-    name_("varDummyName")
+    dim_id_("DummyDimID")
+  , name_("varDummyName")
   , desc_("Dummy description for a dimension variable.")
 {
   
