@@ -27,11 +27,11 @@ class SubPdfFull{
   
  private:
   std::string simcat_type_;
-  std::string simcat_type_stripped_;
+  std::string subpdffull_id_;
   std::string name_;
   std::string desc_;
   bool        extended_;
-  std::map <std::string, Component*> components_;
+  std::map <std::string, boost::shared_ptr<Component> > map_components_;
   
   void InitializeComponents(const boost::property_tree::ptree& tree_components, 
                             const std::map< std::string, boost::shared_ptr<AbsDimension> >& map_dimensions);

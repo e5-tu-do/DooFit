@@ -18,16 +18,21 @@ class Component{
   Component();
   ~Component();
   
-  void Initialize( const boost::property_tree::ptree::value_type &pt_head, std::map< std::string,boost::shared_ptr<AbsDimension> >* map_dimensions );
+  void Initialize( const boost::property_tree::ptree::value_type& tree_component_head, 
+                   const std::map< std::string,boost::shared_ptr<AbsDimension> >& map_dimensions, 
+                   const std::string& subpdffull_id = "" );
   
  protected:
   
  private:
-  bool initialized_;
+  std::string comp_id_;
+  std::string comp_id_full_;
+  std::string name_;
+  std::string desc_;
   bool extended_;
   
-  std::string name_;
-  std::map< std::string,boost::shared_ptr<AbsDimension> >* dimensions_;
+  
+  std::map< std::string, boost::shared_ptr<AbsDimension> > dimensions_;
 };
 
 }}

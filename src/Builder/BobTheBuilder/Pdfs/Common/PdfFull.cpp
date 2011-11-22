@@ -51,12 +51,12 @@ void PdfFull::Initialize( const boost::property_tree::ptree& tree_pdffull,
     desc_     = tree_pdffull.get<string>("desc",name_);
     extended_ = tree_pdffull.get<bool>("Extended",false);
   
-    sinfo << "desc         \"" << desc_ << "\"" << endmsg;
-    sinfo << "Extended     "   << extended_ << endmsg;
+    sinfo << "desc          \"" << desc_ << "\"" << endmsg;
+    sinfo << "Extended      "   << extended_ << endmsg;
 
     // Check for simultaneous category. Set simultaneous boolean.
     simultaneous_ = tree_pdffull.get<bool>("Simultaneous",false);
-    sinfo << "Simultaneous " << simultaneous_ << endmsg;
+    sinfo << "Simultaneous  " << simultaneous_ << endmsg;
   }
   catch(const ptree_error& ptree_err){
     serr << "PdfFull: Could not initialize. " << ptree_err.what() << endmsg;

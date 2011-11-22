@@ -36,16 +36,24 @@ AbsDimensionCat::~AbsDimensionCat(){
 
 
 void AbsDimensionCat::Initialize( const boost::property_tree::ptree::value_type &pt_head ){  
-  name_    = pt_head.second.get_value<string>();
+  dim_id_ = pt_head.second.get_value<string>();
+  
+  sinfo << pt_head.first << " \"" << dim_id_ << "\"" << endmsg;
+  sinfo << "{" << endmsg;
+  sinfo.increment_indent(+2);
   
   ptree pt = pt_head.second;
+  name_    = pt.get<string>("name",string("var")+dim_id_);
   desc_    = pt.get<string>("desc");
   types_   = pt.get<string>("types");
   
   CreateTypes( types_ );
-  
+  sinfo << "name  \"" << name_    << "\"" << endmsg;
   sinfo << "desc  \"" << desc_    << "\"" << endmsg;
   sinfo << "types \"" << types_   << "\"" << endmsg;
+  
+  sinfo.increment_indent(-2);
+  sinfo << "}" << endmsg;
 }
 
 bool AbsDimensionCat::AddToWorkspace( RooWorkspace* ws ){

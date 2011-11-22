@@ -1,28 +1,31 @@
 Dimensions 
 {
-  Mass "varMass"
+  Mass "Mass"
   { 
+    ;name     "m"
     desc     "m_{B}"
     val_min  5000
     val_max  5400
     unit     "MeV/c^{2}"
   }
-  Mass "varMassDau1"
+  Mass "MassDau1"
   {
-    desc    "m_{J/#psi}"
+    ; name     "mJpsi"
+    desc     "m_{J/#psi}"
     val_min  3000
     val_max  4000
     unit     "MeV/c^{2}"
   }
-;  Propertime "varProptime"
+;  Propertime "Proptime"
 ;  {
 ;    desc     "t"
 ;	   val_min  -2
 ;	   val_max  14
 ;	   unit     "ps"
 ;  }
-  Tag        "varTag"
+  Tag        "Tag"
   {
+    ; name    "d"
     desc     "d"
     types    "B0,1;B0bar,-1"
   }
@@ -60,35 +63,35 @@ PdfFull ;"pdfFull"
       Extended    false
       Components  
       {
-        Sig "pdfSig"
+        Sig ;"pdfSig"
         { 
           desc          "P_{Sig}"
           Extended      true
           Dimensions
           {
-            varMass     "Gaussian"
-            varMassDau1 "Gaussian"
+            Mass     "Gaussian"
+            MassDau1 "Gaussian"
           }
         }
-        Pbg "pdfPbg"
-        {
-          varMass     "pdfBtPbgMass"
-          {
-            desc  "juju"
-            type  "Gaussian"
-            mean  "parBtSigMassMean,m_{B}"
-            sigma "parBtSigMassSigma,#sigma_{m,B}"
-            CondPdf   ""
-            CondVars  ""
-            Acc       ""
-          }
-          varMassDau1 "Gaussian"
-        }
-        Lbg "pdfLbg"
-        {
-          varMass     ""
-          vasMassDau1 "=Signal"
-        }
+        ; Pbg ;"pdfPbg"
+        ; {
+        ;   desc         "P"
+        ;   Mass     "Gaussian"
+        ;   {
+        ;     desc  "juju"
+        ;     mean  "parBtSigMassMean,m_{B}"
+        ;     sigma "parBtSigMassSigma,#sigma_{m,B}"
+        ;     CondPdf   ""
+        ;     CondVars  ""
+        ;     Acc       ""
+        ;   }
+        ;   MassDau1 "Gaussian"
+        ; }
+        ; Lbg "pdfLbg"
+        ; {
+        ;   varMass     ""
+        ;   vasMassDau1 "=Signal"
+        ; }
       }
     }
   }

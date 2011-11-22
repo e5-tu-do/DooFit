@@ -18,12 +18,12 @@ using namespace boost;
 using namespace boost::property_tree;
 
 SubPdfFull::SubPdfFull() :
-   simcat_type_("")
- , simcat_type_stripped_("")
+   subpdffull_id_("")
+ , simcat_type_("")
  , name_("DummySubPdfFullName")
  , desc_("Dummy description for a SubPdfFull")
  , extended_(false)
- , components_()
+ , map_components_()
 {
 }
 
@@ -40,25 +40,26 @@ void SubPdfFull::Initialize( const ptree& tree_subpdffull,
     simcat_type_ = simcat_type;
     
     // Strip category type from {;} for standard pdf names
-    simcat_type_stripped_ = simcat_type_;
-    erase_all(simcat_type_stripped_,"{");
-    erase_all(simcat_type_stripped_,";");
-    erase_all(simcat_type_stripped_,"}");
+    subpdffull_id_ = tree_subpdffull.get_value<string>(); 
+    if (subpdffull_id_ == ""){
+      subpdffull_id_ = simcat_type_;
+      erase_all(subpdffull_id_,"{");
+      erase_all(subpdffull_id_,";");
+      erase_all(subpdffull_id_,"}");
+    }
     
-    // Set name, description, extended of PdfFull.
-    name_ = tree_subpdffull.get_value<string>(); 
-    if (name_ == "") name_ = "pdfFull"+simcat_type_stripped_;
-    
-    
-    sinfo << simcat_type_ << " \"" << name_ << "\"" << endmsg;
+    sinfo << simcat_type_ << " \"" << subpdffull_id_ << "\"" << endmsg;
     sinfo << "{" << endmsg;
     sinfo.increment_indent(+2);
     
+    
+    // Set name, description, extended of PdfFull.  
+    name_     = tree_subpdffull.get<string>("name","pdf"+subpdffull_id_+"Full");
     desc_     = tree_subpdffull.get<string>("desc",name_);
     extended_ = tree_subpdffull.get<bool>("Extended",false);    
     
     sinfo << "desc         \"" << desc_ << "\"" << endmsg;
-    sinfo << "Extended     " << extended_ << endmsg;
+    sinfo << "Extended     "   << extended_ << endmsg;
     
   }
   catch(const ptree_error& ptree_err){
@@ -87,7 +88,15 @@ void SubPdfFull::InitializeComponents( const ptree& tree_components,
   sinfo.increment_indent(+2);
   
   BOOST_FOREACH( ptree::value_type tree_component_head, tree_components){
-    
+    string component_name = tree_component_head.first;
+    // insert to map and check for duplicates
+    pair<map<string,shared_ptr<Component> >::iterator,bool> ret;
+    ret = map_components_.insert(pair<string,shared_ptr<Component> >( component_name, shared_ptr<Component>( new Component() ) )) ;
+    if ( ret.second == false ){
+      cout << "SubPdfFull: Tried to insert category '" << component_name << "' in SubPdfFull '" << name_ << "' to map_componentss_ twice." << endl;
+      throw;
+    }
+    map_components_[component_name]->Initialize(tree_component_head, map_dimensions, subpdffull_id_);
   }
   
   sinfo.increment_indent(-2);
