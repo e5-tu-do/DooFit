@@ -68,12 +68,12 @@ namespace Config {
     /**
      *  @brief Getter for first string
      */
-    std::string first() const {return first_;}
+    const std::string& first() const {return first_;}
     
     /**
      *  @brief Getter for second string
      */
-    std::string second() const {return second_;}
+    const std::string& second() const {return second_;}
     
   protected:
     

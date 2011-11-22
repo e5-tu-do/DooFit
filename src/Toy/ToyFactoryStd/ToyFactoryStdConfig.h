@@ -30,6 +30,7 @@
 #endif /* __CINT __ */
 
 // forward declarations
+class TFile;
 
 namespace Toy {
   /** \class ToyFactoryStdConfig
@@ -68,6 +69,10 @@ namespace Toy {
      */
     ///@{
     /**
+     *  @brief Getter for workspace to use
+     */
+    RooWorkspace* workspace() const;
+    /**
      *  \brief Getter for RooAbsPdf* to use for dataset generation
      *
      *  You might ask, why this needs non-const RooAbsPdf*. Refer to 
@@ -82,10 +87,6 @@ namespace Toy {
      *  \brief Getter for RooArgSet* with all observables to generate directly
      */
     const RooArgSet* argset_generation_observables() const; 
-    /**
-     *  @brief Getter for workspace to use
-     */
-    RooWorkspace* workspace() const {return workspace_;}
     /**
      *  \brief Getter for random seed
      *
@@ -118,6 +119,13 @@ namespace Toy {
      *  @return current value of dataset_size_fixed_
      */
     bool dataset_size_fixed() const {return dataset_size_fixed_;}
+    /**
+     *  @brief Getter for for file to load workspace from (and name of workspace in file)
+     *
+     *  @see ToyFactoryStd::set_workspace_filename_name(Config::CommaSeparatedPair)
+     *  @return current value of workspace_filename_name_
+     */
+    Config::CommaSeparatedPair workspace_filename_name() const {return workspace_filename_name_;}
     ///@}
     
     /** @name Setter actual options
@@ -404,6 +412,26 @@ namespace Toy {
     Config::CommaSeparatedPair workspace_filename_name_;
     ///@}
     
+    /** @name Other private members
+     *  Private members besides options.
+     */
+    ///@{
+    // let ROOT Cint not bother about this
+#ifndef __CINT__
+    /**
+     *  @brief TFile to read workspace from
+     * 
+     *  This file will be set automatically upon requeting of a workspace (if 
+     *  workspace_filename_name_ is set and workspace was not set directly 
+     *  before).
+     *
+     *  This is a mutable member as it has to be used dynamically by const 
+     *  member functions.
+     */
+    mutable TFile* ws_file_;
+#endif /* __CINT __ */
+    ///@}
+    
     /**
      *  @brief ClassDef statement for CINT dictionary generation
      */
@@ -412,6 +440,13 @@ namespace Toy {
   
   // let ROOT Cint not bother about this
 #ifndef __CINT__
+  /** \struct WorkspaceNotSetException
+   *  \brief Exception for not set workspace in ToyFactoryStdConfig
+   */
+  struct WorkspaceNotSetException: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "Workspace not set or not loadable"; }
+  };
+  
   /** \struct PdfNotSetException
    *  \brief Exception for not set PDF in ToyFactoryStdConfig
    */

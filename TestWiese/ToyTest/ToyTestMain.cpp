@@ -155,10 +155,14 @@ void TestToys(int argc, char *argv[]) {
   ws->defineSet("argset_obs",argset_obs);  
   
   ws->Print("t");
+  
+//  TFile wsfile("ws.root", "recreate");
+//  ws->Write("ws");
+//  wsfile.Close();
     
-  cfg_tfac.set_workspace(ws);
-  cfg_tfac.set_generation_pdf_workspace("pdf_add");
-  cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
+//  cfg_tfac.set_workspace(ws);
+//  cfg_tfac.set_generation_pdf_workspace("pdf_add");
+//  cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
   
   ToyFactoryStd tfac(cfg_com, cfg_tfac);
   

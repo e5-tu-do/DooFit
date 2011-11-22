@@ -13,6 +13,7 @@
 // ROOT
 #include "TIterator.h"
 #include "TMath.h"
+#include "TFile.h"
 
 // RooFit
 #include "RooAbsPdf.h"
@@ -34,7 +35,8 @@ namespace Toy {
   workspace_(NULL),
   generation_pdf_workspace_(""),
   argset_generation_observables_workspace_(""),
-  random_seed_(0)
+  random_seed_(0),
+  ws_file_(NULL)
   {
     swarn << "Usage of ToyFactoryStdConfig::ToyFactoryStdConfig() is not recommended!" <<endmsg;
   }
@@ -47,17 +49,57 @@ namespace Toy {
   workspace_(NULL),
   generation_pdf_workspace_(""),
   argset_generation_observables_workspace_(""),
-  random_seed_(0)
+  random_seed_(0),
+  ws_file_(NULL)
   {
   }
   
-  ToyFactoryStdConfig::~ToyFactoryStdConfig() {}
+  ToyFactoryStdConfig::~ToyFactoryStdConfig() {
+    if (ws_file_ != NULL) {
+      if (workspace_ != NULL) {
+        delete workspace_;
+      }
+      ws_file_->Close();
+      delete ws_file_;
+    }
+  }
+  
+  RooWorkspace* ToyFactoryStdConfig::workspace() const {
+    if (workspace_ != NULL) {
+      return workspace_;
+    }
+    
+    if (workspace_filename_name_.first().length() > 0) {
+      // need to load workspace (at least try)
+      ws_file_ = new TFile(workspace_filename_name_.first().c_str(),"read");
+      
+      if (ws_file_->IsZombie() || !ws_file_->IsOpen()) {
+        ws_file_->Close();
+        delete ws_file_;
+        
+        serr << "Cannot open file " << workspace_filename_name_.first() << endmsg;
+        throw WorkspaceNotSetException();
+      }
+      
+      workspace_ = (RooWorkspace*)ws_file_->Get(workspace_filename_name_.second().c_str());
+      if (workspace_ == NULL) {
+        ws_file_->Close();
+        delete ws_file_;
+        
+        serr << "Cannot load workspace " << workspace_filename_name_.second() << " from valid file " << workspace_filename_name_.first() << endmsg;
+        throw WorkspaceNotSetException();
+      }
+      return workspace_;
+    } else {
+      return NULL;
+    }
+  }
   
   RooAbsPdf* ToyFactoryStdConfig::generation_pdf() const {
     if (generation_pdf_) { 
       return generation_pdf_;
-    } else if (generation_pdf_workspace_.length() > 0 && workspace_ && workspace_->pdf(generation_pdf_workspace_.c_str())) {
-      return workspace_->pdf(generation_pdf_workspace_.c_str());
+    } else if (generation_pdf_workspace_.length() > 0 && workspace() && workspace()->pdf(generation_pdf_workspace_.c_str())) {
+      return workspace()->pdf(generation_pdf_workspace_.c_str());
     } else {
       throw PdfNotSetException();
     }  
@@ -66,8 +108,8 @@ namespace Toy {
   const RooArgSet* ToyFactoryStdConfig::argset_generation_observables() const {
     if (argset_generation_observables_) { 
       return argset_generation_observables_;
-    } else if (argset_generation_observables_workspace_.length() > 0 && workspace_ && workspace_->set(argset_generation_observables_workspace_.c_str())) {
-      return workspace_->set(argset_generation_observables_workspace_.c_str());
+    } else if (argset_generation_observables_workspace_.length() > 0 && workspace() && workspace()->set(argset_generation_observables_workspace_.c_str())) {
+      return workspace()->set(argset_generation_observables_workspace_.c_str());
     } else {
       throw ArgSetNotSetException();
     }  
@@ -129,7 +171,7 @@ namespace Toy {
     }
     
     scfg << "Workspace:                 ";
-    if (workspace_) {
+    if (workspace()) {
       scfg << "(is set)" << endmsg;
       
       scfg << " PDF name (workspace):     " << generation_pdf_workspace_ << endmsg;
@@ -147,6 +189,8 @@ namespace Toy {
     for (vector<Config::CommaSeparatedPair>::const_iterator it = proto_sections_.begin(); it != proto_sections_.end(); ++it) {
       scfg << "Proto dataset section: " << *it << endmsg;
     }
+
+    scfg << "Workspace from file:       " << workspace_filename_name_ << endmsg;
   }
   
   void ToyFactoryStdConfig::DefineOptions() {
@@ -163,7 +207,8 @@ namespace Toy {
      "Name of variables argset to generate for on linked workspace")
     (GetOptionString("discrete_probabilities").c_str(), po::value<vector<Config::DiscreteProbabilityDistribution> >(&discrete_probabilities_)->composing(), "Discrete probability distribution for variables (can be multiply defined). The string representation is var_name,value1,prob1,value2,prob2,...,valueN,probN")
     (GetOptionString("proto_section").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&proto_sections_)->composing(), "Proto dataset generation section. Specify sub PDF name and config section to use for proto data for this PDF. String representation is pdf_name,section")
-    (GetOptionString("dataset_size_fixed").c_str(), po::value<bool>(&dataset_size_fixed_)->default_value(false),"Set to true to generate a fixed size dataset (instead of poisson distributed size which is default)");
+    (GetOptionString("dataset_size_fixed").c_str(), po::value<bool>(&dataset_size_fixed_)->default_value(false),"Set to true to generate a fixed size dataset (instead of poisson distributed size which is default)")
+    (GetOptionString("workspace_filename_name").c_str(), po::value<Config::CommaSeparatedPair>(&workspace_filename_name_),"Filename to load workspace from (if not set directly) and name of workspace in file (set as filename,workspace_name)");
     
     descs_visible_.push_back(generation);
   }
