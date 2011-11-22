@@ -247,6 +247,20 @@ namespace Toy {
      */
     void set_dataset_size_fixed(bool dataset_size_fixed) {dataset_size_fixed_ = dataset_size_fixed;} 
     /**
+     *  @brief Setter for file to load workspace from (and name of workspace in file)
+     *
+     *  To load an external workspace from a ROOT file, one can specify the 
+     *  filename and name of workspace in the file here (as 
+     *  Config::CommaSeparatedPair in the order filename,workspacename). The 
+     *  workspace will be loaded on demand, but only if no workspace is set 
+     *  directly.
+     *
+     *  @param ws_filename_name ROOT file containing workspace and workspace 
+     *                          name in this file as Config::CommaSeparatedPair
+     */
+    void set_workspace_filename_name(Config::CommaSeparatedPair ws_filename_name) {workspace_filename_name_ = ws_filename_name;} 
+    
+    /**
      *  \brief Add a discrete probability distribution
      *
      *  Add a discrete probability distribution to the vector of such 
@@ -384,6 +398,10 @@ namespace Toy {
      *  a fixed and well defined size.
      */
     bool dataset_size_fixed_;
+    /**
+     *  @brief File name to get workspace from (and name of workspace on file)
+     */
+    Config::CommaSeparatedPair workspace_filename_name_;
     ///@}
     
     /**
