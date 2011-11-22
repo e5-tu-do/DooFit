@@ -49,8 +49,9 @@ namespace Toy {
    *
    *  Generation of the dataset can be invoked via ToyFactoryStd::Generate(). 
    *  This will return a dataset pointer with the generated data (if not 
-   *  configured to write dataset to a file). Therefore, the toy factory can be
-   *  used rather independent of all other modules.
+   *  configured to write dataset to a file). ToyFactoryStd::Generate() will 
+   *  try to invoke specialised generator functions which are able to decompose
+   *  the PDF into sub PDFs and generate those independently.
    *
    *  @section proto-sets Proto dataset generation
    *
