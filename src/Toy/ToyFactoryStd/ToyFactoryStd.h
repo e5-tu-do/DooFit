@@ -38,15 +38,19 @@ namespace Toy {
    *
    *  General configuration is handled via Toy::ToyFactoryStdConfig. One needs
    *  to set the PDF for generation (either via pointer to a RooAbsPdf or via 
-   *  combination of workspace pointer and PDF name on workspace). The set of 
-   *  observables to generate the toy dataset needs to be set as well (again 
-   *  either directly or via name on workspace). 
+   *  combination of workspace pointer and PDF name on workspace or via 
+   *  specifying a file containing the workspace and PDF name on workspace). The 
+   *  set of observables to generate the toy dataset needs to be set as well 
+   *  (again either directly or via name on workspace). 
    *
    *  Although a workspace is not necessarily needed for generation, some 
    *  features (like proto dataset generation) need a workspace to contain PDFs
    *  and argument sets.
    *
-   *  Generation of the dataset can be invoked via ToyFactoryStd::Generate().
+   *  Generation of the dataset can be invoked via ToyFactoryStd::Generate(). 
+   *  This will return a dataset pointer with the generated data (if not 
+   *  configured to write dataset to a file). Therefore, the toy factory can be
+   *  used rather independent of all other modules.
    *
    *  @section proto-sets Proto dataset generation
    *
@@ -92,7 +96,9 @@ namespace Toy {
      *
      *  \return Pointer to the generated sample. ToyFactoryStd does not assume 
      *          ownership of this sample. Therefore, the invoker of this function
-     *          must take care of proper deletion afterwards.
+     *          must take care of proper deletion afterwards. If configured to
+     *          write dataset to a file, this function will return a null 
+     *          pointer.
      */
     RooDataSet* Generate();
     
