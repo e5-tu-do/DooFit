@@ -170,6 +170,11 @@ void TestToys(int argc, char *argv[]) {
   
   RooDataSet* data = tfac.Generate();
   
+  delete data;
+  
+  TFile f("data.root","read");
+  data = (RooDataSet*)f.Get("dataset");
+  
   RooRealVar* mass = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "");
   
   RooPlot* mass_frame = mass->frame();

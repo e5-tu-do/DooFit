@@ -125,7 +125,14 @@ namespace Toy {
      *  @see ToyFactoryStd::set_workspace_filename_name(Config::CommaSeparatedPair)
      *  @return current value of workspace_filename_name_
      */
-    Config::CommaSeparatedPair workspace_filename_name() const {return workspace_filename_name_;}
+    const Config::CommaSeparatedPair& workspace_filename_name() const {return workspace_filename_name_;}
+    /**
+     *  @brief Getter for file name to save dataset to (and name of dataset on file)
+     *
+     *  @see ToyFactoryStd::set_dataset_filename_name(Config::CommaSeparatedPair)
+     *  @return current value of dataset_filename_name_
+     */
+    const Config::CommaSeparatedPair& dataset_filename_name() const {return dataset_filename_name_;}
     ///@}
     
     /** @name Setter actual options
@@ -267,6 +274,18 @@ namespace Toy {
      *                          name in this file as Config::CommaSeparatedPair
      */
     void set_workspace_filename_name(Config::CommaSeparatedPair ws_filename_name) {workspace_filename_name_ = ws_filename_name;} 
+    /**
+     *  @brief Setter for file name to save dataset to (and name of dataset on file)
+     *
+     *  To save the dataset after generation, one can specify the filename and 
+     *  name of dataset in this file (as Config::CommaSeparatedPair in the order 
+     *  filename,datasetname).
+     *
+     *  @param dataset_filename_name ROOT file to save dataset to and dataset 
+     *                               name in this file as 
+     *                               Config::CommaSeparatedPair
+     */
+    void set_dataset_filename_name(Config::CommaSeparatedPair dataset_filename_name) {dataset_filename_name_ = dataset_filename_name;}
     
     /**
      *  \brief Add a discrete probability distribution
@@ -410,6 +429,10 @@ namespace Toy {
      *  @brief File name to get workspace from (and name of workspace on file)
      */
     Config::CommaSeparatedPair workspace_filename_name_;
+    /**
+     *  @brief File name to save dataset to (and name of dataset on file)
+     */
+    Config::CommaSeparatedPair dataset_filename_name_;
     ///@}
     
     /** @name Other private members

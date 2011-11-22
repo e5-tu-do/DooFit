@@ -10,6 +10,7 @@
 // ROOT
 #include "TClass.h"
 #include "TStopwatch.h"
+#include "TFile.h"
 
 // from RooFit
 #include "RooDataSet.h"
@@ -99,6 +100,15 @@ namespace Toy {
     
     sinfo << "Generation of this sample took " << sw << endmsg;
     sinfo.Ruler();
+    
+    if (config_toyfactory_.dataset_filename_name().first().length() > 0) {
+      sinfo << "Writing dataset as " << config_toyfactory_.dataset_filename_name().second() << " into file " << config_toyfactory_.dataset_filename_name().first() << endmsg;
+      TFile dataset_file(config_toyfactory_.dataset_filename_name().first().c_str(),"recreate");
+      
+      data->Write(config_toyfactory_.dataset_filename_name().second().c_str());
+      dataset_file.Close();
+    }
+    
     return data;
   }
   

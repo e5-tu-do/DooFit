@@ -25,6 +25,7 @@
 class CommonConfig; 
 class RooDataSet;
 class RooArgSet;
+class TFile;
 
 namespace Toy {
   /** \class ToyFactoryStd
@@ -48,7 +49,7 @@ namespace Toy {
    *  and argument sets.
    *
    *  Generation of the dataset can be invoked via ToyFactoryStd::Generate(). 
-   *  This will return a dataset pointer with the generated data (if not 
+   *  This will return a dataset pointer with the generated data (can also be 
    *  configured to write dataset to a file). ToyFactoryStd::Generate() will 
    *  try to invoke specialised generator functions which are able to decompose
    *  the PDF into sub PDFs and generate those independently.

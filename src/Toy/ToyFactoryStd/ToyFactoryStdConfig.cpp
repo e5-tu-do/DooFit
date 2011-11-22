@@ -191,6 +191,7 @@ namespace Toy {
     }
 
     scfg << "Workspace from file:       " << workspace_filename_name_ << endmsg;
+    scfg << "File to save dataset to:   " << dataset_filename_name_ << endmsg;
   }
   
   void ToyFactoryStdConfig::DefineOptions() {
@@ -208,7 +209,8 @@ namespace Toy {
     (GetOptionString("discrete_probabilities").c_str(), po::value<vector<Config::DiscreteProbabilityDistribution> >(&discrete_probabilities_)->composing(), "Discrete probability distribution for variables (can be multiply defined). The string representation is var_name,value1,prob1,value2,prob2,...,valueN,probN")
     (GetOptionString("proto_section").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&proto_sections_)->composing(), "Proto dataset generation section. Specify sub PDF name and config section to use for proto data for this PDF. String representation is pdf_name,section")
     (GetOptionString("dataset_size_fixed").c_str(), po::value<bool>(&dataset_size_fixed_)->default_value(false),"Set to true to generate a fixed size dataset (instead of poisson distributed size which is default)")
-    (GetOptionString("workspace_filename_name").c_str(), po::value<Config::CommaSeparatedPair>(&workspace_filename_name_),"Filename to load workspace from (if not set directly) and name of workspace in file (set as filename,workspace_name)");
+    (GetOptionString("workspace_filename_name").c_str(), po::value<Config::CommaSeparatedPair>(&workspace_filename_name_),"Filename to load workspace from (if not set directly) and name of workspace in file (set as filename,workspace_name)")
+    (GetOptionString("dataset_filename_name").c_str(), po::value<Config::CommaSeparatedPair>(&dataset_filename_name_),"Filename to save generated dataset to and name of dataset in file (set as filename,dataset_name)");
     
     descs_visible_.push_back(generation);
   }
