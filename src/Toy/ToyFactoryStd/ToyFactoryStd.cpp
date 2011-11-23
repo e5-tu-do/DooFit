@@ -6,6 +6,7 @@
 
 // boost
 #include "boost/tuple/tuple.hpp"
+#include "boost/filesystem.hpp"
 
 // ROOT
 #include "TClass.h"
@@ -50,6 +51,16 @@ namespace Toy {
     sinfo.Ruler();
     TStopwatch sw;
     sw.Start();
+    
+    if (config_toyfactory_.parameter_read_file().size() > 0) {
+      boost::filesystem::path p(config_toyfactory_.parameter_read_file());
+      if (!boost::filesystem::exists(p)) {
+        serr << "Cannot read parameters from file " << config_toyfactory_.parameter_read_file() << endmsg;
+        throw NotGeneratingDataException();
+      }
+      sinfo << "Reading parameters from " << config_toyfactory_.parameter_read_file() << endmsg;
+      config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables())->readFromFile(config_toyfactory_.parameter_read_file().c_str());
+    }
     
     // try to generate with PDF (if set)
     RooDataSet* data = NULL;
@@ -99,7 +110,6 @@ namespace Toy {
     }
     
     sinfo << "Generation of this sample took " << sw << endmsg;
-    sinfo.Ruler();
     
     if (config_toyfactory_.dataset_filename_name().first().length() > 0) {
       sinfo << "Writing dataset as " << config_toyfactory_.dataset_filename_name().second() << " into file " << config_toyfactory_.dataset_filename_name().first() << endmsg;
@@ -108,6 +118,13 @@ namespace Toy {
       data->Write(config_toyfactory_.dataset_filename_name().second().c_str());
       dataset_file.Close();
     }
+    
+    if (config_toyfactory_.parameter_save_file().size() > 0) {
+      sinfo << "Saving parameters to " << config_toyfactory_.parameter_save_file() << endmsg;
+      config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables())->writeToFile(config_toyfactory_.parameter_save_file().c_str());
+    }
+    
+    sinfo.Ruler();
     
     return data;
   }

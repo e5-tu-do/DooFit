@@ -133,6 +133,18 @@ namespace Toy {
      *  @return current value of dataset_filename_name_
      */
     const Config::CommaSeparatedPair& dataset_filename_name() const {return dataset_filename_name_;}
+    /**
+     *  @brief Getter for file to read parameters from before generation
+     *
+     *  @return current filename to read from
+     */
+    const string& parameter_read_file() const {return parameter_read_file_;}
+    /**
+     *  @brief Getter for file to save parameters to after generation
+     *
+     *  @return current filename to save to
+     */
+    const string& parameter_save_file() const {return parameter_save_file_;}
     ///@}
     
     /** @name Setter actual options
@@ -286,6 +298,18 @@ namespace Toy {
      *                               Config::CommaSeparatedPair
      */
     void set_dataset_filename_name(Config::CommaSeparatedPair dataset_filename_name) {dataset_filename_name_ = dataset_filename_name;}
+    /**
+     *  @brief Setter for file to read parameters from before generation
+     *
+     *  @param filename filename to read from
+     */
+    void set_parameter_read_file(const string& filename) {parameter_read_file_ = filename;}
+    /**
+     *  @brief Setter for file to save parameters to after generation
+     *
+     *  @param filename filename to save to
+     */
+    void set_parameter_save_file(const string& filename) {parameter_save_file_ = filename;}
     
     /**
      *  \brief Add a discrete probability distribution
@@ -433,6 +457,14 @@ namespace Toy {
      *  @brief File name to save dataset to (and name of dataset on file)
      */
     Config::CommaSeparatedPair dataset_filename_name_;
+    /**
+     *  @brief File to read parameters from before generation
+     */
+    string parameter_read_file_;
+    /**
+     *  @brief File to save parameters to after generation
+     */
+    string parameter_save_file_;
     ///@}
     
     /** @name Other private members

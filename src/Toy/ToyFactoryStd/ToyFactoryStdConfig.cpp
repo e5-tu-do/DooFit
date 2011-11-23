@@ -192,6 +192,13 @@ namespace Toy {
 
     scfg << "Workspace from file:       " << workspace_filename_name_ << endmsg;
     scfg << "File to save dataset to:   " << dataset_filename_name_ << endmsg;
+    
+    if (parameter_read_file_.length() > 0) {
+      scfg << "Read parameters from:      " << parameter_read_file_ << endmsg;
+    }
+    if (parameter_save_file_.length() > 0) {
+      scfg << "Save parameters to:        " << parameter_save_file_ << endmsg;
+    }
   }
   
   void ToyFactoryStdConfig::DefineOptions() {
@@ -210,7 +217,9 @@ namespace Toy {
     (GetOptionString("proto_section").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&proto_sections_)->composing(), "Proto dataset generation section. Specify sub PDF name and config section to use for proto data for this PDF. String representation is pdf_name,section")
     (GetOptionString("dataset_size_fixed").c_str(), po::value<bool>(&dataset_size_fixed_)->default_value(false),"Set to true to generate a fixed size dataset (instead of poisson distributed size which is default)")
     (GetOptionString("workspace_filename_name").c_str(), po::value<Config::CommaSeparatedPair>(&workspace_filename_name_),"Filename to load workspace from (if not set directly) and name of workspace in file (set as filename,workspace_name)")
-    (GetOptionString("dataset_filename_name").c_str(), po::value<Config::CommaSeparatedPair>(&dataset_filename_name_),"Filename to save generated dataset to and name of dataset in file (set as filename,dataset_name)");
+    (GetOptionString("dataset_filename_name").c_str(), po::value<Config::CommaSeparatedPair>(&dataset_filename_name_),"Filename to save generated dataset to and name of dataset in file (set as filename,dataset_name)")
+    (GetOptionString("parameter_read_file").c_str(), po::value<string>(&parameter_read_file_),"Filename to read parameters from before generation")
+    (GetOptionString("parameter_save_file").c_str(), po::value<string>(&parameter_save_file_),"Filename to save parameters to after generation");
     
     descs_visible_.push_back(generation);
   }
