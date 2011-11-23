@@ -192,7 +192,9 @@ void TestToys(int argc, char *argv[]) {
   tag2_frame->Draw();
   c1.SaveAs("c2.pdf");
   
-  data->table(RooArgSet(*tag))->Print();
+  Roo1DTable* table = data->table(RooArgSet(*tag));
+  table->Print();
+  delete table;
   
   delete mass_frame;
   delete tag2_frame;
