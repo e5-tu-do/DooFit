@@ -1,5 +1,14 @@
 #include "Builder/BobTheBuilder/Pdfs/Tag/DimTag.h"
 
+
+// from project
+#include "Utils/MsgStream.h"
+
+// from project Pdf related classes
+#include "Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+
+
+
 using namespace Builder::BobTheBuilder;
 
 DimTag::DimTag() :
@@ -9,5 +18,9 @@ DimTag::DimTag() :
 }
 
 DimTag::~DimTag(){
+  
+}
+
+boost::shared_ptr<AbsPdf> DimTag::CreatePdf( const std::string& pdf_type ){
   
 }

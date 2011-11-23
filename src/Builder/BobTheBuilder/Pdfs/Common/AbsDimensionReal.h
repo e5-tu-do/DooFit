@@ -18,6 +18,8 @@ class AbsDimensionReal : public AbsDimension{
   void Initialize(  const boost::property_tree::ptree::value_type &pt_head );
   bool AddToWorkspace( RooWorkspace* ws );
   
+  virtual boost::shared_ptr<AbsPdf> CreatePdf( const std::string& pdf_name) = 0;
+  
   // Getter
   const double        val_min()   const{ return val_min_; };
   const double        val_max()   const{ return val_max_; };

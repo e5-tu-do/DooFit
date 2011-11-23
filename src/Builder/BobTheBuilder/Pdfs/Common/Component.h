@@ -12,6 +12,7 @@ namespace Builder { namespace BobTheBuilder {
 
 // forward declarations
 class AbsDimension;
+class AbsPdf;
 
 class Component{
  public:
@@ -29,11 +30,12 @@ class Component{
   std::string comp_id_full_;
   std::string name_;
   std::string desc_;
-  bool extended_;
+  bool        extended_;
   
-  std::map< std::string, boost::shared_ptr<AbsDimension> > dimensions_;
+  std::map< std::string, boost::shared_ptr<AbsPdf> > map_dimpdfs_;
+  std::map< std::string, boost::shared_ptr<AbsDimension> > map_dimensions_;
   
-  void CreateDimPdfs();
+  void CreateDimPdfs(const boost::property_tree::ptree& tree_compdimensions);
 };
 
 }}

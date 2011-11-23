@@ -57,8 +57,9 @@ PdfFull ;"pdfFull"
   Simultaneous  true
   SimCatSubPdfs "catTrigTag"
   {
-    "{B;t}" ;"pdfFullBt"
+    "{B;t}" ;"Bt"
     {
+      ;name       "pdfBtFull"
       ;desc       "P_{B,t}"
       Extended    false
       Components  
@@ -71,6 +72,7 @@ PdfFull ;"pdfFull"
           {
             Mass     "Gaussian"
             MassDau1 "Gaussian"
+            Proptime "Gaussian"
           }
         }
         ; Pbg ;"pdfPbg"

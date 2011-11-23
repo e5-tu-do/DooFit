@@ -11,6 +11,7 @@ class DimTag : public AbsDimensionCat{
   DimTag();
   ~DimTag();
   
+  boost::shared_ptr<AbsPdf> CreatePdf( const std::string& pdf_type );
  protected:
    
  private:

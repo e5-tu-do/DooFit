@@ -16,8 +16,8 @@ class AbsPdf{
   virtual ~AbsPdf();
   
   
-  virtual void Initialize( const boost::property_tree::ptree::value_type& pt_head ) = 0;
-  virtual RooAbsPdf* AddToWorkspace() = 0;
+  virtual void Initialize( const boost::property_tree::ptree::value_type& tree_pdf_head ) = 0;
+  virtual void AddToWorkspace( RooWorkspace* ws ) = 0;
   
   
   
