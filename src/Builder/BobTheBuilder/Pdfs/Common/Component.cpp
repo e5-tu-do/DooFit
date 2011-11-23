@@ -58,10 +58,12 @@ void Component::Initialize( const ptree::value_type& tree_component_head,
   
   // set dimensions map. Then create and add dimension's pdfs.
   dimensions_ = map_dimensions;
-  
-  
-  
+  CreateDimPdfs();
   
   sinfo.increment_indent(-2);
   sinfo << "}" << endmsg;
+}
+
+void Component::CreateDimPdfs(){
+  
 }

@@ -31,8 +31,9 @@ class Component{
   std::string desc_;
   bool extended_;
   
-  
   std::map< std::string, boost::shared_ptr<AbsDimension> > dimensions_;
+  
+  void CreateDimPdfs();
 };
 
 }}

@@ -219,3 +219,7 @@ void Bob::CreatePdfFull(){
   
 }
 
+void Bob::DumpToRooWorkspace( RooWorkspace& ws){
+  
+}
+
