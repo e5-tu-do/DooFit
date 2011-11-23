@@ -34,7 +34,7 @@ class TFile;
 
 namespace Toy {
   /** \class ToyFactoryStdConfig
-   *  \brief DooFit Config class for the ToyFactoryStd class.
+   *  \brief DooFit Config class for the ToyFactoryStd class
    *
    *  This class is responsible for all ToyFactoryStd related configuration options
    *  which are not covered by CommonConfig.
@@ -53,7 +53,7 @@ namespace Toy {
     /**
      *  \brief Standard constructor for ToyFactoryStdConfig
      *
-     *  Sets all memebers to default values.
+     *  Sets all members to default values.
      *
      *  @param name Name of this Config object.
      */
@@ -351,7 +351,7 @@ namespace Toy {
      *
      *  This function will define all options for the derived CommonConfig class.
      * 
-     *  @see Config::DefineOptions()
+     *  @see Config::AbsConfig::DefineOptions()
      */
     void DefineOptions();
     
@@ -361,7 +361,7 @@ namespace Toy {
      *  This function will store all options from the variable map into own 
      *  members.
      *  
-     *  @see Config::LoadOptions()
+     *  @see Config::AbsConfig::LoadOptions()
      */
     void LoadOptions();
     
