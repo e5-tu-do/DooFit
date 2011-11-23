@@ -1,1 +1,2 @@
 add_subdirectory(ToyFactoryStd)
+add_subdirectory(ToyStudyStd)
