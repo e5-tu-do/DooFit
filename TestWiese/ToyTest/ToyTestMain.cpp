@@ -133,7 +133,10 @@ void TestToys(int argc, char *argv[]) {
   
   RooDataSet* data = tfac.Generate();
   
-  RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(true), Hesse(true), Verbose(false),Timer(true));
+  RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
+  
+  ToyStudyStd tstudy(cfg_com, cfg_tstudy);
+  tstudy.SaveFitResult(fit_result);
   
   delete data;
   

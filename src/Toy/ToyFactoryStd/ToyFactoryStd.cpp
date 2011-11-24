@@ -53,8 +53,7 @@ namespace Toy {
     sw.Start();
     
     if (config_toyfactory_.parameter_read_file().size() > 0) {
-      boost::filesystem::path p(config_toyfactory_.parameter_read_file());
-      if (!boost::filesystem::exists(p)) {
+      if (!boost::filesystem::exists(config_toyfactory_.parameter_read_file())) {
         serr << "Cannot read parameters from file " << config_toyfactory_.parameter_read_file() << endmsg;
         throw NotGeneratingDataException();
       }

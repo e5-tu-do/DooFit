@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <boost/thread/thread.hpp>
+
 using namespace std;
 
 /*
@@ -228,7 +230,7 @@ int Utils::fileNLines( TString strFilename )
 }
 
 void Utils::Sleep(double sleep_time) {
-  usleep(1e6*sleep_time);
+  boost::this_thread::sleep(boost::posix_time::seconds(sleep_time));
 }
 
 void Utils::SetTerminalColor(TerminalColor color) {
