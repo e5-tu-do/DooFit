@@ -25,4 +25,23 @@ namespace Toy {
   Config::AbsConfig(name)
   {
   }
+  
+  ToyStudyStdConfig::~ToyStudyStdConfig() {
+  }
+  
+  void ToyStudyStdConfig::PrintOptions() const {
+  }
+  
+  void ToyStudyStdConfig::DefineOptions() {
+    po::options_description* generation = new po::options_description("Toy study options");
+    
+//    generation->add_options()
+//    (GetOptionString("parameter_save_file").c_str(), po::value<string>(&parameter_save_file_),"Filename to save parameters to after generation");
+    
+    descs_visible_.push_back(generation);
+  }
+  
+  void ToyStudyStdConfig::LoadOptions() {
+  }
+
 }

@@ -24,6 +24,7 @@
 #include "RooAddPdf.h" 
 #include "RooProdPdf.h"
 #include "Roo1DTable.h"
+#include "RooFitResult.h"
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -37,58 +38,17 @@
 #include "Toy/ToyFactoryStd/ToyFactoryStd.h"
 #include "Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
+#include "Toy/ToyStudyStd/ToyStudyStd.h"
+#include "Toy/ToyStudyStd/ToyStudyStdConfig.h"
+
 #include "Utils/MsgStream.h"
 
 void leak() {
-  //for (int i=0; i<1; ++i) {
-  //  double * d = new double[200];
-  //}
-  
-  //for (int i=0; i<1; ++i) {
-  //  Config::DiscreteProbabilityDistribution* dp = new Config::DiscreteProbabilityDistribution();
-  //}
-  
-  RooWorkspace* ws_tmp = new RooWorkspace("ws_tmp");
-  
-  Pdf2WsStd::CommonFuncs::getVar(ws_tmp, "mean1", "mean1", 5200, 5000, 5700, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws_tmp, "mean2", "mean2", 5300, 5000, 5700, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws_tmp, "mean3", "mean3", 5400, 5000, 5700, "MeV/c^{2}");
-  
-  RooGaussian* pdf1 = Pdf2WsStd::Mass::Gaussian(ws_tmp, "test1", "Gaussian test pdf #1","mass","mean1", "abweichung");
-  RooGaussian* pdf2 = Pdf2WsStd::Mass::Gaussian(ws_tmp, "test2", "Gaussian test pdf #2","mass","mean2", "abweichung_bkg");
-  RooGaussian* pdf3 = Pdf2WsStd::Mass::Gaussian(ws_tmp, "test3", "Gaussian test pdf #3","mass","mean3", "abweichung_bkg2");
-  
-  RooGaussian* time1 = Pdf2WsStd::Mass::Gaussian(ws_tmp, "time1", "Gaussian test pdf #1 (time)","time","mean_time1", "sigma_time1");
-  RooGaussian* time2 = Pdf2WsStd::Mass::Gaussian(ws_tmp, "time2", "Gaussian test pdf #2 (time)","time","mean_time2", "sigma_time2");
-  RooGaussian* time3 = Pdf2WsStd::Mass::Gaussian(ws_tmp, "time3", "Gaussian test pdf #3 (time)","time","mean_time3", "sigma_time3");
-  
-  RooProdPdf pdf_prod1("pdf_prod1", "pdf_prod1", RooArgList(*pdf1, *time1));
-  RooProdPdf pdf_prod2("pdf_prod2", "pdf_prod2", RooArgList(*pdf2, *time2));
-  RooProdPdf pdf_prod3("pdf_prod3", "pdf_prod3", RooArgList(*pdf3, *time3));
-  
-  RooRealVar yield1("yield1", "pdf yield", 10000, 0, 10000);
-  RooExtendPdf pdf_extend1("pdf_extend1", "extended pdf #1", pdf_prod1, yield1);
-  
-  RooRealVar yield2("yield2", "pdf yield", 50000, 0, 10000);
-  RooExtendPdf pdf_extend2("pdf_extend2", "extended pdf #2", pdf_prod2, yield2);
-  
-  RooRealVar yield3("yield3", "pdf yield", 5000, 0, 10000);
-  RooExtendPdf pdf_extend3("pdf_extend3", "extended pdf #3", pdf_prod3, yield3);
-  
-  RooRealVar coeff1("coeff1", "coeff1", 0.1, 0.0, 1.0);
-  RooRealVar coeff2("coeff2", "coeff2", 0.1, 0.0, 1.0);
-  RooAddPdf pdf_add("pdf_add", "added pdf", RooArgSet(pdf_extend1, pdf_extend2, pdf_extend3));
-  //RooAddPdf pdf_add("pdf_add", "added pdf", RooArgList(*pdf1, *pdf2, *pdf3), RooArgList(coeff1, coeff2));
-  //RooAddPdf pdf_add("pdf_add", "added pdf", *pdf1, *pdf2, coeff1);
-  
-  ws_tmp->import(pdf_add);
-  
-  //RooDataSet* data = new RooDataSet("data_temp","data_temp",RooArgSet());
-  
 }
 
 void TestToys(int argc, char *argv[]) {
   using namespace Toy;
+  using namespace RooFit;
   
   CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
@@ -96,8 +56,11 @@ void TestToys(int argc, char *argv[]) {
   BuilderStdConfig cfg_bld("builder");
   cfg_bld.InitializeOptions(cfg_com);
   
-  ToyFactoryStdConfig cfg_tfac("toy");
+  ToyFactoryStdConfig cfg_tfac("toyfac");
   cfg_tfac.InitializeOptions(cfg_bld);
+  
+  ToyStudyStdConfig cfg_tstudy("toystudy");
+  cfg_tstudy.InitializeOptions(cfg_tfac);
   
   cfg_com.CheckHelpFlagAndPrintHelp();
   
@@ -121,13 +84,13 @@ void TestToys(int argc, char *argv[]) {
   RooProdPdf pdf_prod2("pdf_prod2", "pdf_prod2", RooArgList(*pdf2, *time2));
   RooProdPdf pdf_prod3("pdf_prod3", "pdf_prod3", RooArgList(*pdf3, *time3));
   
-  RooRealVar yield1("yield1", "pdf yield", 10000, 0, 10000);
+  RooRealVar yield1("yield1", "pdf yield", 10000, 0, 1000000);
   RooExtendPdf pdf_extend1("pdf_extend1", "extended pdf #1", pdf_prod1, yield1);
   
-  RooRealVar yield2("yield2", "pdf yield", 50000, 0, 10000);
+  RooRealVar yield2("yield2", "pdf yield", 50000, 0, 1000000);
   RooExtendPdf pdf_extend2("pdf_extend2", "extended pdf #2", pdf_prod2, yield2);
   
-  RooRealVar yield3("yield3", "pdf yield", 5000, 0, 10000);
+  RooRealVar yield3("yield3", "pdf yield", 5000, 0, 1000000);
   RooExtendPdf pdf_extend3("pdf_extend3", "extended pdf #3", pdf_prod3, yield3);
   
   RooRealVar coeff1("coeff1", "coeff1", 0.1, 0.0, 1.0);
@@ -170,6 +133,8 @@ void TestToys(int argc, char *argv[]) {
   
   RooDataSet* data = tfac.Generate();
   
+  RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(true), Hesse(true), Verbose(false),Timer(true));
+  
   delete data;
   
   TFile f("data.root","read");
@@ -181,7 +146,7 @@ void TestToys(int argc, char *argv[]) {
   RooPlot* tag2_frame = tag2->frame();
   
   data->plotOn(mass_frame);
-  pdf2->plotOn(mass_frame);
+  ws->pdf("pdf_add")->plotOn(mass_frame);
   
   data->plotOn(tag2_frame);
   
