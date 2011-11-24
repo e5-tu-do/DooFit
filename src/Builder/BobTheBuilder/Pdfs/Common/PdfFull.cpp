@@ -7,7 +7,7 @@
 #include <boost/foreach.hpp>
 
 // from project
-#include "Builder/BobTheBuilder/Pdfs/Common/Absdimension.h"
+#include "Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
 #include "Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
 #include "Builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
 #include "Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"

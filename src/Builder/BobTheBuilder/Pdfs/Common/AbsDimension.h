@@ -17,7 +17,7 @@ class RooRealVar;
 namespace Builder { namespace BobTheBuilder {
 // forward declarations for project
 class AbsPdf;
-  
+
   
 /** 
  *  @class AbsDimension
@@ -35,6 +35,7 @@ class AbsDimension{
   virtual boost::shared_ptr<AbsPdf> CreatePdf( const std::string& pdf_type ) = 0;
   
   // Getter
+  const std::string&  dim_id()    const{ return dim_id_;   };
   const std::string&  name()      const{ return name_;   };
   const std::string&  desc()      const{ return desc_;   };
   

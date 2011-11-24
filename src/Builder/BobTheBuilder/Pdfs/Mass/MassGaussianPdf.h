@@ -13,14 +13,16 @@ class MassGaussianPdf : public AbsPdf{
    MassGaussianPdf();
    ~MassGaussianPdf();
     
-    void Initialize( const boost::property_tree::ptree::value_type& tree_pdf_head );
+  void Initialize( const boost::property_tree::ptree::value_type& tree_pdf_head,
+                   const std::string& dim_id, const std::string dim_name, 
+                   const std::string& simcat_id = "", const std::string comp_id = "");
     void AddToWorkspace( RooWorkspace* ws );
 
  protected:
 
  private:
-  std::string dim_id_;
-  std::string dim_name_;
+  std::pair< std::string, std::string> mean_;
+  std::pair< std::string, std::string> sigma_;
   
   
   

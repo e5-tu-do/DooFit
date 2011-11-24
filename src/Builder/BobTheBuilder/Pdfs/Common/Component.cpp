@@ -95,9 +95,10 @@ void Component::CreateDimPdfs(const ptree& tree_compdimensions){
     // if dimension does not exist in map_dimensions_, ignore it
     if (dim_it == map_dimensions_.end()) continue;
     
+    // if not, go on and get dimension's id
+    string dim_id = (*dim_it).second->dim_id();
     
-    
-    // if not, go on and delegate the pdf building
+    // delegate the pdf building
     shared_ptr<AbsPdf> pdf_temp = (*dim_it).second->CreatePdf(pdf_type);
     
     pair<map<string,shared_ptr<AbsPdf> >::iterator,bool> ret;
@@ -109,7 +110,7 @@ void Component::CreateDimPdfs(const ptree& tree_compdimensions){
     }
     else{
       // Everything seems fine. Initialize the SubFullPdf
-      map_dimpdfs_[dim_name]->Initialize(tree_compdim_head);
+      map_dimpdfs_[dim_name]->Initialize(tree_compdim_head, dim_name, dim_id);
     }
     
     
