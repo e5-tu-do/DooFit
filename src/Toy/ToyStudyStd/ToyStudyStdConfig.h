@@ -49,12 +49,24 @@ namespace Toy {
      *  Getter functions for actual options members.
      */
     ///@{
+    /**
+     *  @brief Getter for file name and tree name to store fit result to
+     *
+     *  @return current value of result_filename_treename_
+     */
+    const Config::CommaSeparatedPair& result_filename_treename() const {return result_filename_treename_;}
     ///@}
 
     /** @name Setter actual options
      *  Setter functions for actual options members.
      */
     ///@{
+    /**
+     *  @brief Setter for file name and tree name to store fit result to
+     *
+     *  @param result_file_tree new value for result_filename_treename_
+     */
+    void set_result_filename_treename(const Config::CommaSeparatedPair& result_file_tree) {result_filename_treename_ = result_file_tree;}    
     ///@}
     
    protected:
@@ -94,6 +106,10 @@ namespace Toy {
      *  The actual options members.
      */
     ///@{
+    /**
+     *  @brief File name and tree name to store fit result to
+     */
+    Config::CommaSeparatedPair result_filename_treename_;
     ///@}
   };
 }

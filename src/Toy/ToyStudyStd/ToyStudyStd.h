@@ -15,7 +15,7 @@
 
 namespace Toy {
   /** @class ToyStudyStd
-   *  @brief Standard toy study for DooFit to help conduct mass toy fits and evaluate
+   *  @brief Standard toy study for DooFit to help conduct and evaluate mass toy fits
    *
    *  This class is designed to assist in both conducting mass toy fits as well 
    *  evaluating results from these fits. It's design is not to conduct the 

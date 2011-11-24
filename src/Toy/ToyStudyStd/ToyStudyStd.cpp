@@ -24,7 +24,7 @@ namespace Toy {
     
   }
   
-  ToyStudyStd::~ToyStudyStd(){
+  ToyStudyStd::~ToyStudyStd() {
     
   }
 }
