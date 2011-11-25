@@ -43,7 +43,15 @@ void MassGaussianPdf::Initialize( const ptree::value_type& tree_pdf_head,
   sinfo << "name \"" << name_ << "\"" << endmsg;
   sinfo << "desc \"" << desc_ << "\"" << endmsg;
   
+  // set parameters
+  string default_mean  = string("par")+simcat_id_+comp_id_+dim_id_+"Mean|m_{"+comp_id_+","+simcat_id_+"}";
+  string default_sigma = string("par")+simcat_id_+comp_id_+dim_id_+"Sigma|#sigma_{m,"+comp_id_+","+simcat_id_+"}";
   
+  mean_  = ParseParameter( tree_pdf.get<string>("mean",default_mean));
+  sigma_ = ParseParameter( tree_pdf.get<string>("desc",default_mean));
+  
+  sinfo << "mean  \"" << mean_.first  << "|" << mean_.second   << "\"" << endmsg;
+  sinfo << "sigma \"" << sigma_.first << "|" << sigma_.second  << "\"" << endmsg;
   
   sinfo.increment_indent(-2);
   sinfo << "}" << endmsg;

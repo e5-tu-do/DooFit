@@ -71,6 +71,14 @@ PdfFull ;"pdfFull"
           Dimensions
           {
             Mass     "Gaussian"
+            {
+              desc  "juju"
+              mean  "parBtSigMassMean|m_{B}"
+              sigma "parBtSigMassSigma|#sigma_{m,B}"
+              CondPdf   ""
+              CondVars  ""
+              Acc       ""
+            }                                       
             MassDau1 "Gaussian"
             Proptime "Gaussian"
           }

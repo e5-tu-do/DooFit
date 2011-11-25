@@ -5,6 +5,7 @@
 #include <algorithm>
 
 // from boost
+#include <boost/algorithm/string.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 // forward declarations
@@ -36,11 +37,13 @@ class AbsPdf{
   std::string simcat_id_;
   std::string comp_id_;
   
-    
+  std::pair< std::string, std::string > ParseParameter( std::string parameter_string );
  private:
   
 };
 
+  
+  
 }}
 
 #endif // BUILDER_BOBTHEBUILDER_ABSPDF_H
