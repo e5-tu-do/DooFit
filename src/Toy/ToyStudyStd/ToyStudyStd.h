@@ -63,7 +63,7 @@ namespace Toy {
      *
      *  @param fit_result RooFitResult to save
      */
-    void SaveFitResult(RooFitResult* fit_result) const;
+    void SaveFitResult(const RooFitResult* fit_result) const;
     ///@}
 
     /** @name Evaluation functions
@@ -83,6 +83,13 @@ namespace Toy {
      *  \brief ToyFactoryStdConfig instance to use
      */
     const ToyStudyStdConfig& config_toystudy_;
+  };
+  
+  /** \struct ExceptionCannotSaveFitResult
+   *  \brief Exception for problem in saving fit results
+   */
+  struct ExceptionCannotSaveFitResult: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "Cannot save fit result."; }
   };
 }
 

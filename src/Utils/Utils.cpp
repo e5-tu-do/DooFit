@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include <boost/thread/thread.hpp>
+#include "boost/date_time/posix_time/posix_time.hpp"
 
 using namespace std;
 
@@ -230,7 +231,7 @@ int Utils::fileNLines( TString strFilename )
 }
 
 void Utils::Sleep(double sleep_time) {
-  boost::this_thread::sleep(boost::posix_time::seconds(sleep_time));
+  boost::this_thread::sleep(boost::posix_time::microseconds(sleep_time*1e6));
 }
 
 void Utils::SetTerminalColor(TerminalColor color) {

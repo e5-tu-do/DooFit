@@ -190,10 +190,10 @@ namespace Toy {
       scfg << "Proto dataset section: " << *it << endmsg;
     }
 
-    if (workspace_filename_name_.length() > 0) {
+    if (workspace_filename_name_.first().length() > 0) {
       scfg << "Workspace from file:       " << workspace_filename_name_ << endmsg;
     }
-    if (dataset_filename_name_.length() > 0) {
+    if (dataset_filename_name_.first().length() > 0) {
       scfg << "File to save dataset to:   " << dataset_filename_name_ << endmsg;
     }
     
