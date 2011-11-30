@@ -37,9 +37,9 @@ namespace Toy {
     
   }
   
-  void ToyStudyStd::SaveFitResult(const RooFitResult* fit_result) const {
-    const string& filename = config_toystudy_.result_filename_treename().first();
-    const string& treename = config_toystudy_.result_filename_treename().second();
+  void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result) const {
+    const string& filename = config_toystudy_.store_result_filename_treename().first();
+    const string& treename = config_toystudy_.store_result_filename_treename().second();
     Utils::FileLock flock(filename);
     
     if (!flock.Lock()) {
@@ -55,7 +55,7 @@ namespace Toy {
     if (f.IsZombie() || !f.IsOpen()) {
       serr << "Cannot open file which may be corrupted." << endmsg;
       flock.Unlock();
-      throw ExceptionCannotSaveFitResult();
+      throw ExceptionCannotStoreFitResult();
     } else {
       TTree* tree_results = NULL;
       if (file_existing) {      

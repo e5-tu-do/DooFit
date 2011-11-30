@@ -1,6 +1,9 @@
 #ifndef TOYSTUDYSTDCONFIG_h
 #define TOYSTUDYSTDCONFIG_h
 
+// STL
+#include <vector>
+
 // from project
 #ifndef __CINT__
 #include "Config/AbsConfig.h"
@@ -52,9 +55,15 @@ namespace Toy {
     /**
      *  @brief Getter for file name and tree name to store fit result to
      *
-     *  @return current value of result_filename_treename_
+     *  @return current value of store_result_filename_treename_
      */
-    const Config::CommaSeparatedPair& result_filename_treename() const {return result_filename_treename_;}
+    const Config::CommaSeparatedPair& store_result_filename_treename() const {return store_result_filename_treename_;}
+    /**
+     *  @brief Getter for file names and tree names to read fit result from
+     *
+     *  @return current value of read_results_filename_treename_
+     */
+    const std::vector<Config::CommaSeparatedPair>& read_results_filename_treename() const {return read_results_filename_treename_;}
     ///@}
 
     /** @name Setter actual options
@@ -64,9 +73,22 @@ namespace Toy {
     /**
      *  @brief Setter for file name and tree name to store fit result to
      *
-     *  @param result_file_tree new value for result_filename_treename_
+     *  @param result_file_tree new value for store_result_filename_treename_
      */
-    void set_result_filename_treename(const Config::CommaSeparatedPair& result_file_tree) {result_filename_treename_ = result_file_tree;}    
+    void set_store_result_filename_treename(const Config::CommaSeparatedPair& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
+    /**
+     *  @brief Setter for file names and tree names to read fit result from
+     *
+     *  @param result_file_tree new value for read_results_filename_treename_
+     */
+    void set_read_results_filename_treename(const std::vector<Config::CommaSeparatedPair>& results_file_tree) {read_results_filename_treename_ = results_file_tree;}
+    
+    /**
+     *  @brief Adder for file names and tree names to read fit result from
+     *
+     *  @param result_file_tree new file and tree name to add to read_results_filename_treename_
+     */
+    void AddReadResultsFilenameTreename(const Config::CommaSeparatedPair& result_file_tree) {read_results_filename_treename_.push_back(result_file_tree);}
     ///@}
     
    protected:
@@ -109,7 +131,11 @@ namespace Toy {
     /**
      *  @brief File name and tree name to store fit result to
      */
-    Config::CommaSeparatedPair result_filename_treename_;
+    Config::CommaSeparatedPair store_result_filename_treename_;
+    /**
+     *  @brief File names and tree names to read fit result from
+     */
+    std::vector<Config::CommaSeparatedPair> read_results_filename_treename_;
     ///@}
   };
 }

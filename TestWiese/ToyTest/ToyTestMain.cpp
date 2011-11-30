@@ -136,7 +136,7 @@ void TestToys(int argc, char *argv[]) {
   RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
   
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
-  tstudy.SaveFitResult(fit_result);
+  tstudy.StoreFitResult(fit_result);
   
   delete data;
   

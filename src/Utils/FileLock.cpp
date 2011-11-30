@@ -32,6 +32,7 @@ namespace Utils {
     }
         
     if (!fs::is_regular_file(file_) and fs::exists(file_)) {
+      serr << "File lock error. File " << file_.string() << " is regular: " << fs::is_regular_file(file_) << " and exists: " << fs::exists(file_) << endmsg;
       throw ExceptionFileLockError();
     } 
         

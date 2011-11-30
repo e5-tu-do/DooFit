@@ -51,11 +51,11 @@ namespace Toy {
      */
     ///@{
     /**
-     *  @brief Save a fit result into TTree
+     *  @brief Store a fit result into TTree
      *
      *  This file will save the given fit result to a TTree in a ROOT file. The 
      *  latter can be configured via 
-     *  ToyStudyStdConfig::set_result_filename_treename(). Writing the tree to 
+     *  ToyStudyStdConfig::set_store_result_filename_treename_(). Writing the tree to 
      *  the file is collision-safe, i.e. the file will be locked before write 
      *  and if locked the function will wait for the file to be unlocked again.
      *  If the file will not be unlocked after some time, the tree will be saved
@@ -63,7 +63,7 @@ namespace Toy {
      *
      *  @param fit_result RooFitResult to save
      */
-    void SaveFitResult(const RooFitResult* fit_result) const;
+    void StoreFitResult(const RooFitResult* fit_result) const;
     ///@}
 
     /** @name Evaluation functions
@@ -85,10 +85,10 @@ namespace Toy {
     const ToyStudyStdConfig& config_toystudy_;
   };
   
-  /** \struct ExceptionCannotSaveFitResult
+  /** \struct ExceptionCannotStoreFitResult
    *  \brief Exception for problem in saving fit results
    */
-  struct ExceptionCannotSaveFitResult: public virtual boost::exception, public virtual std::exception { 
+  struct ExceptionCannotStoreFitResult: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Cannot save fit result."; }
   };
 }
