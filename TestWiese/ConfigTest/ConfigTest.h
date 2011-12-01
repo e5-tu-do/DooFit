@@ -230,7 +230,7 @@ private:
   /**
    *  @brief ClassDef statement for CINT dictionary generation
    */
-  ClassDef(ConfigTestAbstractType,1);
+  //ClassDef(ConfigTestAbstractType,1);
 };
 
 class ConfigTestSecond : public Config::AbsConfig {

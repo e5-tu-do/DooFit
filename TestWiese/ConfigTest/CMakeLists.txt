@@ -1,6 +1,7 @@
 
-root_generate_dictionaries(ConfigTestDict ConfigTest.h)
-add_library(ConfigTest ConfigTest.cpp ConfigTest.h ${ConfigTestDict})
+#root_generate_dictionaries(ConfigTestDict ConfigTest.h)
+#${ConfigTestDict}
+add_library(ConfigTest ConfigTest.cpp ConfigTest.h)
 
 add_executable(TestConfig ConfigTestMain.cpp)
 

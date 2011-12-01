@@ -76,4 +76,8 @@ namespace Toy {
       flock.Unlock();
     }
   }
+  
+  void ToyStudyStd::ReadFitResults() {
+    
+  }
 }

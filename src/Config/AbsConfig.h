@@ -511,7 +511,7 @@ namespace Config {
     /**
      *  @brief ClassDef statement for CINT dictionary generation
      */
-    ClassDef(AbsConfig,1);
+    //ClassDef(AbsConfig,1);
   };
   
   

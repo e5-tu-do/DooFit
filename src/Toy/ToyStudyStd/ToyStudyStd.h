@@ -53,13 +53,15 @@ namespace Toy {
     /**
      *  @brief Store a fit result into TTree
      *
-     *  This file will save the given fit result to a TTree in a ROOT file. The 
-     *  latter can be configured via 
-     *  ToyStudyStdConfig::set_store_result_filename_treename_(). Writing the tree to 
-     *  the file is collision-safe, i.e. the file will be locked before write 
-     *  and if locked the function will wait for the file to be unlocked again.
-     *  If the file will not be unlocked after some time, the tree will be saved
-     *  to an alternative file.
+     *  This function will save the given fit result to a TTree in a ROOT file. 
+     *  The latter can be configured via 
+     *  ToyStudyStdConfig::set_store_result_filename_treename(). Writing the 
+     *  tree to the file is collision-safe, i.e. the file will be locked before 
+     *  write and if locked the function will wait for the file to be unlocked 
+     *  again. If the file will not be unlocked after some time, the tree will 
+     *  be saved to an alternative file.
+     *
+     *  @todo Implement fit saving to alternative file after no lock possible
      *
      *  @param fit_result RooFitResult to save
      */
@@ -70,6 +72,14 @@ namespace Toy {
      *  Functions to evaluate fit results and produce pulls etc.
      */
     ///@{
+    /**
+     *  @brief Read fit results from TTrees
+     *
+     *  A list of fit result files as defined in 
+     *  ToyStudyStdConfig::set_read_results_filename_treename() will be read in
+     *  and stored internally in the toy factory. 
+     */
+    void ReadFitResults();
     ///@}
     
    protected:

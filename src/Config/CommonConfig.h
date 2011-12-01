@@ -95,7 +95,7 @@ class CommonConfig : public Config::AbsConfig {
   /**
    *  @brief ClassDef statement for CINT dictionary generation
    */
-  ClassDef(CommonConfig,1);
+  //ClassDef(CommonConfig,1);
 };
 
 #endif //COMMONCONFIG_h

@@ -101,7 +101,7 @@ namespace Config {
     /**
      *  @brief ClassDef statement for CINT dictionary generation
      */
-    ClassDef(DiscreteProbabilityDistribution,1);
+    //ClassDef(DiscreteProbabilityDistribution,1);
   };
 }
 

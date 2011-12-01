@@ -1,18 +1,20 @@
-root_generate_dictionaries(AbsConfigDict AbsConfig.h)
-root_generate_dictionaries(CommonConfigDict CommonConfig.h)
-add_library(Config AbsConfig.cpp AbsConfig.h ${ConfigDict})
-add_library(CommonConfig CommonConfig.cpp CommonConfig.h ${CommonConfigDict})
+#root_generate_dictionaries(AbsConfigDict AbsConfig.h)
+#root_generate_dictionaries(CommonConfigDict CommonConfig.h)
+#${ConfigDict}
+#${CommonConfigDict}
 
-root_generate_dictionaries(AbsTypeCommaSeparatedDict AbsTypeCommaSeparated.h)
-root_generate_dictionaries(DiscreteProbabilityDistributionDict DiscreteProbabilityDistribution.h)
-root_generate_dictionaries(CommaSeparatedPairDict CommaSeparatedPair.h)
-root_generate_dictionaries(ConfigCstStringVectorDict ConfigCstStringVector.h)
+add_library(Config AbsConfig.cpp AbsConfig.h)
+add_library(CommonConfig CommonConfig.cpp CommonConfig.h)
 
-add_library(ConfigHelper 
-AbsTypeCommaSeparated.cpp AbsTypeCommaSeparated.h ${AbsTypeCommaSeparatedDict}
-DiscreteProbabilityDistribution.h DiscreteProbabilityDistribution.cpp ${DiscreteProbabilityDistributionDict}
-ConfigCstStringVector.h ConfigCstStringVector.cpp ${ConfigCstStringVectorDict}
-CommaSeparatedPair.h CommaSeparatedPair.cpp ${CommaSeparatedPairDict}
-)
+#root_generate_dictionaries(AbsTypeCommaSeparatedDict AbsTypeCommaSeparated.h)
+#root_generate_dictionaries(DiscreteProbabilityDistributionDict DiscreteProbabilityDistribution.h) 
+#root_generate_dictionaries(CommaSeparatedPairDict CommaSeparatedPair.h)
+#root_generate_dictionaries(ConfigCstStringVectorDict ConfigCstStringVector.h)
+#${AbsTypeCommaSeparatedDict}
+#${DiscreteProbabilityDistributionDict}
+#${ConfigCstStringVectorDict}
+#${CommaSeparatedPairDict}
+
+add_library(ConfigHelper AbsTypeCommaSeparated.cpp AbsTypeCommaSeparated.h DiscreteProbabilityDistribution.h DiscreteProbabilityDistribution.cpp ConfigCstStringVector.h ConfigCstStringVector.cpp CommaSeparatedPair.h CommaSeparatedPair.cpp)
 
 

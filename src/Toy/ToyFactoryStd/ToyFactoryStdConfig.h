@@ -490,7 +490,7 @@ namespace Toy {
     /**
      *  @brief ClassDef statement for CINT dictionary generation
      */
-    ClassDef(ToyFactoryStdConfig,1);
+    //ClassDef(ToyFactoryStdConfig,1);
   };
   
   // let ROOT Cint not bother about this

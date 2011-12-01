@@ -94,7 +94,7 @@ namespace Config {
     /**
      *  @brief ClassDef statement for CINT dictionary generation
      */
-    ClassDef(ConfigCstStringVector,1);
+    //ClassDef(ConfigCstStringVector,1);
   };
 }
 

@@ -67,6 +67,7 @@ void TestToys(int argc, char *argv[]) {
   //BuilderStd bld(cfg_com, cfg_bld);
   
   RooWorkspace* ws = new RooWorkspace("ws");
+  ws->Print();
   
   Pdf2WsStd::CommonFuncs::getVar(ws, "mean1", "mean1", 5200, 5000, 5700, "MeV/c^{2}");
   Pdf2WsStd::CommonFuncs::getVar(ws, "mean2", "mean2", 5300, 5000, 5700, "MeV/c^{2}");
@@ -134,6 +135,10 @@ void TestToys(int argc, char *argv[]) {
   RooDataSet* data = tfac.Generate();
   
   RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
+  
+//  for (int i=0; i<fit_result->numStatusHistory(); ++i) {
+//    sdebug << fit_result->statusCodeHistory(i) << "->" << fit_result->statusLabelHistory(i) << endmsg;
+//  }
   
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
   tstudy.StoreFitResult(fit_result);

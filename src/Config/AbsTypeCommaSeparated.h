@@ -65,7 +65,7 @@ namespace Config {
     /**
      *  @brief ClassDef statement for CINT dictionary generation
      */
-    ClassDef(AbsTypeCommaSeparated,1);
+    //ClassDef(AbsTypeCommaSeparated,1);
   };
 }
   
