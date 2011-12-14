@@ -25,6 +25,7 @@ Component::Component() :
   , name_("DummyCompName")
   , desc_("Dummy description for Component.")
   , extended_(false)
+  , subpdffull_id_("DummySimCatID")
   , map_dimpdfs_()
   , map_dimensions_()
 {
@@ -39,6 +40,8 @@ void Component::Initialize( const ptree::value_type& tree_component_head,
                             const map< string, shared_ptr<AbsDimension> >& map_dimensions, 
                             const string& subpdffull_id)
 {
+  subpdffull_id_ = subpdffull_id;
+  
   comp_id_      = tree_component_head.first;
   comp_id_full_ = tree_component_head.second.get_value<string>();
   if (comp_id_full_ == ""){
@@ -110,7 +113,7 @@ void Component::CreateDimPdfs(const ptree& tree_compdimensions){
     }
     else{
       // Everything seems fine. Initialize the SubFullPdf
-      map_dimpdfs_[dim_name]->Initialize(tree_compdim_head, dim_name, dim_id);
+      map_dimpdfs_[dim_name]->Initialize(tree_compdim_head, dim_id, dim_name, subpdffull_id_ , comp_id_ );
     }
     
     

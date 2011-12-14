@@ -31,6 +31,8 @@ class Component{
   std::string name_;
   std::string desc_;
   bool        extended_;
+  std::string subpdffull_id_;
+  
   
   std::map< std::string, boost::shared_ptr<AbsPdf> > map_dimpdfs_;
   std::map< std::string, boost::shared_ptr<AbsDimension> > map_dimensions_;

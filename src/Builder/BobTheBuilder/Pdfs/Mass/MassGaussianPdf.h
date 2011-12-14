@@ -3,6 +3,7 @@
 
 // from project
 #include "Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
 
 namespace Builder{ namespace BobTheBuilder{
   
@@ -21,8 +22,8 @@ class MassGaussianPdf : public AbsPdf{
  protected:
 
  private:
-  std::pair< std::string, std::string> mean_;
-  std::pair< std::string, std::string> sigma_;
+  Parameter mean_;
+  Parameter sigma_;
   
   
   
