@@ -12,6 +12,8 @@
 #include "RooRealVar.h"
 #include "RooWorkspace.h"
 
+// from project
+#include "Utils/MsgStream.h"
 
 using namespace Builder::BobTheBuilder;
 
@@ -36,7 +38,7 @@ Builder::BobTheBuilder::Parameter::~Parameter(){
   
 }
 
-void Parameter::Parse( const string& string_to_parse ){
+void Builder::BobTheBuilder::Parameter::Parse( const string& string_to_parse ){
   int position_of_pipe = string_to_parse.find("|");
   if( position_of_pipe != string::npos ){
     name_  = string_to_parse.substr(0, position_of_pipe);
@@ -49,10 +51,16 @@ void Builder::BobTheBuilder::Parameter::Print( ostream& os ) const{
   os << name_ << "|" << desc_;
 }
 
-void Builder::BobTheBuilder::Parameter::AddToWorkspace( RooWorkspace* ws ){
-  // check if object of this name already exists on the workspace
+void Builder::BobTheBuilder::Parameter::AddToWorkspace( RooWorkspace& ws ){
   
+  // check if object of this name already exists on the workspace. If it exists, we don't care and use it, else we create it.
+  if (ws.obj(name_.c_str()) != NULL){
+    return;
+  }
 }
+
+
+
 
 
 std::istream& Builder::BobTheBuilder::operator>>(std::istream& is, Parameter& arg){

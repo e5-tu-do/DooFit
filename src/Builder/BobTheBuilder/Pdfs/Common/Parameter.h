@@ -20,7 +20,7 @@ class Parameter{
   void Parse( const std::string& string_to_parse );
   void Print( std::ostream& os) const;
   
-  void AddToWorkspace( RooWorkspace* ws );
+  void AddToWorkspace( RooWorkspace& ws );
   
       
  protected:
@@ -28,7 +28,8 @@ class Parameter{
  private:
   std::string name_;
   std::string desc_;
-
+  
+  
 };
 
 std::istream& operator>>(std::istream& is, Parameter& arg);
