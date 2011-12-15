@@ -133,7 +133,11 @@ void Builder::BobTheBuilder::PdfFull::InitializeSimCatSubPdfs(const boost::prope
 }
 
 void Builder::BobTheBuilder::PdfFull::AddToWorkspace( RooWorkspace& ws ){
-  
+  // add subpdfs to workspace
+  typedef pair< string, shared_ptr< SubPdfFull > > pair_subpdffull;
+  BOOST_FOREACH( pair_subpdffull subpdf, map_subpdfs_ ){
+    subpdf.second->AddToWorkspace( ws );
+  }
 }
 
 
