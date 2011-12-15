@@ -73,7 +73,7 @@ void CategoryBasic::CreateTypes( const std::string &type_string ){
   }
 }
 
-bool CategoryBasic::AddToWorkspace( RooWorkspace* ws){
+bool CategoryBasic::AddToWorkspace( RooWorkspace& ws){
   RooCategory cat_temp(name_.c_str(), desc_.c_str());
   
   typedef pair<string,int> type_pair;
@@ -82,12 +82,12 @@ bool CategoryBasic::AddToWorkspace( RooWorkspace* ws){
   }
   
   // Check if object with this name exists on workspace, else create one.
-  if (ws->obj(name_.c_str()) != NULL){
+  if (ws.obj(name_.c_str()) != NULL){
     cout << "CategoryBasic: Tried to add RooCategory with name '" << name_ << "' to the workspace! Object with this name already exists on the workspace. FAILED." << endl;
     throw;
   }
   else{
-    ws->import(cat_temp);
+    ws.import(cat_temp);
   }
   
   return true;

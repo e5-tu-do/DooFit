@@ -10,6 +10,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/shared_ptr.hpp>
 
+// forward declarations
+class RooWorkspace;
 
 
 namespace Builder{ namespace BobTheBuilder{

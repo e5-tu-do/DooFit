@@ -220,6 +220,26 @@ void Bob::CreatePdfFull(){
 }
 
 void Bob::DumpToRooWorkspace( RooWorkspace& ws){
+  // loop over dimensions and add them to workspace
+  typedef pair<string,shared_ptr<AbsDimension> > pair_absdim;
+  BOOST_FOREACH( pair_absdim dimension, map_dimensions_){
+    dimension.second->AddToWorkspace( ws );
+  }
+  
+  // loop over basic categories and add them to workspace
+  typedef pair<string,shared_ptr<CategoryBasic> > pair_catbasic;
+  BOOST_FOREACH( pair_catbasic basic_cat, map_categories_basic_){
+    basic_cat.second->AddToWorkspace( ws );
+  }
+  
+  // loop over super categories and add them to workspace
+  typedef pair<string,shared_ptr<CategorySuper> > pair_catsuper;
+  BOOST_FOREACH( pair_catsuper super_cat, map_categories_super_ ){
+    super_cat.second->AddToWorkspace( ws );
+  }
+  
+  // add pdf full to workspace
+  //pdf_full_.AddToWorkspace( ws );
   
 }
 

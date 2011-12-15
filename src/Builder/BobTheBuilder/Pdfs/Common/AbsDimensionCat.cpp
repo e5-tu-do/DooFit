@@ -56,7 +56,7 @@ void AbsDimensionCat::Initialize( const boost::property_tree::ptree::value_type 
   sinfo << "}" << endmsg;
 }
 
-bool AbsDimensionCat::AddToWorkspace( RooWorkspace* ws ){
+bool AbsDimensionCat::AddToWorkspace( RooWorkspace& ws ){
   RooCategory dim_temp(name_.c_str(), desc_.c_str());
   
   typedef pair<string,int> type_pair;
@@ -65,12 +65,12 @@ bool AbsDimensionCat::AddToWorkspace( RooWorkspace* ws ){
   }
   
   // Check if object with this name exists on workspace, else create one.
-  if (ws->obj(name_.c_str()) != NULL){
+  if (ws.obj(name_.c_str()) != NULL){
     cout << "AbsDimensionCat: Tried to add already existing dimension variable with name '" << name_ << "' to the workspace! FAILED." << endl;
     throw;
   }
   else{
-    ws->import(dim_temp);
+    ws.import(dim_temp);
   }
   
   return true;

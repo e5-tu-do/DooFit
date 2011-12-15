@@ -41,7 +41,6 @@ class CategorySuper;
  *  boost::property_tree.
  * 
  */
-
 class Bob{
  public:
   /** 

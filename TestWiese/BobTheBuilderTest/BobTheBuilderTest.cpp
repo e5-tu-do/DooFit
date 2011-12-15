@@ -3,7 +3,8 @@
 #include <iostream>
 #include <string>
 
-
+// from RooFit
+#include "RooWorkspace.h"
 
 // from Project
 #include "Builder/BobTheBuilder/Bob/Bob.h"
@@ -20,6 +21,10 @@ int main( int argc, char *argv[] ){
   Bob builder;
   builder.load(filename);
   
+  RooWorkspace ws("workspace","workspace");
+  builder.DumpToRooWorkspace(ws);
+  
+  ws.Print();
   
   return 0;
 }

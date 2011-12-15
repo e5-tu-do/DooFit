@@ -107,11 +107,11 @@ vector< string > CategorySuper::CombineTypes( const vector< string > &subcat_one
   return temp_comb_types;  
 }
 
-bool CategorySuper::AddToWorkspace( RooWorkspace* ws ){
+bool CategorySuper::AddToWorkspace( RooWorkspace& ws ){
   // create RooArgSet of subcategories
   RooArgSet cat_set;
   BOOST_FOREACH( string subcat_name, vector_subcats_ ){
-    RooCategory* subcat = ws->cat(subcat_name.c_str());
+    RooCategory* subcat = ws.cat(subcat_name.c_str());
     if (subcat == NULL){
       serr << "CategorySuper: RooCategory '" << subcat << "' does not exist on workspace. Unable to create SuperCategory '" << name_ << "'." << endmsg;
       throw;
@@ -124,12 +124,12 @@ bool CategorySuper::AddToWorkspace( RooWorkspace* ws ){
   RooSuperCategory super_cat(name_.c_str(),desc_.c_str(),cat_set);
   
   // check if object with same name already exists on workspace
-  if (ws->obj(name_.c_str()) != NULL){
+  if (ws.obj(name_.c_str()) != NULL){
     cout << "CategorySuper: Tried to add RooSuperCategory with name '" << name_ << "' to the workspace! Object with this name already exists on the workspace. FAILED." << endl;
     throw;
   }
   else{
-    ws->import(super_cat);
+    ws.import(super_cat);
   }
   
   return true;

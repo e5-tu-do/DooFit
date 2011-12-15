@@ -16,7 +16,7 @@ class AbsDimensionReal : public AbsDimension{
   virtual ~AbsDimensionReal();
   
   void Initialize(  const boost::property_tree::ptree::value_type &pt_head );
-  bool AddToWorkspace( RooWorkspace* ws );
+  bool AddToWorkspace( RooWorkspace& ws );
   
   virtual boost::shared_ptr<AbsPdf> CreatePdf( const std::string& pdf_name) = 0;
   

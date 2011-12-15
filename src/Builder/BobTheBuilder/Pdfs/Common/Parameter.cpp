@@ -8,6 +8,8 @@
 // from ROOT
 
 // from RooFit
+#include "RooAbsReal.h"
+#include "RooRealVar.h"
 #include "RooWorkspace.h"
 
 
@@ -48,6 +50,7 @@ void Builder::BobTheBuilder::Parameter::Print( ostream& os ) const{
 }
 
 void Builder::BobTheBuilder::Parameter::AddToWorkspace( RooWorkspace* ws ){
+  // check if object of this name already exists on the workspace
   
 }
 
