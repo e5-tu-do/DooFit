@@ -8,6 +8,9 @@
 // from boost
 #include <boost/property_tree/ptree.hpp>
 
+// forward declarations
+class RooWorkspace;
+
 namespace Builder { namespace BobTheBuilder {
 
 // forward declarations
@@ -22,6 +25,8 @@ class Component{
   void Initialize( const boost::property_tree::ptree::value_type& tree_component_head, 
                    const std::map< std::string,boost::shared_ptr<AbsDimension> >& map_dimensions, 
                    const std::string& subpdffull_id = "" );
+  
+  void AddToWorkspace( RooWorkspace & );
   
  protected:
   

@@ -34,6 +34,7 @@ class PdfFull{
                    const std::map< std::string, boost::shared_ptr<CategoryBasic> >& map_cats_basic,
                    const std::map< std::string, boost::shared_ptr<CategorySuper> >& map_cats_super );
   
+  void AddToWorkspace( RooWorkspace& ws );
   
  protected:
 

@@ -9,6 +9,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/shared_ptr.hpp>
 
+// forward declarations
+class RooWorkspace;
 
 namespace Builder{ namespace BobTheBuilder{
 // forward declarations for project classes
@@ -22,6 +24,8 @@ class SubPdfFull{
   
   void Initialize( const boost::property_tree::ptree& tree_subpdffull, 
                    const std::map< std::string, boost::shared_ptr<AbsDimension> >& map_dimensions, const std::string& simcat_type = "" );
+  
+  void AddToWorkspace( RooWorkspace& ws );
   
  protected:
   

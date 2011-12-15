@@ -8,6 +8,9 @@
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 
+// from RooFit
+#include "RooWorkspace.h"
+
 // from project
 #include "Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
 #include "Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
@@ -19,7 +22,7 @@ using namespace boost::property_tree;
 
 using namespace Builder::BobTheBuilder;
 
-Component::Component() :
+Builder::BobTheBuilder::Component::Component() :
     comp_id_("DummyCompId")
   , comp_id_full_("DummyCompIdFull")
   , name_("DummyCompName")
@@ -32,11 +35,11 @@ Component::Component() :
   
 }
 
-Component::~Component(){
+Builder::BobTheBuilder::Component::~Component(){
   
 }
 
-void Component::Initialize( const ptree::value_type& tree_component_head, 
+void Builder::BobTheBuilder::Component::Initialize( const ptree::value_type& tree_component_head, 
                             const map< string, shared_ptr<AbsDimension> >& map_dimensions, 
                             const string& subpdffull_id)
 {
@@ -85,7 +88,7 @@ void Component::Initialize( const ptree::value_type& tree_component_head,
   sinfo << "}" << endmsg;
 }
 
-void Component::CreateDimPdfs(const ptree& tree_compdimensions){
+void Builder::BobTheBuilder::Component::CreateDimPdfs(const ptree& tree_compdimensions){
   // loop over all known dimensions, search for entry in property_tree, initialize pdfs.
   map< string, shared_ptr<AbsDimension> >::const_iterator dim_it;
   
@@ -115,11 +118,10 @@ void Component::CreateDimPdfs(const ptree& tree_compdimensions){
       // Everything seems fine. Initialize the SubFullPdf
       map_dimpdfs_[dim_name]->Initialize(tree_compdim_head, dim_id, dim_name, subpdffull_id_ , comp_id_ );
     }
-    
-    
-    
-    
-    
   }
 }
 
+
+void Builder::BobTheBuilder::Component::AddToWorkspace( RooWorkspace& ws ){
+  
+}

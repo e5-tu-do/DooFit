@@ -17,7 +17,7 @@ using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
-SubPdfFull::SubPdfFull() :
+Builder::BobTheBuilder::SubPdfFull::SubPdfFull() :
    subpdffull_id_("")
  , simcat_type_("")
  , name_("DummySubPdfFullName")
@@ -27,11 +27,11 @@ SubPdfFull::SubPdfFull() :
 {
 }
 
-SubPdfFull::~SubPdfFull(){
+Builder::BobTheBuilder::SubPdfFull::~SubPdfFull(){
   
 }
 
-void SubPdfFull::Initialize( const ptree& tree_subpdffull, 
+void Builder::BobTheBuilder::SubPdfFull::Initialize( const ptree& tree_subpdffull, 
                              const map< string, shared_ptr<AbsDimension> >& map_dimensions,
                              const string& simcat_type)
 {
@@ -81,7 +81,7 @@ void SubPdfFull::Initialize( const ptree& tree_subpdffull,
   sinfo << "}" << endmsg;
 }
 
-void SubPdfFull::InitializeComponents( const ptree& tree_components, 
+void Builder::BobTheBuilder::SubPdfFull::InitializeComponents( const ptree& tree_components, 
                                        const map< string, shared_ptr<AbsDimension> >& map_dimensions){
   sinfo << "Components" << endmsg;
   sinfo << "{" << endmsg;
@@ -101,4 +101,8 @@ void SubPdfFull::InitializeComponents( const ptree& tree_components,
   
   sinfo.increment_indent(-2);
   sinfo << "}" << endmsg;
+}
+
+void Builder::BobTheBuilder::SubPdfFull::AddToWorkspace( RooWorkspace& ws ){
+  
 }

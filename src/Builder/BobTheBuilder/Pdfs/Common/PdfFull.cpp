@@ -19,7 +19,7 @@ using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
-PdfFull::PdfFull() :
+Builder::BobTheBuilder::PdfFull::PdfFull() :
    name_("DummyPdfFullName")
  , desc_("A dummy description for a PdfFull.")
  , extended_(false)
@@ -30,11 +30,11 @@ PdfFull::PdfFull() :
   
 }
 
-PdfFull::~PdfFull(){
+Builder::BobTheBuilder::PdfFull::~PdfFull(){
   map_subpdfs_.clear();
 }
   
-void PdfFull::Initialize( const boost::property_tree::ptree& tree_pdffull,
+void Builder::BobTheBuilder::PdfFull::Initialize( const boost::property_tree::ptree& tree_pdffull,
                           const map< string, shared_ptr<AbsDimension> >& map_dimensions,
                           const map< string, shared_ptr<CategoryBasic> >& map_cats_basic,
                           const map< string, shared_ptr<CategorySuper> >& map_cats_super
@@ -76,7 +76,7 @@ void PdfFull::Initialize( const boost::property_tree::ptree& tree_pdffull,
   sinfo << "}" << endmsg;
 }
 
-void PdfFull::InitializeSimCatSubPdfs(const boost::property_tree::ptree& tree_simcatsubpdfs,
+void Builder::BobTheBuilder::PdfFull::InitializeSimCatSubPdfs(const boost::property_tree::ptree& tree_simcatsubpdfs,
                                       const map< string, shared_ptr<AbsDimension> >& map_dimensions,
                                       const map< string, shared_ptr<CategoryBasic> >& map_cats_basic,
                                       const map< string, shared_ptr<CategorySuper> >& map_cats_super)
@@ -131,3 +131,10 @@ void PdfFull::InitializeSimCatSubPdfs(const boost::property_tree::ptree& tree_si
   sinfo.increment_indent(-2);
   sinfo << "}" << endmsg;
 }
+
+void Builder::BobTheBuilder::PdfFull::AddToWorkspace( RooWorkspace& ws ){
+  
+}
+
+
+
