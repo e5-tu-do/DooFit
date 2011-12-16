@@ -73,8 +73,11 @@ PdfFull ;"pdfFull"
             Mass     "Gaussian"
             {
               desc  "juju"
-              mean  "parBtSigMassMean | m_{B}"
-              sigma "parBtSigMassSigma | #sigma_{m}"
+              Parameters
+              {
+                mean "as|f"
+                sigma "as|f"
+              }
               CondPdf   ""
               CondVars  ""
               Acc       ""

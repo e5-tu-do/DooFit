@@ -14,6 +14,8 @@ AbsPdf::AbsPdf() :
   , dim_name_("DimensionName")
   , subpdffull_id_("DummySimCatID")
   , comp_id_("DummyComponentID")
+  , tree_pdf_()
+  , map_params_()
 {
   
 }
