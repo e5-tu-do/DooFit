@@ -1,0 +1,1 @@
+add_library( Brewery_Recipe_Pdf AbsDimPdf.cpp AbsDimPdf.h PdfFull.cpp PdfFull.h )

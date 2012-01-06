@@ -16,9 +16,7 @@ class AbsParameter {
   virtual ~AbsParameter();
   
   
-  
  protected:
-  std::string name_;
   
  private:
   

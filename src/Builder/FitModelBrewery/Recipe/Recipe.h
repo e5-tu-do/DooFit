@@ -23,6 +23,8 @@ class Recipe {
   
  private:
   std::map< std::string, AbsParameter* > parameters_;
+  std::map< std::string, AbsPdf* > pdfs_;
+  
 };
 
 } // namespace fitmodelbrewery

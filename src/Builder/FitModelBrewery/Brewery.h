@@ -19,11 +19,11 @@ namespace fitmodelbrewery {
  *
  *  The Brewery class delegates the work of creating a fitmodel in terms of a       
  *  PDF. The task of reading in the user configuration information for the PDF
- *  is performed by the @Scrivener. The @Scrivener uses e.g. a text file with
- *  a property tree and translates it to a @Recipe. The @Recipe is a
+ *  is performed by the Scrivener. The Scrivener uses e.g. a text file with
+ *  a property tree and translates it to a Recipe. The Recipe is a
  *  hierarchical structure that defines the properties of the PDFs,
  *  parameters, dimensions and their relationship. It can check itself for 
- *  consistency. After the @Recipe is prepared the @Brewer takes over and 
+ *  consistency. After the Recipe is prepared the Brewer takes over and 
  *  creates the final product, e.g. a Roofit workspace containing all   
  *  elements of the fit model. 
  */
