@@ -1,2 +1,4 @@
 add_subdirectory(BuilderStd)
 add_subdirectory(BobTheBuilder)
+add_subdirectory(FitModelBrewery)
+add_subdirectory(Sin2bBuilder)
