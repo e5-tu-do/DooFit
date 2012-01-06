@@ -29,6 +29,11 @@ class Parameter{
   std::string name_;
   std::string desc_;
   
+  void ParseIsEqual();
+  void ParseStandard();
+  void ParseBlinded();
+  void ParseFormulaVar();
+  
   
 };
 
