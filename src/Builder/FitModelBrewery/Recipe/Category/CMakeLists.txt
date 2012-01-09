@@ -1,5 +1,5 @@
 add_library( Brewery_Recipe_Category 
   AbsCategory.cpp AbsCategory.h 
-  StandardCategory.cpp StandardCategory.h 
+  BasicCategory.cpp BasicCategory.h 
   SuperCategory.cpp SuperCategory.h
 )

@@ -1,6 +1,9 @@
 #ifndef BUILDER_FITMODELBREWERY_RECIPE_DIMENSION_ABSDIMENSION_H_
 #define BUILDER_FITMODELBREWERY_RECIPE_DIMENSION_ABSDIMENSION_H_
 
+// from STL
+#include <string>
+
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -9,6 +12,11 @@ class AbsDimension {
   AbsDimension();
   virtual ~AbsDimension();
   
+  
+  virtual std::string name() const = 0;
+  
+  virtual void RegisterInRecipe() = 0;
+  virtual void CheckForConsistency() = 0;
   
  protected:
   

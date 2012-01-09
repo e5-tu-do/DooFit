@@ -12,10 +12,13 @@ class RealDimension : public AbsDimension {
   RealDimension();
   virtual ~RealDimension();
   
+  void RegisterInRecipe();
+  void CheckForConsistency();
+  
  protected:
   
  private:
-  /* data */
+  //std::string 
 };
 
 } // namespace fitmodelbrewery 
