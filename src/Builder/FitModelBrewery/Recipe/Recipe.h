@@ -49,7 +49,7 @@ class Recipe {
   
  private:
   
-  std::map< std::string, const RealDimension& > dims_real_;
+  std::map< std::string, const RealDimension& > dims_real_; 
   std::map< std::string, const DiscreteDimension& > dims_discrete_;
   
   std::map< std::string, const StandardParameter& > params_std_;
