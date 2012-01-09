@@ -13,7 +13,7 @@ class AbsDimension {
   virtual ~AbsDimension();
   
   
-  virtual std::string name() const = 0;
+  virtual std::string GetName() const = 0;
   
   virtual void RegisterInRecipe() = 0;
   virtual void CheckForConsistency() = 0;

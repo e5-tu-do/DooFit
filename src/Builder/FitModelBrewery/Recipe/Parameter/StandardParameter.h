@@ -17,7 +17,9 @@ class StandardParameter : public AbsParameter {
  public:
   StandardParameter( const Recipe& recipe );
   ~StandardParameter();
-
+  
+  virtual std::string GetName() const{ return name_; }
+  
   /** @brief Setters and Getters */
   std::string name() const { return name_; }
   void set_name(const std::string& name) { name_ = name; }

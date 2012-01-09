@@ -15,13 +15,11 @@ class AbsParameter {
   AbsParameter( const Recipe& recipe );
   virtual ~AbsParameter();
   
-  /** Setter and getter for name_ */
-  std::string name() const { return name_; }
-  void set_name(const std::string& name) { name_ = name; } 
-  
+  virtual std::string GetName() const = 0;
+
   
  protected:
-  std::string name_;
+  
  private:
   
 };

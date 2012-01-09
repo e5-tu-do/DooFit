@@ -12,7 +12,10 @@ class DiscreteDimension : public AbsDimension {
  public:
   DiscreteDimension();
   virtual ~DiscreteDimension ();
-
+  
+  virtual std::string GetName() const;
+  
+  
  protected:
   
  private:

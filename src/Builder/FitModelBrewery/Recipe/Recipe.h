@@ -9,10 +9,8 @@
  *  @author $Author$
  *  @date 2012-01-09
  *  @date $Date$
- *  @version $Rev$  \sa
+ *  @version $Rev$
  */
-
-
 
 #ifndef BUILDER_FITMODELBREWERY_RECIPE_RECIPE_H_
 #define BUILDER_FITMODELBREWERY_RECIPE_RECIPE_H_
@@ -44,27 +42,46 @@ class Recipe {
   Recipe();
   ~Recipe();
   
+  /** @brief Adds a copy of the DiscreteDimension object to dims_discrete_. */
+  void RegisterRecipeElement(const DiscreteDimension& dim_discrete);
+  /** @brief Adds a copy of the RealDimension object to dims_discrete_. */
+  void RegisterRecipeElement(const RealDimension& dim_real);
+  /** @brief Adds a copy of the StandardParameter object to params_std_. */
+  void RegisterRecipeElement(const StandardParameter& param_std);
+  /** @brief Adds a copy of the UnblindUniformParameter object to params_bldunif_. */
+  void RegisterRecipeElement(const UnblindUniformParameter& param_bldunif);
+  /** @brief Adds a copy of the FormulaParameter object to params_formula_. */
+  void RegisterRecipeElement(const FormulaParameter& param_formula);
+  
   
  protected:
   
  private:
+  typedef std::map< std::string, const RealDimension& > RealDimensionMap;
+  typedef std::map< std::string, const DiscreteDimension& > DiscreteDimensionMap;
+  typedef std::map< std::string, const StandardParameter& > StandardParameterMap;    
+  typedef std::map< std::string, const UnblindUniformParameter& > UnblindUniformParameterMap;
+  typedef std::map< std::string, const FormulaParameter& > FormulaParameterMap;     
   
-  std::map< std::string, const RealDimension& > dims_real_; 
-  std::map< std::string, const DiscreteDimension& > dims_discrete_;
   
-  std::map< std::string, const StandardParameter& > params_std_;
-  std::map< std::string, const UnblindUniformParameter& > params_bldunif_;
-  std::map< std::string, const FormulaParameter& > params_formula_;
+  
+  /** @brief Function that checks on all maps if an object of with name search_name exists. */
+  bool RecipeElementExists(const std::string& search_name);
+  
+  RealDimensionMap            dims_real_; 
+  DiscreteDimensionMap        dims_discrete_;
+  StandardParameterMap        params_std_;
+  UnblindUniformParameterMap  params_bldunif_;
+  FormulaParameterMap         params_formula_;
   
   //std::map< std::string, AbsResolution* > resols_;
   //std::map< std::string, AbsPdf* > pdfs_;
-  
 };
 
 /** @struct RegistrationFailed
  *  @brief Registration of an object to the map fails
  */
-struct RegistrationFailed: public virtual boost::exception, public virtual std::exception { 
+struct ExcRecipeRegistrationFailed: public virtual boost::exception, public virtual std::exception { 
   virtual const char* what() const throw() { return "Registration of object in Recipe failed."; }
 };
 

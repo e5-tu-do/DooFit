@@ -12,6 +12,8 @@ class RealDimension : public AbsDimension {
   RealDimension();
   virtual ~RealDimension();
   
+  virtual std::string GetName() const;
+  
   void RegisterInRecipe();
   void CheckForConsistency();
   
