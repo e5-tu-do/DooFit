@@ -57,17 +57,17 @@ class Recipe {
  protected:
   
  private:
-  typedef std::map< std::string, const RealDimension& > RealDimensionMap;
-  typedef std::map< std::string, const DiscreteDimension& > DiscreteDimensionMap;
-  typedef std::map< std::string, const StandardParameter& > StandardParameterMap;    
-  typedef std::map< std::string, const UnblindUniformParameter& > UnblindUniformParameterMap;
-  typedef std::map< std::string, const FormulaParameter& > FormulaParameterMap;     
+  typedef std::map<std::string, const RealDimension&> RealDimensionMap;
+  typedef std::map<std::string, const DiscreteDimension&> DiscreteDimensionMap;
+  typedef std::map<std::string, const StandardParameter&> StandardParameterMap;    
+  typedef std::map<std::string, const UnblindUniformParameter&> UnblindUniformParameterMap;
+  typedef std::map<std::string, const FormulaParameter&> FormulaParameterMap;     
   
   
   
   /** @brief Function that checks on all maps if an object of with name search_name exists. */
   bool RecipeElementExists(const std::string& search_name);
-  
+    
   RealDimensionMap            dims_real_; 
   DiscreteDimensionMap        dims_discrete_;
   StandardParameterMap        params_std_;
