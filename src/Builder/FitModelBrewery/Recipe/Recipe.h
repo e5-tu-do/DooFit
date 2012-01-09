@@ -6,9 +6,9 @@
  *  © Copyright 2012  - Julian Wishahi. All Rights Reserved.
  *
  *  @author Julian Wishahi 
- *  @author $LastChangedBy$
+ *  @author $Author$
  *  @date 2012-01-09
- *  @date $LastChangedDate$
+ *  @date $Date$
  *  @version $Rev$  \sa
  */
 
