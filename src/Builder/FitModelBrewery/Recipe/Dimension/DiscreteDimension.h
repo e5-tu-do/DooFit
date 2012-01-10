@@ -57,6 +57,7 @@ class DiscreteDimension : public AbsDimension {
   std::string name_;
   std::string desc_;
   std::map<std::string,int> map_types_;
+  
 };
 
 /** @struct RegistrationFailed

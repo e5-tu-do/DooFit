@@ -26,11 +26,13 @@ namespace builder {
 namespace fitmodelbrewery {
 
 // forward declarations
-class AbsDimension;
 class DiscreteDimension;
 class RealDimension;
 
-class AbsParameter;
+class BasicCategory;
+class SuperCategory;
+
+
 class StandardParameter;
 class UnblindUniformParameter;
 class FormulaParameter;
@@ -42,10 +44,14 @@ class Recipe {
   Recipe();
   ~Recipe();
   
-  /** @brief Adds a copy of the DiscreteDimension object to dims_discrete_. */
+  /** @brief Adds a copy of the DiscreteDimension object to map_dims_discrete_. */
   void RegisterRecipeElement(const DiscreteDimension& dim_discrete);
-  /** @brief Adds a copy of the RealDimension object to dims_discrete_. */
+  /** @brief Adds a copy of the RealDimension object to map_dims_discrete_. */
   void RegisterRecipeElement(const RealDimension& dim_real);
+  /** @brief Adds a copy of the RealDimension object to map_cats_basic_. */
+  void RegisterRecipeElement(const BasicCategory& cat_basic);
+  /** @brief Adds a copy of the RealDimension object to map_cats_super_. */
+  void RegisterRecipeElement(const SuperCategory& cat_super);
   /** @brief Adds a copy of the StandardParameter object to params_std_. */
   void RegisterRecipeElement(const StandardParameter& param_std);
   /** @brief Adds a copy of the UnblindUniformParameter object to params_bldunif_. */
@@ -59,6 +65,10 @@ class Recipe {
  private:
   typedef std::map<std::string, const RealDimension&> RealDimensionMap;
   typedef std::map<std::string, const DiscreteDimension&> DiscreteDimensionMap;
+  
+  typedef std::map<std::string, const BasicCategory&> BasicCategoryMap;
+  typedef std::map<std::string, const SuperCategory&> SuperCategoryMap;
+  
   typedef std::map<std::string, const StandardParameter&> StandardParameterMap;    
   typedef std::map<std::string, const UnblindUniformParameter&> UnblindUniformParameterMap;
   typedef std::map<std::string, const FormulaParameter&> FormulaParameterMap;     
@@ -70,6 +80,10 @@ class Recipe {
   
   RealDimensionMap            map_dims_real_; 
   DiscreteDimensionMap        map_dims_discrete_;
+  
+  BasicCategoryMap            map_cats_basic_;
+  SuperCategoryMap            map_cats_super_;
+  
   StandardParameterMap        map_params_std_;
   UnblindUniformParameterMap  map_params_bldunif_;
   FormulaParameterMap         map_params_formula_;
