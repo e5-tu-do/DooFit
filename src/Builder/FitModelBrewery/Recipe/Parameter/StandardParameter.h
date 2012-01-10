@@ -13,6 +13,17 @@ namespace fitmodelbrewery {
 //forward declarations in namespace
 class Recipe;
 
+/** @class StandardParameter
+ *  @brief This class represents the standard parameter type to be used in pdfs.        
+ *  
+ *  © Copyright 2012  - Julian Wishahi. All Rights Reserved.
+ *
+ *  @author Julian Wishahi 
+ *  @author $Author$
+ *  @date 2012-01-10
+ *  @date $Date$
+ *  @version $Rev$
+ */
 class StandardParameter : public AbsParameter {
  public:
   explicit StandardParameter();

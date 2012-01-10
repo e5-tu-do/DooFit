@@ -19,7 +19,7 @@
 #include <map>
 #include <string>
 
-// from Boost
+// from boost
 #include <boost/exception/all.hpp>
 
 namespace builder {
