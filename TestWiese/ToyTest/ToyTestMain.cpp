@@ -145,6 +145,8 @@ void TestToys(int argc, char *argv[]) {
   
   delete data;
   
+  tstudy.ReadFitResults();
+  
   TFile f("data.root","read");
   data = (RooDataSet*)f.Get("dataset");
   
@@ -244,14 +246,4 @@ int main(int argc, char *argv[]) {
 //  sdebug << "C: " << sw.CpuTime() << ", R: " << sw.RealTime() << endmsg;
   
   TestToys(argc, argv);
-  
-  gDirectory->Print();
-  gObjectTable->Print();
-  
-  gDirectory = NULL;
-  gObjectTable = NULL;
-  
-  for (int i=0; i<100000; ++i) {
-    for (int i=0; i<10000; ++i) {}
-  }
 }

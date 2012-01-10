@@ -93,6 +93,10 @@ namespace Toy {
      *  \brief ToyFactoryStdConfig instance to use
      */
     const ToyStudyStdConfig& config_toystudy_;
+    /**
+     *  \brief Container for read in fit results
+     */
+    std::vector<RooFitResult*> fit_results_;
   };
   
   /** \struct ExceptionCannotStoreFitResult

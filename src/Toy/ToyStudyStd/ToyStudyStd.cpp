@@ -9,6 +9,7 @@
 // ROOT
 #include "TTree.h"
 #include "TFile.h"
+#include "TBranch.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -78,6 +79,30 @@ namespace Toy {
   }
   
   void ToyStudyStd::ReadFitResults() {
+    const std::vector<Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
     
+    if (fit_results_.size() > 0) {
+      swarn << "Reading in fit results while results are already stored." << endmsg;
+    }
+    
+    int results_stored = 0;
+    
+    for (std::vector<Config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
+      TFile file((*it_files).first().c_str(), "read");
+      TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
+            
+      TBranch* result_branch = tree->GetBranch("fit_results");
+      RooFitResult* fit_result = NULL;
+      result_branch->SetAddress(&fit_result);
+      
+      for (int i=0; i<tree->GetEntries(); ++i) {
+        result_branch->GetEntry(i);
+        
+        // save a copy
+        fit_results_.push_back(new RooFitResult(*fit_result));
+        results_stored++;
+      }
+    }
+    sinfo << "Read in " << results_stored << " fit results." << endmsg;
   }
 }
