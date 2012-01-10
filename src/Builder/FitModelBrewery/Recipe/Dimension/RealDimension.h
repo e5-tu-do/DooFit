@@ -10,13 +10,16 @@
 namespace builder {
 namespace fitmodelbrewery {
 
+// forward declarations in namespace
+class Recipe;
+
 class RealDimension : public AbsDimension {
  public:
   RealDimension();
   virtual ~RealDimension();
   
   virtual std::string GetName() const { return name(); };
-  virtual void RegisterInRecipe(){};
+  virtual void RegisterInRecipe(Recipe& recipe);
   virtual void CheckForConsistency(){};
   
   /** Setter and getter for name_ */

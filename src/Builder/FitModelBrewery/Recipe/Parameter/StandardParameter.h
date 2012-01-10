@@ -15,36 +15,41 @@ class Recipe;
 
 class StandardParameter : public AbsParameter {
  public:
-  StandardParameter( const Recipe& recipe );
+  explicit StandardParameter();
   ~StandardParameter();
   
-  virtual std::string GetName() const{ return name_; }
+  virtual std::string GetName() const{ return name(); }
   
-  /** @brief Setters and Getters */
+  virtual void RegisterInRecipe(Recipe& recipe);
+  virtual void CheckForConsistency();
+  
+  /** Setter and getter for name_ */
   std::string name() const { return name_; }
-  void set_name(const std::string& name) { name_ = name; }
+  void set_name(const std::string& name) { name_ = name; } 
   
+  /** Setter and getter for desc_ */
   std::string desc() const { return desc_; }
-  void set_desc(const std::string& desc) { desc_ = desc; }
+  void set_desc(const std::string& desc) { desc_ = desc; } 
   
-  double init_val() const { return init_val_; }
-  void set_init_val(double init_val) { init_val_ = init_val; } 
+  /** Setter and getter for val_min_ */
+  double val_min() const { return val_min_; }
+  void set_val_min(const double val_min) { val_min_ = val_min; } 
   
-  double min_val() const { return min_val_; }
-  void set_min_val(double min_val) { min_val_ = min_val; } 
+  /** Setter and getter for val_max_ */
+  double val_max() const { return val_max_; }
+  void set_val_max(const double val_max) { val_max_ = val_max; } 
   
-  double max_val() const { return max_val_; }
-  void set_max_val(double max_val) { max_val_ = max_val; }
-
+  /** Setter and getter for unit_ */
   std::string unit() const { return unit_; }
   void set_unit(const std::string& unit) { unit_ = unit; }
-
+  
+  
  private:
   std::string name_;
   std::string desc_;
-  double      init_val_;
-  double      min_val_;
-  double      max_val_;
+  double      val_init_;
+  double      val_min_;
+  double      val_max_;
   std::string unit_;
 };
 

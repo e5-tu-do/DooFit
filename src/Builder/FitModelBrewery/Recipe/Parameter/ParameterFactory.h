@@ -36,7 +36,7 @@ class ParameterFactory {
    *    - "UnblindUniform" for @UnblindUniformParameter
    *    - "Formula" for @FormulaParameter
    */
-  static AbsParameter* createNewParameter(const std::string& parameter_type, const Recipe& recipe);
+  static AbsParameter* createNewParameter(const std::string& parameter_type);
   
  private:
   /* data */

@@ -4,13 +4,14 @@
 namespace builder {
 namespace fitmodelbrewery {
 
-AbsParameter::AbsParameter( const Recipe& recipe ) {
+AbsParameter::AbsParameter() {
   
 }
 
 AbsParameter::~AbsParameter() {
   
 }
-  
+
+
 } // namespace fitmodelbrewery
 } // namespace builder

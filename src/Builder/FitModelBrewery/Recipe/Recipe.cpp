@@ -1,6 +1,12 @@
 #include "Builder/FitModelBrewery/Recipe/Recipe.h"
 
+// from STL
+
 // from project
+/// from Utils
+#include "Utils/MsgStream.h"
+
+/// from Builder/FitModelBrewery
 #include "Builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
 #include "Builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
 
@@ -11,7 +17,15 @@
 namespace builder {
 namespace fitmodelbrewery {
 
-Recipe::Recipe() {
+Recipe::Recipe() 
+    : dims_real_(),
+      dims_discrete_(),
+      params_std_(),
+      params_bldunif_(),
+      params_formula_(),
+      is_ready(false),
+      is_consistent(false)
+{
   
 }
 
@@ -24,13 +38,17 @@ void Recipe::RegisterRecipeElement(const DiscreteDimension& dim_discrete) {
   // check if any element with the same name exists
   if (RecipeElementExists(dim_discrete.GetName())){
     throw ExcRecipeRegistrationFailed();
-  }
+  }  
 }
 
 void Recipe::RegisterRecipeElement(const RealDimension& dim_real) {
   // check if any element with the same name exists
   if (RecipeElementExists(dim_real.GetName())){
     throw ExcRecipeRegistrationFailed();
+  }
+  else {
+    pair<string,RealDimension> dim_real_entry(dim_real.GetName(), RealDimension(dim_real));
+    dims_real_.insert(dim_real_entry);
   }
 }
 
@@ -39,6 +57,11 @@ void Recipe::RegisterRecipeElement(const StandardParameter& param_std) {
   if (RecipeElementExists(param_std.GetName())){
     throw ExcRecipeRegistrationFailed();
   }
+  else {
+    pair<string,StandardParameter> param_std_entry(param_std.GetName(), StandardParameter(param_std));
+    params_std_.insert(param_std_entry);
+  }
+  
 }
 // 
 // void Recipe::RegisterRecipeElement(const UnblindUniformParameter& param_bldunif) {

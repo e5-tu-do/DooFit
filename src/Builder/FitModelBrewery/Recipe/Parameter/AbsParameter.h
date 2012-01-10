@@ -12,10 +12,13 @@ class Recipe;
 
 class AbsParameter {
  public:
-  AbsParameter( const Recipe& recipe );
+  explicit AbsParameter();
   virtual ~AbsParameter();
   
   virtual std::string GetName() const = 0;
+
+  virtual void CheckForConsistency() = 0;
+  virtual void RegisterInRecipe(Recipe& recipe) = 0;
 
   
  protected:

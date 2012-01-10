@@ -16,9 +16,9 @@ ParameterFactory::~ParameterFactory(){
   
 }
 
-static AbsParameter* createNewParameter(const std::string& parameter_type,  const Recipe& recipe ){
+static AbsParameter* createNewParameter(const std::string& parameter_type){
   if ("Standard" == parameter_type) {
-    return new StandardParameter(recipe);
+    return new StandardParameter();
   }
   else {
     return NULL;

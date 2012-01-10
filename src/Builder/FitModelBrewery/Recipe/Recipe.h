@@ -67,7 +67,7 @@ class Recipe {
   
   /** @brief Function that checks on all maps if an object of with name search_name exists. */
   bool RecipeElementExists(const std::string& search_name);
-    
+  
   RealDimensionMap            dims_real_; 
   DiscreteDimensionMap        dims_discrete_;
   StandardParameterMap        params_std_;
@@ -76,6 +76,11 @@ class Recipe {
   
   //std::map< std::string, AbsResolution* > resols_;
   //std::map< std::string, AbsPdf* > pdfs_;
+  
+  bool is_ready;
+  bool is_consistent;
+  
+  
 };
 
 /** @struct RegistrationFailed
