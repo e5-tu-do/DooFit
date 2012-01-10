@@ -7,7 +7,14 @@
 namespace builder {
 namespace fitmodelbrewery {
   
-RealDimension::RealDimension() {
+RealDimension::RealDimension() 
+  : AbsDimension(),
+    name_("StandardDimensionName"),
+    desc_("StandardDimensionDesc"),
+    val_min_(0.),
+    val_max_(1.),
+    unit_("StandardDimensionUnit")
+{
   
 }
 

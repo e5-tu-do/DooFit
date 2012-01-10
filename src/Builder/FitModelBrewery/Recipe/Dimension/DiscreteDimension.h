@@ -1,6 +1,9 @@
 #ifndef BUILDER_FITMODELBREWERY_RECIPE_DIMENSION_DISCRETEDIMENSION_H
 #define BUILDER_FITMODELBREWERY_RECIPE_DIMENSION_DISCRETEDIMENSION_H
 
+// from STL
+#include <map>
+#include <string>
 
 // from project
 #include "Builder/FitModelBrewery/Recipe/Dimension/AbsDimension.h"
@@ -19,7 +22,8 @@ class DiscreteDimension : public AbsDimension {
  protected:
   
  private:
-  /* data */
+  std::string name_;
+  std::map<std::string,int> map_types_;
 };
 
 } // namespace fitmodelbrewery 

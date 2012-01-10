@@ -68,11 +68,11 @@ class Recipe {
   /** @brief Function that checks on all maps if an object of with name search_name exists. */
   bool RecipeElementExists(const std::string& search_name);
   
-  RealDimensionMap            dims_real_; 
-  DiscreteDimensionMap        dims_discrete_;
-  StandardParameterMap        params_std_;
-  UnblindUniformParameterMap  params_bldunif_;
-  FormulaParameterMap         params_formula_;
+  RealDimensionMap            map_dims_real_; 
+  DiscreteDimensionMap        map_dims_discrete_;
+  StandardParameterMap        map_params_std_;
+  UnblindUniformParameterMap  map_params_bldunif_;
+  FormulaParameterMap         map_params_formula_;
   
   //std::map< std::string, AbsResolution* > resols_;
   //std::map< std::string, AbsPdf* > pdfs_;

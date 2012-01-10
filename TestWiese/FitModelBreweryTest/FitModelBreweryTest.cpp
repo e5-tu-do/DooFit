@@ -11,7 +11,7 @@ int main() {
   StandardParameter parMass;
   parMass.set_name("heinz");
   RealDimension parProptime;
-  parProptime.set_name("heinz");
+  parProptime.set_name("kunz");
   parMass.RegisterInRecipe(recipe);
   parProptime.RegisterInRecipe(recipe);
   return 0;

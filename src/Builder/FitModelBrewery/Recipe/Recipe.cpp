@@ -18,11 +18,11 @@ namespace builder {
 namespace fitmodelbrewery {
 
 Recipe::Recipe() 
-    : dims_real_(),
-      dims_discrete_(),
-      params_std_(),
-      params_bldunif_(),
-      params_formula_(),
+    : map_dims_real_(),
+      map_dims_discrete_(),
+      map_params_std_(),
+      map_params_bldunif_(),
+      map_params_formula_(),
       is_ready(false),
       is_consistent(false)
 {
@@ -48,7 +48,7 @@ void Recipe::RegisterRecipeElement(const RealDimension& dim_real) {
   }
   else {
     pair<string,RealDimension> dim_real_entry(dim_real.GetName(), RealDimension(dim_real));
-    dims_real_.insert(dim_real_entry);
+    map_dims_real_.insert(dim_real_entry);
   }
 }
 
@@ -59,7 +59,7 @@ void Recipe::RegisterRecipeElement(const StandardParameter& param_std) {
   }
   else {
     pair<string,StandardParameter> param_std_entry(param_std.GetName(), StandardParameter(param_std));
-    params_std_.insert(param_std_entry);
+    map_params_std_.insert(param_std_entry);
   }
   
 }
@@ -79,11 +79,11 @@ void Recipe::RegisterRecipeElement(const StandardParameter& param_std) {
 //}
 
 bool Recipe::RecipeElementExists(const std::string& search_name) {
-  if (dims_real_.find(search_name) != dims_real_.end()) return true;
-  else if (dims_discrete_.find(search_name) != dims_discrete_.end()) return true;
-  else if (params_std_.find(search_name) != params_std_.end()) return true;
-  else if (params_bldunif_.find(search_name) != params_bldunif_.end()) return true;
-  else if (params_formula_.find(search_name) != params_formula_.end()) return true;
+  if (map_dims_real_.find(search_name) != map_dims_real_.end()) return true;
+  else if (map_dims_discrete_.find(search_name) != map_dims_discrete_.end()) return true;
+  else if (map_params_std_.find(search_name) != map_params_std_.end()) return true;
+  else if (map_params_bldunif_.find(search_name) != map_params_bldunif_.end()) return true;
+  else if (map_params_formula_.find(search_name) != map_params_formula_.end()) return true;
   else return false;
 }
 
