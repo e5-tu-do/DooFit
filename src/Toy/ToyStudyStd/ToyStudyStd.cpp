@@ -13,6 +13,8 @@
 
 // from RooFit
 #include "RooFitResult.h"
+#include "RooArgList.h"
+#include "RooDataSet.h"
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -29,13 +31,15 @@ namespace Toy {
   
   ToyStudyStd::ToyStudyStd(const CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy) :
   config_common_(cfg_com),
-  config_toystudy_(cfg_tstudy)
+  config_toystudy_(cfg_tstudy),
+  fit_results_(),
+  evaluated_values_(NULL)
   {
     
   }
   
   ToyStudyStd::~ToyStudyStd() {
-    
+    if (evaluated_values_ != NULL) delete evaluated_values_;
   }
   
   void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result) const {
@@ -104,5 +108,44 @@ namespace Toy {
       }
     }
     sinfo << "Read in " << results_stored << " fit results." << endmsg;
+  }
+  
+  void ToyStudyStd::EvaluateFitResults() {
+    if (fit_results_.size() <= 0) {
+      serr << "Cannot evaluate as no fit results are loaded." << endmsg;
+      throw ExceptionCannotEvaluateFitResults();
+    }
+    
+    // build list of all parameters, pulls, etc.
+    RooArgSet parameter_set = BuildEvaluationArgSet(*fit_results_.front());
+    
+    // loop over fit results and fill all values into RooDataSet
+    if (evaluated_values_ != NULL) delete evaluated_values_;
+    evaluated_values_ = new RooDataSet("evaluated_values", "evaluated_values", parameter_set);
+    for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_.begin(); it_results != fit_results_.end(); ++it_results) {
+      RooArgSet params = BuildEvaluationArgSet(**it_results);
+      evaluated_values_->add(params);
+    }
+    
+    evaluated_values_->Print();
+  }
+  
+  RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) {
+    RooArgSet parameters;
+    
+    const RooArgList& parameter_list = fit_result.floatParsFinal();
+    TIterator* parameter_iter        = parameter_list.createIterator();
+    RooRealVar* parameter            = NULL;
+    while ((parameter = (RooRealVar*)parameter_iter->Next())) {
+      TString pull_name = parameter->GetName() + TString("_pull");
+      TString pull_desc = TString("Pull of ") + parameter->GetTitle();
+      
+      RooRealVar* par  = new RooRealVar(*parameter);
+      //RooRealVar* pull = new RooRealVar(pull_name, pull_desc, -10, 10);
+      
+      parameters.addOwned(*par);
+      //parameters.addOwned(*pull);
+    }
+    return parameters;
   }
 }

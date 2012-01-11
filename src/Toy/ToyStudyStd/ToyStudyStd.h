@@ -6,6 +6,7 @@
 // ROOT
 
 // from RooFit
+#include "RooArgSet.h"
 
 // from project
 #include "Toy/ToyStudyStd/ToyStudyStdConfig.h"
@@ -13,6 +14,7 @@
 
 // forward declarations
 class RooFitResult;
+class RooDataSet;
 
 namespace Toy {
   /** @class ToyStudyStd
@@ -80,9 +82,29 @@ namespace Toy {
      *  and stored internally in the toy factory. 
      */
     void ReadFitResults();
+    /**
+     *  @brief Evaluate read in fit results
+     *
+     *  Stored fit results are evaluated and pulls and other relevant values are
+     *  being determined.
+     */
+    void EvaluateFitResults();
     ///@}
     
+    RooDataSet* evaluated_values() const { return evaluated_values_; }
+    
    protected:
+    /**
+     *  @brief Build an argument set with evaluated parameters
+     *
+     *  For a given fit result this helper function will generate a RooArgSet 
+     *  with all values extracted from this result (parameter values, pulls 
+     *  etc.).
+     *
+     *  @param fit_result RooFitResult to use for evaluation
+     *  @return argument set with all evaluated parameters
+     */
+    RooArgSet BuildEvaluationArgSet(const RooFitResult& fit_result);
     
    private:
     /**
@@ -97,6 +119,10 @@ namespace Toy {
      *  \brief Container for read in fit results
      */
     std::vector<RooFitResult*> fit_results_;
+    /**
+     *  \brief RooDataSet for all evaluated parameters, their pulls and so on
+     */
+    RooDataSet* evaluated_values_;
   };
   
   /** \struct ExceptionCannotStoreFitResult
@@ -104,6 +130,13 @@ namespace Toy {
    */
   struct ExceptionCannotStoreFitResult: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Cannot save fit result."; }
+  };
+  
+  /** \struct ExceptionCannotEvaluateFitResults
+   *  \brief Exception for problem in evaluating fit results
+   */
+  struct ExceptionCannotEvaluateFitResults: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "Cannot evaluate fit results."; }
   };
 }
 

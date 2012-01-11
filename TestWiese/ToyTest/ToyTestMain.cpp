@@ -69,7 +69,7 @@ void TestToys(int argc, char *argv[]) {
   RooWorkspace* ws = new RooWorkspace("ws");
   ws->Print();
   
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean1", "mean1", 5200, 5000, 5700, "MeV/c^{2}");
+  Pdf2WsStd::CommonFuncs::getVar(ws, "mean1", "mean1", 5200, 5100, 5300, "MeV/c^{2}");
   Pdf2WsStd::CommonFuncs::getVar(ws, "mean2", "mean2", 5300, 5000, 5700, "MeV/c^{2}");
   Pdf2WsStd::CommonFuncs::getVar(ws, "mean3", "mean3", 5400, 5000, 5700, "MeV/c^{2}");
   
@@ -146,6 +146,13 @@ void TestToys(int argc, char *argv[]) {
   delete data;
   
   tstudy.ReadFitResults();
+  tstudy.EvaluateFitResults();
+  
+  RooDataSet* evaluated_values = tstudy.evaluated_values();
+  const RooArgSet* args = evaluated_values->get();
+  RooRealVar* mean1 = (RooRealVar*)args->find("mean1");
+  RooPlot* mean1_frame = mean1->frame();
+  evaluated_values->plotOn(mean1_frame);
   
   TFile f("data.root","read");
   data = (RooDataSet*)f.Get("dataset");
@@ -166,6 +173,9 @@ void TestToys(int argc, char *argv[]) {
   
   tag2_frame->Draw();
   c1.SaveAs("c2.pdf");
+  
+  mean1_frame->Draw();
+  c1.SaveAs("mean1_values.pdf");
   
   Roo1DTable* table = data->table(RooArgSet(*tag));
   table->Print();
