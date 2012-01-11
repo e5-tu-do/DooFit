@@ -29,21 +29,20 @@ void BasicCategory::RegisterInRecipe(Recipe& recipe) {
   recipe.RegisterRecipeElement(*this);
 }
 
-void BasicCategory::AddType(string type_name, int type_value) {
+void BasicCategory::AddType(const string& type_name, int type_value) {
+  // Check if value already exists
+  typedef pair<string,int> type_pair;
+  BOOST_FOREACH( type_pair type , map_types_ ){
+    if ( type.second == type_value ){
+      throw ExcBasicCategoryTypeExists();
+    }
+  }
+  // Try to add new type
   pair<map<string, int >::iterator,bool> ret;
   ret = map_types_.insert(pair<string,int>(type_name, type_value));
   // Check if key already exists in map
   if (ret.second == false){
     throw ExcBasicCategoryTypeExists();
-  }
-  else {
-    // Check if value already exists
-    typedef pair<string,int> type_pair;
-    BOOST_FOREACH( type_pair type , map_types_ ){
-      if ( type.second == type_value ){
-        throw ExcBasicCategoryTypeExists();
-      }
-    }
   }
 }
 

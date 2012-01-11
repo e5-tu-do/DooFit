@@ -30,20 +30,20 @@ void DiscreteDimension::RegisterInRecipe(Recipe& recipe) {
 }
 
 void DiscreteDimension::AddType(string type_name, int type_value) {
+  // Check if value already exists
+  typedef pair<string,int> type_pair;
+  BOOST_FOREACH( type_pair type , map_types_ ){
+    if ( type.second == type_value ){
+      throw ExcDiscreteDimensionTypeExists();
+    }
+  }
+  
+  // Try to add new type
   pair<map<string, int >::iterator,bool> ret;
   ret = map_types_.insert(pair<string,int>(type_name, type_value));
   // Check if key already exists in map
   if (ret.second == false){
     throw ExcDiscreteDimensionTypeExists();
-  }
-  else {
-    // Check if value already exists
-    typedef pair<string,int> type_pair;
-    BOOST_FOREACH( type_pair type , map_types_ ){
-      if ( type.second == type_value ){
-        throw ExcDiscreteDimensionTypeExists();
-      }
-    }
   }
 }
 

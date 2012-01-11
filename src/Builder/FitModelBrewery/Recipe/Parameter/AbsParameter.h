@@ -17,7 +17,7 @@ class AbsParameter {
   
   virtual std::string GetName() const = 0;
 
-  virtual void CheckForConsistency() = 0;
+  virtual void CheckForConsistency() const = 0;
   virtual void RegisterInRecipe(Recipe& recipe) = 0;
 
   

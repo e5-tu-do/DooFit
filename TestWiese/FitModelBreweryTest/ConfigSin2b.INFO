@@ -1,0 +1,142 @@
+Dimensions 
+{
+  Mass "Mass"
+  { 
+    ;name     "m"
+    desc     "m_{B}"
+    val_min  5000
+    val_max  5400
+    unit     "MeV/c^{2}"
+  }
+  Mass "MassDau1"
+  {
+    ; name     "mJpsi"
+    desc     "m_{J/#psi}"
+    val_min  3000
+    val_max  4000
+    unit     "MeV/c^{2}"
+  }
+;  Propertime "Proptime"
+;  {
+;    desc     "t"
+;	   val_min  -2
+;	   val_max  14
+;	   unit     "ps"
+;  }
+  Tag        "Tag"
+  {
+    ; name    "d"
+    desc     "d"
+    types    "B0,1;B0bar,-1"
+  }
+}
+
+Categories 
+{ 
+  Basic "catTrigger"
+  {
+    desc  "Trigger categories"
+    types "B,1" ;U,2"
+  }
+  Basic "catTagged"
+  {
+    desc  "Tagging categories"
+    types "t,1" ;u,0"
+  }
+  Super "catTrigTag"
+  {
+    desc    "Combined Trigger and Tagging category"
+    subcats "catTrigger,catTagged"
+  }  
+}
+
+PdfFull ;"pdfFull"
+{
+  ;desc          "P"
+  Extended      false
+  Simultaneous  true
+  SimCatSubPdfs "catTrigTag"
+  {
+    "{B;t}" ;"Bt"
+    {
+      ;name       "pdfBtFull"
+      ;desc       "P_{B,t}"
+      Extended    false
+      Components  
+      {
+        Sig ;"pdfSig"
+        { 
+          desc          "P_{Sig}"
+          Extended      true
+          Dimensions
+          {
+            Mass     "Gaussian"
+            {
+              desc  "juju"
+              Parameters
+              {
+                mean "as|f"
+                sigma "as|f"
+              }
+              CondPdf   ""
+              CondVars  ""
+              Acc       ""
+            }                                       
+            MassDau1 "Gaussian"
+            Proptime "Gaussian"
+          }
+        }
+        ; Pbg ;"pdfPbg"
+        ; {
+        ;   desc         "P"
+        ;   Mass     "Gaussian"
+        ;   {
+        ;     desc  "juju"
+        ;     mean  "parBtSigMassMean,m_{B}"
+        ;     sigma "parBtSigMassSigma,#sigma_{m,B}"
+        ;     CondPdf   ""
+        ;     CondVars  ""
+        ;     Acc       ""
+        ;   }
+        ;   MassDau1 "Gaussian"
+        ; }
+        ; Lbg "pdfLbg"
+        ; {
+        ;   varMass     ""
+        ;   vasMassDau1 "=Signal"
+        ; }
+      }
+    }
+  }
+} 
+
+
+;PdfFull "pdfFull"
+;{
+;  Desc     "P(m)"
+;  Simcats  None
+;  Extended true 
+;  Components
+;  {
+;    Sig "pdfSig"
+;    { 
+;      desc     "P_{Sig}"
+;      Extended true
+;      Dimensions
+;      {
+;        varMass     "Gaussian"
+;        varMassDau1 "Gaussian"
+;      }
+;    }
+;    Pbg "pdfPbg"
+;    {
+;      varMass     "Gaussian"
+;      varMassDau1 "Gaussian"
+;    }
+;    Lbg "pdfLbg"
+;    {
+;      varMass     "=PromptBkg"
+;      vasMassDau1 "=Signal"
+;    }
+;  }
+;}

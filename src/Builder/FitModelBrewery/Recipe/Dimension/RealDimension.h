@@ -20,7 +20,7 @@ class RealDimension : public AbsDimension {
   
   virtual std::string GetName() const { return name(); };
   virtual void RegisterInRecipe(Recipe& recipe);
-  virtual void CheckForConsistency(){};
+  virtual void CheckForConsistency() const {};
   
   /** Setter and getter for name_ */
   std::string name() const { return name_; }

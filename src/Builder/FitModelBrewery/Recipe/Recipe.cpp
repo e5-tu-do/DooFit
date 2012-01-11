@@ -75,8 +75,7 @@ void Recipe::RegisterRecipeElement(const BasicCategory& cat_basic) {
   }
 }
 
-/*
-  void Recipe::RegisterRecipeElement(const SuperCategory& cat_super) {
+void Recipe::RegisterRecipeElement(const SuperCategory& cat_super) {
   // check if any element with the same name exists
   if (RecipeElementExists(cat_super.GetName())){
     throw ExcRecipeRegistrationFailed();
@@ -87,7 +86,6 @@ void Recipe::RegisterRecipeElement(const BasicCategory& cat_basic) {
     map_cats_super_.insert(cat_super_entry);
   }
 }
-*/
 
 void Recipe::RegisterRecipeElement(const StandardParameter& param_std) {
   // check if any element with the same name exists

@@ -36,7 +36,7 @@ class DiscreteDimension : public AbsDimension {
   
   virtual std::string GetName() const { return name(); }
   virtual void RegisterInRecipe(Recipe& recipe);
-  virtual void CheckForConsistency(){};
+  virtual void CheckForConsistency() const {};
   
   
   

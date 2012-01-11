@@ -1,1 +1,9 @@
-add_library( Brewery_Recipe_Pdf AbsDimPdf.cpp AbsDimPdf.h PdfFull.cpp PdfFull.h )
+add_library( Brewery_Recipe_Pdf 
+PdfFull.cpp PdfFull.h
+AbsDimPdf.cpp AbsDimPdf.h 
+#GenericPdfs
+GenericPdfs/GaussianPdf.cpp GenericPdfs/GaussianPdf.h
+#PdfsWithResol
+#Resolutions
+#DataPdfs
+)

@@ -49,7 +49,7 @@ class BasicCategory : public AbsCategory {
   void set_desc(const std::string& desc) { desc_ = desc; } 
   
   /** Add a new type to the discrete dimension map. */
-  void AddType(std::string type_name, int type_value);
+  void AddType(const std::string& type_name, int type_value);
   
  protected:
   

@@ -26,7 +26,7 @@ void StandardParameter::RegisterInRecipe(Recipe& recipe) {
   recipe.RegisterRecipeElement(*this);
 }
 
-void StandardParameter::CheckForConsistency(){
+void StandardParameter::CheckForConsistency() const {
   
 }
   
