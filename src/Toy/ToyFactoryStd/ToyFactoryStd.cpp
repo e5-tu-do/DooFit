@@ -255,7 +255,11 @@ namespace Toy {
       if (proto_data.size() > 0) {
         proto_size = proto_data[0]->numEntries();
       } else {
-        proto_size = expected_yield+10*TMath::Sqrt(expected_yield);
+        double yield = expected_yield;
+        if (expected_yield==0) {
+          yield = pdf.expectedEvents(argset_generation_observables);
+        }
+        proto_size = yield+10*TMath::Sqrt(yield);
       }
       
       // Store only proto data specific for this PDF (remember, there might be 
@@ -277,17 +281,18 @@ namespace Toy {
       // merge this proto data at the end of already existing proto data
       proto_data.push_back(proto_data_this_pdf);
       have_to_delete_proto_data = true;
-    }    
+    }
     
     if (PdfIsDecomposable(pdf)) {
       // pdf needs to be decomposed and generated piece-wise 
       if (PdfIsExtended(pdf)) {
         RooRealVar& yield = *((RooRealVar*)pdf.findServer(1));
         RooAbsPdf& sub_pdf = *((RooAbsPdf*)pdf.findServer(0));
-        
+                
         sinfo << "RooExtendPdf " << pdf.GetName() << "(" << sub_pdf.GetName() << "," << yield.GetName() << "=" << yield.getVal() << ") will be decomposed." << endmsg;
         
         sinfo.set_indent(sinfo.indent()+2);
+                
         data = GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield>0 ? expected_yield : yield.getVal(), extended, proto_data);
         sinfo.set_indent(sinfo.indent()-2);
       } else if (PdfIsAdded(pdf)) {
@@ -334,6 +339,10 @@ namespace Toy {
   }
   
   RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
+    // if no external yield set, get expectation from PDF
+    if (expected_yield==0) {
+      expected_yield = pdf.expectedEvents(argset_generation_observables);
+    }
     sinfo << "RooAddPdf " << pdf.GetName();
     
     RooAddPdf& add_pdf = dynamic_cast<RooAddPdf&>(pdf);
@@ -356,7 +365,7 @@ namespace Toy {
       it->Next();
     }
     
-    sinfo << "will be decomposed." << endmsg;
+    sinfo << "will be decomposed. Expecting " << expected_yield << " events." << endmsg;
     sinfo.set_indent(sinfo.indent()+2);
     
     RooAbsPdf* sub_pdf = NULL;
@@ -594,6 +603,8 @@ namespace Toy {
   }
   
   RooDataSet* ToyFactoryStd::GenerateProtoSample(const RooAbsPdf& pdf, const Config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, RooWorkspace* workspace, int yield) const {
+    
+    assert(yield>0);
     sinfo << "Generating proto data for PDF " << pdf.GetName() << " using config section " << proto_section.second() << endmsg;
     sinfo.set_indent(sinfo.indent()+2);
     ToyFactoryStdConfig cfg_tfac_proto(proto_section.second());

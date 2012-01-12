@@ -2,9 +2,14 @@
 #include "Utils.h"
 #include <stdlib.h>
 #include <unistd.h>
+#include <utility>
+#include <vector>
 
 #include <boost/thread/thread.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
+
+//from Roofit
+#include "RooDataSet.h"
 
 using namespace std;
 
@@ -465,3 +470,31 @@ void Utils::PlotResiduals(TString pName, RooPlot * pFrame, RooRealVar * pVar, Ro
   
   printPlot(&c1, pName, pDir);
 }
+
+std::pair<double,double> Utils::MedianLimitsForTuple(const RooDataSet& dataset, std::string var_name) {
+  int num_entries = dataset.numEntries();
+  std::vector<double> entries(num_entries);
+  
+  // convert entries into vector (for sorting)
+  const RooArgSet* args = NULL;
+  for (int i = 0; i < num_entries; ++i) {
+    args = dataset.get(i);
+    entries[i] = dynamic_cast<RooRealVar*>(args->find(var_name.c_str()))->getVal();
+  }
+  
+  std::sort(entries.begin(), entries.end());
+  int idx_median = num_entries/2;       
+  
+  std::pair<double, double> minmax;
+  
+  minmax.first  = -4*entries[idx_median]+5*entries[(int)(idx_median*0.32)];
+  minmax.second = -4*entries[idx_median]+5*entries[(int)(num_entries-idx_median*0.32)];
+  
+  if (minmax.first == minmax.second) {
+    minmax.first = entries[idx_median]*0.98;
+    minmax.first = entries[idx_median]*1.02;
+  }
+  
+  return minmax;
+}
+

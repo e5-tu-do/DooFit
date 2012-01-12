@@ -70,6 +70,11 @@ namespace Toy {
    *
    *  @todo Proto sets need to be split for sub PDFs.
    *  @todo Test proto generation without externally set yield.
+   *
+   *  @bug If an external yield is given for extended PDFs, the PDFs will be 
+   *       generated correctly according to this number. However, the pulls will 
+   *       all be wrong as the internal PDF yield will be used to calculate the
+   *       pull.
    */
   
   class ToyFactoryStd {

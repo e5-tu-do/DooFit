@@ -10,6 +10,7 @@
 #include "TTree.h"
 #include "TFile.h"
 #include "TBranch.h"
+#include "TMath.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -85,6 +86,9 @@ namespace Toy {
   void ToyStudyStd::ReadFitResults() {
     const std::vector<Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
     
+    sinfo.Ruler();
+    sinfo << "Loading fit results..." << endmsg;
+    
     if (fit_results_.size() > 0) {
       swarn << "Reading in fit results while results are already stored." << endmsg;
     }
@@ -105,9 +109,18 @@ namespace Toy {
         // save a copy
         fit_results_.push_back(new RooFitResult(*fit_result));
         results_stored++;
+        sinfo << i << endmsg;
+        sdebug << fit_result->Sizeof() << endmsg;
+        delete fit_result;
+        fit_result = NULL;
       }
+      
+      delete result_branch;
+      delete tree;
+      file.Close();
     }
     sinfo << "Read in " << results_stored << " fit results." << endmsg;
+    sinfo.Ruler();
   }
   
   void ToyStudyStd::EvaluateFitResults() {
@@ -126,8 +139,6 @@ namespace Toy {
       RooArgSet params = BuildEvaluationArgSet(**it_results);
       evaluated_values_->add(params);
     }
-    
-    evaluated_values_->Print();
   }
   
   RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) {
@@ -139,12 +150,29 @@ namespace Toy {
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       TString pull_name = parameter->GetName() + TString("_pull");
       TString pull_desc = TString("Pull of ") + parameter->GetTitle();
+      TString init_name = parameter->GetName() + TString("_init");
+      TString init_desc = TString("Init value of ") + parameter->GetTitle();
+      TString res_name  = parameter->GetName() + TString("_res");
+      TString res_desc  = TString("Residual of ") + parameter->GetTitle();
       
       RooRealVar* par  = new RooRealVar(*parameter);
-      //RooRealVar* pull = new RooRealVar(pull_name, pull_desc, -10, 10);
+      RooRealVar* pull = new RooRealVar(pull_name, pull_desc, -100, 100);
+      RooRealVar* init = new RooRealVar(*(RooRealVar*)fit_result.floatParsInit().find(par->GetName()), init_name);
       
+      double pull_value = (par->getVal() - init->getVal())/par->getError();
+      pull->setVal(pull_value);
+      
+      sdebug << "(init,fitvalue,pull) for " << parameter->GetName() << " = " << "(" << init->getVal() << "," << par->getVal() << "," << pull_value << ")" << endmsg;
+      
+      if (TMath::Abs(pull_value) > 5.0) {
+        swarn << "Pull for " << parameter->GetName() << " is " << pull_value
+              << " (too large deviation from expectation)" << endmsg;
+        fit_result.Print();
+      }
+        
       parameters.addOwned(*par);
-      //parameters.addOwned(*pull);
+      parameters.addOwned(*pull);
+      parameters.addOwned(*init);
     }
     return parameters;
   }

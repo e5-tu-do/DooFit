@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <sys/stat.h>
+#include <utility>
 
 #include "TLorentzVector.h"
 #include "TLorentzRotation.h"
@@ -92,6 +93,20 @@ namespace Utils
 	inline double	RadToDeg(double rad){return rad*180.0/TMath::Pi();}
 	inline double	DegToRad(double deg){return deg/180.0*TMath::Pi();}
 	void		Symmetrize(TMatrixD &m);
+  
+  /**
+    *  @brief Median limits for tuple (here: RooDataSet)
+    *
+    *  This function will evaluate the distribution of the variable with name 
+    *  var_name in the dataset. It will return a pair as (min, max) as plotting
+    *  range for the distribution neglecting outliers by a quantile based 
+    *  approach.
+    *
+    *  @param dataset RooDataSet to evaluate
+    *  @param var_name name of variable in dataset to evaluate
+    *  @return pair of (double,double) as (min,max) to use for plotting
+    */
+  std::pair<double,double> MedianLimitsForTuple(const RooDataSet& dataset, std::string var_name);
 };
 
 #endif // #ifdef Utils_h

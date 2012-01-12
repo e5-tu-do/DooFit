@@ -103,6 +103,8 @@ namespace Toy {
      *
      *  @param fit_result RooFitResult to use for evaluation
      *  @return argument set with all evaluated parameters
+     *
+     *  @todo enhance this to be able to work with asymmetric errors if available
      */
     RooArgSet BuildEvaluationArgSet(const RooFitResult& fit_result);
     

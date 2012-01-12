@@ -1,6 +1,7 @@
 // STL
 #include <vector>
 #include <sstream>
+#include <utility>
 
 // Boost
 
@@ -69,9 +70,13 @@ void TestToys(int argc, char *argv[]) {
   RooWorkspace* ws = new RooWorkspace("ws");
   ws->Print();
   
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean1", "mean1", 5200, 5100, 5300, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean2", "mean2", 5300, 5000, 5700, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean3", "mean3", 5400, 5000, 5700, "MeV/c^{2}");
+  Pdf2WsStd::CommonFuncs::getVar(ws, "mean1", "mean1", 5200, 5150, 5250, "MeV/c^{2}");
+  Pdf2WsStd::CommonFuncs::getVar(ws, "mean2", "mean2", 5300, 5250, 5350, "MeV/c^{2}");
+  Pdf2WsStd::CommonFuncs::getVar(ws, "mean3", "mean3", 5400, 5350, 5450, "MeV/c^{2}");
+  
+  Pdf2WsStd::CommonFuncs::getVar(ws, "mean_time1", "mean_time1", 5200, 5150, 5250, "MeV/c^{2}");
+  Pdf2WsStd::CommonFuncs::getVar(ws, "mean_time2", "mean_time2", 5300, 5250, 5350, "MeV/c^{2}");
+  Pdf2WsStd::CommonFuncs::getVar(ws, "mean_time3", "mean_time3", 5400, 5350, 5450, "MeV/c^{2}");
   
   RooGaussian* pdf1 = Pdf2WsStd::Mass::Gaussian(ws, "test1", "Gaussian test pdf #1","mass","mean1", "abweichung");
   RooGaussian* pdf2 = Pdf2WsStd::Mass::Gaussian(ws, "test2", "Gaussian test pdf #2","mass","mean2", "abweichung_bkg");
@@ -120,9 +125,9 @@ void TestToys(int argc, char *argv[]) {
   
   ws->Print("t");
   
-//  TFile wsfile("ws.root", "recreate");
-//  ws->Write("ws");
-//  wsfile.Close();
+  TFile wsfile("ws.root", "recreate");
+  ws->Write("ws");
+  wsfile.Close();
     
 //  cfg_tfac.set_workspace(ws);
 //  cfg_tfac.set_generation_pdf_workspace("pdf_add");
@@ -134,6 +139,7 @@ void TestToys(int argc, char *argv[]) {
   
   RooDataSet* data = tfac.Generate();
   
+  ws->pdf("pdf_add")->getParameters(data)->readFromFile("generation.par");
   RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
   
 //  for (int i=0; i<fit_result->numStatusHistory(); ++i) {
@@ -150,32 +156,44 @@ void TestToys(int argc, char *argv[]) {
   
   RooDataSet* evaluated_values = tstudy.evaluated_values();
   const RooArgSet* args = evaluated_values->get();
-  RooRealVar* mean1 = (RooRealVar*)args->find("mean1");
-  RooPlot* mean1_frame = mean1->frame();
-  evaluated_values->plotOn(mean1_frame);
+  RooRealVar* mean1_pull = (RooRealVar*)args->find("yield1_pull");
+  
+  std::pair<double,double> minmax = Utils::MedianLimitsForTuple(*evaluated_values, "yield1_pull");
+  sdebug << "min,max: " << minmax.first << "," << minmax.second << endmsg;
+  
+  RooPlot* mean1_pull_frame = mean1_pull->frame(Range(minmax.first,minmax.second));
+  evaluated_values->plotOn(mean1_pull_frame);
   
   TFile f("data.root","read");
   data = (RooDataSet*)f.Get("dataset");
   
   RooRealVar* mass = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "");
+  RooRealVar* time = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "");
   
   RooPlot* mass_frame = mass->frame();
+  RooPlot* time_frame = time->frame();
   RooPlot* tag2_frame = tag2->frame();
   
   data->plotOn(mass_frame);
   ws->pdf("pdf_add")->plotOn(mass_frame);
   
+  data->plotOn(time_frame);
+  ws->pdf("pdf_add")->plotOn(time_frame);
+  
   data->plotOn(tag2_frame);
   
   TCanvas c1("c1", "c1", 800, 600);
   mass_frame->Draw();
-  c1.SaveAs("c1.pdf");
+  c1.SaveAs("mass.pdf");
+  
+  time_frame->Draw();
+  c1.SaveAs("time.pdf");
   
   tag2_frame->Draw();
   c1.SaveAs("c2.pdf");
   
-  mean1_frame->Draw();
-  c1.SaveAs("mean1_values.pdf");
+  mean1_pull_frame->Draw();
+  c1.SaveAs("mean1_pulls.pdf");
   
   Roo1DTable* table = data->table(RooArgSet(*tag));
   table->Print();
