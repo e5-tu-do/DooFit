@@ -38,6 +38,10 @@ namespace Toy {
     for (vector<Config::CommaSeparatedPair>::const_iterator it = read_results_filename_treename_.begin(); it != read_results_filename_treename_.end(); ++it) {
       scfg << "File and tree to read result from: " << *it << endmsg;
     }
+    
+    if (plot_directory_.size() > 0) {
+      scfg << "Plot directory:                    " << plot_directory_ << endmsg;
+    }
   }
   
   void ToyStudyStdConfig::DefineOptions() {
@@ -45,7 +49,8 @@ namespace Toy {
     
     generation->add_options()
     (GetOptionString("store_result_filename_treename").c_str(), po::value<Config::CommaSeparatedPair>(&store_result_filename_treename_),"File name and tree name to save fit results to (set as filename,treename)")
-    (GetOptionString("read_results_filename_treename").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&read_results_filename_treename_)->composing(), "File names and tree names to read fit results from (set as filename,treename)");
+    (GetOptionString("read_results_filename_treename").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&read_results_filename_treename_)->composing(), "File names and tree names to read fit results from (set as filename,treename)")
+    (GetOptionString("plot_directory").c_str(), po::value<std::string>(&plot_directory_), "Plot directory for evaluation of fit results");
     
     descs_visible_.push_back(generation);
   }

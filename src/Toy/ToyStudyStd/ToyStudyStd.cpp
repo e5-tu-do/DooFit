@@ -87,15 +87,16 @@ namespace Toy {
     const std::vector<Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
     
     sinfo.Ruler();
-    sinfo << "Loading fit results..." << endmsg;
     
     if (fit_results_.size() > 0) {
       swarn << "Reading in fit results while results are already stored." << endmsg;
     }
     
     int results_stored = 0;
+    int results_neglected = 0;
     
     for (std::vector<Config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
+      sinfo << "Loading fit results from " << (*it_files).first() << endmsg;
       TFile file((*it_files).first().c_str(), "read");
       TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
             
@@ -107,10 +108,14 @@ namespace Toy {
         result_branch->GetEntry(i);
         
         // save a copy
-        fit_results_.push_back(new RooFitResult(*fit_result));
-        results_stored++;
+        if (FitResultOkay(*fit_result)) {
+          fit_results_.push_back(new RooFitResult(*fit_result));
+          results_stored++;
+        } else {
+          results_neglected++;
+          swarn << "Fit result number " << i << " in file " << *it_files << " negelected." << endmsg;
+        }
         sinfo << i << endmsg;
-        sdebug << fit_result->Sizeof() << endmsg;
         delete fit_result;
         fit_result = NULL;
       }
@@ -119,7 +124,7 @@ namespace Toy {
       delete tree;
       file.Close();
     }
-    sinfo << "Read in " << results_stored << " fit results." << endmsg;
+    sinfo << "Read in " << results_stored << " fit results. (" << results_neglected << " results negelected, that is " << static_cast<double>(results_neglected)/static_cast<double>(results_stored+results_neglected)*100.0 << "%)" << endmsg;
     sinfo.Ruler();
   }
   
@@ -141,7 +146,30 @@ namespace Toy {
     }
   }
   
-  RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) {
+  void ToyStudyStd::PlotEvaluatedParameters() {
+    if (evaluated_values_->numEntries() <= 0) {
+      serr << "Cannot plot as no fit results are evaluated." << endmsg;
+      throw ExceptionCannotEvaluateFitResults();
+    }
+    
+    TCanvas canvas("canvas_toystudy", "canvas", 800, 600);
+    const RooArgSet* parameters = evaluated_values_->get();
+    TIterator* parameter_iter   = parameters->createIterator();
+    RooRealVar* parameter       = NULL;
+    while ((parameter = (RooRealVar*)parameter_iter->Next())) {
+      std::pair<double,double> minmax = Utils::MedianLimitsForTuple(*evaluated_values_, parameter->GetName());
+      sdebug << parameter->GetName() <<  " -> min,max: " << minmax.first << "," << minmax.second << endmsg;
+      RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
+      evaluated_values_->plotOn(frame);
+      frame->Draw();
+      TString plot_name = parameter->GetName();
+      Utils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory());
+      
+      delete frame;
+    }
+  }
+  
+  RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) const {
     RooArgSet parameters;
     
     const RooArgList& parameter_list = fit_result.floatParsFinal();
@@ -161,9 +189,7 @@ namespace Toy {
       
       double pull_value = (par->getVal() - init->getVal())/par->getError();
       pull->setVal(pull_value);
-      
-      sdebug << "(init,fitvalue,pull) for " << parameter->GetName() << " = " << "(" << init->getVal() << "," << par->getVal() << "," << pull_value << ")" << endmsg;
-      
+            
       if (TMath::Abs(pull_value) > 5.0) {
         swarn << "Pull for " << parameter->GetName() << " is " << pull_value
               << " (too large deviation from expectation)" << endmsg;
@@ -175,5 +201,13 @@ namespace Toy {
       parameters.addOwned(*init);
     }
     return parameters;
+  }
+  
+  bool ToyStudyStd::FitResultOkay(const RooFitResult& fit_result) const {
+    if (fit_result.covQual() != 3) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

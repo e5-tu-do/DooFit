@@ -64,6 +64,12 @@ namespace Toy {
      *  @return current value of read_results_filename_treename_
      */
     const std::vector<Config::CommaSeparatedPair>& read_results_filename_treename() const {return read_results_filename_treename_;}
+    /**
+     *  @brief Getter for plot directory for evaluation of fit results
+     *
+     *  @return current value of plot_directory_
+     */
+    const std::string& plot_directory() const {return plot_directory_;}
     ///@}
 
     /** @name Setter actual options
@@ -82,7 +88,13 @@ namespace Toy {
      *  @param result_file_tree new value for read_results_filename_treename_
      */
     void set_read_results_filename_treename(const std::vector<Config::CommaSeparatedPair>& results_file_tree) {read_results_filename_treename_ = results_file_tree;}
-    
+    /**
+     *  @brief Setter for plot directory for evaluation of fit results
+     *
+     *  @param plot_directory new value for plot_directory_
+     */
+    void set_plot_directory(const std::string& plot_directory) {plot_directory_ = plot_directory;}
+        
     /**
      *  @brief Adder for file names and tree names to read fit result from
      *
@@ -136,6 +148,10 @@ namespace Toy {
      *  @brief File names and tree names to read fit result from
      */
     std::vector<Config::CommaSeparatedPair> read_results_filename_treename_;
+    /**
+     *  @brief Plot directory for evaluation of fit results
+     */
+    std::string plot_directory_;
     ///@}
   };
 }

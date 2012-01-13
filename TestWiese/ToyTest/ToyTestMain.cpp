@@ -12,6 +12,7 @@
 #include "TDirectory.h"
 #include "TROOT.h"
 #include "TObjectTable.h"
+#include "TStopwatch.h"
 
 // RooFit
 #include "RooWorkspace.h"
@@ -44,29 +45,10 @@
 
 #include "Utils/MsgStream.h"
 
-void leak() {
-}
+using namespace ROOT;
+using namespace RooFit;
 
-void TestToys(int argc, char *argv[]) {
-  using namespace Toy;
-  using namespace RooFit;
-  
-  CommonConfig cfg_com("common");
-  cfg_com.InitializeOptions(argc, argv);
-  
-  BuilderStdConfig cfg_bld("builder");
-  cfg_bld.InitializeOptions(cfg_com);
-  
-  ToyFactoryStdConfig cfg_tfac("toyfac");
-  cfg_tfac.InitializeOptions(cfg_bld);
-  
-  ToyStudyStdConfig cfg_tstudy("toystudy");
-  cfg_tstudy.InitializeOptions(cfg_tfac);
-  
-  cfg_com.CheckHelpFlagAndPrintHelp();
-  
-  //BuilderStd bld(cfg_com, cfg_bld);
-  
+RooWorkspace* BuildPDF() {
   RooWorkspace* ws = new RooWorkspace("ws");
   ws->Print();
   
@@ -128,51 +110,20 @@ void TestToys(int argc, char *argv[]) {
   TFile wsfile("ws.root", "recreate");
   ws->Write("ws");
   wsfile.Close();
-    
-//  cfg_tfac.set_workspace(ws);
-//  cfg_tfac.set_generation_pdf_workspace("pdf_add");
-//  cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
   
-  ToyFactoryStd tfac(cfg_com, cfg_tfac);
-  
-  cfg_com.PrintAll();
-  
-  RooDataSet* data = tfac.Generate();
-  
-  ws->pdf("pdf_add")->getParameters(data)->readFromFile("generation.par");
-  RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
-  
-//  for (int i=0; i<fit_result->numStatusHistory(); ++i) {
-//    sdebug << fit_result->statusCodeHistory(i) << "->" << fit_result->statusLabelHistory(i) << endmsg;
-//  }
-  
-  ToyStudyStd tstudy(cfg_com, cfg_tstudy);
-  tstudy.StoreFitResult(fit_result);
-  
-  delete data;
-  
-  tstudy.ReadFitResults();
-  tstudy.EvaluateFitResults();
-  
-  RooDataSet* evaluated_values = tstudy.evaluated_values();
-  const RooArgSet* args = evaluated_values->get();
-  RooRealVar* mean1_pull = (RooRealVar*)args->find("yield1_pull");
-  
-  std::pair<double,double> minmax = Utils::MedianLimitsForTuple(*evaluated_values, "yield1_pull");
-  sdebug << "min,max: " << minmax.first << "," << minmax.second << endmsg;
-  
-  RooPlot* mean1_pull_frame = mean1_pull->frame(Range(minmax.first,minmax.second));
-  evaluated_values->plotOn(mean1_pull_frame);
-  
+  return ws;
+}
+
+void PlotToyFit(RooWorkspace* ws) {
   TFile f("data.root","read");
-  data = (RooDataSet*)f.Get("dataset");
+  RooDataSet* data = (RooDataSet*)f.Get("dataset");
   
   RooRealVar* mass = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "");
   RooRealVar* time = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "");
   
   RooPlot* mass_frame = mass->frame();
   RooPlot* time_frame = time->frame();
-  RooPlot* tag2_frame = tag2->frame();
+  RooPlot* tag2_frame = ws->var("tag2")->frame();
   
   data->plotOn(mass_frame);
   ws->pdf("pdf_add")->plotOn(mass_frame);
@@ -192,10 +143,7 @@ void TestToys(int argc, char *argv[]) {
   tag2_frame->Draw();
   c1.SaveAs("c2.pdf");
   
-  mean1_pull_frame->Draw();
-  c1.SaveAs("mean1_pulls.pdf");
-  
-  Roo1DTable* table = data->table(RooArgSet(*tag));
+  Roo1DTable* table = data->table(RooArgSet(*ws->cat("tag")));
   table->Print();
   delete table;
   
@@ -203,75 +151,102 @@ void TestToys(int argc, char *argv[]) {
   delete tag2_frame;
   
   delete data;
-  delete ws;
-  //gROOT = NULL;
+}
+
+void ReadInBug() {
+  RooWorkspace* ws = BuildPDF();
+  RooDataSet* data = ws->pdf("pdf_add")->generate(*ws->set("argset_obs"), 1000, Extended(true));
+  data->Print();
+  RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
+  
+  TFile f("testbug.root","update");
+  TTree* tree_results = NULL;
+  tree_results = (TTree*)f.Get("results");
+  if (tree_results == NULL) {
+    tree_results = new TTree("results", "Tree for toy study fit results");
+    tree_results->Branch("fit_results", "RooFitResult", &fit_result, 64000, 0);
+  } else {      
+    tree_results->SetBranchAddress("fit_results", &fit_result);
+  }
+  
+  tree_results->Fill();
+  tree_results->Write("",TObject::kOverwrite);
+  f.Close();
+  
+  std::vector<RooFitResult*> fit_results_;
+  TFile file("testbug.root", "read");
+  TTree* tree = (TTree*)file.Get("results");
+  
+  TBranch* result_branch = tree->GetBranch("fit_results");
+  RooFitResult* fit_result_read = NULL;
+  result_branch->SetAddress(&fit_result_read);
+  
+  TStopwatch sw;
+  for (int i=0; i<tree->GetEntries(); ++i) {
+    result_branch->GetEntry(i);
+    
+    // save a copy
+    sw.Reset();
+    sw.Start();
+    fit_results_.push_back(new RooFitResult(*fit_result_read));
+    std::cout << i << std::endl;
+    delete fit_result;
+    fit_result = NULL;
+    sw.Stop();
+    sw.Print();
+  }
+  
+  delete result_branch;
+  delete tree;
+
+}
+
+void TestToys(int argc, char *argv[]) {
+  using namespace Toy;
+  using namespace RooFit;
+  
+  CommonConfig cfg_com("common");
+  cfg_com.InitializeOptions(argc, argv);
+  
+  BuilderStdConfig cfg_bld("builder");
+  cfg_bld.InitializeOptions(cfg_com);
+  
+  ToyFactoryStdConfig cfg_tfac("toyfac");
+  cfg_tfac.InitializeOptions(cfg_bld);
+  
+  ToyStudyStdConfig cfg_tstudy("toystudy");
+  cfg_tstudy.InitializeOptions(cfg_tfac);
+  
+  cfg_com.CheckHelpFlagAndPrintHelp();
+    
+//  RooWorkspace* ws = BuildPDF();
+    
+//  cfg_tfac.set_workspace(ws);
+//  cfg_tfac.set_generation_pdf_workspace("pdf_add");
+//  cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
+  
+  ToyFactoryStd tfac(cfg_com, cfg_tfac);
+  
+  cfg_com.PrintAll();
+  
+  RooDataSet* data = NULL;
+//  data = tfac.Generate();
+//  
+//  ws->pdf("pdf_add")->getParameters(data)->readFromFile("generation.par");
+//  RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
+  
+  ToyStudyStd tstudy(cfg_com, cfg_tstudy);
+//  tstudy.StoreFitResult(fit_result);
+//  delete data;
+  
+  tstudy.ReadFitResults();
+//  tstudy.EvaluateFitResults();
+//  tstudy.PlotEvaluatedParameters();
+    
+//  PlotToyFit(ws);
+//  delete ws;
 }
 
 int main(int argc, char *argv[]) {
-//  // some performance test code
-//  int i_max = 30;
-//  int j_max = 1000000;
-//  
-//  TStopwatch sw;
-//  sw.Start();
-//  RooRealVar* var0 = new RooRealVar("var0","", 0, -10, 10);
-//  RooArgSet argset0(*var0);
-//  RooDataSet * data_test = new RooDataSet("data", "data", argset0);
-//  for (int j=0; j<j_max; ++j) {
-//    var0->setVal(5);
-//    data_test->add(argset0);
-//  }
-//  
-//  for (int i=1; i<i_max; ++i) {
-//    ostringstream s;
-//    s << "var" << i;
-//    RooRealVar* var = new RooRealVar(s.str().c_str(),"", 0, -10, 10);
-//    RooArgSet argset(*var);
-//    
-//    RooDataSet * sub_data = new RooDataSet("data", "data", argset);
-//    
-//    for (int j=0; j<j_max; ++j) {
-//      var->setVal(5);
-//      sub_data->add(argset);
-//    }
-//    
-//    sdebug << "merge" << endmsg;
-//    data_test->merge(sub_data);
-//    delete sub_data;
-//  }
-//  data_test->Print();
-//  sw.Stop();
-//  
-//  sdebug << "C: " << sw.CpuTime() << ", R: " << sw.RealTime() << endmsg;
-//  
-//  delete data_test;
-//  sw.Reset();
-//  sw.Start();
-//
-//  RooArgSet argset;
-//  for (int i=0; i<i_max; ++i) {
-//    ostringstream s;
-//    s << "var" << i;
-//    RooRealVar* var = new RooRealVar(s.str().c_str(),"", 0, -10, 10);
-//    argset.add(*var);
-//  }
-//  
-//  data_test = new RooDataSet("data", "data", argset);
-//  
-//  for (int j=0; j<j_max; ++j) {
-//    for (int i=0; i<i_max; ++i) {
-//      ostringstream s;
-//      s << "var" << i;
-//      RooRealVar* var = (RooRealVar*)argset.find(s.str().c_str());
-//      var->setVal(5);
-//    }
-//  
-//    data_test->add(argset);
-//  }
-//  data_test->Print();
-//  sw.Stop();
-//  
-//  sdebug << "C: " << sw.CpuTime() << ", R: " << sw.RealTime() << endmsg;
-  
   TestToys(argc, argv);
 }

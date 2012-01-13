@@ -490,9 +490,9 @@ std::pair<double,double> Utils::MedianLimitsForTuple(const RooDataSet& dataset, 
   minmax.first  = -4*entries[idx_median]+5*entries[(int)(idx_median*0.32)];
   minmax.second = -4*entries[idx_median]+5*entries[(int)(num_entries-idx_median*0.32)];
   
-  if (minmax.first == minmax.second) {
-    minmax.first = entries[idx_median]*0.98;
-    minmax.first = entries[idx_median]*1.02;
+  if (minmax.first >= minmax.second) {
+    minmax.first  = entries[idx_median]*0.98;
+    minmax.second = entries[idx_median]*1.02;
   }
   
   return minmax;

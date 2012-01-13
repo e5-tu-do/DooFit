@@ -89,6 +89,13 @@ namespace Toy {
      *  being determined.
      */
     void EvaluateFitResults();
+    /**
+     *  @brief Generate plots for all evaluated parameters
+     *
+     *  After evaluation pulls and other relevant parameters are being plotted 
+     *  to the plot directory specified in ToyStudyStdConfig::plot_directory_
+     */
+    void PlotEvaluatedParameters();
     ///@}
     
     RooDataSet* evaluated_values() const { return evaluated_values_; }
@@ -106,7 +113,17 @@ namespace Toy {
      *
      *  @todo enhance this to be able to work with asymmetric errors if available
      */
-    RooArgSet BuildEvaluationArgSet(const RooFitResult& fit_result);
+    RooArgSet BuildEvaluationArgSet(const RooFitResult& fit_result) const;
+    /**
+     *  @brief Evaluate fit result quality
+     *
+     *  For a given fit result evaluate the fit quality (i.e. convergence, 
+     *  covariance matrix quality and so on).
+     *
+     *  @param fit_result RooFitResult to use for evaluation
+     *  @return true if fit result is okay, false if not
+     */
+    bool FitResultOkay(const RooFitResult& fit_result) const;
     
    private:
     /**
