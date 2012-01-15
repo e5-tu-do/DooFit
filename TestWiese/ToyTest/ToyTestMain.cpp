@@ -219,32 +219,32 @@ void TestToys(int argc, char *argv[]) {
   
   cfg_com.CheckHelpFlagAndPrintHelp();
     
-//  RooWorkspace* ws = BuildPDF();
+  RooWorkspace* ws = BuildPDF();
     
-//  cfg_tfac.set_workspace(ws);
-//  cfg_tfac.set_generation_pdf_workspace("pdf_add");
-//  cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
+  cfg_tfac.set_workspace(ws);
+  cfg_tfac.set_generation_pdf_workspace("pdf_add");
+  cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
   
   ToyFactoryStd tfac(cfg_com, cfg_tfac);
   
   cfg_com.PrintAll();
   
   RooDataSet* data = NULL;
-//  data = tfac.Generate();
-//  
-//  ws->pdf("pdf_add")->getParameters(data)->readFromFile("generation.par");
-//  RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
+  data = tfac.Generate();
+  
+  ws->pdf("pdf_add")->getParameters(data)->readFromFile("generation.par");
+  RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
   
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
-//  tstudy.StoreFitResult(fit_result);
-//  delete data;
+  tstudy.StoreFitResult(fit_result);
+  delete data;
   
   tstudy.ReadFitResults();
-//  tstudy.EvaluateFitResults();
-//  tstudy.PlotEvaluatedParameters();
+  tstudy.EvaluateFitResults();
+  tstudy.PlotEvaluatedParameters();
     
-//  PlotToyFit(ws);
-//  delete ws;
+  PlotToyFit(ws);
+  delete ws;
 }
 
 int main(int argc, char *argv[]) {

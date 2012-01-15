@@ -11,6 +11,7 @@
 #include "TFile.h"
 #include "TBranch.h"
 #include "TMath.h"
+#include "TStopwatch.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -41,6 +42,9 @@ namespace Toy {
   
   ToyStudyStd::~ToyStudyStd() {
     if (evaluated_values_ != NULL) delete evaluated_values_;
+    for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_.begin(); it_results != fit_results_.end(); ++it_results) {
+      delete *it_results;
+    }
   }
   
   void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result) const {
@@ -109,14 +113,15 @@ namespace Toy {
         
         // save a copy
         if (FitResultOkay(*fit_result)) {
-          fit_results_.push_back(new RooFitResult(*fit_result));
+          //fit_results_.push_back(new RooFitResult(*fit_result));
+          fit_results_.push_back(fit_result);
           results_stored++;
         } else {
           results_neglected++;
           swarn << "Fit result number " << i << " in file " << *it_files << " negelected." << endmsg;
         }
-        sinfo << i << endmsg;
-        delete fit_result;
+        sdebug << i << endmsg;
+        //delete fit_result;
         fit_result = NULL;
       }
       
@@ -129,21 +134,28 @@ namespace Toy {
   }
   
   void ToyStudyStd::EvaluateFitResults() {
+    sinfo.Ruler();
+    sinfo << "Evaluating fit results" << endmsg;
     if (fit_results_.size() <= 0) {
       serr << "Cannot evaluate as no fit results are loaded." << endmsg;
       throw ExceptionCannotEvaluateFitResults();
     }
-    
+        
     // build list of all parameters, pulls, etc.
     RooArgSet parameter_set = BuildEvaluationArgSet(*fit_results_.front());
     
     // loop over fit results and fill all values into RooDataSet
     if (evaluated_values_ != NULL) delete evaluated_values_;
     evaluated_values_ = new RooDataSet("evaluated_values", "evaluated_values", parameter_set);
+    int i = 0;
     for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_.begin(); it_results != fit_results_.end(); ++it_results) {
       RooArgSet params = BuildEvaluationArgSet(**it_results);
+      
       evaluated_values_->add(params);
+      sdebug << i << endmsg;
+      ++i;
     }
+    sinfo.Ruler();
   }
   
   void ToyStudyStd::PlotEvaluatedParameters() {
@@ -170,8 +182,9 @@ namespace Toy {
   }
   
   RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) const {
+    TStopwatch sw;
     RooArgSet parameters;
-    
+
     const RooArgList& parameter_list = fit_result.floatParsFinal();
     TIterator* parameter_iter        = parameter_list.createIterator();
     RooRealVar* parameter            = NULL;
@@ -185,7 +198,18 @@ namespace Toy {
       
       RooRealVar* par  = new RooRealVar(*parameter);
       RooRealVar* pull = new RooRealVar(pull_name, pull_desc, -100, 100);
+      sw.Reset();
+      sw.Start();
       RooRealVar* init = new RooRealVar(*(RooRealVar*)fit_result.floatParsInit().find(par->GetName()), init_name);
+      sw.Stop();
+      sdebug << sw << endmsg;      
+//      RooRealVar* par  = new RooRealVar(parameter->GetName(), parameter->GetTitle(), parameter->getMin(), parameter->getMax());
+//      par->setVal(parameter->getVal());
+//      par->setError(parameter->getError());
+//      RooRealVar* pull = new RooRealVar(pull_name, pull_desc, -100, 100);
+//      RooRealVar* orig_init = (RooRealVar*)fit_result.floatParsInit().find(par->GetName());
+//      RooRealVar* init = new RooRealVar(init_name, init_desc, orig_init->getMin(), orig_init->getMax());
+//      init->setVal(orig_init->getVal());
       
       double pull_value = (par->getVal() - init->getVal())/par->getError();
       pull->setVal(pull_value);
@@ -200,6 +224,7 @@ namespace Toy {
       parameters.addOwned(*pull);
       parameters.addOwned(*init);
     }
+
     return parameters;
   }
   
