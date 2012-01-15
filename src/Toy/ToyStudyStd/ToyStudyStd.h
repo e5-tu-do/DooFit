@@ -15,6 +15,7 @@
 // forward declarations
 class RooFitResult;
 class RooDataSet;
+class RooRealVar;
 
 namespace Toy {
   /** @class ToyStudyStd
@@ -124,6 +125,24 @@ namespace Toy {
      *  @return true if fit result is okay, false if not
      */
     bool FitResultOkay(const RooFitResult& fit_result) const;
+    /**
+     *  @brief Copy an existing RooRealVar into a new RooRealVar
+     *
+     *  This function creates a new RooRealVar based on a given RooRealVar and
+     *  copys (for toy studies) relevant information into the new RooRealVar. 
+     *
+     *  Huh, sounds exactly what the copy constructor 
+     *  RooRealVar::RooRealVar(const RooRealVar& other) is meant for, you might
+     *  think. You are right. Unfortunately this copy constructor has an odd bug
+     *  in which every subsequent call takes longer and longer. As we need to 
+     *  copy thousands of RooRealVars, this is not applicable here.
+     *
+     *  @param other RooRealVar to copy
+     *  @param new_name if not empty, a different name can be supplied here
+     *  @param new_title if not empty, a different title can be supplied here
+     *  @return the copied RooRealVar
+     */
+    RooRealVar& CopyRooRealVar(const RooRealVar& other, const std::string& new_name="", const std::string& new_title="") const;
     
    private:
     /**

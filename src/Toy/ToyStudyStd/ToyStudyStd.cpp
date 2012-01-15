@@ -1,6 +1,7 @@
 #include "Toy/ToyStudyStd/ToyStudyStd.h"
 
 // STL
+#include <string>
 
 // boost
 #include "boost/interprocess/sync/file_lock.hpp"
@@ -120,7 +121,6 @@ namespace Toy {
           results_neglected++;
           swarn << "Fit result number " << i << " in file " << *it_files << " negelected." << endmsg;
         }
-        sdebug << i << endmsg;
         //delete fit_result;
         fit_result = NULL;
       }
@@ -152,9 +152,9 @@ namespace Toy {
       RooArgSet params = BuildEvaluationArgSet(**it_results);
       
       evaluated_values_->add(params);
-      sdebug << i << endmsg;
       ++i;
     }
+    sinfo << "Evaluated " << i << " fit results." << endmsg;
     sinfo.Ruler();
   }
   
@@ -196,22 +196,11 @@ namespace Toy {
       TString res_name  = parameter->GetName() + TString("_res");
       TString res_desc  = TString("Residual of ") + parameter->GetTitle();
       
-      RooRealVar* par  = new RooRealVar(*parameter);
+      RooRealVar& par  = CopyRooRealVar(*parameter);
       RooRealVar* pull = new RooRealVar(pull_name, pull_desc, -100, 100);
-      sw.Reset();
-      sw.Start();
-      RooRealVar* init = new RooRealVar(*(RooRealVar*)fit_result.floatParsInit().find(par->GetName()), init_name);
-      sw.Stop();
-      sdebug << sw << endmsg;      
-//      RooRealVar* par  = new RooRealVar(parameter->GetName(), parameter->GetTitle(), parameter->getMin(), parameter->getMax());
-//      par->setVal(parameter->getVal());
-//      par->setError(parameter->getError());
-//      RooRealVar* pull = new RooRealVar(pull_name, pull_desc, -100, 100);
-//      RooRealVar* orig_init = (RooRealVar*)fit_result.floatParsInit().find(par->GetName());
-//      RooRealVar* init = new RooRealVar(init_name, init_desc, orig_init->getMin(), orig_init->getMax());
-//      init->setVal(orig_init->getVal());
-      
-      double pull_value = (par->getVal() - init->getVal())/par->getError();
+      RooRealVar& init = CopyRooRealVar(*(RooRealVar*)fit_result.floatParsInit().find(par.GetName()), std::string(init_name), std::string(init_desc));
+    
+      double pull_value = (par.getVal() - init.getVal())/par.getError();
       pull->setVal(pull_value);
             
       if (TMath::Abs(pull_value) > 5.0) {
@@ -220,9 +209,9 @@ namespace Toy {
         fit_result.Print();
       }
         
-      parameters.addOwned(*par);
+      parameters.addOwned(par);
       parameters.addOwned(*pull);
-      parameters.addOwned(*init);
+      parameters.addOwned(init);
     }
 
     return parameters;
@@ -234,5 +223,18 @@ namespace Toy {
     } else {
       return true;
     }
+  }
+  
+  RooRealVar& ToyStudyStd::CopyRooRealVar(const RooRealVar& other, const std::string& new_name, const std::string& new_title) const {
+    RooRealVar* new_var = new RooRealVar(new_name.length()>0 ? new_name.c_str() : other.GetName(),
+                                         new_title.length()>0 ? new_title.c_str() : other.GetTitle(),
+                                         other.getVal());
+    if (other.hasMin())       new_var->setMin(other.getMin());
+    if (other.hasMax())       new_var->setMax(other.getMax());
+    if (other.hasError())     new_var->setError(other.getError());
+    if (other.hasAsymError()) new_var->setAsymError(other.getErrorLo(), other.getErrorHi());
+    new_var->setUnit(other.getUnit());
+    
+    return *new_var;
   }
 }
