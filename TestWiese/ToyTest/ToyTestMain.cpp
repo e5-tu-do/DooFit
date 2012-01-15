@@ -153,54 +153,6 @@ void PlotToyFit(RooWorkspace* ws) {
   delete data;
 }
 
-void ReadInBug() {
-  RooWorkspace* ws = BuildPDF();
-  RooDataSet* data = ws->pdf("pdf_add")->generate(*ws->set("argset_obs"), 1000, Extended(true));
-  data->Print();
-  RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
-  
-  TFile f("testbug.root","update");
-  TTree* tree_results = NULL;
-  tree_results = (TTree*)f.Get("results");
-  if (tree_results == NULL) {
-    tree_results = new TTree("results", "Tree for toy study fit results");
-    tree_results->Branch("fit_results", "RooFitResult", &fit_result, 64000, 0);
-  } else {      
-    tree_results->SetBranchAddress("fit_results", &fit_result);
-  }
-  
-  tree_results->Fill();
-  tree_results->Write("",TObject::kOverwrite);
-  f.Close();
-  
-  std::vector<RooFitResult*> fit_results_;
-  TFile file("testbug.root", "read");
-  TTree* tree = (TTree*)file.Get("results");
-  
-  TBranch* result_branch = tree->GetBranch("fit_results");
-  RooFitResult* fit_result_read = NULL;
-  result_branch->SetAddress(&fit_result_read);
-  
-  TStopwatch sw;
-  for (int i=0; i<tree->GetEntries(); ++i) {
-    result_branch->GetEntry(i);
-    
-    // save a copy
-    sw.Reset();
-    sw.Start();
-    fit_results_.push_back(new RooFitResult(*fit_result_read));
-    std::cout << i << std::endl;
-    delete fit_result;
-    fit_result = NULL;
-    sw.Stop();
-    sw.Print();
-  }
-  
-  delete result_branch;
-  delete tree;
-
-}
-
 void TestToys(int argc, char *argv[]) {
   using namespace Toy;
   using namespace RooFit;
