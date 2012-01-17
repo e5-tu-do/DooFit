@@ -4,23 +4,24 @@
 #include "Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
 #include "Utils/MsgStream.h"
 
-using namespace Builder::BobTheBuilder;
-
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
-Builder::BobTheBuilder::MassGaussianPdf::MassGaussianPdf() : 
+namespace Builder{ 
+namespace BobTheBuilder{
+
+MassGaussianPdf::MassGaussianPdf() : 
    AbsPdf()
 {
   
 }
 
-Builder::BobTheBuilder::MassGaussianPdf::~MassGaussianPdf(){
+MassGaussianPdf::~MassGaussianPdf(){
   
 }
 
-void Builder::BobTheBuilder::MassGaussianPdf::Initialize( const ptree::value_type& tree_pdf_head, 
+void MassGaussianPdf::Initialize( const ptree::value_type& tree_pdf_head, 
                                   const std::string& dim_id, const std::string dim_name, 
                                   const std::string& subpdffull_id, const std::string comp_id)
 {
@@ -50,7 +51,7 @@ void Builder::BobTheBuilder::MassGaussianPdf::Initialize( const ptree::value_typ
   sinfo << "}" << endmsg;
 }
 
-void Builder::BobTheBuilder::MassGaussianPdf::InitializeParameters(){
+void MassGaussianPdf::InitializeParameters(){
   sinfo << "Parameters" << endmsg;
   sinfo << "{" << endmsg;
   sinfo.increment_indent(+2);
@@ -85,6 +86,7 @@ void Builder::BobTheBuilder::MassGaussianPdf::InitializeParameters(){
 }
 
 
-void Builder::BobTheBuilder::MassGaussianPdf::AddToWorkspace( RooWorkspace* ws ){
+void MassGaussianPdf::AddToWorkspace( RooWorkspace* ws ){
   
 }
+}}

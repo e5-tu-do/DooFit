@@ -13,13 +13,14 @@
 #include "Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
 #include "Utils/MsgStream.h"
 
-using namespace Builder::BobTheBuilder;
-
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
-Builder::BobTheBuilder::PdfFull::PdfFull() :
+namespace Builder{ 
+namespace BobTheBuilder{
+
+PdfFull::PdfFull() :
    name_("DummyPdfFullName")
  , desc_("A dummy description for a PdfFull.")
  , extended_(false)
@@ -30,11 +31,11 @@ Builder::BobTheBuilder::PdfFull::PdfFull() :
   
 }
 
-Builder::BobTheBuilder::PdfFull::~PdfFull(){
+PdfFull::~PdfFull(){
   map_subpdfs_.clear();
 }
   
-void Builder::BobTheBuilder::PdfFull::Initialize( const boost::property_tree::ptree& tree_pdffull,
+void PdfFull::Initialize( const boost::property_tree::ptree& tree_pdffull,
                           const map< string, shared_ptr<AbsDimension> >& map_dimensions,
                           const map< string, shared_ptr<CategoryBasic> >& map_cats_basic,
                           const map< string, shared_ptr<CategorySuper> >& map_cats_super
@@ -76,7 +77,7 @@ void Builder::BobTheBuilder::PdfFull::Initialize( const boost::property_tree::pt
   sinfo << "}" << endmsg;
 }
 
-void Builder::BobTheBuilder::PdfFull::InitializeSimCatSubPdfs(const boost::property_tree::ptree& tree_simcatsubpdfs,
+void PdfFull::InitializeSimCatSubPdfs(const boost::property_tree::ptree& tree_simcatsubpdfs,
                                       const map< string, shared_ptr<AbsDimension> >& map_dimensions,
                                       const map< string, shared_ptr<CategoryBasic> >& map_cats_basic,
                                       const map< string, shared_ptr<CategorySuper> >& map_cats_super)
@@ -132,7 +133,7 @@ void Builder::BobTheBuilder::PdfFull::InitializeSimCatSubPdfs(const boost::prope
   sinfo << "}" << endmsg;
 }
 
-void Builder::BobTheBuilder::PdfFull::AddToWorkspace( RooWorkspace& ws ){
+void PdfFull::AddToWorkspace( RooWorkspace& ws ){
   // add subpdfs to workspace
   typedef pair< string, shared_ptr< SubPdfFull > > pair_subpdffull;
   BOOST_FOREACH( pair_subpdffull subpdf, map_subpdfs_ ){
@@ -140,5 +141,6 @@ void Builder::BobTheBuilder::PdfFull::AddToWorkspace( RooWorkspace& ws ){
   }
 }
 
+}}
 
 

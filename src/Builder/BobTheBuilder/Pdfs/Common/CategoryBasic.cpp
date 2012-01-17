@@ -19,13 +19,13 @@
 // from project
 #include "Utils/MsgStream.h"
 
-using namespace Builder::BobTheBuilder;
 using namespace boost;
 using namespace boost::property_tree;
 
 using namespace std;
 
-
+namespace Builder{ 
+namespace BobTheBuilder{
 
 CategoryBasic::CategoryBasic() :
    name_("DummyName")
@@ -101,3 +101,5 @@ std::vector< std::string > CategoryBasic::GetTypesVector(){
   }
   return vector_temp;
 }
+
+}}

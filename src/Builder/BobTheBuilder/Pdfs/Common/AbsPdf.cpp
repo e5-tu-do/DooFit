@@ -3,9 +3,10 @@
 // from boost
 #include <boost/algorithm/string.hpp>
 
-using namespace Builder::BobTheBuilder;
-
 using namespace std;
+
+namespace Builder{ 
+namespace BobTheBuilder{
 
 AbsPdf::AbsPdf() :
     name_("pdfDummyName")
@@ -24,6 +25,6 @@ AbsPdf::~AbsPdf(){
   
 }
 
-
+}}
 
 

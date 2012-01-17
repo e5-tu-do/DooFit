@@ -12,13 +12,13 @@
 #include "Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
 #include "Builder/BobTheBuilder/Pdfs/Mass/MassGaussianPdf.h"
 
-using namespace Builder::BobTheBuilder;
 
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
-
+namespace Builder{ 
+namespace BobTheBuilder{
 
 DimMass::DimMass() :
    AbsDimensionReal()
@@ -37,3 +37,5 @@ boost::shared_ptr<AbsPdf> DimMass::CreatePdf( const std::string& pdf_type ){
     throw;
   }
 }
+
+}}

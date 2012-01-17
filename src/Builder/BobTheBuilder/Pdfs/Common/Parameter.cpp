@@ -15,30 +15,32 @@
 // from project
 #include "Utils/MsgStream.h"
 
-using namespace Builder::BobTheBuilder;
 
 using namespace std;
 using namespace boost;
 
-Builder::BobTheBuilder::Parameter::Parameter() :
+namespace Builder{ 
+namespace BobTheBuilder{
+
+Parameter::Parameter() :
    name_("parDummyName")
  , desc_("Dummy description of a parameter")
 {
   
 }
 
-Builder::BobTheBuilder::Parameter::Parameter( const std::string& string_to_parse ) :
+Parameter::Parameter( const std::string& string_to_parse ) :
    name_("parDummyName")
  , desc_("Dummy description of a parameter")
 {
   Parse(string_to_parse);
 }
 
-Builder::BobTheBuilder::Parameter::~Parameter(){
+Parameter::~Parameter(){
   
 }
 
-void Builder::BobTheBuilder::Parameter::Parse( const string& string_to_parse ){
+void Parameter::Parse( const string& string_to_parse ){
   int position_of_pipe = string_to_parse.find("|");
   if( position_of_pipe != string::npos ){
     name_  = string_to_parse.substr(0, position_of_pipe);
@@ -47,11 +49,11 @@ void Builder::BobTheBuilder::Parameter::Parse( const string& string_to_parse ){
   
 }
 
-void Builder::BobTheBuilder::Parameter::Print( ostream& os ) const{
+void Parameter::Print( ostream& os ) const{
   os << name_ << "|" << desc_;
 }
 
-void Builder::BobTheBuilder::Parameter::AddToWorkspace( RooWorkspace& ws ){
+void Parameter::AddToWorkspace( RooWorkspace& ws ){
   
   // check if object of this name already exists on the workspace. If it exists, we don't care and use it, else we create it.
   if (ws.obj(name_.c_str()) != NULL){
@@ -63,14 +65,16 @@ void Builder::BobTheBuilder::Parameter::AddToWorkspace( RooWorkspace& ws ){
 
 
 
-std::istream& Builder::BobTheBuilder::operator>>(std::istream& is, Parameter& arg){
+std::istream& operator>>(std::istream& is, Parameter& arg){
   string string_to_parse;
   is >> string_to_parse;
   arg.Parse(string_to_parse);
   return is;
 }
 
-std::ostream& Builder::BobTheBuilder::operator<<(std::ostream& os, const Parameter& arg){
+std::ostream& operator<<(std::ostream& os, const Parameter& arg){
   arg.Print(os);
   return os;
 }
+
+}}

@@ -17,10 +17,12 @@
 // from project
 #include "Utils/MsgStream.h"
 
-using namespace Builder::BobTheBuilder;
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
+
+namespace Builder{ 
+namespace BobTheBuilder{
 
 AbsDimensionCat::AbsDimensionCat() :
     AbsDimension()
@@ -93,3 +95,4 @@ void AbsDimensionCat::CreateTypes( const std::string &type_string ){
   }
 }
 
+}}

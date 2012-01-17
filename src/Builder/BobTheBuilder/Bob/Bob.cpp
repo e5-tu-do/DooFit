@@ -28,8 +28,8 @@ using namespace std;
 using namespace boost;
 namespace bpt = property_tree;
 
-using namespace Builder::BobTheBuilder;
-
+namespace Builder{ 
+namespace BobTheBuilder{
 Bob::Bob() :
    tree_main_()
  , map_dimensions_()
@@ -243,3 +243,4 @@ void Bob::DumpToRooWorkspace( RooWorkspace& ws){
   
 }
 
+}}

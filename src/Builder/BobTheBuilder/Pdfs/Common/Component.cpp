@@ -20,9 +20,10 @@ using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
-using namespace Builder::BobTheBuilder;
+namespace Builder{ 
+namespace BobTheBuilder{
 
-Builder::BobTheBuilder::Component::Component() :
+Component::Component() :
     comp_id_("DummyCompId")
   , comp_id_full_("DummyCompIdFull")
   , name_("DummyCompName")
@@ -35,11 +36,11 @@ Builder::BobTheBuilder::Component::Component() :
   
 }
 
-Builder::BobTheBuilder::Component::~Component(){
+Component::~Component(){
   
 }
 
-void Builder::BobTheBuilder::Component::Initialize( const ptree::value_type& tree_component_head, 
+void Component::Initialize( const ptree::value_type& tree_component_head, 
                             const map< string, shared_ptr<AbsDimension> >& map_dimensions, 
                             const string& subpdffull_id)
 {
@@ -88,7 +89,7 @@ void Builder::BobTheBuilder::Component::Initialize( const ptree::value_type& tre
   sinfo << "}" << endmsg;
 }
 
-void Builder::BobTheBuilder::Component::CreateDimPdfs(const ptree& tree_compdimensions){
+void Component::CreateDimPdfs(const ptree& tree_compdimensions){
   // loop over all known dimensions, search for entry in property_tree, initialize pdfs.
   map< string, shared_ptr<AbsDimension> >::const_iterator dim_it;
   
@@ -122,6 +123,7 @@ void Builder::BobTheBuilder::Component::CreateDimPdfs(const ptree& tree_compdime
 }
 
 
-void Builder::BobTheBuilder::Component::AddToWorkspace( RooWorkspace& ws ){
+void Component::AddToWorkspace( RooWorkspace& ws ){
   
 }
+}}

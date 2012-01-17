@@ -18,8 +18,8 @@ class AbsDimensionCat : public AbsDimension{
   AbsDimensionCat();
   virtual ~AbsDimensionCat();
   
-  void Initialize(  const boost::property_tree::ptree::value_type &pt_head );
-  bool AddToWorkspace( RooWorkspace& ws );
+  virtual void Initialize(  const boost::property_tree::ptree::value_type &pt_head );
+  virtual bool AddToWorkspace( RooWorkspace& ws );
   
   virtual boost::shared_ptr<AbsPdf> CreatePdf( const std::string& pdf_name) = 0;
   

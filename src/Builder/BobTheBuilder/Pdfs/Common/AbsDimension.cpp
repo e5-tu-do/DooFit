@@ -6,9 +6,10 @@
 using namespace std;
 using namespace boost::property_tree;
 
-using namespace Builder::BobTheBuilder;
 
-
+namespace Builder{ 
+namespace BobTheBuilder{
+  
 AbsDimension::AbsDimension() :
     dim_id_("DummyDimID")
   , name_("varDummyName")
@@ -20,3 +21,5 @@ AbsDimension::AbsDimension() :
 AbsDimension::~AbsDimension(){
   
 };
+
+}}

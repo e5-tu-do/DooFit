@@ -15,9 +15,9 @@ using namespace std;
 using namespace boost::property_tree;
 using namespace RooFit;
 
-using namespace Builder::BobTheBuilder;
-
-
+namespace Builder{ 
+namespace BobTheBuilder{
+  
 AbsDimensionReal::AbsDimensionReal() :
    AbsDimension()
  , val_min_(0)
@@ -68,3 +68,5 @@ bool AbsDimensionReal::AddToWorkspace( RooWorkspace& ws ){
 
   return true;
 }
+
+}}

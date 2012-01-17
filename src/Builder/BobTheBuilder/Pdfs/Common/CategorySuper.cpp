@@ -18,14 +18,14 @@
 // from project Builder BobTheBuilder
 #include "Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
 
-using namespace Builder::BobTheBuilder;
 
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
 
-
+namespace Builder{ 
+namespace BobTheBuilder{
 
 CategorySuper::CategorySuper() :
    name_("DummyNameCategorySuper")
@@ -135,5 +135,5 @@ bool CategorySuper::AddToWorkspace( RooWorkspace& ws ){
   return true;
 }
 
-
+}}
 
