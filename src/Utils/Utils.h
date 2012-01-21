@@ -65,7 +65,10 @@ namespace Utils
 	void 		PlotResiduals(TString pName, RooPlot * pFrame, RooRealVar * pVar, RooAbsPdf * pPDF, 
 	                      TString pDir = "", bool normalize = true, bool plot_log = false, 
 	                      TLatex label = TLatex(1.,1.,""));
-  //
+ 
+        ///Do an Asymmetry Plot for a given NTuple the name of the time variable and a variable name that is used for a cut (+/-1) to separate two mixing states
+        void plotAsymmetry(TString pPlotName, TTree * pTuple, TString pVarTime, TString pVarMix, int pBins = 20, double pRngMax = 0.01, double pRngMin = 0.00, TString pTimeUnit = "ns");
+ //
 	// stuff
 	//
 	bool		fileExists(TString strFilename);

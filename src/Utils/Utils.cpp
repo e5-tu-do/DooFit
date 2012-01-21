@@ -498,3 +498,43 @@ std::pair<double,double> Utils::MedianLimitsForTuple(const RooDataSet& dataset, 
   return minmax;
 }
 
+void Utils::plotAsymmetry(TString pPlotName, TTree * pTuple, TString pVarTime, TString pVarMix, int pBins, double pRngMin, double pRngMax, TString pTimeUnit) {
+        Utils::setStyle();
+        TCanvas c("c","c",800,600);
+
+        int nBins = pBins;
+        double rngMax = pRngMax;
+        double rngMin = pRngMin;
+
+        TTree *tree = pTuple;
+
+        //get histograms for time distributions of (non)oszilated B0 candidates from datafile
+        TH1D * hUpOsz = new TH1D("hUpOs",TString("MagUp oszilated;time (ns);nr. of candidates/")+Form("%f",(rngMax-rngMin)/(double)nBins) + pTimeUnit,nBins,rngMin,rngMax);
+        tree->Draw(pVarTime + ">>hUpOs",        "(" + pVarTime + " > -1) & (" + pVarMix + " == -1)");
+
+        TH1D * hUpNos = new TH1D("hUpNo",TString("MagUp non oszilated;time (ns);nr. of candidates/")+Form("%f",(rngMax-rngMin)/(double)nBins) + pTimeUnit,nBins,rngMin,rngMax);
+        tree->Draw(pVarTime + ">>hUpNo",        "(" + pVarTime + " > -1) & (" + pVarMix + " == 1)");
+
+        //build histograms with N_notoszilated +/- N_oszilated
+        TH1D * hUpSum = (TH1D*)hUpNos->Clone("hUpSum");
+        TH1D * hUpDif = (TH1D*)hUpNos->Clone("hUpDif");
+
+        hUpSum->Add(hUpOsz);
+        hUpDif->Add(hUpOsz,-1);
+
+        //build asymmetry histogram
+        TH1D * hUpAsy = (TH1D*)hUpDif->Clone("hUpAsy");
+        hUpAsy->Divide(hUpSum);
+
+
+        hUpAsy->Draw();
+
+        Utils::printPlot(&c,pPlotName,"Plot");
+
+        delete hUpOsz;
+        delete hUpNos;
+        delete hUpSum;
+        delete hUpDif;
+        delete hUpAsy;
+}
+
