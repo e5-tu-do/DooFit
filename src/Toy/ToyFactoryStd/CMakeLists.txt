@@ -1,4 +1,0 @@
-#root_generate_dictionaries(ToyFactoryStdConfigDict ToyFactoryStdConfig.h)
-#${ToyFactoryStdConfigDict}
-add_library(ToyFactoryStd ToyFactoryStd.cpp ToyFactoryStd.h ToyFactoryStdConfig.cpp ToyFactoryStdConfig.h )
-
