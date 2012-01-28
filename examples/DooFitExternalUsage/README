@@ -1,0 +1,7 @@
+To use DooFit externally, do the following:
+
+1. Build DooFit
+2. make install in your build directory of DooFit to install DooFit 
+   (TODO: add how to specify install location)
+3. set DOOFITSYS environment variable to DooFit install location
+4. build this project
