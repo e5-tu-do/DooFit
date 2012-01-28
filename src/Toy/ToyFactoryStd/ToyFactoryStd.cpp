@@ -26,6 +26,7 @@
 #include "Roo1DTable.h"
 #include "RooRealVar.h"
 #include "RooCategory.h"
+#include "RooEffProd.h"
 
 // from Project
 #include "Config/CommonConfig.h"
@@ -326,6 +327,13 @@ namespace Toy {
       
       obs_argset->Print();
       pdf.Print("t");
+      sdebug << expected_yield << endmsg;
+      proto_arg.Print();
+      
+      RooEffProd* effpdf = (RooEffProd*)&pdf;
+      
+      effpdf->Print();
+      effpdf->generate(*obs_argset, expected_yield);
       
       data = pdf.generate(*obs_argset, expected_yield, extend_arg, proto_arg);
       delete obs_argset;
@@ -393,20 +401,29 @@ namespace Toy {
           // coefficient in non-extended PDF.
           coef = sub_pdf->expectedEvents(argset_generation_observables)/pdf.expectedEvents(argset_generation_observables);
         } else {
-          if (coef_i < coefs.getSize()) {
+          // in this case, the RooAddPdf is extended inside the RooAddPdf, although
+          // the daughter PDFs are not. We need to take special care here.
+          if (pdf.mustBeExtended()) {
             coef = dynamic_cast<RooAbsReal&>(coefs[coef_i++]).getVal();
           } else {
-            // last coefficient is (in non-recursive way) always 
-            // 1-(sum coeffs)
-            coef = 1.0 - sum_coef;
+            if (coef_i < coefs.getSize()) {
+              coef = dynamic_cast<RooAbsReal&>(coefs[coef_i++]).getVal();
+            } else {
+              // last coefficient is (in non-recursive way) always 
+              // 1-(sum coeffs)
+              coef = 1.0 - sum_coef;
+            }
+            sum_coef += coef;
           }
-          sum_coef += coef;
         }
-        if (extended) {
-          sub_yield = RooRandom::randomGenerator()->Poisson(coef*expected_yield);
+        if (!add_pdf_extended && pdf.mustBeExtended()) {
+          sub_yield = coef;
         } else {
           sub_yield = coef*expected_yield;
         }
+        if (extended) {
+          sub_yield = RooRandom::randomGenerator()->Poisson(sub_yield);
+        } 
         
         // check for need to pass proto set
         RooDataSet* sub_proto_dataset = NULL;
@@ -469,7 +486,7 @@ namespace Toy {
           MergeDatasets(data, data_temp);
         }
       } else {
-        data = (GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false, proto_data));
+        data = GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false, proto_data);
       }
     }
     delete it;
