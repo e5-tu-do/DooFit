@@ -2,6 +2,9 @@ To use DooFit externally, do the following:
 
 1. Build DooFit
 2. make install in your build directory of DooFit to install DooFit 
-   (TODO: add how to specify install location)
+   (specify install location via -DCMAKE_INSTALL_PREFIX=/path/to/install
+   at cmake call)
 3. set DOOFITSYS environment variable to DooFit install location
-4. build this project
+4. set LD_LIBRARY_PATH or DYLD_LIBRARY_PATH (or whatever your system uses)
+   to $DOOFITSYS/lib
+5. build this project
