@@ -325,16 +325,6 @@ namespace Toy {
       
       RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
       
-      obs_argset->Print();
-      pdf.Print("t");
-      sdebug << expected_yield << endmsg;
-      proto_arg.Print();
-      
-      RooEffProd* effpdf = (RooEffProd*)&pdf;
-      
-      effpdf->Print();
-      effpdf->generate(*obs_argset, expected_yield);
-      
       data = pdf.generate(*obs_argset, expected_yield, extend_arg, proto_arg);
       delete obs_argset;
       if (proto_set != NULL) {
