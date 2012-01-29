@@ -22,21 +22,21 @@
 // from boost
 #include <boost/exception/all.hpp>
 
+/// from Builder/FitModelBrewery
+#include "Builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
+#include "Builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
+
+#include "Builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
+#include "Builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
+
+#include "Builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
+#include "Builder/FitModelBrewery/Recipe/Parameter/UnblindUniformParameter.h"
+#include "Builder/FitModelBrewery/Recipe/Parameter/FormulaParameter.h"
+
 namespace builder {
 namespace fitmodelbrewery {
 
 // forward declarations
-class DiscreteDimension;
-class RealDimension;
-
-class BasicCategory;
-class SuperCategory;
-
-
-class StandardParameter;
-class UnblindUniformParameter;
-class FormulaParameter;
-
 class AbsPdf;
 
 class Recipe {
@@ -54,24 +54,24 @@ class Recipe {
   void RegisterRecipeElement(const SuperCategory& cat_super);
   /** @brief Adds a copy of the StandardParameter object to params_std_. */
   void RegisterRecipeElement(const StandardParameter& param_std);
-  /** @brief Adds a copy of the UnblindUniformParameter object to params_bldunif_. */
-  void RegisterRecipeElement(const UnblindUniformParameter& param_bldunif);
-  /** @brief Adds a copy of the FormulaParameter object to params_formula_. */
-  void RegisterRecipeElement(const FormulaParameter& param_formula);
+//  /** @brief Adds a copy of the UnblindUniformParameter object to params_bldunif_. */
+//  void RegisterRecipeElement(const UnblindUniformParameter& param_bldunif);
+//  /** @brief Adds a copy of the FormulaParameter object to params_formula_. */
+//  void RegisterRecipeElement(const FormulaParameter& param_formula);
   
   
  protected:
   
  private:
-  typedef std::map<std::string, const RealDimension&> RealDimensionMap;
-  typedef std::map<std::string, const DiscreteDimension&> DiscreteDimensionMap;
+  typedef std::map<std::string, const RealDimension> RealDimensionMap;
+  typedef std::map<std::string, const DiscreteDimension> DiscreteDimensionMap;
   
-  typedef std::map<std::string, const BasicCategory&> BasicCategoryMap;
-  typedef std::map<std::string, const SuperCategory&> SuperCategoryMap;
+  typedef std::map<std::string, const BasicCategory> BasicCategoryMap;
+  typedef std::map<std::string, const SuperCategory> SuperCategoryMap;
   
-  typedef std::map<std::string, const StandardParameter&> StandardParameterMap;    
-  typedef std::map<std::string, const UnblindUniformParameter&> UnblindUniformParameterMap;
-  typedef std::map<std::string, const FormulaParameter&> FormulaParameterMap;     
+  typedef std::map<std::string, const StandardParameter> StandardParameterMap;    
+//  typedef std::map<std::string, const UnblindUniformParameter> UnblindUniformParameterMap;
+//  typedef std::map<std::string, const FormulaParameter> FormulaParameterMap;     
   
   
   
@@ -85,8 +85,8 @@ class Recipe {
   SuperCategoryMap            map_cats_super_;
   
   StandardParameterMap        map_params_std_;
-  UnblindUniformParameterMap  map_params_bldunif_;
-  FormulaParameterMap         map_params_formula_;
+//  UnblindUniformParameterMap  map_params_bldunif_;
+//  FormulaParameterMap         map_params_formula_;
   
   //std::map< std::string, AbsResolution* > resols_;
   //std::map< std::string, AbsPdf* > pdfs_;

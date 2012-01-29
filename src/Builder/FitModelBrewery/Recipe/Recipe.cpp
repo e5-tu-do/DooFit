@@ -6,16 +6,7 @@
 /// from Utils
 #include "Utils/MsgStream.h"
 
-/// from Builder/FitModelBrewery
-#include "Builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
-#include "Builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
 
-#include "Builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
-#include "Builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
-
-#include "Builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
-#include "Builder/FitModelBrewery/Recipe/Parameter/UnblindUniformParameter.h"
-#include "Builder/FitModelBrewery/Recipe/Parameter/FormulaParameter.h"
 
 namespace builder {
 namespace fitmodelbrewery {
@@ -24,10 +15,10 @@ Recipe::Recipe()
     : map_dims_real_(),
       map_dims_discrete_(),
       map_cats_basic_(),
-      //map_cats_super_(),    
+      map_cats_super_(),    
       map_params_std_(),
-      map_params_bldunif_(),
-      map_params_formula_(),
+      //map_params_bldunif_(),
+      //map_params_formula_(),
       is_ready(false),
       is_consistent(false)
 {
@@ -106,8 +97,8 @@ bool Recipe::RecipeElementExists(const std::string& search_name) {
   else if (map_cats_basic_.find(search_name) != map_cats_basic_.end()) return true;
   else if (map_cats_super_.find(search_name) != map_cats_super_.end()) return true;
   else if (map_params_std_.find(search_name) != map_params_std_.end()) return true;
-  else if (map_params_bldunif_.find(search_name) != map_params_bldunif_.end()) return true;
-  else if (map_params_formula_.find(search_name) != map_params_formula_.end()) return true;
+//  else if (map_params_bldunif_.find(search_name) != map_params_bldunif_.end()) return true;
+//  else if (map_params_formula_.find(search_name) != map_params_formula_.end()) return true;
   else return false;
 }
 
