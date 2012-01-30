@@ -171,6 +171,13 @@ namespace Toy {
     virtual const char* what() const throw() { return "Cannot save fit result."; }
   };
   
+  /** \struct ExceptionCannotReadFitResult
+   *  \brief Exception for problem in reading fit results
+   */
+  struct ExceptionCannotReadFitResult: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "Cannot read fit results."; }
+  };
+  
   /** \struct ExceptionCannotEvaluateFitResults
    *  \brief Exception for problem in evaluating fit results
    */

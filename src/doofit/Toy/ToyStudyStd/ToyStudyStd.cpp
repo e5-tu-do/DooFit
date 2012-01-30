@@ -52,8 +52,12 @@ namespace Toy {
   void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result) const {
     const string& filename = config_toystudy_.store_result_filename_treename().first();
     const string& treename = config_toystudy_.store_result_filename_treename().second();
+    if (filename.length() == 0) {
+      serr << "Filename to save fit result into not set! Cannot store fit result." << endmsg;
+      throw ExceptionCannotStoreFitResult();
+    }
+
     Utils::FileLock flock(filename);
-    
     if (!flock.Lock()) {
       swarn << "File to save fit result to " << filename << " is locked. Waiting for unlock." << endmsg;
     }
@@ -94,9 +98,14 @@ namespace Toy {
     
     sinfo.Ruler();
     
+    if (results_files.size() == 0) {
+      serr << "No files to read fit results from are specified. Cannot read in." << endmsg;
+      throw ExceptionCannotReadFitResult();
+    }
+    
     if (fit_results_.size() > 0) {
       swarn << "Reading in fit results while results are already stored." << endmsg;
-    }
+    } 
     
     int results_stored = 0;
     int results_neglected = 0;
