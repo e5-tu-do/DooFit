@@ -1,4 +1,4 @@
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
 
 // from STL
 
@@ -13,9 +13,9 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Utils//MsgStream.h"
 
-namespace DooFit {
+namespace doofit {
 using namespace std;
 using namespace boost;
 

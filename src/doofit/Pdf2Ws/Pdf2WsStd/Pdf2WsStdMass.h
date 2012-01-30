@@ -14,7 +14,7 @@ class RooWorkspace;
 class TString;
 class RooGaussian;
 
-namespace DooFit {
+namespace doofit {
 
 namespace Pdf2WsStd{ namespace Mass{
   /**
@@ -36,6 +36,6 @@ namespace Pdf2WsStd{ namespace Mass{
    
 }}
 
-} // namespace DooFit
+} // namespace doofit
 
 #endif // PDF2WSSTDMASS_h

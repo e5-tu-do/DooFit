@@ -1,11 +1,11 @@
-#include "DooFit/Builder/FitModelBrewery/Recipe/Parameter/ParameterFactory.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Parameter/ParameterFactory.h"
 
 // from project
-#include "DooFit/Builder/FitModelBrewery/Recipe/Recipe.h"
-#include "DooFit/Builder/FitModelBrewery/Recipe/Parameter/AbsParameter.h"
-#include "DooFit/Builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Recipe.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Parameter/AbsParameter.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -29,4 +29,4 @@ static AbsParameter* createNewParameter(const std::string& parameter_type){
 
 } // namespace fitmodelbrewery 
 } // namespace builder
-} // namespace DooFit 
+} // namespace doofit 

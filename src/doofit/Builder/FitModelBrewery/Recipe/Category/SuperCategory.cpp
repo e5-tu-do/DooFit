@@ -1,12 +1,12 @@
-#include "DooFit/Builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
 
 // from project
-#include "DooFit/Builder/FitModelBrewery/Recipe/Recipe.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Recipe.h"
 
 using namespace std;
 using namespace boost;
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -34,4 +34,4 @@ void SuperCategory::AddBasicCategory(const std::string& basic_cat_name) {
 
 } // namespace fitmodelbrewery 
 } // namespace builder
-} // namespace DooFit
+} // namespace doofit

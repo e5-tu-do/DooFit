@@ -1,13 +1,13 @@
-#include "DooFit/Config/ConfigCstStringVector.h"
+#include "doofit/Config/ConfigCstStringVector.h"
 
 // from STL
 
 // from Boost
 
 // from Project
-#include "DooFit/Utils/MsgStream.h"
+#include "doofit/Utils/MsgStream.h"
 
-namespace DooFit {
+namespace doofit {
 using namespace std;
 using namespace Config;
 

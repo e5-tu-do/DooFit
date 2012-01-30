@@ -1,4 +1,4 @@
-#include "DooFit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
+#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 
 // from STL
 #include <iostream>
@@ -19,10 +19,10 @@
 // RooFit PDFs from Project 
 
 // from Project
-#include "DooFit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
+#include "doofit/Utils//MsgStream.h"
 
-namespace DooFit {
+namespace doofit {
 using namespace std;
 using namespace Pdf2WsStd;
 

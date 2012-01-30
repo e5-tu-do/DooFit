@@ -1,4 +1,4 @@
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Mass/DimMass.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Mass/DimMass.h"
 
 // from STL
 #include <iostream>
@@ -6,18 +6,18 @@
 // from boost
 
 // from project
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Utils//MsgStream.h"
 
 // from project Pdf related classes
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Mass/MassGaussianPdf.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Mass/MassGaussianPdf.h"
 
 
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
-namespace DooFit {
+namespace doofit {
 namespace Builder{ 
 namespace BobTheBuilder{
 

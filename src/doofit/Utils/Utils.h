@@ -35,7 +35,7 @@
 #include "RooCmdArg.h"
 #include "RooGlobalFunc.h"
 
-namespace DooFit {
+namespace doofit {
   namespace Utils
   {
     /// Terminal color enum to be used for example in MsgStream class.

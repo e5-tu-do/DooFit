@@ -1,7 +1,7 @@
-#include "DooFit/Builder/FitModelBrewery/Recipe/Parameter/AbsParameter.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Parameter/AbsParameter.h"
 
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -16,4 +16,4 @@ AbsParameter::~AbsParameter() {
 
 } // namespace fitmodelbrewery
 } // namespace builder
-} // namespace DooFit
+} // namespace doofit

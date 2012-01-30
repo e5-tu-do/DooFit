@@ -35,7 +35,7 @@ class RooWorkspace;
 class RooAbsArg;
 
 
-namespace DooFit {
+namespace doofit {
 
 namespace Pdf2WsStd{ namespace CommonFuncs{
   /**
@@ -83,5 +83,5 @@ namespace Pdf2WsStd{ namespace CommonFuncs{
    */
   bool import(RooWorkspace* ws, const RooAbsArg& arg);
 } }
-} // namespace DooFit
+} // namespace doofit
 #endif // PDF2WSSTDCOMMONFUNCS_h

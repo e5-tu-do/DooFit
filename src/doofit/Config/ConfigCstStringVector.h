@@ -16,13 +16,13 @@
 
 // from project
 #ifndef __CINT__
-#include "DooFit/Config/AbsTypeCommaSeparated.h"
+#include "doofit/Config/AbsTypeCommaSeparated.h"
 #else
 // ROOT Cint hacks...
 #include "../Config/AbsTypeCommaSeparated.h"
 #endif /* __CINT __ */
 
-namespace DooFit {
+namespace doofit {
 namespace Config {
   class ConfigCstStringVector : public AbsTypeCommaSeparated {
   public:

@@ -4,7 +4,7 @@
 // from STL
 #include <string>
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -30,7 +30,7 @@ class AbsDimPdf {
 
 } // namespace fitmodelbrewery
 } // namespace builder
-} // namespace DooFit
+} // namespace doofit
 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_PDF_ABSDIMPDF_H_

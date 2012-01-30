@@ -1,15 +1,15 @@
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
 
 // from boost
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 
 // from project
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/Component.h"
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/Component.h"
+#include "doofit/Utils//MsgStream.h"
 
-namespace DooFit {
+namespace doofit {
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;

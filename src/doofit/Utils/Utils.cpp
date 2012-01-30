@@ -16,7 +16,7 @@
 
 using namespace std;
 
-namespace DooFit {
+namespace doofit {
 /*
  * Set global layout
  *

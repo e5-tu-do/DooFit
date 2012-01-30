@@ -1,10 +1,10 @@
-#include "DooFit/Builder/FitModelBrewery/Brewery.h"
+#include "doofit/Builder/FitModelBrewery/Brewery.h"
 
 
 using namespace std;
 
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -18,4 +18,4 @@ Brewery::~Brewery() {
 
 } // namespace fitmodelbrewery
 } // namespace builder
-} // namespace DooFit
+} // namespace doofit

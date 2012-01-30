@@ -9,15 +9,15 @@
 #include "RooArgSet.h"
 
 // from project
-#include "DooFit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
-#include "DooFit/Config/CommonConfig.h"
+#include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include "doofit/Config/CommonConfig.h"
 
 // forward declarations
 class RooFitResult;
 class RooDataSet;
 class RooRealVar;
 
-namespace DooFit {
+namespace doofit {
 namespace Toy {
   /** @class ToyStudyStd
    *  @brief Standard toy study for DooFit to help conduct and evaluate mass toy fits
@@ -178,7 +178,7 @@ namespace Toy {
     virtual const char* what() const throw() { return "Cannot evaluate fit results."; }
   };
 } // namespace Toy
-} // namespace DooFit
+} // namespace doofit
 
 
 #endif // TOYSTUDYSTD_h

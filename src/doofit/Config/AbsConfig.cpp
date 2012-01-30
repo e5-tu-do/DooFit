@@ -1,4 +1,4 @@
-#include "DooFit/Config/AbsConfig.h"
+#include "doofit/Config/AbsConfig.h"
 
 // from STL
 #include <string>
@@ -11,9 +11,9 @@
 #include <boost/tokenizer.hpp>
 
 // from Project
-#include "DooFit/Utils/MsgStream.h"
+#include "doofit/Utils/MsgStream.h"
 
-namespace DooFit {
+namespace doofit {
 namespace Config {
   using namespace std;
   namespace po = boost::program_options;

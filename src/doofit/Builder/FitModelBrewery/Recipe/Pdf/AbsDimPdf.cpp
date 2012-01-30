@@ -1,7 +1,7 @@
-#include "DooFit/Builder/FitModelBrewery/Recipe/Pdf/AbsDimPdf.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Pdf/AbsDimPdf.h"
 
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -16,4 +16,4 @@ AbsDimPdf::~AbsDimPdf() {
 
 } // namespace fitmodelbrewery
 } // namespace builder
-} // namespace DooFit
+} // namespace doofit

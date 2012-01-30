@@ -4,9 +4,9 @@
 // from STL
 
 // from project
-#include "DooFit/Config/AbsConfig.h"
+#include "doofit/Config/AbsConfig.h"
 
-namespace DooFit {
+namespace doofit {
 namespace builder { 
 namespace fitmodelbrewery {
 
@@ -55,7 +55,7 @@ class BreweryConfig : public Config::AbsConfig {
 
 } // namespace fitmodelbrewery
 } // namespace builder
-} // namespace DooFit
+} // namespace doofit
 
 
 #endif // BUILDER_FITMODELBREWERY_BREWERYCONFIG_H_

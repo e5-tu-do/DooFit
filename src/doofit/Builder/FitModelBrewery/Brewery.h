@@ -7,11 +7,11 @@
 #ifndef BUILDER_FITMODELBREWERY_BREWERY_H_
 
 // from project
-#include "DooFit/Config/CommonConfig.h"
-#include "DooFit/Builder/FitModelBrewery/BreweryConfig.h"
+#include "doofit/Config/CommonConfig.h"
+#include "doofit/Builder/FitModelBrewery/BreweryConfig.h"
 
 
-namespace DooFit {
+namespace doofit {
 namespace builder { 
 namespace fitmodelbrewery {
 
@@ -43,7 +43,7 @@ class Brewery {
 
 } // namespace fitmodelbrewery
 } // namespace builder
-} // namespace DooFit
+} // namespace doofit
 
 
 #endif // BUILDER_FITMODELBREWERY_BREWERY_H_

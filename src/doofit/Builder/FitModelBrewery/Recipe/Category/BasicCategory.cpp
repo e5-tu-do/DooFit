@@ -1,15 +1,15 @@
-#include "DooFit/Builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
 
 // from boost
 #include <boost/foreach.hpp>
 
 // from project
-#include "DooFit/Builder/FitModelBrewery/Recipe/Recipe.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Recipe.h"
 
 using namespace std;
 using namespace boost;
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -50,4 +50,4 @@ void BasicCategory::AddType(const string& type_name, int type_value) {
 
 } // namespace fitmodelbrewery 
 } // namespace builder
-} // namespace DooFit
+} // namespace doofit

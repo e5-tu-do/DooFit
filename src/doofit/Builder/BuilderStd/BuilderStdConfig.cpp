@@ -1,4 +1,4 @@
-#include "DooFit/Builder/BuilderStd/BuilderStdConfig.h"
+#include "doofit/Builder/BuilderStd/BuilderStdConfig.h"
 
 // STL
 #include <string>
@@ -16,9 +16,9 @@
 // RooFit
 
 // from project
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Utils//MsgStream.h"
 
-namespace DooFit {
+namespace doofit {
 using namespace std;
 namespace po = boost::program_options;
 namespace pt = boost::property_tree;

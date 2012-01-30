@@ -1,6 +1,6 @@
 // from project
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
+#include "doofit/Utils//MsgStream.h"
 
 // from STL
 #include <iostream>
@@ -11,7 +11,7 @@
 #include "RooWorkspace.h"
 
 
-namespace DooFit {
+namespace doofit {
 using namespace std;
 using namespace boost::property_tree;
 using namespace RooFit;

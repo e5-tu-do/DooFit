@@ -1,6 +1,6 @@
-#include "DooFit/Builder/FitModelBrewery/Recipe/Category/AbsCategory.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Category/AbsCategory.h"
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -14,4 +14,4 @@ AbsCategory::~AbsCategory() {
 
 } // namespace fitmodelbrewery 
 } // namespace builder
-} // namespace DooFit
+} // namespace doofit

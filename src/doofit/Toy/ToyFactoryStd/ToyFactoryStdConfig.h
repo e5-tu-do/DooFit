@@ -19,9 +19,9 @@
 
 // from project
 #ifndef __CINT__
-#include "DooFit/Config/AbsConfig.h"
-#include "DooFit/Config/DiscreteProbabilityDistribution.h"
-#include "DooFit/Config/CommaSeparatedPair.h"
+#include "doofit/Config/AbsConfig.h"
+#include "doofit/Config/DiscreteProbabilityDistribution.h"
+#include "doofit/Config/CommaSeparatedPair.h"
 #else
 // ROOT Cint hacks...
 #include "../../Config/AbsConfig.h"
@@ -32,7 +32,7 @@
 // forward declarations
 class TFile;
 
-namespace DooFit {
+namespace doofit {
 namespace Toy {
   /** \class ToyFactoryStdConfig
    *  \brief DooFit Config class for the ToyFactoryStd class
@@ -518,6 +518,6 @@ namespace Toy {
   };
 #endif /* __CINT __ */
 } // namespace Toy
-} // namespace DooFit
+} // namespace doofit
 
 #endif // TOYFACTORYSTDCONFIG_h

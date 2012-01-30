@@ -21,7 +21,7 @@
 
 // from project
 #ifndef __CINT__
-#include "DooFit/Config/AbsConfig.h"
+#include "doofit/Config/AbsConfig.h"
 #else
 // ROOT Cint hacks...
 #include "AbsConfig.h"
@@ -29,7 +29,7 @@
 
 // forward declarations
 
-namespace DooFit {
+namespace doofit {
 class CommonConfig : public Config::AbsConfig {
  public:
   /**

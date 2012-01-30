@@ -19,14 +19,14 @@
 #include <boost/shared_ptr.hpp>
 
 // from project
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/PdfFull.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/PdfFull.h"
 
 // from RooFit
 
 // forward declarations outside project
 class RooWorkspace;
 
-namespace DooFit {
+namespace doofit {
 namespace Builder { namespace BobTheBuilder {
 // forward declarations inside project
 class AbsDimension;

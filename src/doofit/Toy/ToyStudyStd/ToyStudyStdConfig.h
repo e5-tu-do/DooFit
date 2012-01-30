@@ -6,8 +6,8 @@
 
 // from project
 #ifndef __CINT__
-#include "DooFit/Config/AbsConfig.h"
-#include "DooFit/Config/CommaSeparatedPair.h"
+#include "doofit/Config/AbsConfig.h"
+#include "doofit/Config/CommaSeparatedPair.h"
 #else
 // ROOT Cint hacks...
 #include "../../Config/AbsConfig.h"
@@ -16,7 +16,7 @@
 
 // forward declarations
 
-namespace DooFit {
+namespace doofit {
 namespace Toy {
   /** @class ToyStudyStdConfig
    *  @brief DooFit Config class for the ToyStudyStd class
@@ -156,6 +156,6 @@ namespace Toy {
     ///@}
   };
 } // namespace Toy
-} // namespace DooFit
+} // namespace doofit
 
 #endif // TOYSTUDYSTDCONFIG_h

@@ -1,4 +1,4 @@
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
 
 // from STL
 #include <iostream>
@@ -6,7 +6,7 @@
 using namespace std;
 using namespace boost::property_tree;
 
-namespace DooFit {
+namespace doofit {
 namespace Builder{ 
 namespace BobTheBuilder{
   

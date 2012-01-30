@@ -1,2 +1,2 @@
-#include "DooFit/Builder/FitModelBrewery/BreweryConfig.h"
+#include "doofit/Builder/FitModelBrewery/BreweryConfig.h"
 

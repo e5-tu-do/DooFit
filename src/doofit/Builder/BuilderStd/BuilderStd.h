@@ -9,7 +9,7 @@
 #ifndef BUILDERSTD_h
 #define BUILDERSTD_h
 
-namespace DooFit {
+namespace doofit {
 // forward declarations
 class CommonConfig; 
 class BuilderStdConfig;

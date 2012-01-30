@@ -1,14 +1,14 @@
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Tag/DimTag.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Tag/DimTag.h"
 
 
 // from project
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Utils//MsgStream.h"
 
 // from project Pdf related classes
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
 
 
-namespace DooFit {
+namespace doofit {
 namespace Builder{ 
 namespace BobTheBuilder{
 

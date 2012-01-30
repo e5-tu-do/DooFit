@@ -19,14 +19,14 @@
 #include "RooAbsPdf.h"
 
 // from project
-#include "DooFit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "doofit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
 // forward declarations
 class RooDataSet;
 class RooArgSet;
 class TFile;
 
-namespace DooFit {
+namespace doofit {
 
 class CommonConfig; 
   
@@ -386,6 +386,6 @@ namespace Toy {
     virtual const char* what() const throw() { return "Trying to merge non-appendable datasets"; }
   };
 } // namespace Toy
-} // namespace DooFit
+} // namespace doofit
 
 #endif // TOYFACTORYSTD_h

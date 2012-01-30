@@ -5,9 +5,9 @@
 #include <string>
 
 // from project
-#include "DooFit/Builder/FitModelBrewery/Recipe/Dimension/AbsDimension.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Dimension/AbsDimension.h"
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -58,6 +58,6 @@ class RealDimension : public AbsDimension {
 
 } // namespace fitmodelbrewery 
 } // namespace builder
-} // namespace DooFit 
+} // namespace doofit 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_DIMENSION_REALDIMENSION_H

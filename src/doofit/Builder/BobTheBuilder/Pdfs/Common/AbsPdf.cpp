@@ -1,9 +1,9 @@
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
 
 // from boost
 #include <boost/algorithm/string.hpp>
 
-namespace DooFit {
+namespace doofit {
 using namespace std;
 
 namespace Builder{ 

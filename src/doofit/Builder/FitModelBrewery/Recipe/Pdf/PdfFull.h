@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -46,6 +46,6 @@ class PdfFull
 
 } // namespace fitmodelbrewery 
 } // namespace builder
-} // namespace DooFit 
+} // namespace doofit 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_PDF_FULLPDF_H

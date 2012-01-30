@@ -9,9 +9,9 @@
 #include <boost/exception/all.hpp>
 
 // from project
-#include "DooFit/Builder/FitModelBrewery/Recipe/Dimension/AbsDimension.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Dimension/AbsDimension.h"
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -71,6 +71,6 @@ struct ExcDiscreteDimensionTypeExists: public virtual boost::exception, public v
 
 } // namespace fitmodelbrewery 
 } // namespace builder
-} // namespace DooFit 
+} // namespace doofit 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_DIMENSION_DISCRETEDIMENSION_H

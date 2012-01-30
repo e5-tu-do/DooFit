@@ -13,7 +13,7 @@
 class RooWorkspace;
 class RooRealVar;
 
-namespace DooFit {
+namespace doofit {
 namespace Builder { namespace BobTheBuilder {
 // forward declarations for project
 class AbsPdf;

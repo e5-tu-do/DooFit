@@ -1,14 +1,14 @@
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Mass/MassGaussianPdf.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Mass/MassGaussianPdf.h"
 
 // from project
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
+#include "doofit/Utils//MsgStream.h"
 
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
-namespace DooFit {
+namespace doofit {
 namespace Builder{ 
 namespace BobTheBuilder{
 

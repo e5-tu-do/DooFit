@@ -11,10 +11,10 @@
 // RooFit
 
 // from project
-#include "DooFit/Utils/MsgStream.h"
+#include "doofit/Utils/MsgStream.h"
 #include "CommonConfig.h"
 
-namespace DooFit {
+namespace doofit {
 using namespace std;
 namespace po = boost::program_options;
 

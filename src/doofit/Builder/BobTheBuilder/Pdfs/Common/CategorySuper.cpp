@@ -1,4 +1,4 @@
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
 
 // from STL
 
@@ -13,12 +13,12 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Utils//MsgStream.h"
 
 // from project Builder BobTheBuilder
-#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
+#include "doofit/Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
 
-namespace DooFit {
+namespace doofit {
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;

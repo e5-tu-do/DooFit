@@ -1,6 +1,6 @@
 #include "MsgStream.h"
 
-namespace DooFit {
+namespace doofit {
 int MsgStream::indent_ = 0;
 
 MsgStream serr   (Utils::kTextRed);

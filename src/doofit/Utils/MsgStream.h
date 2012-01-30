@@ -11,7 +11,7 @@
 #include "TIterator.h"
 #include "RooAbsArg.h"
 
-namespace DooFit {
+namespace doofit {
 /*! \class MsgStream 
  * \brief A class for message output using different messages and colors.
  *
@@ -248,6 +248,6 @@ extern MsgStream scfg;
 extern MsgStream sout;
 /// MsgStream for debug messages. Color: None
 extern MsgStream sdebug;
-} // namespace DooFit
+} // namespace doofit
 
 #endif

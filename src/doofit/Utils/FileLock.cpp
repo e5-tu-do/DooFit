@@ -16,8 +16,8 @@
 // from RooFit
 
 // from Project
-#include "DooFit/Utils/MsgStream.h"
-namespace DooFit {
+#include "doofit/Utils/MsgStream.h"
+namespace doofit {
 namespace Utils {
   using namespace std;
   namespace fs = boost::filesystem;

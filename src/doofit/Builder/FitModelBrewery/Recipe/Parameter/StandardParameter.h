@@ -5,9 +5,9 @@
 #include <string>
 
 // from project
-#include "DooFit/Builder/FitModelBrewery/Recipe/Parameter/AbsParameter.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Parameter/AbsParameter.h"
 
-namespace DooFit {
+namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -67,6 +67,6 @@ class StandardParameter : public AbsParameter {
 
 } // namespace fitmodelbrewery 
 } // namespace builder
-} // namespace DooFit 
+} // namespace doofit 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_PARAMETER_STANDARDPARAMETER_H
