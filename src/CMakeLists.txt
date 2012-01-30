@@ -1,1 +1,1 @@
-add_subdirectory(DooFit)
+add_subdirectory(doofit)
