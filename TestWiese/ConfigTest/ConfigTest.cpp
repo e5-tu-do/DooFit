@@ -14,12 +14,12 @@
 
 // from project
 #include "ConfigTest.h"
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Utils//MsgStream.h"
 
 using namespace std;
 namespace po = boost::program_options;
 
-namespace DooFit {
+namespace doofit {
 ConfigTest::ConfigTest(const std::string& name) :
 Config::AbsConfig(name),
 my_test_switch_(false),

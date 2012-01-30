@@ -29,25 +29,25 @@
 #include "RooFitResult.h"
 
 // from Project
-#include "DooFit/Config/CommonConfig.h"
+#include "doofit/Config/CommonConfig.h"
 
-#include "DooFit/Builder/BuilderStd/BuilderStd.h"
-#include "DooFit/Builder/BuilderStd/BuilderStdConfig.h"
+#include "doofit/Builder/BuilderStd/BuilderStd.h"
+#include "doofit/Builder/BuilderStd/BuilderStdConfig.h"
 
-#include "DooFit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
-#include "DooFit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
+#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
+#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
 
-#include "DooFit/Toy/ToyFactoryStd/ToyFactoryStd.h"
-#include "DooFit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "doofit/Toy/ToyFactoryStd/ToyFactoryStd.h"
+#include "doofit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
-#include "DooFit/Toy/ToyStudyStd/ToyStudyStd.h"
-#include "DooFit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include "doofit/Toy/ToyStudyStd/ToyStudyStd.h"
+#include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
 
-#include "DooFit/Utils//MsgStream.h"
+#include "doofit/Utils//MsgStream.h"
 
 using namespace ROOT;
 using namespace RooFit;
-using namespace DooFit;
+using namespace doofit;
 
 RooWorkspace* BuildPDF() {
   RooWorkspace* ws = new RooWorkspace("ws");

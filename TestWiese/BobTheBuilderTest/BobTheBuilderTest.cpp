@@ -7,10 +7,10 @@
 #include "RooWorkspace.h"
 
 // from Project
-#include "DooFit/Builder/BobTheBuilder/Bob/Bob.h"
+#include "doofit/Builder/BobTheBuilder/Bob/Bob.h"
 
 using namespace std;
-using namespace DooFit;
+using namespace doofit;
 namespace bpt = boost::property_tree;
 
 using namespace Builder::BobTheBuilder;
