@@ -1,4 +1,4 @@
-#include "Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
 
 // from STL
 
@@ -13,9 +13,9 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
-
+namespace DooFit {
 using namespace std;
 using namespace boost;
 
@@ -78,3 +78,4 @@ std::ostream& operator<<(std::ostream& os, const Parameter& arg){
 }
 
 }}
+}

@@ -19,14 +19,17 @@
 #include "RooAbsPdf.h"
 
 // from project
-#include "Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "DooFit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
 // forward declarations
-class CommonConfig; 
 class RooDataSet;
 class RooArgSet;
 class TFile;
 
+namespace DooFit {
+
+class CommonConfig; 
+  
 namespace Toy {
   /** \class ToyFactoryStd
    *  \brief Standard toy factory for DooFit generating toy samples
@@ -382,6 +385,7 @@ namespace Toy {
   struct DatasetsNotAppendableException: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Trying to merge non-appendable datasets"; }
   };
-}
+} // namespace Toy
+} // namespace DooFit
 
 #endif // TOYFACTORYSTD_h

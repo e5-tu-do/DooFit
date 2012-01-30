@@ -1,14 +1,15 @@
-#include "Builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
 
 // from boost
 #include <boost/foreach.hpp>
 
 // from project
-#include "Builder/FitModelBrewery/Recipe/Recipe.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Recipe.h"
 
 using namespace std;
 using namespace boost;
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -50,3 +51,4 @@ void DiscreteDimension::AddType(string type_name, int type_value) {
 
 } // namespace fitmodelbrewery 
 } // namespace builder
+} // namespace DooFit

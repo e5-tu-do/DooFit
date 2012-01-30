@@ -1,6 +1,6 @@
 // from project
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
-#include "Utils/MsgStream.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
+#include "DooFit/Utils//MsgStream.h"
 
 // from STL
 #include <iostream>
@@ -11,6 +11,7 @@
 #include "RooWorkspace.h"
 
 
+namespace DooFit {
 using namespace std;
 using namespace boost::property_tree;
 using namespace RooFit;
@@ -70,3 +71,4 @@ bool AbsDimensionReal::AddToWorkspace( RooWorkspace& ws ){
 }
 
 }}
+}

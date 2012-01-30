@@ -13,6 +13,7 @@
 // forward declarations
 class RooWorkspace;
 
+namespace DooFit {
 namespace Builder { namespace BobTheBuilder {
 
 // forward declarations in project
@@ -49,5 +50,5 @@ class CategorySuper{
 };
   
 }}
-
+}
 #endif // BUILDER_BOBTHEBUILDER_CATEGORYSUPER_H

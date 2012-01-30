@@ -5,6 +5,7 @@
 #include <string>
 
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -43,7 +44,8 @@ class ParameterFactory {
 };
 
 } // namespace fitmodelbrewery 
-} // namespace builder 
+} // namespace builder
+} // namespace DooFit 
 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_PARAMETER_PARAMETERFACTORY_H

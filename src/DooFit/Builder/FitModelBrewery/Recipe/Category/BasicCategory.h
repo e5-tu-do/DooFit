@@ -9,8 +9,9 @@
 #include <boost/exception/all.hpp>
 
 // from project
-#include "Builder/FitModelBrewery/Recipe/Category/AbsCategory.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Category/AbsCategory.h"
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -69,6 +70,7 @@ struct ExcBasicCategoryTypeExists: public virtual boost::exception, public virtu
 
 
 } // namespace fitmodelbrewery 
-} // namespace builder 
+} // namespace builder
+} // namespace DooFit 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_CATEGORY_BASICCATEGORY_H

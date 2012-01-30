@@ -9,6 +9,7 @@
 #ifndef BUILDERSTD_h
 #define BUILDERSTD_h
 
+namespace DooFit {
 // forward declarations
 class CommonConfig; 
 class BuilderStdConfig;
@@ -22,6 +23,6 @@ class BuilderStd{
   
  private:
 };
-
+}
 
 #endif // BUILDERSTD_h

@@ -1,4 +1,4 @@
-#include "Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
 
 // from STL
 #include <iostream>
@@ -17,8 +17,9 @@
 
 
 // from project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
+namespace DooFit {
 using namespace boost;
 using namespace boost::property_tree;
 
@@ -103,3 +104,4 @@ std::vector< std::string > CategoryBasic::GetTypesVector(){
 }
 
 }}
+}

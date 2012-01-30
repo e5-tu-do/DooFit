@@ -23,16 +23,17 @@
 #include <boost/exception/all.hpp>
 
 /// from Builder/FitModelBrewery
-#include "Builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
-#include "Builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
 
-#include "Builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
-#include "Builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
 
-#include "Builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
-#include "Builder/FitModelBrewery/Recipe/Parameter/UnblindUniformParameter.h"
-#include "Builder/FitModelBrewery/Recipe/Parameter/FormulaParameter.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Parameter/UnblindUniformParameter.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Parameter/FormulaParameter.h"
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -107,6 +108,7 @@ struct ExcRecipeRegistrationFailed: public virtual boost::exception, public virt
 
 } // namespace fitmodelbrewery
 } // namespace builder
+} // namespace DooFit
 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_RECIPE_H_

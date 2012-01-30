@@ -8,6 +8,7 @@
 // forward declarations
 class RooWorkspace;
 
+namespace DooFit {
 namespace Builder{ namespace BobTheBuilder{
   
 class Parameter{
@@ -41,5 +42,6 @@ std::istream& operator>>(std::istream& is, Parameter& arg);
 std::ostream& operator<<(std::ostream& os, const Parameter& arg);
   
 }}
+}
 
 #endif // BUiLDER_BOBTHEBUILDER_PARAMETER_H

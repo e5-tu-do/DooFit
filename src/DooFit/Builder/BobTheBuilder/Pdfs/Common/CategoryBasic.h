@@ -12,7 +12,7 @@
 // forward declarations
 class RooWorkspace;
 
-
+namespace DooFit {
 namespace Builder { namespace BobTheBuilder {
 
 class CategoryBasic{
@@ -46,5 +46,5 @@ class CategoryBasic{
 
 
 }}
-  
+}  
 #endif // BUILDER_BOBTHEBUILDER_CATEGORYBASIC_H

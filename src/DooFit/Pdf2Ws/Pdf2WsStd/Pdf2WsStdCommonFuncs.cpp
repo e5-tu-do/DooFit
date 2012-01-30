@@ -1,4 +1,4 @@
-#include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
+#include "DooFit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
 
 // STL
 #include <iostream>
@@ -15,11 +15,13 @@
 #include "RooAbsArg.h"
 
 // from Project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
 using namespace std;
 using namespace ROOT;
 using namespace RooFit;
+
+namespace DooFit {
 
 RooAbsReal* Pdf2WsStd::CommonFuncs::getVar(RooWorkspace* ws,
                                            const TString& var_name, const TString& var_title, 
@@ -50,4 +52,5 @@ RooAbsReal* Pdf2WsStd::CommonFuncs::getVar(RooWorkspace* ws,
 bool Pdf2WsStd::CommonFuncs::import(RooWorkspace* ws, const RooAbsArg& arg) {
   // Silence for testing purposes for now. Later to be exchanged by some Config foo.
   return ws->import(arg, Silence());
+}
 }

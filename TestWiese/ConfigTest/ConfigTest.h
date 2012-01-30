@@ -39,14 +39,15 @@ namespace boost { namespace program_options {
 
 // from project
 #ifndef __CINT__
-#include "Config/AbsConfig.h"
-#include "Config/AbsTypeCommaSeparated.h"
+#include "DooFit/Config/AbsConfig.h"
+#include "DooFit/Config/AbsTypeCommaSeparated.h"
 #else
 // ROOT Cint hacks...
 #include "../../src/Config/AbsConfig.h"
 #include "../../src/Config/AbsTypeCommaSeparated.h"
 #endif /* __CINT __ */
 
+namespace DooFit {
 // forward declarations
 class ConfigTestAbstractType;
 
@@ -337,6 +338,6 @@ private:
   std::vector<ConfigTestAbstractType> my_abstract_type_;
   ///@}
 };
-
+} // namespace DooFit
 
 #endif //CONFIGTEST_h

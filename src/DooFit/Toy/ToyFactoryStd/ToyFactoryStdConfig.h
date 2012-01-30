@@ -19,9 +19,9 @@
 
 // from project
 #ifndef __CINT__
-#include "Config/AbsConfig.h"
-#include "Config/DiscreteProbabilityDistribution.h"
-#include "Config/CommaSeparatedPair.h"
+#include "DooFit/Config/AbsConfig.h"
+#include "DooFit/Config/DiscreteProbabilityDistribution.h"
+#include "DooFit/Config/CommaSeparatedPair.h"
 #else
 // ROOT Cint hacks...
 #include "../../Config/AbsConfig.h"
@@ -32,6 +32,7 @@
 // forward declarations
 class TFile;
 
+namespace DooFit {
 namespace Toy {
   /** \class ToyFactoryStdConfig
    *  \brief DooFit Config class for the ToyFactoryStd class
@@ -516,6 +517,7 @@ namespace Toy {
     virtual const char* what() const throw() { return "Observables argument set not set"; }
   };
 #endif /* __CINT __ */
-}
+} // namespace Toy
+} // namespace DooFit
 
 #endif // TOYFACTORYSTDCONFIG_h

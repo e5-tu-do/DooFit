@@ -12,6 +12,7 @@
 // forward declarations
 class RooWorkspace;
 
+namespace DooFit {
 namespace Builder{ namespace BobTheBuilder{
 // forward declarations for project classes
 class AbsDimension;
@@ -42,5 +43,6 @@ class SubPdfFull{
 };
 
 }}
+}
 
 #endif // BUILDER_BOBTHEBUILDER_SUBPDFFULL_H

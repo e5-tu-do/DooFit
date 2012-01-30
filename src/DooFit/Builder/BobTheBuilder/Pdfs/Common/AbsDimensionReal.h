@@ -3,10 +3,10 @@
 
 
 // from project
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
 
 // forward declarations
-
+namespace DooFit {
 namespace Builder { namespace BobTheBuilder {
 
 class AbsDimensionReal : public AbsDimension{
@@ -44,5 +44,5 @@ class AbsDimensionReal : public AbsDimension{
 };
 
 }}
-
+}
 #endif // BUILDER_BOBTHEBUILDER_ABSDIMENSIONREAL_H

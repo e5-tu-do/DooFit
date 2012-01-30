@@ -1,14 +1,14 @@
-#include "Builder/BobTheBuilder/Pdfs/Tag/DimTag.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Tag/DimTag.h"
 
 
 // from project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
 // from project Pdf related classes
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
 
 
-
+namespace DooFit {
 namespace Builder{ 
 namespace BobTheBuilder{
 
@@ -27,3 +27,4 @@ boost::shared_ptr<AbsPdf> DimTag::CreatePdf( const std::string& pdf_type ){
 }
 
 }}
+}

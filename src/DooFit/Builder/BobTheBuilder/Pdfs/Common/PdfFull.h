@@ -13,7 +13,7 @@
 // forward declarations
 class RooWorkspace;
 
-
+namespace DooFit {
 namespace Builder{ namespace BobTheBuilder{
 
 // forward declarations for project
@@ -57,5 +57,5 @@ class PdfFull{
   
   
 }}
-
+}
 #endif // BUILDER_BOBTHEBUILDER_PDFFULL_H

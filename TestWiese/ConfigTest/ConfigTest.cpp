@@ -14,11 +14,12 @@
 
 // from project
 #include "ConfigTest.h"
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
 using namespace std;
 namespace po = boost::program_options;
 
+namespace DooFit {
 ConfigTest::ConfigTest(const std::string& name) :
 Config::AbsConfig(name),
 my_test_switch_(false),
@@ -120,4 +121,4 @@ void ConfigTestAbstractType::Print(std::ostream& os) const {
     os << "; k: " << (*itmap).first << ", v: " << (*itmap).second;
   }
 }
-
+} // namspace DooFit

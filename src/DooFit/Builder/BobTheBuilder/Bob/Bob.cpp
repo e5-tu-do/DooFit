@@ -1,4 +1,4 @@
-#include "Builder/BobTheBuilder/Bob/Bob.h"
+#include "DooFit/Builder/BobTheBuilder/Bob/Bob.h"
 
 // from STL
 #include <exception>
@@ -12,15 +12,15 @@
 #include <boost/property_tree/json_parser.hpp>
 
 // from project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
 // from Builder/BobTheBuilder subproject
-#include "Builder/BobTheBuilder/Pdfs/Common/Component.h"
-#include "Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
-#include "Builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
-#include "Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
-#include "Builder/BobTheBuilder/Pdfs/Mass/DimMass.h"
-#include "Builder/BobTheBuilder/Pdfs/Tag/DimTag.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/Component.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Mass/DimMass.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Tag/DimTag.h"
 
 
 
@@ -28,6 +28,7 @@ using namespace std;
 using namespace boost;
 namespace bpt = property_tree;
 
+namespace DooFit {
 namespace Builder{ 
 namespace BobTheBuilder{
 Bob::Bob() :
@@ -244,3 +245,4 @@ void Bob::DumpToRooWorkspace( RooWorkspace& ws){
 }
 
 }}
+}

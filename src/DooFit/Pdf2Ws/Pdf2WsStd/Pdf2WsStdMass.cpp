@@ -1,4 +1,4 @@
-#include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
+#include "DooFit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 
 // from STL
 #include <iostream>
@@ -19,10 +19,10 @@
 // RooFit PDFs from Project 
 
 // from Project
-#include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
-#include "Utils/MsgStream.h"
+#include "DooFit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
+#include "DooFit/Utils//MsgStream.h"
 
-
+namespace DooFit {
 using namespace std;
 using namespace Pdf2WsStd;
 
@@ -46,4 +46,5 @@ RooGaussian* Pdf2WsStd::Mass::Gaussian(RooWorkspace* ws,
   CommonFuncs::import(ws,RooGaussian(pdf_name, pdf_desc, *var_mass, *par_mean, *par_sigma));
   
   return (RooGaussian*)ws->pdf(pdf_name);
+}
 }

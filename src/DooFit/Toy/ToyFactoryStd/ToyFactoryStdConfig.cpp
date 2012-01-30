@@ -1,4 +1,4 @@
-#include "Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "DooFit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
 // STL
 #include <string>
@@ -21,11 +21,12 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
 using namespace std;
 namespace po = boost::program_options;
 
+namespace DooFit {
 namespace Toy {
   ToyFactoryStdConfig::ToyFactoryStdConfig() : 
   Config::AbsConfig("empty_name"),
@@ -230,4 +231,6 @@ namespace Toy {
   
   void ToyFactoryStdConfig::LoadOptions() {
   }
-}
+} // namespace Toy
+} // namespace DooFit
+

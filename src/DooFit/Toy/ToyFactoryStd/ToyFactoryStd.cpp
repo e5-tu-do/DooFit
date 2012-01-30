@@ -1,4 +1,4 @@
-#include "Toy/ToyFactoryStd/ToyFactoryStd.h"
+#include "DooFit/Toy/ToyFactoryStd/ToyFactoryStd.h"
 
 // STL
 #include <cstring>
@@ -29,13 +29,14 @@
 #include "RooEffProd.h"
 
 // from Project
-#include "Config/CommonConfig.h"
-#include "Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
-#include "Utils/MsgStream.h"
+#include "DooFit/Config/CommonConfig.h"
+#include "DooFit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "DooFit/Utils/MsgStream.h"
 
 using namespace ROOT;
 using namespace RooFit;
 
+namespace DooFit {
 namespace Toy {
   ToyFactoryStd::ToyFactoryStd(const CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac) :
   config_common_(cfg_com),
@@ -630,4 +631,6 @@ namespace Toy {
     
     return tfac_proto.Generate();
   }
-}
+} // namespace Toy
+} // namespace DooFit
+

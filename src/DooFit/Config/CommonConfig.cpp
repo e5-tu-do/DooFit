@@ -11,9 +11,10 @@
 // RooFit
 
 // from project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils/MsgStream.h"
 #include "CommonConfig.h"
 
+namespace DooFit {
 using namespace std;
 namespace po = boost::program_options;
 
@@ -45,4 +46,5 @@ void CommonConfig::DefineOptions() {
 
 void CommonConfig::LoadOptions() {
   if (var_map_.count("help")) help_flag_ = true;
+}
 }

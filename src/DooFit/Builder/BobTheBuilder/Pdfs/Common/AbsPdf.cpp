@@ -1,8 +1,9 @@
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
 
 // from boost
 #include <boost/algorithm/string.hpp>
 
+namespace DooFit {
 using namespace std;
 
 namespace Builder{ 
@@ -27,4 +28,4 @@ AbsPdf::~AbsPdf(){
 
 }}
 
-
+}

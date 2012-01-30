@@ -1,4 +1,4 @@
-#include "Builder/BobTheBuilder/Pdfs/Common/PdfFull.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/PdfFull.h"
 
 // from STL
 #include <iostream>
@@ -7,16 +7,17 @@
 #include <boost/foreach.hpp>
 
 // from project
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
-#include "Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
-#include "Builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
-#include "Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
-#include "Utils/MsgStream.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
+#include "DooFit/Utils//MsgStream.h"
 
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
+namespace DooFit {
 namespace Builder{ 
 namespace BobTheBuilder{
 
@@ -143,4 +144,4 @@ void PdfFull::AddToWorkspace( RooWorkspace& ws ){
 
 }}
 
-
+}

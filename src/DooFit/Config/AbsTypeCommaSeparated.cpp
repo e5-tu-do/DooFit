@@ -1,4 +1,4 @@
-#include "Config/AbsTypeCommaSeparated.h"
+#include "DooFit/Config/AbsTypeCommaSeparated.h"
 
 // from STL
 #include <string>
@@ -7,9 +7,12 @@
 // from Boost
 #include <boost/tokenizer.hpp>
 
+namespace DooFit {
+
 using namespace std;
 using namespace Config;
 
+  
 vector<string> AbsTypeCommaSeparated::DecomposeString(string str) const {
   vector<string> elements;
   
@@ -24,14 +27,16 @@ vector<string> AbsTypeCommaSeparated::DecomposeString(string str) const {
   return elements;
 }
 
-std::istream& operator>>(std::istream& is, AbsTypeCommaSeparated& arg) {
+}
+
+std::istream& operator>>(std::istream& is, DooFit::Config::AbsTypeCommaSeparated& arg) {
   std::string s;
   is >> s;
   arg.Parse(s);
   return is;
 }
 
-std::ostream& operator<<(std::ostream& os, const AbsTypeCommaSeparated& arg) {
+std::ostream& operator<<(std::ostream& os, const DooFit::Config::AbsTypeCommaSeparated& arg) {
   arg.Print(os);
   return os;
 }

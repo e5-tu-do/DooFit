@@ -33,6 +33,7 @@ namespace boost { namespace program_options {
 
 // from RooFit
 
+namespace DooFit {
 namespace Config {
   /** \class Config::AbsConfig
    *  \brief DooFit abstract Config base class.
@@ -165,7 +166,7 @@ namespace Config {
    *  
    *  // from project
    *  #ifndef __CINT__
-   *  #include "Config/AbsConfig.h"
+   *  #include "DooFit/Config/AbsConfig.h"
    *  #else
    *  // ROOT Cint hacks...
    *  #include "../../Config/AbsConfig.h"
@@ -544,5 +545,5 @@ namespace Config {
   };
 #endif /* __CINT __ */
 }
-
+}
 #endif //CONFIG_h

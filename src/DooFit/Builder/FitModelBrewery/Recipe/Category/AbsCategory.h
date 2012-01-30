@@ -4,6 +4,7 @@
 // from STL
 #include <string>
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -26,6 +27,7 @@ class AbsCategory {
 };
 
 } // namespace fitmodelbrewery 
-} // namespace builder 
+} // namespace builder
+} // namespace DooFit 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_CATEGORY_ABSCATEGORY_H

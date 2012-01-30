@@ -1,12 +1,13 @@
-#include "Config/CommaSeparatedPair.h"
+#include "DooFit/Config/CommaSeparatedPair.h"
 
 // from STL
 
 // from Project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
 using namespace std;
 
+namespace DooFit {
 namespace Config {
   void CommaSeparatedPair::Parse(string str) {
     vector<string> elements = DecomposeString(str);
@@ -24,4 +25,5 @@ namespace Config {
   void CommaSeparatedPair::Print(std::ostream& os) const {
     os << first_ << "->" << second_;
   }
+}
 }

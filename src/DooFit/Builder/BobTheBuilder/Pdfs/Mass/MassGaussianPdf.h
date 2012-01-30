@@ -2,8 +2,9 @@
 #define BUILDER_BOBTHEBUILDER_MASSGAUSSIANPDF_H
 
 // from project
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
 
+namespace DooFit {
 namespace Builder{ namespace BobTheBuilder{
   
   // forward declarations from project
@@ -30,5 +31,5 @@ class MassGaussianPdf : public AbsPdf{
 };
   
 }}
-
+}
 #endif // BUILDER_BOBTHEBUILDER_MASSGAUSSIANPDF_H

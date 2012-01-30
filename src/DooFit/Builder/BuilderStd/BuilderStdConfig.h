@@ -20,10 +20,11 @@
 // RooFit
 
 // from project
-#include "Config/AbsConfig.h"
+#include "DooFit/Config/AbsConfig.h"
 
 // forward declarations
 
+namespace DooFit {
 class BuilderStdConfig : public Config::AbsConfig {
  public:
   /**
@@ -102,6 +103,6 @@ class BuilderStdConfig : public Config::AbsConfig {
   
   
 };
-
+}
 
 #endif // BUILDERSTDCONFIG_h

@@ -1,4 +1,4 @@
-#include "Toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include "DooFit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
 
 // STL
 
@@ -9,12 +9,13 @@
 // RooFit
 
 // from project
-#include "Utils/MsgStream.h"
-#include "../../Config/CommaSeparatedPair.h"
+#include "DooFit/Utils//MsgStream.h"
+#include "DooFit/Config/CommaSeparatedPair.h"
 
 using namespace std;
 namespace po = boost::program_options;
 
+namespace DooFit {
 namespace Toy {
   ToyStudyStdConfig::ToyStudyStdConfig() : 
   Config::AbsConfig("empty_name")
@@ -58,4 +59,5 @@ namespace Toy {
   void ToyStudyStdConfig::LoadOptions() {
   }
 
-}
+} // namespace Toy
+} // namespace DooFit

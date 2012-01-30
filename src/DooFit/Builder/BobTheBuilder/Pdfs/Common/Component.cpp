@@ -1,4 +1,4 @@
-#include "Builder/BobTheBuilder/Pdfs/Common/Component.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/Component.h"
 
 // from STL
 #include <iostream>
@@ -12,10 +12,11 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
-#include "Utils/MsgStream.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "DooFit/Utils//MsgStream.h"
 
+namespace DooFit {
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
@@ -127,3 +128,4 @@ void Component::AddToWorkspace( RooWorkspace& ws ){
   
 }
 }}
+}

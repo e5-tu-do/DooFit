@@ -3,12 +3,13 @@
 
 // from project
 #ifndef __CINT__
-#include "Config/AbsTypeCommaSeparated.h"
+#include "DooFit/Config/AbsTypeCommaSeparated.h"
 #else
 // ROOT Cint hacks...
 #include "../Config/AbsTypeCommaSeparated.h"
 #endif /* __CINT __ */
 
+namespace DooFit {
 namespace Config {
   /** @class DiscreteProbabilityDistribution
    *  @brief Distribution for discrete probabilities of variables.
@@ -104,5 +105,5 @@ namespace Config {
     //ClassDef(DiscreteProbabilityDistribution,1);
   };
 }
-
+}
 #endif // DISCRETEPROBABILTYDISTRIBUTION_h

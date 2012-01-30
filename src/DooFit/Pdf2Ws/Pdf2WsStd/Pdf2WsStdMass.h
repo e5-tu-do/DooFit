@@ -9,11 +9,12 @@
 
 // from ROOT
 
-
 // forward declarations
 class RooWorkspace;
 class TString;
 class RooGaussian;
+
+namespace DooFit {
 
 namespace Pdf2WsStd{ namespace Mass{
   /**
@@ -35,6 +36,6 @@ namespace Pdf2WsStd{ namespace Mass{
    
 }}
 
-
+} // namespace DooFit
 
 #endif // PDF2WSSTDMASS_h

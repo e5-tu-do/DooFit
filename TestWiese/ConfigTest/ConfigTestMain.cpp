@@ -8,9 +8,9 @@
    */
 
 #include "ConfigTest.h"
-#include "Config/CommonConfig.h"
-#include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
-#include "Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
+#include "DooFit/Config/CommonConfig.h"
+#include "DooFit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
+#include "DooFit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 
 #include "RooWorkspace.h"
 #include "RooRealVar.h"
@@ -19,6 +19,8 @@
 
 #include <exception>
 #include <iostream>
+
+using namespace DooFit;
 
 int main(int argc, char *argv[]) {
   try {

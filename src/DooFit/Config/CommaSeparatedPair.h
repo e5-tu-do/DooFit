@@ -3,12 +3,13 @@
 
 // from project
 #ifndef __CINT__
-#include "Config/AbsTypeCommaSeparated.h"
+#include "DooFit/Config/AbsTypeCommaSeparated.h"
 #else
 // ROOT Cint hacks...
 #include "../Config/AbsTypeCommaSeparated.h"
 #endif /* __CINT __ */
 
+namespace DooFit {
 namespace Config {
   /** @class CommaSeparatedPair
    *  @brief A simple comma separated pair of two strings.
@@ -93,6 +94,7 @@ namespace Config {
      */
     //ClassDef(CommaSeparatedPair,1);
   };
+}
 }
 
 #endif // COMMASEPARATEDPAIR_h

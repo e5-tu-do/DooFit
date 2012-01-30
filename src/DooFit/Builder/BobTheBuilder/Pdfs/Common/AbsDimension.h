@@ -13,7 +13,7 @@
 class RooWorkspace;
 class RooRealVar;
 
-
+namespace DooFit {
 namespace Builder { namespace BobTheBuilder {
 // forward declarations for project
 class AbsPdf;
@@ -58,5 +58,5 @@ class AbsDimension{
 };
 
 }}
-
+}
 #endif // BUILDER_BOBTHEBUILDER_ABSDIMENSION_H

@@ -1,15 +1,15 @@
-#include "Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
 
 // from boost
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 
 // from project
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
-#include "Builder/BobTheBuilder/Pdfs/Common/Component.h"
-#include "Utils/MsgStream.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/Component.h"
+#include "DooFit/Utils//MsgStream.h"
 
-
+namespace DooFit {
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
@@ -108,3 +108,4 @@ void SubPdfFull::AddToWorkspace( RooWorkspace& ws ){
 }
 
 }}
+}

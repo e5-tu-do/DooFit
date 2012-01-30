@@ -1,8 +1,9 @@
-#include "Builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
 
 // from project
-#include "Builder/FitModelBrewery/Recipe/Recipe.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Recipe.h"
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
   
@@ -31,4 +32,5 @@ void StandardParameter::CheckForConsistency() const {
 }
   
 } // namespace fitmodelbrewery 
-} // namespace builder 
+} // namespace builder
+} // namespace DooFit 

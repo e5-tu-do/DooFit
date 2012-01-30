@@ -1,5 +1,6 @@
-#include "Builder/FitModelBrewery/Recipe/Pdf/PdfFull.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Pdf/PdfFull.h"
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
   
@@ -12,4 +13,5 @@ PdfFull::~PdfFull() {
 }
   
 } // namespace fitmodelbrewery 
-} // namespace builder 
+} // namespace builder
+} // namespace DooFit 

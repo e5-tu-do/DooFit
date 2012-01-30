@@ -4,6 +4,7 @@
 // from STL
 #include <string>
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -29,6 +30,7 @@ class AbsParameter {
 
 } // namespace fitmodelbrewery
 } // namespace builder
+} // namespace DooFit
 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_PARAMETER_ABSPARAMETER_H_

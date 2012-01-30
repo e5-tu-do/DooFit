@@ -2,8 +2,9 @@
 #define BUILDER_BOBTHEBUILDER_DIMTAG_H
 
 // from project
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsDimensionCat.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimensionCat.h"
 
+namespace DooFit {
 namespace Builder { namespace BobTheBuilder {
 
 class DimTag : public AbsDimensionCat{
@@ -19,6 +20,6 @@ class DimTag : public AbsDimensionCat{
 };
 
 }}
-
+}
 
 #endif // BUILDER_BOBTHEBUILDER_DIMTAG_H

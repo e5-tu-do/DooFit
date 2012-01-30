@@ -2,8 +2,9 @@
 #define BUILDER_BOBTHEBUILDER_DIMMASS_H
 
 // from Project
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
 
+namespace DooFit {
 namespace Builder { namespace BobTheBuilder {
 
 class DimMass : public AbsDimensionReal{
@@ -15,5 +16,5 @@ class DimMass : public AbsDimensionReal{
 };
 
 }}
-
+}
 #endif // BUILDER_BOBTHEBUILDER_DIMMASS_H

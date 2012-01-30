@@ -1,13 +1,14 @@
-#include "Builder/BobTheBuilder/Pdfs/Mass/MassGaussianPdf.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Mass/MassGaussianPdf.h"
 
 // from project
-#include "Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
-#include "Utils/MsgStream.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
+#include "DooFit/Utils//MsgStream.h"
 
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
 
+namespace DooFit {
 namespace Builder{ 
 namespace BobTheBuilder{
 
@@ -90,3 +91,4 @@ void MassGaussianPdf::AddToWorkspace( RooWorkspace* ws ){
   
 }
 }}
+}

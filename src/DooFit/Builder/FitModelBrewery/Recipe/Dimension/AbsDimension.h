@@ -18,6 +18,7 @@
 // from STL
 #include <string>
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -43,6 +44,7 @@ class AbsDimension {
 
 } // namespace fitmodelbrewery
 } // namespace builder
+} // namespace DooFit
 
 
 #endif // BUILDER_FITMODELBREWERY_RECIPE_DIMENSION_ABSDIMENSION_H_

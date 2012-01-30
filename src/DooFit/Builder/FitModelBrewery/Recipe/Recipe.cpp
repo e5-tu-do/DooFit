@@ -1,13 +1,14 @@
-#include "Builder/FitModelBrewery/Recipe/Recipe.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Recipe.h"
 
 // from STL
 
 // from project
 /// from Utils
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
 
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
 
@@ -105,3 +106,4 @@ bool Recipe::RecipeElementExists(const std::string& search_name) {
 
 } // namespace fitmodelbrewery
 } // namespace builder
+} // namespace DooFit

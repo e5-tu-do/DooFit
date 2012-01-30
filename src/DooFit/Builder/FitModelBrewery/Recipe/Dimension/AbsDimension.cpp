@@ -1,5 +1,6 @@
-#include "Builder/FitModelBrewery/Recipe/Dimension/AbsDimension.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Dimension/AbsDimension.h"
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
   
@@ -12,4 +13,5 @@ AbsDimension::~AbsDimension() {
 }
   
 } // namespace fitmodelbrewery 
-} // namespace builder 
+} // namespace builder
+} // namespace DooFit 

@@ -9,8 +9,8 @@
 
 
 // from project
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
-
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
+namespace DooFit {
 namespace Builder { namespace BobTheBuilder {
 
 class AbsDimensionCat : public AbsDimension{
@@ -33,7 +33,7 @@ class AbsDimensionCat : public AbsDimension{
 };
   
 } }
-
+}
 
 
 #endif // BUILDER_BOBTHEBUILDER_ABSDIMENSIONCAT_H

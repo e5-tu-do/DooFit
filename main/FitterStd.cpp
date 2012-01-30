@@ -8,9 +8,9 @@
 #include "RooWorkspace.h"
 
 // from Project
-#include "Config/CommonConfig.h"
+#include "DooFit/Config/CommonConfig.h"
 
-
+using namespace DooFit;
 
 int main(int argc, char *argv[]){
   // Test Builder

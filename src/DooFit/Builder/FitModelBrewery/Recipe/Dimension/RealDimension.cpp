@@ -1,9 +1,10 @@
-#include "Builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
 
 // from project
-#include "Builder/FitModelBrewery/Recipe/Recipe.h"
+#include "DooFit/Builder/FitModelBrewery/Recipe/Recipe.h"
 
 
+namespace DooFit {
 namespace builder {
 namespace fitmodelbrewery {
   
@@ -27,4 +28,5 @@ void RealDimension::RegisterInRecipe(Recipe& recipe) {
 }
 
 } // namespace fitmodelbrewery 
-} // namespace builder 
+} // namespace builder
+} // namespace DooFit 

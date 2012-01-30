@@ -11,6 +11,7 @@
 // forward declarations
 class RooWorkspace;
 
+namespace DooFit {
 namespace Builder { namespace BobTheBuilder {
 
 // forward declarations
@@ -46,5 +47,6 @@ class Component{
 };
 
 }}
+}
 
 #endif // BUILDER_BOBTHEBUILDER_COMPONENT_H

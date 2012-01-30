@@ -1,4 +1,4 @@
-#include "Toy/ToyStudyStd/ToyStudyStd.h"
+#include "DooFit/Toy/ToyStudyStd/ToyStudyStd.h"
 
 // STL
 #include <string>
@@ -20,15 +20,16 @@
 #include "RooDataSet.h"
 
 // from Project
-#include "Config/CommonConfig.h"
-#include "Toy/ToyStudyStd/ToyStudyStdConfig.h"
-#include "Utils/MsgStream.h"
-#include "Utils/Utils.h"
-#include "Utils/FileLock.h"
+#include "DooFit/Config/CommonConfig.h"
+#include "DooFit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include "DooFit/Utils//MsgStream.h"
+#include "DooFit/Utils//Utils.h"
+#include "DooFit/Utils//FileLock.h"
 
 using namespace ROOT;
 using namespace RooFit;
 
+namespace DooFit {
 namespace Toy {
   namespace fs = boost::filesystem;
   
@@ -237,4 +238,5 @@ namespace Toy {
     
     return *new_var;
   }
-}
+} // namespace Toy
+} // namespace DooFit

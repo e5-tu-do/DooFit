@@ -1,4 +1,4 @@
-#include "Builder/BuilderStd/BuilderStdConfig.h"
+#include "DooFit/Builder/BuilderStd/BuilderStdConfig.h"
 
 // STL
 #include <string>
@@ -16,8 +16,9 @@
 // RooFit
 
 // from project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
+namespace DooFit {
 using namespace std;
 namespace po = boost::program_options;
 namespace pt = boost::property_tree;
@@ -50,4 +51,5 @@ void BuilderStdConfig::load(const std::string &filename){
 //  BOOST_FOREACH(string category, categories_){
 //    cout << category << endl;
 //  }
+}
 }

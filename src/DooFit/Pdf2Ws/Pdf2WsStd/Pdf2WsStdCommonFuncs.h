@@ -35,6 +35,8 @@ class RooWorkspace;
 class RooAbsArg;
 
 
+namespace DooFit {
+
 namespace Pdf2WsStd{ namespace CommonFuncs{
   /**
    *  @brief Get variable with name @a var_name from workspace @a ws.
@@ -81,5 +83,5 @@ namespace Pdf2WsStd{ namespace CommonFuncs{
    */
   bool import(RooWorkspace* ws, const RooAbsArg& arg);
 } }
-
+} // namespace DooFit
 #endif // PDF2WSSTDCOMMONFUNCS_h

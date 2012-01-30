@@ -1,4 +1,4 @@
-#include "Builder/BobTheBuilder/Pdfs/Common/AbsDimensionCat.h"
+#include "DooFit/Builder/BobTheBuilder/Pdfs/Common/AbsDimensionCat.h"
 
 // from STL
 #include <iostream>
@@ -15,8 +15,9 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils//MsgStream.h"
 
+namespace DooFit {
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
@@ -96,3 +97,4 @@ void AbsDimensionCat::CreateTypes( const std::string &type_string ){
 }
 
 }}
+}

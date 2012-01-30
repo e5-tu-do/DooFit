@@ -1,12 +1,13 @@
-#include "Config/ConfigCstStringVector.h"
+#include "DooFit/Config/ConfigCstStringVector.h"
 
 // from STL
 
 // from Boost
 
 // from Project
-#include "Utils/MsgStream.h"
+#include "DooFit/Utils/MsgStream.h"
 
+namespace DooFit {
 using namespace std;
 using namespace Config;
 
@@ -50,4 +51,4 @@ void ConfigCstStringVector::Print(std::ostream& os) const {
 //    cumuluated_prob = (*itmap).second;
 //  }
 }
-
+}
