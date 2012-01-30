@@ -7,7 +7,7 @@
 add_library(Config SHARED AbsConfig.cpp AbsConfig.h CommonConfig.cpp CommonConfig.h AbsTypeCommaSeparated.cpp AbsTypeCommaSeparated.h DiscreteProbabilityDistribution.h DiscreteProbabilityDistribution.cpp ConfigCstStringVector.h ConfigCstStringVector.cpp CommaSeparatedPair.h CommaSeparatedPair.cpp)
 
 install(TARGETS Config DESTINATION lib)
-install (FILES AbsConfig.h CommonConfig.h AbsTypeCommaSeparated.h DiscreteProbabilityDistribution.h ConfigCstStringVector.h CommaSeparatedPair.h DESTINATION include/Config)
+install(FILES AbsConfig.h CommonConfig.h AbsTypeCommaSeparated.h DiscreteProbabilityDistribution.h ConfigCstStringVector.h CommaSeparatedPair.h DESTINATION include/doofit/Config)
 
 #add_library(CommonConfig CommonConfig.cpp CommonConfig.h)
 target_link_libraries(Config Utils ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})

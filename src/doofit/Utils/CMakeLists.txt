@@ -4,4 +4,4 @@
 add_library(Utils SHARED Utils.cpp Utils.h MsgStream.cpp MsgStream.h FileLock.cpp FileLock.h)
 target_link_libraries(Utils ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
 install(TARGETS Utils DESTINATION lib)
-install(FILES Utils.h MsgStream.h FileLock.h DESTINATION include/Utils)
+install(FILES Utils.h MsgStream.h FileLock.h DESTINATION include/doofit/Utils)
