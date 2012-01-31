@@ -76,7 +76,15 @@ namespace Toy {
     
     // try to generate with PDF (if set)
     RooDataSet* data = NULL;
-    data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield(), !config_toyfactory_.dataset_size_fixed());
+    try {
+      data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield(), !config_toyfactory_.dataset_size_fixed());
+    } catch (const PdfNotSetException& e) {
+      if (config_toyfactory_.discrete_probabilities().size() == 0) {
+        // could not generate continous sample via PDF, nor is a discrete sample requested
+        serr << "Not generating any data as neither PDF if set nor discrete variables are requested." << endmsg;
+        throw NotGeneratingDataException();
+      }
+    }
       
     const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities = config_toyfactory_.discrete_probabilities();
     
