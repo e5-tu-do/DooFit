@@ -1,4 +1,4 @@
-#include "MsgStream.h"
+#include "doofit/Utils/MsgStream.h"
 
 namespace doofit {
 int MsgStream::indent_ = 0;

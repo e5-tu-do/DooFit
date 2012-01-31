@@ -3,8 +3,8 @@
 // from STL
 
 // from project
-/// from Utils
-#include "doofit/Utils//MsgStream.h"
+/// from utils
+#include "doofit/utils//MsgStream.h"
 
 
 

@@ -12,7 +12,7 @@
 #include <boost/property_tree/json_parser.hpp>
 
 // from project
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 // from Builder/BobTheBuilder subproject
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/Component.h"

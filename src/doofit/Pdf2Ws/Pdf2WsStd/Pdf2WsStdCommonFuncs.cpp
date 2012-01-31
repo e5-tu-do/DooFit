@@ -15,7 +15,7 @@
 #include "RooAbsArg.h"
 
 // from Project
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 using namespace std;
 using namespace ROOT;

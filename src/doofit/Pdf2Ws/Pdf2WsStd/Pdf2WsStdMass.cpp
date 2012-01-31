@@ -20,7 +20,7 @@
 
 // from Project
 #include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 namespace doofit {
 using namespace std;

@@ -6,7 +6,7 @@
 // from boost
 
 // from project
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 // from project Pdf related classes
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"

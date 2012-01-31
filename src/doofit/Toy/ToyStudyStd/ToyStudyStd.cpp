@@ -22,9 +22,9 @@
 // from Project
 #include "doofit/Config/CommonConfig.h"
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
-#include "doofit/Utils//MsgStream.h"
-#include "doofit/Utils//Utils.h"
-#include "doofit/Utils//FileLock.h"
+#include "doofit/utils//MsgStream.h"
+#include "doofit/utils//utils.h"
+#include "doofit/utils//FileLock.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -57,12 +57,12 @@ namespace Toy {
       throw ExceptionCannotStoreFitResult();
     }
 
-    Utils::FileLock flock(filename);
+    utils::FileLock flock(filename);
     if (!flock.Lock()) {
       swarn << "File to save fit result to " << filename << " is locked. Waiting for unlock." << endmsg;
     }
     while (!flock.Lock()) {
-      Utils::Sleep(2);
+      utils::Sleep(2);
     }
 
     sinfo << "Saving fit result to file " << filename << endmsg;
@@ -179,13 +179,13 @@ namespace Toy {
     TIterator* parameter_iter   = parameters->createIterator();
     RooRealVar* parameter       = NULL;
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
-      std::pair<double,double> minmax = Utils::MedianLimitsForTuple(*evaluated_values_, parameter->GetName());
+      std::pair<double,double> minmax = utils::MedianLimitsForTuple(*evaluated_values_, parameter->GetName());
       sdebug << parameter->GetName() <<  " -> min,max: " << minmax.first << "," << minmax.second << endmsg;
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
       evaluated_values_->plotOn(frame);
       frame->Draw();
       TString plot_name = parameter->GetName();
-      Utils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory());
+      utils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory());
       
       delete frame;
     }

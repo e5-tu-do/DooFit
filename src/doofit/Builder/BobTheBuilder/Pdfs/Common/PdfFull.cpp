@@ -11,7 +11,7 @@
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 using namespace std;
 using namespace boost;

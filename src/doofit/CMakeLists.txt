@@ -7,5 +7,5 @@ add_subdirectory(Plotter)
 add_subdirectory(Toy)
 add_subdirectory(ExtraRooPdf)
 
-add_subdirectory(Utils)
+add_subdirectory(utils)
 

@@ -11,7 +11,7 @@
 // RooFit
 
 // from project
-#include "doofit/Utils/MsgStream.h"
+#include "doofit/utils/MsgStream.h"
 #include "CommonConfig.h"
 
 namespace doofit {

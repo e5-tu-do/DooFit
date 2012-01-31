@@ -2,7 +2,7 @@
 
 // from project
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 using namespace std;
 using namespace boost;

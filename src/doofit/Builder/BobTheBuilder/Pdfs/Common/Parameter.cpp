@@ -13,7 +13,7 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 namespace doofit {
 using namespace std;

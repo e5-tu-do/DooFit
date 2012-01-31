@@ -11,7 +11,7 @@
 #include <boost/tokenizer.hpp>
 
 // from Project
-#include "doofit/Utils/MsgStream.h"
+#include "doofit/utils/MsgStream.h"
 
 namespace doofit {
 namespace Config {

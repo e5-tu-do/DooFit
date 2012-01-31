@@ -7,7 +7,7 @@
 // from project
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/Component.h"
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 namespace doofit {
 using namespace std;

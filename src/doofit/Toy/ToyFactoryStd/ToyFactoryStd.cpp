@@ -31,7 +31,7 @@
 // from Project
 #include "doofit/Config/CommonConfig.h"
 #include "doofit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
-#include "doofit/Utils/MsgStream.h"
+#include "doofit/utils/MsgStream.h"
 
 using namespace ROOT;
 using namespace RooFit;

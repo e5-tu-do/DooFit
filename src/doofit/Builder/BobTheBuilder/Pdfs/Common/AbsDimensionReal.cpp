@@ -1,6 +1,6 @@
 // from project
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 // from STL
 #include <iostream>

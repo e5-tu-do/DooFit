@@ -1,7 +1,7 @@
 #ifndef MsgStream_h
 #define MsgStream_h
 
-#include "Utils.h"
+#include "doofit/Utils/Utils.h"
 #include <iostream>
 #include <sstream> 
 #include <cstring>

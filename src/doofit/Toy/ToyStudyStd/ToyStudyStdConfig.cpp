@@ -9,7 +9,7 @@
 // RooFit
 
 // from project
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 #include "doofit/Config/CommaSeparatedPair.h"
 
 using namespace std;

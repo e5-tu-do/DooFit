@@ -13,7 +13,7 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 // from project Builder BobTheBuilder
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
