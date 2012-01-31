@@ -1,5 +1,5 @@
 
-#include "doofit/Utils/Utils.h"
+#include "doofit/utils/utils.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <utility>
@@ -22,7 +22,7 @@ namespace doofit {
  *
  *  option = "", "2d"
  */
-void Utils::setStyle(TString option)
+void utils::setStyle(TString option)
 {
 	// text font
 	int font = 132;
@@ -102,7 +102,7 @@ void Utils::setStyle(TString option)
  * The axis is adjusted automatically when the histogram
  * is given as an argument.
  */
-void Utils::setHotColdPalette(TH2* h)
+void utils::setHotColdPalette(TH2* h)
 {
 	const Int_t NRGBs = 5;
 	const Int_t NCont = 255;
@@ -124,7 +124,7 @@ void Utils::setHotColdPalette(TH2* h)
 	}
 }
 
-void Utils::setRedBluePalette(TH2* h)
+void utils::setRedBluePalette(TH2* h)
 {
 	const Int_t NRGBs = 5;
 	const Int_t NCont = 255;
@@ -147,7 +147,7 @@ void Utils::setRedBluePalette(TH2* h)
 }
 
 
-void Utils::drawDate(float x1, float y1, float x2, float y2)
+void utils::drawDate(float x1, float y1, float x2, float y2)
 {
 	TDatime timer;
 	TPaveText *pt = new TPaveText(x1, y1, x2, y2,"BRNDC");
@@ -162,7 +162,7 @@ void Utils::drawDate(float x1, float y1, float x2, float y2)
 }
 
 
-void Utils::printSystemRecources(TString cmd)
+void utils::printSystemRecources(TString cmd)
 {
 	cout << endl;
 	system("ps aux|head -n 1");
@@ -171,9 +171,9 @@ void Utils::printSystemRecources(TString cmd)
 }
 
 
-void Utils::printPlot(TCanvas* c, TString name, TString dir)
+void utils::printPlot(TCanvas* c, TString name, TString dir)
 {
-        cout << "Utils::printPlot() : printing plots ..." << endl;
+        cout << "utils::printPlot() : printing plots ..." << endl;
 
         if ( dir!="" && !dir.EndsWith("/") ) dir += "/";
 
@@ -192,7 +192,7 @@ void Utils::printPlot(TCanvas* c, TString name, TString dir)
  * doesn't work with 3GB files.
  *
  */
-bool Utils::fileExists( TString strFilename )
+bool utils::fileExists( TString strFilename )
 {
 	struct stat stFileInfo;
 	bool blnReturn;
@@ -219,7 +219,7 @@ bool Utils::fileExists( TString strFilename )
 }
 
 
-int Utils::fileNLines( TString strFilename )
+int utils::fileNLines( TString strFilename )
 {
 	if ( ! fileExists(strFilename) )
 	{
@@ -239,21 +239,21 @@ int Utils::fileNLines( TString strFilename )
 	return n-1;
 }
 
-void Utils::Sleep(double sleep_time) {
+void utils::Sleep(double sleep_time) {
   boost::this_thread::sleep(boost::posix_time::microseconds(sleep_time*1e6));
 }
 
-void Utils::SetTerminalColor(TerminalColor color) {
+void utils::SetTerminalColor(TerminalColor color) {
   if (color != kTextNone) {
     printf("%c[%d;%dm",27,1,30+color);
   }
 }
 
-void Utils::ResetTerminal() {
+void utils::ResetTerminal() {
   printf("%c[%dm",27,0);
 }
 
-bool Utils::TerminalIsRedirected() {
+bool utils::TerminalIsRedirected() {
   if (!isatty(fileno(stdout))){
     return true;
   } else {
@@ -264,7 +264,7 @@ bool Utils::TerminalIsRedirected() {
 /*
  * round doubles
  */
-double Utils::Round(double value, unsigned int digits)
+double utils::Round(double value, unsigned int digits)
 {
 	value *= pow(10., (int)digits);
 	if (value >= 0)
@@ -279,11 +279,11 @@ double Utils::Round(double value, unsigned int digits)
 /*
  * Calculate the covariance between two variables.
  */
-Double_t Utils::Covariance(Int_t n, Double_t xdata[], Double_t ydata[])
+Double_t utils::Covariance(Int_t n, Double_t xdata[], Double_t ydata[])
 {
 	if ( n==0 )
 	{
-		cout << "Utils::Covariance() : ERROR : No datapoints! Returning 0." << endl;
+		cout << "utils::Covariance() : ERROR : No datapoints! Returning 0." << endl;
 		return 0.0;
 	}
 	
@@ -301,7 +301,7 @@ Double_t Utils::Covariance(Int_t n, Double_t xdata[], Double_t ydata[])
 
 	if ( v<0.0 )
 	{
-		cout << "Utils::Covariance() : ERROR : Variance < 0. Returning 0." << endl;
+		cout << "utils::Covariance() : ERROR : Variance < 0. Returning 0." << endl;
 		return 0.0;
 	}	
 
@@ -312,7 +312,7 @@ Double_t Utils::Covariance(Int_t n, Double_t xdata[], Double_t ydata[])
 /*
  * Calculate the variance of a dataset.
  */
-Double_t Utils::Variance(Int_t n, Double_t data[])
+Double_t utils::Variance(Int_t n, Double_t data[])
 {
 	return Covariance(n, data, data);
 }
@@ -323,7 +323,7 @@ Double_t Utils::Variance(Int_t n, Double_t data[])
  * the smaller ones upon it in order. This is to avoid the clash with the "same"
  * option of TH1::Draw().
  */
-void Utils::drawOrdered(TH1* h1, TH1* h2, TH1* h3, TH1* h4)
+void utils::drawOrdered(TH1* h1, TH1* h2, TH1* h3, TH1* h4)
 {
 	TH1* h[4];
 	h[0] = h1;
@@ -362,7 +362,7 @@ void Utils::drawOrdered(TH1* h1, TH1* h2, TH1* h3, TH1* h4)
 	
 	for ( int i=0; i<nmax; i++ )
 	{
-		cout << "Utils::DrawOrdered() : Drawing " << h[ord[i]]->GetName() << " ..." << endl;
+		cout << "utils::DrawOrdered() : Drawing " << h[ord[i]]->GetName() << " ..." << endl;
 		if ( i==0 ) h[ord[i]]->Draw();
 		else        h[ord[i]]->Draw("same");
 	}
@@ -374,11 +374,11 @@ void Utils::drawOrdered(TH1* h1, TH1* h2, TH1* h3, TH1* h4)
  * to the lower right one, which needs to be entirely filled
  * with zeroes.
  */
-void Utils::Symmetrize(TMatrixD &m)
+void utils::Symmetrize(TMatrixD &m)
 {
 	if ( m.GetNrows()!=m.GetNcols() )
 	{
-		cout << "Utils::Symmetrize() : ERROR : Matrix not quadratic!" << endl;
+		cout << "utils::Symmetrize() : ERROR : Matrix not quadratic!" << endl;
 		return;
 	}
 	
@@ -387,7 +387,7 @@ void Utils::Symmetrize(TMatrixD &m)
 	{
 		if ( m[j][i]!=0.0 )
 		{
-			cout << "Utils::Symmetrize() : ERROR : Matrix element is non-zero!" << endl;
+			cout << "utils::Symmetrize() : ERROR : Matrix element is non-zero!" << endl;
 			return;
 		}
 		m[j][i] = m[i][j];
@@ -399,14 +399,14 @@ void Utils::Symmetrize(TMatrixD &m)
  * Add axis labels to the IncPhi phase space histograms. Sure this is
  * somewhere else, too, but I have no idea where. TMK.
  */
-void Utils::addEtaPtLabels(TH2D* h)
+void utils::addEtaPtLabels(TH2D* h)
 {
 	if ( !h ) return;
 	h->GetXaxis()->SetTitle("p_{T} [MeV/c^{2}]");
 	h->GetYaxis()->SetTitle("y");
 }
 
-void Utils::PlotResiduals(TString pName, RooPlot * pFrame, RooRealVar * pVar, RooAbsPdf * pPDF, 
+void utils::PlotResiduals(TString pName, RooPlot * pFrame, RooRealVar * pVar, RooAbsPdf * pPDF, 
                           TString pDir, bool normalize, bool plot_log,
                           TLatex label
                           ) {
@@ -483,7 +483,7 @@ void Utils::PlotResiduals(TString pName, RooPlot * pFrame, RooRealVar * pVar, Ro
   printPlot(&c1, pName, pDir);
 }
 
-std::pair<double,double> Utils::MedianLimitsForTuple(const RooDataSet& dataset, std::string var_name) {
+std::pair<double,double> utils::MedianLimitsForTuple(const RooDataSet& dataset, std::string var_name) {
   int num_entries = dataset.numEntries();
   std::vector<double> entries(num_entries);
   
@@ -510,8 +510,8 @@ std::pair<double,double> Utils::MedianLimitsForTuple(const RooDataSet& dataset, 
   return minmax;
 }
 
-void Utils::plotAsymmetry(TString pPlotName, TTree * pTuple, TString pVarTime, TString pVarMix, int pBins, double pRngMin, double pRngMax, TString pTimeUnit) {
-        Utils::setStyle();
+void utils::plotAsymmetry(TString pPlotName, TTree * pTuple, TString pVarTime, TString pVarMix, int pBins, double pRngMin, double pRngMax, TString pTimeUnit) {
+        utils::setStyle();
         TCanvas c("c","c",800,600);
 
         int nBins = pBins;
@@ -541,7 +541,7 @@ void Utils::plotAsymmetry(TString pPlotName, TTree * pTuple, TString pVarTime, T
 
         hUpAsy->Draw();
 
-        Utils::printPlot(&c,pPlotName,"Plot");
+        utils::printPlot(&c,pPlotName,"Plot");
 
         delete hUpOsz;
         delete hUpNos;

@@ -1,7 +1,7 @@
 #ifndef MsgStream_h
 #define MsgStream_h
 
-#include "doofit/Utils/Utils.h"
+#include "doofit/utils/utils.h"
 #include <iostream>
 #include <sstream> 
 #include <cstring>
@@ -27,7 +27,7 @@ namespace doofit {
  *
  * The user can define their own MsgStream as well:
  * \code
- * MsgStream mymsgstream(Utils::kTextBlue);
+ * MsgStream mymsgstream(utils::kTextBlue);
  * mymsgstream << "My own stream" << endmsg;
  * \endcode
  */
@@ -38,11 +38,11 @@ public:
    *
    *  @param color The color to be used for this stream
    */
-  MsgStream(Utils::TerminalColor color) : text_color_(color), is_active_(true) {}
+  MsgStream(utils::TerminalColor color) : text_color_(color), is_active_(true) {}
   /**
    *  \brief Default constructor for standard uncolored output
    */
-  MsgStream() : text_color_(Utils::kTextNone), is_active_(true) {}
+  MsgStream() : text_color_(utils::kTextNone), is_active_(true) {}
   
   /**
    *  \brief Get the internal std::ostringstream
@@ -65,10 +65,10 @@ public:
    */
   MsgStream& doOutput() {
     if (is_active_) {
-      if (!Utils::TerminalIsRedirected()) Utils::SetTerminalColor(text_color_);
+      if (!utils::TerminalIsRedirected()) utils::SetTerminalColor(text_color_);
       std::cout << std::string(indent_, ' ');
       std::cout << os_.str() << std::endl;
-      if (!Utils::TerminalIsRedirected()) Utils::ResetTerminal();
+      if (!utils::TerminalIsRedirected()) utils::ResetTerminal();
     }
     os_.str("");
       
@@ -152,7 +152,7 @@ protected:
   /// \brief Internal std::ostringstream for data.
   std::ostringstream os_;            
   /// \brief Text color for output.
-  Utils::TerminalColor text_color_;  
+  utils::TerminalColor text_color_;  
   
   /// \brief determining if stream is active or not (i.e. printing)
   bool is_active_;

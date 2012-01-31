@@ -2,8 +2,8 @@
  *
  */
 
-#ifndef Utils_h
-#define Utils_h
+#ifndef utils_h
+#define utils_h
 
 #include <iostream>
 #include <fstream>
@@ -36,7 +36,7 @@
 #include "RooGlobalFunc.h"
 
 namespace doofit {
-  namespace Utils
+  namespace utils
   {
     /// Terminal color enum to be used for example in MsgStream class.
     enum TerminalColor {
@@ -115,4 +115,4 @@ namespace doofit {
     std::pair<double,double> MedianLimitsForTuple(const RooDataSet& dataset, std::string var_name);
   };
 };
-#endif // #ifdef Utils_h
+#endif // #ifdef utils_h

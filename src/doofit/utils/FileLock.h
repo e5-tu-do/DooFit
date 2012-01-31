@@ -10,7 +10,7 @@
 // forward declarations
 
 namespace doofit {
-namespace Utils {
+namespace utils {
   /** @class FileLock
    *  @brief Helper class for safe file locking among shared file systems without locking specific support
    *
