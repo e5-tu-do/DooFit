@@ -43,7 +43,7 @@
 #include "doofit/Toy/ToyStudyStd/ToyStudyStd.h"
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
 
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -115,7 +115,7 @@ RooWorkspace* BuildPDF() {
   return ws;
 }
 
-void PlotToyFit(RooWorkspace* ws) {
+void PlotToyFit(RooWorkspace* ws, const RooAbsPdf* pdf) {
   TFile f("data.root","read");
   RooDataSet* data = (RooDataSet*)f.Get("dataset");
   
@@ -127,10 +127,10 @@ void PlotToyFit(RooWorkspace* ws) {
   RooPlot* tag2_frame = ws->var("tag2")->frame();
   
   data->plotOn(mass_frame);
-  ws->pdf("pdf_add")->plotOn(mass_frame);
+  pdf->plotOn(mass_frame);
   
   data->plotOn(time_frame);
-  ws->pdf("pdf_add")->plotOn(time_frame);
+  pdf->plotOn(time_frame);
   
   data->plotOn(tag2_frame);
   
@@ -172,11 +172,16 @@ void TestToys(int argc, char *argv[]) {
   
   cfg_com.CheckHelpFlagAndPrintHelp();
     
-  RooWorkspace* ws = BuildPDF();
-    
+  //RooWorkspace* ws = BuildPDF();
+  TFile ws_file("ws.root", "read");
+  RooWorkspace* ws = (RooWorkspace*)ws_file.Get("ws");
+  
+  RooAbsPdf* pdf = ws->pdf("pdfFull");
+  ws->Print();
+  
   cfg_tfac.set_workspace(ws);
-  cfg_tfac.set_generation_pdf_workspace("pdf_add");
-  cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
+  //cfg_tfac.set_generation_pdf_workspace("pdfFull");
+  //cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
   
   ToyFactoryStd tfac(cfg_com, cfg_tfac);
   
@@ -185,8 +190,8 @@ void TestToys(int argc, char *argv[]) {
   RooDataSet* data = NULL;
   data = tfac.Generate();
   
-  ws->pdf("pdf_add")->getParameters(data)->readFromFile("generation.par");
-  RooFitResult* fit_result = ws->pdf("pdf_add")->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
+  pdf->getParameters(data)->readFromFile("generation.par");
+  RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
   
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
   tstudy.StoreFitResult(fit_result);
@@ -196,7 +201,7 @@ void TestToys(int argc, char *argv[]) {
   tstudy.EvaluateFitResults();
   tstudy.PlotEvaluatedParameters();
     
-  PlotToyFit(ws);
+  PlotToyFit(ws, pdf);
   delete ws;
 }
 

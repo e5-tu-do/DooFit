@@ -43,7 +43,7 @@
 #include "doofit/Toy/ToyStudyStd/ToyStudyStd.h"
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
 
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 using namespace ROOT;
 using namespace RooFit;

@@ -14,7 +14,7 @@
 
 // from project
 #include "ConfigTest.h"
-#include "doofit/Utils//MsgStream.h"
+#include "doofit/utils//MsgStream.h"
 
 using namespace std;
 namespace po = boost::program_options;
