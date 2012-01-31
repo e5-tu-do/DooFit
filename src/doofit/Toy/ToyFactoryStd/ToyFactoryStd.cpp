@@ -361,11 +361,9 @@ namespace Toy {
       it = pdf.serverIterator();
     } else {
       sinfo << " (not extended) ";
-      
+          
       // in non-extended case it's best to iterate over the PDF's components.
-      it = add_pdf.getComponents()->createIterator();
-      // the first component is the RooAddPdf itself, get rid of it
-      it->Next();
+      it = add_pdf.pdfList().createIterator();
     }
     
     sinfo << "will be decomposed. Expecting " << expected_yield << " events." << endmsg;
@@ -452,13 +450,10 @@ namespace Toy {
   RooDataSet* ToyFactoryStd::GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     sinfo << "RooProdPdf " << pdf.GetName() << " will be decomposed." << endmsg;
     sinfo.set_indent(sinfo.indent()+2);
-    
+        
     RooProdPdf& prod_pdf = dynamic_cast<RooProdPdf&>(pdf);
-    
-    RooArgSet* comp_argset = prod_pdf.getComponents();
-    TIterator* it = comp_argset->createIterator();
-    // the first component is the RooProdPdf itself, get rid of it
-    it->Next();
+    const RooArgList& sub_pdf_list = prod_pdf.pdfList();
+    TIterator* it = sub_pdf_list.createIterator();
     
     RooAbsPdf* sub_pdf = NULL;
     RooDataSet* data = NULL;
@@ -481,7 +476,6 @@ namespace Toy {
       }
     }
     delete it;
-    delete comp_argset;
     
     sinfo.set_indent(sinfo.indent()-2);
     return data;
