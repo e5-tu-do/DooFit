@@ -60,23 +60,23 @@ namespace Toy {
         throw NotGeneratingDataException();
       }
       sinfo << "Reading parameters from " << config_toyfactory_.parameter_read_file() << endmsg;
-      config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables())->readFromFile(config_toyfactory_.parameter_read_file().c_str());
+      try {
+        config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables())->readFromFile(config_toyfactory_.parameter_read_file().c_str());
+      } catch (const PdfNotSetException& e) {
+        if (config_toyfactory_.discrete_probabilities().size() == 0) {
+          // could not generate continous sample via PDF, nor is a discrete sample requested
+          serr << "Not generating any data as neither PDF if set nor discrete variables are requested." << endmsg;
+          throw NotGeneratingDataException();
+        }
+      } catch (const ArgSetNotSetException& e) {
+        serr << "Cannot generate any data as observables argument set is not set." << endmsg;
+        throw e;
+      }  
     }
     
     // try to generate with PDF (if set)
     RooDataSet* data = NULL;
-    try {
-      data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield(), !config_toyfactory_.dataset_size_fixed());
-    } catch (const PdfNotSetException& e) {
-      if (config_toyfactory_.discrete_probabilities().size() == 0) {
-        // could not generate continous sample via PDF, nor is a discrete sample requested
-        serr << "Not generating any data as neither PDF if set nor discrete variables are requested." << endmsg;
-        throw NotGeneratingDataException();
-      }
-    } catch (const ArgSetNotSetException& e) {
-      serr << "Cannot generate any data as observables argument set is not set." << endmsg;
-      throw e;
-    }
+    data = GenerateForPdf(*(config_toyfactory_.generation_pdf()), *(config_toyfactory_.argset_generation_observables()), config_toyfactory_.expected_yield(), !config_toyfactory_.dataset_size_fixed());
       
     const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities = config_toyfactory_.discrete_probabilities();
     
@@ -325,7 +325,6 @@ namespace Toy {
       }
       
       RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
-      
       data = pdf.generate(*obs_argset, expected_yield, extend_arg, proto_arg);
       delete obs_argset;
       if (proto_set != NULL) {
