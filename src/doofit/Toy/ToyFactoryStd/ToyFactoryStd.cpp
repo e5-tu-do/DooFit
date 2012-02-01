@@ -335,8 +335,11 @@ namespace Toy {
         proto_arg = ProtoData(*proto_set);
       }
       
+      // correct rounding of number of events to generate
+      int yield_to_generate = static_cast<int>(expected_yield + 0.5);
+      
       RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
-      data = pdf.generate(*obs_argset, expected_yield, extend_arg, proto_arg);
+      data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
       delete obs_argset;
       if (proto_set != NULL) {
         delete proto_set;
@@ -391,6 +394,8 @@ namespace Toy {
       proto_dataset = MergeDatasetVector(proto_data);
     }
     
+    double yield_lost_due_rounding = 0.0;
+    
     while ((sub_pdf = (RooAbsPdf*)it->Next())) {
       if (sub_pdf->IsA()->InheritsFrom("RooAbsPdf")) {
         double sub_yield, coef;
@@ -434,6 +439,13 @@ namespace Toy {
           }
           proto_dataset_pos += sub_yield;
           sub_proto_data.push_back(sub_proto_dataset);
+        }
+        
+        yield_lost_due_rounding += sub_yield - static_cast<int>(sub_yield+0.5);
+        int add_roundup_yield = static_cast<int>(yield_lost_due_rounding+0.5);
+        if (add_roundup_yield >= 1) {
+          sub_yield += add_roundup_yield;
+          yield_lost_due_rounding = 0.0;
         }
         
         if (data) {
