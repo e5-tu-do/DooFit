@@ -4,6 +4,9 @@
 #include <cstring>
 #include <vector>
 
+// POSIX/UNIX
+#include <unistd.h>
+
 // boost
 #include "boost/tuple/tuple.hpp"
 #include "boost/filesystem.hpp"

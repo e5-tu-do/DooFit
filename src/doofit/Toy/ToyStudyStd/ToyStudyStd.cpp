@@ -32,6 +32,7 @@ using namespace RooFit;
 namespace doofit {
 namespace Toy {
   namespace fs = boost::filesystem;
+  bool ToyStudyStd::abort_save_ = false;
   
   ToyStudyStd::ToyStudyStd(const CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy) :
   config_common_(cfg_com),
@@ -39,7 +40,7 @@ namespace Toy {
   fit_results_(),
   evaluated_values_(NULL)
   {
-    
+    abort_save_ = false;
   }
   
   ToyStudyStd::~ToyStudyStd() {
@@ -50,13 +51,16 @@ namespace Toy {
   }
   
   void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result) const {
+    signal(SIGINT, ToyStudyStd::HandleSignal);
+    signal(SIGTERM, ToyStudyStd::HandleSignal);
+    
     const string& filename = config_toystudy_.store_result_filename_treename().first();
     const string& treename = config_toystudy_.store_result_filename_treename().second();
     if (filename.length() == 0) {
       serr << "Filename to save fit result into not set! Cannot store fit result." << endmsg;
       throw ExceptionCannotStoreFitResult();
     }
-
+    
     utils::FileLock flock(filename);
     if (!flock.Lock()) {
       swarn << "File to save fit result to " << filename << " is locked. Waiting for unlock." << endmsg;
@@ -65,32 +69,49 @@ namespace Toy {
       utils::Sleep(2);
     }
 
-    sinfo << "Saving fit result to file " << filename << endmsg;
-    bool file_existing = fs::exists(filename);
-    TFile f(fs::absolute(filename).string().c_str(),"update");
-    if (f.IsZombie() || !f.IsOpen()) {
-      serr << "Cannot open file which may be corrupted." << endmsg;
-      flock.Unlock();
-      throw ExceptionCannotStoreFitResult();
-    } else {
-      TTree* tree_results = NULL;
-      if (file_existing) {      
-        tree_results = (TTree*)f.Get(treename.c_str());
-      } 
-      
-      if (tree_results == NULL) {
-        tree_results = new TTree(treename.c_str(), "Tree for toy study fit results");
-        tree_results->Branch("fit_results", "RooFitResult", &fit_result, 64000, 0);
-      } else {      
-        tree_results->SetBranchAddress("fit_results", &fit_result);
+    if (!abort_save_) {
+      sinfo << "Saving fit result to file " << filename << endmsg;
+      bool file_existing = fs::exists(filename);
+      TFile f(fs::absolute(filename).string().c_str(),"update");
+      if (f.IsZombie() || !f.IsOpen()) {
+        serr << "Cannot open file which may be corrupted." << endmsg;
+        flock.Unlock();
+        throw ExceptionCannotStoreFitResult();
+      } else {
+        if (!abort_save_) {
+          TTree* tree_results = NULL;
+          if (file_existing) {      
+            tree_results = (TTree*)f.Get(treename.c_str());
+          } 
+          
+          if (tree_results == NULL) {
+            tree_results = new TTree(treename.c_str(), "Tree for toy study fit results");
+            tree_results->Branch("fit_results", "RooFitResult", &fit_result, 64000, 0);
+          } else {      
+            tree_results->SetBranchAddress("fit_results", &fit_result);
+          }
+          
+          tree_results->Fill();
+          tree_results->Write("",TObject::kOverwrite);
+        } else {
+          swarn << "Caught signal. Did not save fit result although file was opened. Trying to close file gracefully." << endmsg;
+        }
+          
+        f.Close();
+        
+        flock.Unlock();
       }
-      
-      tree_results->Fill();
-      tree_results->Write("",TObject::kOverwrite);
-      f.Close();
-      
-      flock.Unlock();
+    } else {
+      swarn << "Aborting save as signal to end execution was caught before." << endmsg;
     }
+    
+    if (abort_save_) {
+      swarn << "Caught signal. If we reached this, the file should have been closed gracefully without damage." << endmsg;
+      exit(1);
+    }
+    
+    signal(SIGINT, SIG_DFL);
+    signal(SIGTERM, SIG_DFL);
   }
   
   void ToyStudyStd::ReadFitResults() {
@@ -246,6 +267,11 @@ namespace Toy {
     new_var->setUnit(other.getUnit());
     
     return *new_var;
+  }
+  
+  void ToyStudyStd::HandleSignal(int param) {
+    swarn << "Caught signal " << param << " during save of fit result. Will try to end gracefully without damaging the file." << endmsg;
+    abort_save_ = true;
   }
 } // namespace Toy
 } // namespace doofit

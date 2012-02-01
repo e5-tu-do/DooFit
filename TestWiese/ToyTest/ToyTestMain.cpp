@@ -176,7 +176,7 @@ void TestToys(int argc, char *argv[]) {
   TFile ws_file("ws.root", "read");
   RooWorkspace* ws = (RooWorkspace*)ws_file.Get("ws");
   
-  RooAbsPdf* pdf = ws->pdf("pdfFull");
+  RooAbsPdf* pdf = ws->pdf("pdf_add");
   ws->Print();
   
   cfg_tfac.set_workspace(ws);

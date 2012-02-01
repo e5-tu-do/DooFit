@@ -145,6 +145,16 @@ namespace Toy {
      */
     RooRealVar& CopyRooRealVar(const RooRealVar& other, const std::string& new_name="", const std::string& new_title="") const;
     
+    /**
+     *  @brief Handle Unix signals
+     *
+     *  In order to increase safety when saving fit results, this function 
+     *  handles UNIX/POSIX signals to avoid file corruption.
+     *
+     *  @param param the signal parameter
+     */
+    static void HandleSignal(int param);
+    
    private:
     /**
      *  \brief CommonConfig instance to use
@@ -162,6 +172,14 @@ namespace Toy {
      *  \brief RooDataSet for all evaluated parameters, their pulls and so on
      */
     RooDataSet* evaluated_values_;
+    /**
+     *  \brief Static variable for ToyFactoryStd::HandleSignal(int)
+     *
+     *  This variable will be set to true by ToyFactoryStd::HandleSignal(int) in
+     *  case of a signal to abort the program. ToyStudyStd::StoreFitResult() 
+     *  will try to end gracefully afterwards.
+     */
+    static bool abort_save_;
   };
   
   /** \struct ExceptionCannotStoreFitResult
