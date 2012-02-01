@@ -10,6 +10,7 @@
 // boost
 #include "boost/tuple/tuple.hpp"
 #include "boost/filesystem.hpp"
+#include "boost/math/special_functions/round.hpp"
 
 // ROOT
 #include "TClass.h"
@@ -336,7 +337,7 @@ namespace Toy {
       }
       
       // correct rounding of number of events to generate
-      int yield_to_generate = static_cast<int>(expected_yield + 0.5);
+      int yield_to_generate = boost::math::iround(expected_yield + 0.5);
       
       RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
       data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
@@ -441,9 +442,9 @@ namespace Toy {
           sub_proto_data.push_back(sub_proto_dataset);
         }
         
-        yield_lost_due_rounding += sub_yield - static_cast<int>(sub_yield+0.5);
-        int add_roundup_yield = static_cast<int>(yield_lost_due_rounding+0.5);
-        if (add_roundup_yield >= 1) {
+        yield_lost_due_rounding += sub_yield - boost::math::iround(sub_yield+0.5);
+        int add_roundup_yield = boost::math::iround(yield_lost_due_rounding);
+        if (TMath::Abs(add_roundup_yield) >= 1) {
           sub_yield += add_roundup_yield;
           yield_lost_due_rounding = 0.0;
         }
