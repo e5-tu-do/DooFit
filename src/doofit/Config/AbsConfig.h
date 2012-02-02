@@ -45,6 +45,10 @@
  * export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOFITSYS/lib
  * @endcode
  * 
+ * @subsection mp_externalusage Using DooFit from an external project
+ *
+ * In the external project, adapt your CMake... 
+ *
  */
 
 /** @namespace Config
