@@ -47,7 +47,33 @@
  * 
  * @subsection mp_externalusage Using DooFit from an external project
  *
- * In the external project, adapt your CMake... 
+ * In the external project, adapt your <tt>CMakeLists.txt</tt> file to find 
+ * DooFit and copy the provided <tt>FindDooFit.cmake</tt> (can be found in 
+ * <tt>external/</tt> directory of DooFit) into your CMake modules path (which
+ * can be configured in CMakeLists.txt). The following example shows this 
+ * procedure:
+ *
+ * @code
+ * # Append local directory cmake/Modules to $CMAKE_MODULE_PATH.
+ * # This is where you want to put the provided FindDooFit.cmake.
+ * set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+ * 
+ * # Try to find DooFit (this requires $DOOFITSYS to be set)
+ * find_package(DooFit)
+ * 
+ * # Tell CMake to also use DooFit includes and libraries in its search path for
+ * # includes and libraries.
+ * include_directories(${DooFit_INCLUDE_DIR})
+ * link_directories(${DooFit_LIBRARY_DIR})
+ *
+ * # Only if DooFit is found build this executable and link it.
+ * # this will protect the complete project from not compiling for anyone not 
+ * # having DooFit installed. 
+ * if (DooFit_FOUND)
+ *   add_executable(MyBinary MainBinaryMain.cpp)
+ *   target_link_libraries(MyBinary ${DooFit_LIBRARIES} ${MY_OTHER_LIBRARIES})
+ * endif (DooFit_FOUND)
+ * @endcode
  *
  */
 
