@@ -1,4 +1,4 @@
-/** @class Config::AbsTypeCommaSeparated
+/** @class doofit::Config::AbsTypeCommaSeparated
  *  @brief Abstract base class for complex Config members with comma-separated
  *         string representation
  *
