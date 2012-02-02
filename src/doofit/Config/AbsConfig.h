@@ -67,6 +67,12 @@
  * endif (DooFit_FOUND)
  * @endcode
  *
+ * @section mp_usage How to use DooFit objects
+ *
+ * Using DooFit from external projects is simple. However, one should get an 
+ * idea of the design philosophy to understand the way, DooFit should be used.
+ * An integral part is the doofit::Config system...
+ *
  */
 
 /** @namespace doofit::Config
