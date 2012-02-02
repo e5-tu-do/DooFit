@@ -122,7 +122,7 @@ namespace doofit {
    */
   
 namespace Config {
-  /** \class Config::AbsConfig
+  /** \class doofit::Config::AbsConfig
    *  \brief DooFit abstract Config base class.
    *
    *  This is the abstract base class for all DooFit config objects. It offers
