@@ -16,6 +16,10 @@
  * RooFit by providing high level functions for generating complex PDFs, fitting
  * these, plotting or conducting toy studies.
  *
+ * @section mp_installation Installation
+ *
+ * The intended usage of DooFit is as a framework
+ *
  */
 
 /** @namespace Config

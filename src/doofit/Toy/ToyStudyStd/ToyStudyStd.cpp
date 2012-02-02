@@ -218,7 +218,8 @@ namespace Toy {
       RooRealVar* sigma    = NULL;
       RooGaussian* gauss   = NULL;
       RooPlot* param_frame = NULL;
-      if (param_name.substr(param_name.length()-5).compare("_pull") == 0) {
+      if (param_name.substr(param_name.length()-5).compare("_pull") == 0 || 
+          param_name.substr(param_name.length()-4).compare("_res") == 0) {
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
         sigma = new RooRealVar("s", "sigma of pull", (minmax.second-minmax.first)/10.0,0,minmax.second-minmax.first);
         gauss = new RooGaussian("pdf_pull", "Gaussian PDF of pull", *parameter, *mean, *sigma);
@@ -268,12 +269,18 @@ namespace Toy {
       TString res_name  = parameter->GetName() + TString("_res");
       TString res_desc  = TString("Residual of ") + parameter->GetTitle();
       
+      double par_error = ((RooRealVar*)parameter_list.find(parameter->GetName()))->getError();
+      
       RooRealVar& par  = CopyRooRealVar(*parameter);
       RooRealVar* pull = new RooRealVar(pull_name, pull_desc, -100, 100);
+      RooRealVar* res  = new RooRealVar(res_name, res_desc, -10*par_error, +10*par_error);
       RooRealVar& init = CopyRooRealVar(*(RooRealVar*)fit_result.floatParsInit().find(par.GetName()), std::string(init_name), std::string(init_desc));
-    
+      
       double pull_value = (par.getVal() - init.getVal())/par.getError();
       pull->setVal(pull_value);
+      
+      double res_value = (par.getVal() - init.getVal());
+      res->setVal(res_value);
             
       if (TMath::Abs(pull_value) > 5.0) {
         swarn << "Pull for " << parameter->GetName() << " is " << pull_value
@@ -283,6 +290,7 @@ namespace Toy {
         
       parameters.addOwned(par);
       parameters.addOwned(*pull);
+      parameters.addOwned(*res);
       parameters.addOwned(init);
     }
 
