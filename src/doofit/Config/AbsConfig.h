@@ -1,3 +1,17 @@
+/** @namespace doofit
+ *
+ *  @brief Global DooFit namespace
+ *
+ *  This namespace by definition contains all DooFit namespaces, classes and 
+ *  functions to ensure that DooFit can be used without naming conflicts inside 
+ *  other projects.
+ *
+ */
+
+/** @mainpage DooFit fitting framework
+ *
+ */
+
 /** @namespace Config
  *
  *  @brief Config subsystem namespace.
