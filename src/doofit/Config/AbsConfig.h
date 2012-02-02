@@ -71,7 +71,14 @@
  *
  * Using DooFit from external projects is simple. However, one should get an 
  * idea of the design philosophy to understand the way, DooFit should be used.
- * An integral part is the doofit::Config system...
+ * An integral part is the doofit::Config system which relies on having a 
+ * distinct config object for each sub-module of DooFit. Config objects are the 
+ * interface between user and module. They are needed at initialization of a 
+ * module object and can be configured via setter functions, command line 
+ * arguments and config files. One always requires a doofit::CommonConfig 
+ * instance and the specific instance of the module to use. 
+ *
+ * To be continued...
  *
  */
 

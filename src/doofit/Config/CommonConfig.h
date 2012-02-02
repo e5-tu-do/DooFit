@@ -1,4 +1,4 @@
-/** \class CommonConfig
+/** \class doofit::CommonConfig
  *  \brief DooFit common and general Config class for all applications.
  *
  *  This common Config object is responsible for all options common to all 
