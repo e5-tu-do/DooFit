@@ -1,14 +1,6 @@
 #ifndef TOYFACTORYSTD_h
 #define TOYFACTORYSTD_h
 
-/** @namespace Toy
- *
- *  @brief Toy subsystem namespace.
- *
- *  This namespace is responsible for toy sample creation and toy studies.
- *
- */
-
 // STL
 #include <cstring>
 
@@ -27,6 +19,13 @@ class RooArgSet;
 class TFile;
 
 namespace doofit {
+  /** @namespace Toy
+   *
+   *  @brief Toy subsystem namespace.
+   *
+   *  This namespace is responsible for toy sample creation and toy studies.
+   *
+   */
 
 class CommonConfig; 
   
