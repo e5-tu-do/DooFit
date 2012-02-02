@@ -23,8 +23,15 @@
  * and interfaced from other external projects. FindDooFit CMake modules are 
  * supplied which allow easy integration of DooFit in any other CMake project.
  *
+ * @subsection mp_building Building DooFit
  * 
- *
+ * To build DooFit, download it either as a release version or checkout from 
+ * SVN. Create a @c build directory where you invoke CMake and install DooFit.
+ * 
+ * @code
+ * cmake -DCMAKE_INSTALL_PREFIX=/path/to/install/to /path/of/doofit/source
+ * @endcode
+ * 
  */
 
 /** @namespace Config
