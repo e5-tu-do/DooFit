@@ -30,6 +30,19 @@
  * 
  * @code
  * cmake -DCMAKE_INSTALL_PREFIX=/path/to/install/to /path/of/doofit/source
+ * make
+ * make install
+ * @endcode
+ *
+ * Afterwards set the environment variable @c $DOOFITSYS to the install location
+ * as set above. If not installing into a standard location like @c /usr/local
+ * or similar, you also have to set @c $LD_LIBRARY_PATH (on Linux) or 
+ * @c $DYLD_LIBRARY_PATH (on Mac OS) to include @c $DOOFITSYS/lib. Best practice
+ * probably is to set these in your @c ~/.bashrc or globally.
+ *
+ * @code
+ * export DOOFITSYS=/path/to/install/to
+ * export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOFITSYS/lib
  * @endcode
  * 
  */
