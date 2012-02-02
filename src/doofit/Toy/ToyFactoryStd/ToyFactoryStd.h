@@ -19,7 +19,7 @@ class RooArgSet;
 class TFile;
 
 namespace doofit {
-  /** @namespace Toy
+  /** @namespace doofit::Toy
    *
    *  @brief Toy subsystem namespace.
    *
