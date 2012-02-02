@@ -1,12 +1,4 @@
-/** @namespace doofit
- *
- *  @brief Global DooFit namespace
- *
- *  This namespace by definition contains all DooFit namespaces, classes and 
- *  functions to ensure that DooFit can be used without naming conflicts inside 
- *  other projects.
- *
- */
+
 
 /** @mainpage DooFit fitting framework
  *
@@ -77,7 +69,7 @@
  *
  */
 
-/** @namespace Config
+/** @namespace doofit::Config
  *
  *  @brief Config subsystem namespace.
  *
@@ -113,6 +105,16 @@ namespace boost { namespace program_options {
 // from RooFit
 
 namespace doofit {
+  /** @namespace doofit
+   *
+   *  @brief Global DooFit namespace
+   *
+   *  This namespace by definition contains all DooFit namespaces, classes and 
+   *  functions to ensure that DooFit can be used without naming conflicts inside 
+   *  other projects.
+   *
+   */
+  
 namespace Config {
   /** \class Config::AbsConfig
    *  \brief DooFit abstract Config base class.
