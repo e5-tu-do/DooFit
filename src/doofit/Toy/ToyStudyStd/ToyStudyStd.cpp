@@ -18,13 +18,15 @@
 #include "RooFitResult.h"
 #include "RooArgList.h"
 #include "RooDataSet.h"
+#include "RooRealVar.h"
+#include "RooGaussian.h"
 
 // from Project
 #include "doofit/Config/CommonConfig.h"
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
-#include "doofit/utils//MsgStream.h"
-#include "doofit/utils//utils.h"
-#include "doofit/utils//FileLock.h"
+#include "doofit/utils/MsgStream.h"
+#include "doofit/utils/utils.h"
+#include "doofit/utils/FileLock.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -194,22 +196,57 @@ namespace Toy {
       serr << "Cannot plot as no fit results are evaluated." << endmsg;
       throw ExceptionCannotEvaluateFitResults();
     }
+ 
+    sinfo.Ruler();
+    sinfo << "Plotting parameter distributions." << endmsg;
     
     TCanvas canvas("canvas_toystudy", "canvas", 800, 600);
     const RooArgSet* parameters = evaluated_values_->get();
     TIterator* parameter_iter   = parameters->createIterator();
     RooRealVar* parameter       = NULL;
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
-      std::pair<double,double> minmax = utils::MedianLimitsForTuple(*evaluated_values_, parameter->GetName());
-      sdebug << parameter->GetName() <<  " -> min,max: " << minmax.first << "," << minmax.second << endmsg;
+      std::string param_name = parameter->GetName();
+      std::pair<double,double> minmax = utils::MedianLimitsForTuple(*evaluated_values_, param_name);
+      sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
+            
+      // for all pulls fit a gaussian
+      RooRealVar* mean     = NULL;
+      RooRealVar* sigma    = NULL;
+      RooGaussian* gauss   = NULL;
+      RooPlot* param_frame = NULL;
+      if (param_name.substr(param_name.length()-5).compare("_pull") == 0) {
+        mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
+        sigma = new RooRealVar("s", "sigma of pull", (minmax.second-minmax.first)/10.0,0,minmax.second-minmax.first);
+        gauss = new RooGaussian("pdf_pull", "Gaussian PDF of pull", *parameter, *mean, *sigma);
+        
+        sinfo.increment_indent(2);
+        sinfo << "Fitting Gaussian distribution for parameter " << param_name << endmsg;
+        RooFitResult* fit_result = gauss->fitTo(*evaluated_values_, NumCPU(1), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true));
+        fit_result->Print("v");
+        sinfo.increment_indent(-2);
+      }
+      
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
       evaluated_values_->plotOn(frame);
+      if (gauss != NULL) {
+        gauss->plotOn(frame);
+        param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
+      }
       frame->Draw();
       TString plot_name = parameter->GetName();
       utils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory());
       
       delete frame;
+      
+      if (gauss != NULL) {
+        //delete param_frame;
+        delete gauss;
+        delete sigma;
+        delete mean;
+      }
     }
+    
+    sinfo.Ruler();
   }
   
   RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) const {
