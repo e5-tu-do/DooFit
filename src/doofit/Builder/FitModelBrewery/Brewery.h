@@ -1,4 +1,4 @@
-/** @namespace builder::fitmodelbrewery
+/** @namespace doofit::builder::fitmodelbrewery
   * @brief This namespace encapsulates all classes and methods related to the
   * FitModelBrewery PDF building project
   * 
