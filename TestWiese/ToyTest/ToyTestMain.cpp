@@ -189,7 +189,7 @@ void TestToys(int argc, char *argv[]) {
   
   RooDataSet* data = NULL;
   data = tfac.Generate();
-  
+    
   pdf->getParameters(data)->readFromFile("generation.par");
   RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
   
