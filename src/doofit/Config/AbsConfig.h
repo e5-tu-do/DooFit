@@ -18,7 +18,12 @@
  *
  * @section mp_installation Installation
  *
- * The intended usage of DooFit is as a framework
+ * The intended usage of DooFit is as a framework and therefore @a not to build
+ * custom user code inside of DooFit. However, DooFit can be easily installed 
+ * and interfaced from other external projects. FindDooFit CMake modules are 
+ * supplied which allow easy integration of DooFit in any other CMake project.
+ *
+ * 
  *
  */
 
