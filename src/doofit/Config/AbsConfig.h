@@ -10,6 +10,12 @@
 
 /** @mainpage DooFit fitting framework
  *
+ * @section mp_introduction Introduction
+ *
+ * DooFit is a RooFit-based fitting framework intended to assist in fitting with
+ * RooFit by providing high level functions for generating complex PDFs, fitting
+ * these, plotting or conducting toy studies.
+ *
  */
 
 /** @namespace Config
