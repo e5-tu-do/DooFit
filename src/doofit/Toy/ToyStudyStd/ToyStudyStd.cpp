@@ -13,6 +13,7 @@
 #include "TBranch.h"
 #include "TMath.h"
 #include "TStopwatch.h"
+#include "TROOT.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -200,7 +201,10 @@ namespace Toy {
     sinfo.Ruler();
     sinfo << "Plotting parameter distributions." << endmsg;
     
+    gROOT->SetStyle("Plain");
+    utils::setStyle();
     TCanvas canvas("canvas_toystudy", "canvas", 800, 600);
+    
     const RooArgSet* parameters = evaluated_values_->get();
     TIterator* parameter_iter   = parameters->createIterator();
     RooRealVar* parameter       = NULL;
