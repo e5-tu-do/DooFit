@@ -1,4 +1,4 @@
-/** @namespace Pdf2WsStd
+/** @namespace doofit::Pdf2WsStd
  *  @brief DooFit Pdf2WsStd namespace.
  *
  *  The Pdf2WsStd namespace contains the basic helper functions to allow
@@ -16,7 +16,7 @@
  *  @see Pdf2WsStd::ProptimeErr
  *  
  */
-/** @namespace Pdf2WsStd::CommonFuncs
+/** @namespace doofit::Pdf2WsStd::CommonFuncs
  *  @brief DooFit Pdf2WsStd::CommonFuncs namespace with helper functions.
  *
  *  The Pdf2WsStd::CommonFuncs namespace contains functions used by other 
