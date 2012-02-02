@@ -1,4 +1,4 @@
-/** @class Config::ConfigCstStringVector
+/** @class doofit:.Config::ConfigCstStringVector
  *  @brief TOURETTE SUCKER, I HAVE NO DESCRIPTION. SHAME ON ME.
  *
  *  This class is merely a container for Config objects to store components
