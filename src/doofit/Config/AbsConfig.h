@@ -89,7 +89,7 @@
  * 
  * int main(int argc, char* argv[]) {
  *   // Initialize config objects (mandatory).
- *   // Notice how the first object gets initialised via argc/argv from command
+ *   // Notice how the first object gets initialized via argc/argv from command
  *   // line. All following config objects get the former config object passed 
  *   // on to take over all previously unrecognized options.
  *   // Parsing a config file will be handled automatically and can be 
