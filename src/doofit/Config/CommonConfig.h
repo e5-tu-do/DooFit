@@ -1,4 +1,4 @@
-/** \class doofit::CommonConfig
+/** \class doofit::Config::CommonConfig
  *  \brief DooFit common and general Config class for all applications.
  *
  *  This common Config object is responsible for all options common to all 
@@ -30,6 +30,7 @@
 // forward declarations
 
 namespace doofit {
+namespace Config {
 class CommonConfig : public Config::AbsConfig {
  public:
   /**
@@ -98,6 +99,7 @@ class CommonConfig : public Config::AbsConfig {
    */
   //ClassDef(CommonConfig,1);
 };
-}
+} // namespace Config
+} // namespace doofit
 
 #endif //COMMONCONFIG_h

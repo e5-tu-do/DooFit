@@ -20,6 +20,7 @@
 using namespace std;
 using namespace ROOT;
 using namespace RooFit;
+using namespace doofit::utils;
 
 namespace doofit {
 

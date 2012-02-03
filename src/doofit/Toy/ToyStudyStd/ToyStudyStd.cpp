@@ -24,6 +24,7 @@
 
 // from Project
 #include "doofit/Config/CommonConfig.h"
+#include "doofit/Config/CommaSeparatedPair.h"
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
 #include "doofit/utils/MsgStream.h"
 #include "doofit/utils/utils.h"
@@ -31,13 +32,14 @@
 
 using namespace ROOT;
 using namespace RooFit;
+using namespace doofit::utils;
 
 namespace doofit {
 namespace Toy {
   namespace fs = boost::filesystem;
   bool ToyStudyStd::abort_save_ = false;
   
-  ToyStudyStd::ToyStudyStd(const CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy) :
+  ToyStudyStd::ToyStudyStd(const Config::CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy) :
   config_common_(cfg_com),
   config_toystudy_(cfg_tstudy),
   fit_results_(),
@@ -118,7 +120,7 @@ namespace Toy {
   }
   
   void ToyStudyStd::ReadFitResults() {
-    const std::vector<Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
+    const std::vector<doofit::Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
     
     sinfo.Ruler();
     
@@ -134,7 +136,7 @@ namespace Toy {
     int results_stored = 0;
     int results_neglected = 0;
     
-    for (std::vector<Config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
+    for (std::vector<doofit::Config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
       sinfo << "Loading fit results from " << (*it_files).first() << endmsg;
       TFile file((*it_files).first().c_str(), "read");
       TTree* tree = (TTree*)file.Get((*it_files).second().c_str());

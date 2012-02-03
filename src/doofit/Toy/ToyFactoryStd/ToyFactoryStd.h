@@ -27,7 +27,9 @@ namespace doofit {
    *
    */
 
-class CommonConfig; 
+namespace Config {
+  class CommonConfig; 
+}
   
 namespace Toy {
   /** \class ToyFactoryStd
@@ -90,7 +92,7 @@ namespace Toy {
      *  @param cfg_com CommonConfig for the general configuration.
      *  @param cfg_tfac ToyFactoryStdConfig for this specific toy factory.
      */
-    ToyFactoryStd(const CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac);
+    ToyFactoryStd(const Config::CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac);
     
     /**
      *  \brief Destructor for ToyFactoryStd
@@ -350,7 +352,7 @@ namespace Toy {
     /**
      *  \brief CommonConfig instance to use
      */
-    const CommonConfig& config_common_;
+    const Config::CommonConfig& config_common_;
     /**
      *  \brief ToyFactoryStdConfig instance to use
      */

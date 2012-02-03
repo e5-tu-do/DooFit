@@ -12,7 +12,8 @@
 #include "RooAbsArg.h"
 
 namespace doofit {
-/*! \class MsgStream 
+namespace utils {
+/*! \class doofit::utils::MsgStream 
  * \brief A class for message output using different messages and colors.
  *
  * MsgStream is a handler class to output messages. It can be used like 
@@ -248,6 +249,7 @@ extern MsgStream scfg;
 extern MsgStream sout;
 /// MsgStream for debug messages. Color: None
 extern MsgStream sdebug;
+} // namespace utils
 } // namespace doofit
 
 #endif

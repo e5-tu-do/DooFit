@@ -10,7 +10,6 @@
 
 // from project
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
-#include "doofit/Config/CommonConfig.h"
 
 // forward declarations
 class RooFitResult;
@@ -18,6 +17,10 @@ class RooDataSet;
 class RooRealVar;
 
 namespace doofit {
+  namespace Config {
+    class CommonConfig; 
+  }
+  
 namespace Toy {
   /** @class ToyStudyStd
    *  @brief Standard toy study for DooFit to help conduct and evaluate mass toy fits
@@ -40,7 +43,7 @@ namespace Toy {
      *  @param cfg_com CommonConfig for the general configuration.
      *  @param cfg_tstudy ToyStudyStdConfig for this specific toy study.
      */
-    ToyStudyStd(const CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy);
+    ToyStudyStd(const Config::CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy);
     
     /**
      *  @brief Destructor for ToyStudyStd
@@ -159,7 +162,7 @@ namespace Toy {
     /**
      *  \brief CommonConfig instance to use
      */
-    const CommonConfig& config_common_;
+    const Config::CommonConfig& config_common_;
     /**
      *  \brief ToyFactoryStdConfig instance to use
      */

@@ -15,6 +15,7 @@ namespace doofit {
 using namespace std;
 using namespace boost::property_tree;
 using namespace RooFit;
+using namespace doofit::utils;
 
 namespace Builder{ 
 namespace BobTheBuilder{

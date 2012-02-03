@@ -9,6 +9,8 @@ using namespace std;
 
 namespace doofit {
 namespace Config {
+  using namespace doofit::utils;
+  
   void DiscreteProbabilityDistribution::Parse(string str) {
     vector<string> elements = DecomposeString(str);
     

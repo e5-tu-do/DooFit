@@ -31,7 +31,7 @@ namespace fitmodelbrewery {
 class Brewery {
  public:
   Brewery();
-  Brewery(const CommonConfig& cfg_com, const BreweryConfig& cfg_brw);
+  Brewery(const Config::CommonConfig& cfg_com, const BreweryConfig& cfg_brw);
   ~Brewery();
  
  protected:

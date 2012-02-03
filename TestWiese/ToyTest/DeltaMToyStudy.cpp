@@ -158,7 +158,7 @@ void TestToys(int argc, char *argv[]) {
   using namespace Toy;
   using namespace RooFit;
   
-  CommonConfig cfg_com("common");
+  doofit::Config::CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
   
   BuilderStdConfig cfg_bld("builder");
