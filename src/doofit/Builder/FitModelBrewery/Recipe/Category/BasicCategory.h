@@ -61,7 +61,7 @@ class BasicCategory : public AbsCategory {
   
 };
 
-/** @struct RegistrationFailed
+/** @struct doofit::builder::fitmodelbrewery::RegistrationFailed
  *  @brief Registration of an object to the map fails
  */
 struct ExcBasicCategoryTypeExists: public virtual boost::exception, public virtual std::exception { 
