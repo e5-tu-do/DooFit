@@ -1,11 +1,11 @@
-/** \class ConfigTest
+/** \class doofit::testwiese::ConfigTest
  *  \brief DooFit Config test class.
  *
  *  This is a test config class implementation to test the abstract Config base
  *  class.
  */
 
-/** \class ConfigTestSecond
+/** \class doofit::testwiese::ConfigTestSecond
  *  \brief DooFit Config second test class.
  *
  *  This is a second test config class implementation to test the abstract 
@@ -48,6 +48,16 @@ namespace boost { namespace program_options {
 #endif /* __CINT __ */
 
 namespace doofit {
+namespace testwiese {  
+  /** @namespace doofit::testwiese
+   *
+   *  @brief Namespace for testing purposes
+   *
+   *  This namespace is to test implementations, ideas or concepts. No 
+   *  production code should go in here.
+   *
+   */
+
 // forward declarations
 class ConfigTestAbstractType;
 
@@ -338,6 +348,7 @@ private:
   std::vector<ConfigTestAbstractType> my_abstract_type_;
   ///@}
 };
+} // namespace testwiese
 } // namespace doofit
 
 #endif //CONFIGTEST_h

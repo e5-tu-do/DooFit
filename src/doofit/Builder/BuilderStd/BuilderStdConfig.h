@@ -1,4 +1,4 @@
-/** \class BuilderStdConfig
+/** \class doofit::BuilderStdConfig
  *  \brief DooFit Config class for the BuilderStd Pdf builder.
  *
  *  This Config object is responsible for all options of the BuilderStd not

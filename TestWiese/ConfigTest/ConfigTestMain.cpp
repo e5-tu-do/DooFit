@@ -21,6 +21,7 @@
 #include <iostream>
 
 using namespace doofit;
+using namespace doofit::testwiese;
 
 int main(int argc, char *argv[]) {
   try {

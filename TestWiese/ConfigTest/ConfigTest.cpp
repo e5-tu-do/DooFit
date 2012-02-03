@@ -20,6 +20,7 @@ using namespace std;
 namespace po = boost::program_options;
 
 namespace doofit {
+namespace testwiese {
 ConfigTest::ConfigTest(const std::string& name) :
 Config::AbsConfig(name),
 my_test_switch_(false),
@@ -121,4 +122,5 @@ void ConfigTestAbstractType::Print(std::ostream& os) const {
     os << "; k: " << (*itmap).first << ", v: " << (*itmap).second;
   }
 }
+} // namspace testwiese
 } // namspace DooFit

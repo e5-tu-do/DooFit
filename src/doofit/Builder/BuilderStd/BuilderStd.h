@@ -1,9 +1,9 @@
-/** \class BuilderStd
- *  \brief Standard Builder. Adds Pdf object to a workspace.
+/** @class doofit::BuilderStd
+ *  @brief Standard Builder. Adds Pdf object to a workspace.
  *
  *  This Builder class is meant as standard implementation. The configuration in
  *  the BuilderStdConfig class is used to create the correct Pdfs on a workspace.
- *  \see BuilderStdConfig
+ *  @see BuilderStdConfig
  */
 
 #ifndef BUILDERSTD_h
