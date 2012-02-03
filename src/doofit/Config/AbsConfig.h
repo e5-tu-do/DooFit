@@ -88,19 +88,31 @@
  * #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
  * 
  * int main(int argc, char* argv[]) {
+ *   // Initialize config objects (mandatory).
+ *   // Notice how the first object gets initialised via argc/argv from command
+ *   // line. All following config objects get the former config object passed 
+ *   // on to take over all previously unrecognized options.
+ *   // Parsing a config file will be handled automatically and can be 
+ *   // configured via -c or --config-file command line option.
+ *   // See examples/toys directory for config file examples.
  *   doofit::CommonConfig cfg_com("common");
  *   cfg_com.InitializeOptions(argc, argv);
  *   doofit::Toy::ToyFactoryStdConfig cfg_tfac("toyfac");
  *   cfg_tfac.InitializeOptions(cfg_com);
  *   
+ *   // Check for a set --help flag and if so, print help and exit gracefully 
+ *   // (recommended).
  *   cfg_com.CheckHelpFlagAndPrintHelp();
  *   
- *   // more custom code, e.g. to set options internally
- *   // not required as configuration via command line/config file is enough
+ *   // More custom code, e.g. to set options internally.
+ *   // Not required as configuration via command line/config file is enough.
  *   ...
  *   
+ *   // Print overview of all options (optional)
  *   cfg_com.PrintAll();
  *
+ *   // Initialize the toy factory module with the config objects and start 
+ *   // generating toy samples.
  *   doofit::Toy::ToyFactoryStd tfac(cfg_com, cfg_tfac);
  *   RooDataSet* data = tfac.Generate();
  * }
