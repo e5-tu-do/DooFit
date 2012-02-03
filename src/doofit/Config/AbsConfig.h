@@ -78,7 +78,33 @@
  * arguments and config files. One always requires a doofit::CommonConfig 
  * instance and the specific instance of the module to use. 
  *
- * To be continued...
+ * Take this example:
+ *
+ * @code
+ * #include "doofit/Config/CommonConfig.h"
+ * #include "doofit/Toy/ToyFactoryStd/ToyFactoryStd.h"
+ * #include "doofit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+ * #include "doofit/Toy/ToyStudyStd/ToyStudyStd.h"
+ * #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
+ * 
+ * int main(int argc, char* argv[]) {
+ *   doofit::CommonConfig cfg_com("common");
+ *   cfg_com.InitializeOptions(argc, argv);
+ *   doofit::Toy::ToyFactoryStdConfig cfg_tfac("toyfac");
+ *   cfg_tfac.InitializeOptions(cfg_com);
+ *   
+ *   cfg_com.CheckHelpFlagAndPrintHelp();
+ *   
+ *   // more custom code, e.g. to set options internally
+ *   // not required as configuration via command line/config file is enough
+ *   ...
+ *   
+ *   cfg_com.PrintAll();
+ *
+ *   doofit::Toy::ToyFactoryStd tfac(cfg_com, cfg_tfac);
+ *   RooDataSet* data = tfac.Generate();
+ * }
+ * @endcode
  *
  */
 
