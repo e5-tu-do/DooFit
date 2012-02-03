@@ -1,4 +1,4 @@
-/** @class Recipe
+/** @class doofit::builder::fitmodelbrewery::Recipe
  *  @brief The Recipe describes the relation of the pdf to be built.
  *
  *  The Recipe defines the relation of pdfs, parameters, etc.
