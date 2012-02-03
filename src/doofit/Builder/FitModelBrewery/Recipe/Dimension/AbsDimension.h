@@ -1,4 +1,4 @@
-/** @class AbsDimension
+/** @class doofit::builder::fitmodelbrewery::AbsDimension
  *  @brief Abstract base class for dimension object
  *
  *  This class is the abstract base class for all dimension object. 
