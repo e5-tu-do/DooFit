@@ -191,7 +191,7 @@ void TestToys(int argc, char *argv[]) {
   data = tfac.Generate();
     
   pdf->getParameters(data)->readFromFile("generation.par");
-  RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
+  RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(true), Hesse(false), Verbose(false),Timer(true));
   
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
   tstudy.StoreFitResult(fit_result);

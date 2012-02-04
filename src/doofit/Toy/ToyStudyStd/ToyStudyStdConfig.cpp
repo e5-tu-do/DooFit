@@ -19,13 +19,15 @@ using namespace doofit::utils;
 namespace doofit {
 namespace Toy {
   ToyStudyStdConfig::ToyStudyStdConfig() : 
-  Config::AbsConfig("empty_name")
+  Config::AbsConfig("empty_name"),
+  handle_asymmetric_errors_(true)
   {
     swarn << "Usage of ToyStudyStdConfig::ToyStudyStdConfig() is not recommended!" <<endmsg;
   }
   
   ToyStudyStdConfig::ToyStudyStdConfig(const std::string& name) :
-  Config::AbsConfig(name)
+  Config::AbsConfig(name),
+  handle_asymmetric_errors_(true)
   {
   }
   
@@ -44,6 +46,8 @@ namespace Toy {
     if (plot_directory_.size() > 0) {
       scfg << "Plot directory:                    " << plot_directory_ << endmsg;
     }
+    
+    scfg << "Using asymmetric errors for pulls: " << handle_asymmetric_errors_ << endmsg;
   }
   
   void ToyStudyStdConfig::DefineOptions() {
@@ -52,7 +56,8 @@ namespace Toy {
     generation->add_options()
     (GetOptionString("store_result_filename_treename").c_str(), po::value<Config::CommaSeparatedPair>(&store_result_filename_treename_),"File name and tree name to save fit results to (set as filename,treename)")
     (GetOptionString("read_results_filename_treename").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&read_results_filename_treename_)->composing(), "File names and tree names to read fit results from (set as filename,treename)")
-    (GetOptionString("plot_directory").c_str(), po::value<std::string>(&plot_directory_), "Plot directory for evaluation of fit results");
+    (GetOptionString("plot_directory").c_str(), po::value<std::string>(&plot_directory_), "Plot directory for evaluation of fit results")
+    (GetOptionString("handle_asymmetric_errors").c_str(), po::value<bool>(&handle_asymmetric_errors_)->default_value(true),"Set to false to not use asymmetric errors for pull calculation (c.f. CDF/ANAL/PUBLIC/5776). Default is true. If unsure, use asymmetric errors.");
     
     descs_visible_.push_back(generation);
   }

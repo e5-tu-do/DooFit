@@ -71,6 +71,13 @@ namespace Toy {
      *  @return current value of plot_directory_
      */
     const std::string& plot_directory() const {return plot_directory_;}
+    /**
+     *  @brief Getter for for handling of asymmetric errors (c.f. CDF/ANAL/PUBLIC/5776)
+     *
+     *  @see ToyStudyStdConfig::set_handle_asymmetric_errors(bool)
+     *  @return current value of handle_asymmetric_errors_
+     */
+    bool handle_asymmetric_errors() const {return handle_asymmetric_errors_;}
     ///@}
 
     /** @name Setter actual options
@@ -95,6 +102,19 @@ namespace Toy {
      *  @param plot_directory new value for plot_directory_
      */
     void set_plot_directory(const std::string& plot_directory) {plot_directory_ = plot_directory;}
+    /**
+     *  @brief Setter for handling of asymmetric errors (c.f. CDF/ANAL/PUBLIC/5776)
+     *
+     *  In case of asymmetric errors for fitted parameters, pulls should 
+     *  normally be calculated using these asymmetric errors to get standard 
+     *  distributed pull distribution. Refer to CDF/ANAL/PUBLIC/5776 for 
+     *  details. By default, ToyStudyStdConfig will use asymmetric errors 
+     *  automatically if available. This option is only needed if the 
+     *  symmetric errors of the parameters are to be used @a always.
+     *
+     *  @param handle_asymmetric_errors whether to handle asymmetric errors (true) or not
+     */
+    void set_handle_asymmetric_errors(bool handle_asymmetric_errors) {handle_asymmetric_errors_ = handle_asymmetric_errors;}
         
     /**
      *  @brief Adder for file names and tree names to read fit result from
@@ -153,6 +173,10 @@ namespace Toy {
      *  @brief Plot directory for evaluation of fit results
      */
     std::string plot_directory_;
+    /**
+     *  @brief Handle asymmetric errors correctly (c.f. CDF/ANAL/PUBLIC/5776)
+     */
+    bool handle_asymmetric_errors_;
     ///@}
   };
 } // namespace Toy

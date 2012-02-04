@@ -278,7 +278,18 @@ namespace Toy {
       RooRealVar* res  = new RooRealVar(res_name, res_desc, -10*par_error, +10*par_error);
       RooRealVar& init = CopyRooRealVar(*(RooRealVar*)fit_result.floatParsInit().find(par.GetName()), std::string(init_name), std::string(init_desc));
       
-      double pull_value = (par.getVal() - init.getVal())/par.getError();
+      double pull_value = 0.0;
+      
+      // asymmetric error handling
+      if (par.hasAsymError() && config_toystudy_.handle_asymmetric_errors()) {
+        if (par.getVal() <= init.getVal()) {
+          pull_value = (init.getVal() - par.getVal())/par.getErrorHi();
+        } else {
+          pull_value = (par.getVal() - init.getVal())/par.getErrorLo();
+        }
+      } else {
+        pull_value = (init.getVal() - par.getVal())/par.getError();
+      }
       pull->setVal(pull_value);
       
       double res_value = (par.getVal() - init.getVal());
