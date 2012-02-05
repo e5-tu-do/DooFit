@@ -66,7 +66,9 @@ namespace Toy {
       }
       sinfo << "Reading parameters from " << config_toyfactory_.parameter_read_file() << endmsg;
       try {
-        config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables())->readFromFile(config_toyfactory_.parameter_read_file().c_str());
+        RooArgSet* argset_parameters = config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables());
+        argset_parameters->readFromFile(config_toyfactory_.parameter_read_file().c_str());
+        delete argset_parameters;
       } catch (const PdfNotSetException& e) {
         if (config_toyfactory_.discrete_probabilities().size() == 0) {
           // could not generate continous sample via PDF, nor is a discrete sample requested
@@ -96,7 +98,7 @@ namespace Toy {
     if (discrete_probabilities.size() > 0) {
       // determine yield and already generated argset for discrete dataset
       double discrete_yield = 0;
-      const RooArgSet* argset_already_generated;
+      const RooArgSet* argset_already_generated = NULL;
       if (data != NULL) {
         // continous PDF was generated, take args and yield from there
         discrete_yield = data->numEntries();
@@ -121,6 +123,8 @@ namespace Toy {
       } else {
         data = data_discrete;
       }
+      
+      if (argset_already_generated != NULL) delete argset_already_generated;
     }
     
     sinfo << "Generation of this sample took " << sw << endmsg;
@@ -135,7 +139,9 @@ namespace Toy {
     
     if (config_toyfactory_.parameter_save_file().size() > 0) {
       sinfo << "Saving parameters to " << config_toyfactory_.parameter_save_file() << endmsg;
-      config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables())->writeToFile(config_toyfactory_.parameter_save_file().c_str());
+      RooArgSet* argset_parameters = config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables());
+      argset_parameters->writeToFile(config_toyfactory_.parameter_save_file().c_str());
+      delete argset_parameters;
     }
     
     sinfo.Ruler();
@@ -548,7 +554,7 @@ namespace Toy {
           double* cum_probs     = new double[num_values];
           double* values        = new double[num_values];
           int*    num_generated = new int[num_values];
-          
+                    
           int j = 0;
           for (std::vector<std::pair<double,double> >::const_iterator it_prob = prob_map.begin(); it_prob != prob_map.end(); ++it_prob) {
             cum_probs[j]     = (*it_prob).second;

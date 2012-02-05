@@ -188,7 +188,13 @@ void TestToys(int argc, char *argv[]) {
   cfg_com.PrintAll();
   
   RooDataSet* data = NULL;
+  
+//  for (int i=0; i<100000; ++i) {
   data = tfac.Generate();
+//    delete data;
+//    gObjectTable->Print(); 
+//    utils::sdebug << i << utils::endmsg;
+//  }
     
   pdf->getParameters(data)->readFromFile("generation.par");
   RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(true), Hesse(false), Verbose(false),Timer(true));
