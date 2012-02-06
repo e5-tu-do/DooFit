@@ -230,6 +230,7 @@ namespace Toy {
         sinfo << "Fitting Gaussian distribution for parameter " << param_name << endmsg;
         RooFitResult* fit_result = gauss->fitTo(*evaluated_values_, NumCPU(1), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true));
         fit_result->Print("v");
+        delete fit_result;
         sinfo.increment_indent(-2);
       }
       
@@ -307,6 +308,7 @@ namespace Toy {
       parameters.addOwned(init);
     }
 
+    delete parameter_iter;
     return parameters;
   }
   

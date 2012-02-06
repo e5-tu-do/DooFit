@@ -173,19 +173,19 @@ void utils::printSystemRecources(TString cmd)
 
 void utils::printPlot(TCanvas* c, TString name, TString dir)
 {
-        cout << "utils::printPlot() : printing plots ..." << endl;
+  cout << "utils::printPlot() : printing plots ..." << endl;
 
-        if ( dir!="" && !dir.EndsWith("/") ) dir += "/";
+  if ( dir!="" && !dir.EndsWith("/") ) dir += "/";
 
 	system("mkdir -p " + dir+"eps/");
 	system("mkdir -p " + dir+"C/");
 	system("mkdir -p " + dir+"png/");
 	system("mkdir -p " + dir+"pdf/");
 
-        c->Print(dir+"eps/" + name + ".eps");
+  c->Print(dir+"eps/" + name + ".eps");
 	c->Print(dir+"C/"   + name + ".C");
-        c->Print(dir+"png/" + name + ".png");
-        c->Print(dir+"pdf/" + name + ".pdf");
+  c->Print(dir+"png/" + name + ".png");
+  c->Print(dir+"pdf/" + name + ".pdf");
 }
 
 /* 
