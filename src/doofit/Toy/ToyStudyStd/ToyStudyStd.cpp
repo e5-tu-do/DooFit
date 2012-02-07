@@ -107,6 +107,7 @@ namespace Toy {
         flock.Unlock();
       }
     } else {
+      flock.Unlock();
       swarn << "Aborting save as signal to end execution was caught before." << endmsg;
     }
     
@@ -222,13 +223,18 @@ namespace Toy {
       RooPlot* param_frame = NULL;
       if (param_name.substr(param_name.length()-5).compare("_pull") == 0 || 
           param_name.substr(param_name.length()-4).compare("_res") == 0) {
+        
+        TString cut = param_name + ">" + boost::lexical_cast<std::string>(minmax.first) + "&&" + param_name + "<" + boost::lexical_cast<std::string>(minmax.second);
+        sdebug << "FITTING " << param_name << " now with a pull window of " << cut << endmsg;
+        RooDataSet mcs_dataset_window("mcs_dataset_window", "MC study dataset with window for pulls", evaluated_values_, RooArgSet(*parameter), cut);
+        
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
         sigma = new RooRealVar("s", "sigma of pull", (minmax.second-minmax.first)/10.0,0,minmax.second-minmax.first);
         gauss = new RooGaussian("pdf_pull", "Gaussian PDF of pull", *parameter, *mean, *sigma);
         
         sinfo.increment_indent(2);
         sinfo << "Fitting Gaussian distribution for parameter " << param_name << endmsg;
-        RooFitResult* fit_result = gauss->fitTo(*evaluated_values_, NumCPU(1), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true));
+        RooFitResult* fit_result = gauss->fitTo(mcs_dataset_window, NumCPU(1), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true));
         fit_result->Print("v");
         delete fit_result;
         sinfo.increment_indent(-2);
