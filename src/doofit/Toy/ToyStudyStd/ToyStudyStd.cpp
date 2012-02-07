@@ -299,7 +299,7 @@ namespace Toy {
       }
       pull->setVal(pull_value);
       
-      double res_value = (par.getVal() - init.getVal());
+      double res_value = (init.getVal() - par.getVal());
       res->setVal(res_value);
             
       if (TMath::Abs(pull_value) > 5.0) {
