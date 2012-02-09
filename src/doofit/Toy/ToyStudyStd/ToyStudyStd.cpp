@@ -191,6 +191,9 @@ namespace Toy {
       evaluated_values_->add(params);
       ++i;
     }
+    
+    PrintUnexpectedPullOverview();
+    
     sinfo << "Evaluated " << i << " fit results." << endmsg;
     sinfo.Ruler();
   }
@@ -263,7 +266,7 @@ namespace Toy {
     sinfo.Ruler();
   }
   
-  RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) const {
+  RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) {
     TStopwatch sw;
     RooArgSet parameters;
 
@@ -306,6 +309,11 @@ namespace Toy {
         swarn << "Pull for " << parameter->GetName() << " is " << pull_value
               << " (too large deviation from expectation)" << endmsg;
         fit_result.Print();
+        if (unexpected_pulls_counter_.count(parameter->GetName()) == 0) {
+          unexpected_pulls_counter_[parameter->GetName()] = 1;
+        } else {
+          unexpected_pulls_counter_[parameter->GetName()]++;
+        }
       }
         
       parameters.addOwned(par);
@@ -342,6 +350,12 @@ namespace Toy {
   void ToyStudyStd::HandleSignal(int param) {
     swarn << "Caught signal " << param << " during save of fit result. Will try to end gracefully without damaging the file." << endmsg;
     abort_save_ = true;
+  }
+  
+  void ToyStudyStd::PrintUnexpectedPullOverview() const {
+    for (std::map<std::string, int>::const_iterator it=unexpected_pulls_counter_.begin(); it!=unexpected_pulls_counter_.end(); ++it) {
+      sinfo << "Parameter " << (*it).first << ", number of times outside of -5..+5 range: " << (*it).second << endmsg;
+    }
   }
 } // namespace Toy
 } // namespace doofit

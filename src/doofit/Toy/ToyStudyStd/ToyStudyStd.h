@@ -118,7 +118,7 @@ namespace Toy {
      *
      *  @todo enhance this to be able to work with asymmetric errors if available
      */
-    RooArgSet BuildEvaluationArgSet(const RooFitResult& fit_result) const;
+    RooArgSet BuildEvaluationArgSet(const RooFitResult& fit_result);
     /**
      *  @brief Evaluate fit result quality
      *
@@ -147,6 +147,13 @@ namespace Toy {
      *  @return the copied RooRealVar
      */
     RooRealVar& CopyRooRealVar(const RooRealVar& other, const std::string& new_name="", const std::string& new_title="") const;
+    /**
+     *  @brief Print an overview of how many pulls are beyond expected range
+     *
+     *  This function will basically print how often each parameter pull was 
+     *  outside the expected range (-5..+5). 
+     */
+    void PrintUnexpectedPullOverview() const;
     
     /**
      *  @brief Handle Unix signals
@@ -175,6 +182,14 @@ namespace Toy {
      *  \brief RooDataSet for all evaluated parameters, their pulls and so on
      */
     RooDataSet* evaluated_values_;
+    /**
+     *  \brief Counter for unexpectedly large pulls
+     *
+     *  This map holds counters for all pulls larger +-5 to check how many 
+     *  (value) pull values for each parameter (key) are outside the -5..+5 
+     *  range.
+     */
+    std::map<std::string, int> unexpected_pulls_counter_;
     /**
      *  \brief Static variable for ToyFactoryStd::HandleSignal(int)
      *
