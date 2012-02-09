@@ -78,6 +78,12 @@ namespace Toy {
      *  @return current value of handle_asymmetric_errors_
      */
     bool handle_asymmetric_errors() const {return handle_asymmetric_errors_;}
+    /**
+     *  @brief Getter for fitting pulls on plotting window instead of full range
+     *
+     *  @return current value of fit_on_plot_window_
+     */
+    bool fit_on_plot_window() const {return fit_on_plot_window_;}
     ///@}
 
     /** @name Setter actual options
@@ -115,6 +121,12 @@ namespace Toy {
      *  @param handle_asymmetric_errors whether to handle asymmetric errors (true) or not
      */
     void set_handle_asymmetric_errors(bool handle_asymmetric_errors) {handle_asymmetric_errors_ = handle_asymmetric_errors;}
+    /**
+     *  @brief Setter for fitting pulls on plotting window instead of full range
+     *
+     *  @param fit_on_plot_window new value for fit_on_plot_window_
+     */
+    void set_fit_on_plot_window(bool& fit_on_plot_window) {fit_on_plot_window_ = fit_on_plot_window;}
         
     /**
      *  @brief Adder for file names and tree names to read fit result from
@@ -177,6 +189,10 @@ namespace Toy {
      *  @brief Handle asymmetric errors correctly (c.f. CDF/ANAL/PUBLIC/5776)
      */
     bool handle_asymmetric_errors_;
+    /**
+     *  @brief Fit pulls on plotting window instead of full range
+     */
+    bool fit_on_plot_window_;
     ///@}
   };
 } // namespace Toy
