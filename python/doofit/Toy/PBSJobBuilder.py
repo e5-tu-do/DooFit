@@ -3,7 +3,9 @@ import os, sys
 
 ##@package PBSJobBuilder
 #  This simple script can build PBS jobs based on a proto job.
-#  
+#
+#  @section pbsjobbuilder_overview Overview
+#
 #  Based on a supplied proto job (see examples/toys for an example job) this 
 #  script will replace several keywords in this proto job and generate individual
 #  job files from this. The user can supply a job base name, job directory for 
@@ -11,7 +13,9 @@ import os, sys
 #  job, walltime and number of CPUs to use.
 #  
 #  Also each iteration can get a unique seed starting at 1.
-#  
+#
+#  @section pbsjobbuilder_protojob The proto job file
+#
 #  Syntax/Example for keywords in the proto job file:
 #  
 #  @code
@@ -38,13 +42,31 @@ import os, sys
 #  
 #  for i in `seq %(seeds)s`;
 #  do
-#  time echo toy --seed=$i --output=result_%(job_number)s.root --num_cpu=%(num_cpu)s >> %(log_file)s
+#    time echo toy --seed=$i --output=result_%(job_number)s.root --num_cpu=%(num_cpu)s >> %(log_file)s
 #  done
 #  
 #  echo finished job number %(job_number)s
 #  @endcode
 #  
+#  The following keywords are supported:
+#  
+#  @li @c job_name: the individual job's name
+#  @li @c out_file: the stdout log file for the individual job
+#  @li @c err_file: the stderr log file for the individual job
+#  @li @c log_file: the log file for the individual job
+#  @li @c walltime: the walltime for the job
+#  @li @c num_cpu:  the number of CPUs to use
+#  @li @c seeds:    the seeds for the iterations in this individual job to use (will be generated as <tt>minseed maxseed</tt> compatible to the above @c for statement)
+#  @li @c job_number: the number of the individual job
 #
+#  @section pbsjobbuilder_calling Calling PBSJobBuilder.py
+#
+#  Call PBSJobBuilder.py like this:
+#
+#  @code 
+#  PBSJobBuilder.py proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu
+#  @endcode
+
 
 def create_single_job(proto_script, settings_dict, jobs_dir, num_iterations, min_seed):
   settings_dict['seeds'] = str(min_seed) +  ' ' + str(min_seed+num_iterations-1)
@@ -69,3 +91,8 @@ def create_jobs(proto_script, job_base_name, jobs_dir, num_jobs, num_iterations_
       'cwd'        : os.getcwd()
       }
     min_seed = create_single_job(proto_script, settings_dict, jobs_dir, num_iterations_per_job, min_seed)
+
+if __name__ == "__main__":
+  if len(sys.argv) < 8:
+    print 'Usage: ' + sys.argv[0] + ' proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu'
+  create_jobs(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), sys.argv[6], int(sys.argv[7]))
