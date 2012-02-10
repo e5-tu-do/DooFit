@@ -35,6 +35,7 @@
  * @code
  * export DOOFITSYS=/path/to/install/to
  * export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOFITSYS/lib
+ * export PATH=$PATH:$DOOFITSYS/bin
  * @endcode
  * 
  * @subsection mp_externalusage Using DooFit from an external project

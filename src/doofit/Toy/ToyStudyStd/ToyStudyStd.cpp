@@ -210,6 +210,7 @@ namespace Toy {
     gROOT->SetStyle("Plain");
     utils::setStyle();
     TCanvas canvas("canvas_toystudy", "canvas", 800, 600);
+    utils::printPlotOpenStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     
     const RooArgSet* parameters = evaluated_values_->get();
     TIterator* parameter_iter   = parameters->createIterator();
@@ -257,6 +258,7 @@ namespace Toy {
       frame->Draw();
       TString plot_name = parameter->GetName();
       utils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory());
+      utils::printPlot(&canvas, "AllPlots", config_toystudy_.plot_directory());
       
       delete frame;
       
@@ -268,6 +270,7 @@ namespace Toy {
       }
     }
     
+    utils::printPlotCloseStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     sinfo.Ruler();
   }
   
