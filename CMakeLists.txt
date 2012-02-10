@@ -39,5 +39,6 @@ link_directories(${Boost_LIBRARY_DIR})
 include_directories(${ROOT_INCLUDE_DIR})
 
 add_subdirectory(src)
+add_subdirectory(python)
 add_subdirectory(TestWiese)
 add_subdirectory(main)
