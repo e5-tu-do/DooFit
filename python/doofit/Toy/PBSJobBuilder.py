@@ -16,7 +16,7 @@ import os, sys
 #
 #  @section pbsjobbuilder_protojob The proto job file
 #
-#  Syntax/Example for keywords in the proto job file:
+#  Syntax/Example for a proto job file:
 #  
 #  @code
 ##!/bin/sh
@@ -64,10 +64,15 @@ import os, sys
 #Call PBSJobBuilder.py like this:
 #
 #  @code 
-#  PBSJobBuilder.py proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu
+#PBSJobBuilder.py proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu
 #  @endcode
+# 
+#  Afterwards, a submit script <tt>submit_job_base_name.sh</tt> will be created 
+#  inside the jobs directory to easily submit all jobs.
+#
 
-
+## Generate one job file
+#
 def create_single_job(proto_script, settings_dict, jobs_dir, num_iterations, min_seed):
   settings_dict['seeds'] = str(min_seed) +  ' ' + str(min_seed+num_iterations-1)
   file = open(proto_script)
@@ -76,9 +81,14 @@ def create_single_job(proto_script, settings_dict, jobs_dir, num_iterations, min
   file_write.write(script)
   return min_seed + num_iterations
 
+## Generate all job files and the submit script
+#
 def create_jobs(proto_script, job_base_name, jobs_dir, num_jobs, num_iterations_per_job, walltime, num_cpu):
   min_seed = 1
   jobs_dir = os.path.realpath(os.path.abspath(os.path.expanduser(jobs_dir)))
+  submit_file_name = os.path.join(jobs_dir,'submit_' + job_base_name + '.sh')
+  submit_file = open(submit_file_name, 'w')
+  submit_file.writelines('#!/bin/sh\n')
   for i in range(0,num_jobs):
     settings_dict = {
       'job_name'   : job_base_name + '_' + str(i),
@@ -91,6 +101,8 @@ def create_jobs(proto_script, job_base_name, jobs_dir, num_jobs, num_iterations_
       'cwd'        : os.getcwd()
       }
     min_seed = create_single_job(proto_script, settings_dict, jobs_dir, num_iterations_per_job, min_seed)
+    submit_file.writelines('qsub ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
+  print 'sh ' + submit_file_name
 
 if __name__ == "__main__":
   if len(sys.argv) < 8:
