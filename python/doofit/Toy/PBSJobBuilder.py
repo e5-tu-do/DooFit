@@ -6,11 +6,11 @@ import os, sys
 #
 #  @section pbsjobbuilder_overview Overview
 #
-#  Based on a supplied proto job (see examples/toys for an example job) this 
-#  script will replace several keywords in this proto job and generate individual
-#  job files from this. The user can supply a job base name, job directory for 
-#  jobs and logs, number of PBS jobs to run, number of iterations in each PBS
-#  job, walltime and number of CPUs to use.
+#  Based on a supplied proto job (see examples/toys/proto_job.sh for an example 
+#  job) this script will replace several keywords in this proto job and generate 
+#  individual job files from this. The user can supply a job base name, job 
+#  directory for jobs and logs, number of PBS jobs to run, number of iterations 
+#  in each PBS job, walltime and number of CPUs to use.
 #  
 #  Also each iteration can get a unique seed starting at 1.
 #
@@ -107,4 +107,5 @@ def create_jobs(proto_script, job_base_name, jobs_dir, num_jobs, num_iterations_
 if __name__ == "__main__":
   if len(sys.argv) < 8:
     print 'Usage: ' + sys.argv[0] + ' proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu'
+    sys.exit(1)
   create_jobs(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), sys.argv[6], int(sys.argv[7]))
