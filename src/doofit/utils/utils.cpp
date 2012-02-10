@@ -195,13 +195,9 @@ void utils::printPlot(TCanvas* c, TString name, TString dir)
     if ( dir!="" && !dir.EndsWith("/") ) dir += "/";
     
     //	system("mkdir -p " + dir+"eps/");
-    //	system("mkdir -p " + dir+"C/");
-    system("mkdir -p " + dir+"png/");
     system("mkdir -p " + dir+"pdf/");
     
     //  c->Print(dir+"eps/" + name + ".eps");
-    //	c->Print(dir+"C/"   + name + ".C");
-    c->Print(dir+"png/" + name + ".png[");
     c->Print(dir+"pdf/" + name + ".pdf[");
   }
   
@@ -212,13 +208,9 @@ void utils::printPlot(TCanvas* c, TString name, TString dir)
     if ( dir!="" && !dir.EndsWith("/") ) dir += "/";
     
     //	system("mkdir -p " + dir+"eps/");
-    //	system("mkdir -p " + dir+"C/");
-    system("mkdir -p " + dir+"png/");
     system("mkdir -p " + dir+"pdf/");
     
     //  c->Print(dir+"eps/" + name + ".eps");
-    //	c->Print(dir+"C/"   + name + ".C");
-    c->Print(dir+"png/" + name + ".png]");
     c->Print(dir+"pdf/" + name + ".pdf]");
   }
 
