@@ -58,7 +58,10 @@ namespace doofit {
     void		setHotColdPalette(TH2* h=0);
     void		setRedBluePalette(TH2* h=0);
     
+    void		printPlotOpenStack(TCanvas* c, TString name, TString dir="");
     void		printPlot(TCanvas* c, TString name, TString dir="");
+    void		printPlotCloseStack(TCanvas* c, TString name, TString dir="");
+    
     void		drawDate(float x1=0.10, float y1=0.02, float x2=0.5, float y2=0.1);	
     void		drawOrdered(TH1* h1, TH1* h2, TH1* h3=0, TH1* h4=0);
     

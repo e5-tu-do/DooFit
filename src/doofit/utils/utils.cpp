@@ -177,16 +177,50 @@ void utils::printPlot(TCanvas* c, TString name, TString dir)
 
   if ( dir!="" && !dir.EndsWith("/") ) dir += "/";
 
-	system("mkdir -p " + dir+"eps/");
-	system("mkdir -p " + dir+"C/");
+//	system("mkdir -p " + dir+"eps/");
+//	system("mkdir -p " + dir+"C/");
 	system("mkdir -p " + dir+"png/");
 	system("mkdir -p " + dir+"pdf/");
 
-  c->Print(dir+"eps/" + name + ".eps");
-	c->Print(dir+"C/"   + name + ".C");
+//  c->Print(dir+"eps/" + name + ".eps");
+//	c->Print(dir+"C/"   + name + ".C");
   c->Print(dir+"png/" + name + ".png");
   c->Print(dir+"pdf/" + name + ".pdf");
 }
+  
+  void utils::printPlotOpenStack(TCanvas* c, TString name, TString dir)
+  {
+    cout << "utils::printPlot() : printing plots ..." << endl;
+    
+    if ( dir!="" && !dir.EndsWith("/") ) dir += "/";
+    
+    //	system("mkdir -p " + dir+"eps/");
+    //	system("mkdir -p " + dir+"C/");
+    system("mkdir -p " + dir+"png/");
+    system("mkdir -p " + dir+"pdf/");
+    
+    //  c->Print(dir+"eps/" + name + ".eps");
+    //	c->Print(dir+"C/"   + name + ".C");
+    c->Print(dir+"png/" + name + ".png[");
+    c->Print(dir+"pdf/" + name + ".pdf[");
+  }
+  
+  void utils::printPlotCloseStack(TCanvas* c, TString name, TString dir)
+  {
+    cout << "utils::printPlot() : printing plots ..." << endl;
+    
+    if ( dir!="" && !dir.EndsWith("/") ) dir += "/";
+    
+    //	system("mkdir -p " + dir+"eps/");
+    //	system("mkdir -p " + dir+"C/");
+    system("mkdir -p " + dir+"png/");
+    system("mkdir -p " + dir+"pdf/");
+    
+    //  c->Print(dir+"eps/" + name + ".eps");
+    //	c->Print(dir+"C/"   + name + ".C");
+    c->Print(dir+"png/" + name + ".png]");
+    c->Print(dir+"pdf/" + name + ".pdf]");
+  }
 
 /* 
  * doesn't work with 3GB files.
