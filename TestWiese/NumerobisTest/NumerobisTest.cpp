@@ -31,7 +31,11 @@ int main( int argc, char *argv[] ){
   cfg_bld.CheckHelpFlagAndPrintHelp();
   
 
-  Numerobis(cfg_com,cfg_bld);
+  Numerobis builder(cfg_com,cfg_bld);
   
+  RooWorkspace ws("ws");
+  builder.AddToWorkspace(ws);
+  ws.Print();
+
   return 0;
 }

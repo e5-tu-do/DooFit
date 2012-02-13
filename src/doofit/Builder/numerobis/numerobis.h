@@ -54,6 +54,8 @@ class Numerobis {
   RooCategory* CreateDimDisc(const std::string& name, const std::string& desc);
   //RooRealVar* CreateParameterStd(const std::string& name, const std::string& desc, double val_min, double val_max, const std::string unit = "", const std::string& prefix="", const std::string& postfix="");
   
+  void PrintNumerobis();
+  
   RooWorkspace* workspace_;
   bool is_simultaneous_;
   RooCmdArg import_arg_;
