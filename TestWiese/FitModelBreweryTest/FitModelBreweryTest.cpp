@@ -2,18 +2,18 @@
 #include <iostream>
 
 // from project
-#include "Builder/FitModelBrewery/Recipe/Recipe.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Recipe.h"
 
-#include "Builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
-#include "Builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
 
-#include "Builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
-#include "Builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
 
-#include "Builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
+#include "doofit/Builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
 
 using namespace std;
-using namespace builder::fitmodelbrewery;
+using namespace doofit::builder::fitmodelbrewery;
 
 int main() {
   Recipe recipe;

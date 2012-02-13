@@ -1,0 +1,10 @@
+Dimensions {
+  Real {
+    Mass        "'m','m_{B}',5000,5400,'MeV/c^{2}'"
+    Proptime    "'t','t',-2,14,'ps'"
+    ProptimeErr "'sigmat','#sigma_{t}',0.001,0.3,'ps'"
+  }
+  Discrete {
+    Tag         "'d','d',"
+  }
+}

@@ -1,0 +1,1 @@
+add_library(Builder_Numerobis numerobis.cpp numerobis.h numerobis_config.cpp Numerobis_config.h)
