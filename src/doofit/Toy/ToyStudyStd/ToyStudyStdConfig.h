@@ -93,6 +93,17 @@ namespace Toy {
     /**
      *  @brief Setter for file name and tree name to store fit result to
      *
+     *  @warning In its current implementation ToyStudyStd::StoreFitResult() 
+     *           will lock the file before saving to allow multiple processes
+     *           to save into one single file safely. However, this file locking 
+     *           (although implemented as light-weight as possible) can render
+     *           certain "high-performance parallel file systems" like FhGFS 
+     *           unusable. This might lead to significant deadtimes while 
+     *           waiting for a file lock when accessing the file from a certain
+     *           amount of processes at the same time. In this case, one should
+     *           revert to a simple NFS server or local disks for result files 
+     *           which in general performs way better.
+     *
      *  @param result_file_tree new value for store_result_filename_treename_
      */
     void set_store_result_filename_treename(const Config::CommaSeparatedPair& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
