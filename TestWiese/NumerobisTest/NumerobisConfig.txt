@@ -1,0 +1,2 @@
+[numerobis]
+pdf_config_file = ExamplePdfConfig.INFO

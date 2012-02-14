@@ -3,7 +3,7 @@ add_executable(NumerobisTest NumerobisTest.cpp)
 
 # Aliases for module libs
 
-set(NUMEROBIS_LIBS Builder_Numerobis)
+set(NUMEROBIS_LIBS Builder_Numerobis Builder_Numerobis_Blueprint)
 set(UTILS_LIBS Utils)
 
 # Linker information
