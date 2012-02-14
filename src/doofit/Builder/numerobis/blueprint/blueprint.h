@@ -14,7 +14,11 @@ class Blueprint {
  private:
   /* data */
 };
-  
+
+
+
+
+
 } // namespace blueprint 
 } // namespace numerobis 
 } // namespace builder 

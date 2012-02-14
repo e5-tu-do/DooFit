@@ -3,6 +3,7 @@
 // from project
 #include "doofit/Config/CommonConfig.h"
 #include "doofit/Builder/numerobis/numerobis_config.h"
+#include "doofit/Builder/numerobis/blueprint/blueprint.h"
 
 //=== OLD SPB stuff ===========//
 // from STL
