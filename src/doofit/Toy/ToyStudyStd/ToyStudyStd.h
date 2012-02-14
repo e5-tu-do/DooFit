@@ -68,7 +68,7 @@ namespace Toy {
      *  again. If the file will not be unlocked after some time, the tree will 
      *  be saved to an alternative file.
      *
-     *  @see doofit::Toy::ToyStudyStdConfig::set_store_result_filename_treename(const doofit::Config::CommaSeparatedPair&)
+     *  @see ToyStudyStdConfig::set_store_result_filename_treename()
      *
      *  @warning See warnings for doofit::Toy::ToyStudyStdConfig::set_store_result_filename_treename(const Config::CommaSeparatedPair&)
      *
