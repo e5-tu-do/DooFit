@@ -64,7 +64,7 @@ import os, sys
 #Call PBSJobBuilder.py like this:
 #
 #  @code 
-#PBSJobBuilder.py proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu
+#PBSJobBuilder.py proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu min_seed
 #  @endcode
 # 
 #  Afterwards, a submit script <tt>submit_job_base_name.sh</tt> will be created 
@@ -83,8 +83,7 @@ def create_single_job(proto_script, settings_dict, jobs_dir, num_iterations, min
 
 ## Generate all job files and the submit script
 #
-def create_jobs(proto_script, job_base_name, jobs_dir, num_jobs, num_iterations_per_job, walltime, num_cpu):
-  min_seed = 1
+def create_jobs(proto_script, job_base_name, jobs_dir, num_jobs, num_iterations_per_job, walltime, num_cpu, min_seed):
   jobs_dir = os.path.realpath(os.path.abspath(os.path.expanduser(jobs_dir)))
   submit_file_name = os.path.join(jobs_dir,'submit_' + job_base_name + '.sh')
   submit_file = open(submit_file_name, 'w')
@@ -102,10 +101,12 @@ def create_jobs(proto_script, job_base_name, jobs_dir, num_jobs, num_iterations_
       }
     min_seed = create_single_job(proto_script, settings_dict, jobs_dir, num_iterations_per_job, min_seed)
     submit_file.writelines('qsub ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
+  print 'Jobs successfully created. Maximum seed used: ' + str(min_seed-1)
+  print 'Submit jobs via this command:'
   print 'sh ' + submit_file_name
 
 if __name__ == "__main__":
-  if len(sys.argv) < 8:
-    print 'Usage: ' + sys.argv[0] + ' proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu'
+  if len(sys.argv) < 9:
+    print 'Usage: ' + sys.argv[0] + ' proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu min_seed'
     sys.exit(1)
-  create_jobs(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), sys.argv[6], int(sys.argv[7]))
+  create_jobs(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), sys.argv[6], int(sys.argv[7]), int(sys.argv[8]))
