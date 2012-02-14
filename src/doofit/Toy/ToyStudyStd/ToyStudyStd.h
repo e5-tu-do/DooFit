@@ -68,7 +68,9 @@ namespace Toy {
      *  again. If the file will not be unlocked after some time, the tree will 
      *  be saved to an alternative file.
      *
-     *  @warning See warnings for doofit::Toy::ToyStudyStdConfig::set_store_result_filename_treename()
+     *  @see doofit::Toy::ToyStudyStdConfig::set_store_result_filename_treename(const Config::CommaSeparatedPair&)
+     *
+     *  @warning See warnings for doofit::Toy::ToyStudyStdConfig::set_store_result_filename_treename(const Config::CommaSeparatedPair&)
      *
      *  @todo Implement fit saving to alternative file after no lock possible
      *
