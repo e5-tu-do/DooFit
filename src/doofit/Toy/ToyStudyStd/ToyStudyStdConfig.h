@@ -186,6 +186,8 @@ namespace Toy {
     ///@{
     /**
      *  @brief File name and tree name to store fit result to
+     *
+     *  @see const Config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename
      */
     Config::CommaSeparatedPair store_result_filename_treename_;
     /**
