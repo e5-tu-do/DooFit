@@ -13,7 +13,7 @@ using namespace doofit::utils;
 
 NumerobisConfig::NumerobisConfig(const std::string& name) :
     Config::AbsConfig(name),
-    ptree_filename_("")
+    pdf_config_file_("")
 {
 }
 
@@ -21,8 +21,8 @@ NumerobisConfig::~NumerobisConfig() {
 }
 
 void NumerobisConfig::PrintOptions() const {
-  if (ptree_filename_.size() > 0) {
-    scfg << "PDF property tree config file: " << ptree_filename_ << endmsg;
+  if (pdf_config_file_.size() > 0) {
+    scfg << "PDF property tree config file: " << pdf_config_file_ << endmsg;
   }
 }
 
@@ -30,7 +30,7 @@ void NumerobisConfig::DefineOptions() {
   po::options_description* numerobis_desc = new po::options_description("Numerobis Builder Options");
   
   numerobis_desc->add_options()
-  (GetOptionString("config-file").c_str(), po::value<std::string>(&ptree_filename_), "  Path to pdf config file (property tree).");
+  (GetOptionString("pdf_config_file").c_str(), po::value<std::string>(&pdf_config_file_), "  Path to pdf config file (property tree).");
   
   descs_visible_.push_back(numerobis_desc);
 }

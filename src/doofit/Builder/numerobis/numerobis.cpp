@@ -63,11 +63,13 @@ using namespace RooFit;
 using doofit::Config::CommonConfig;
 
 Numerobis::Numerobis(const CommonConfig& cfg_com, const NumerobisConfig& cfg_num) 
-  : workspace_(NULL),
+  : cfg_com_(cfg_com),
+    cfg_num_(cfg_num),
+    workspace_(NULL),
     import_arg_(Silence()),
     cf_fixed_(true)
 {
-  PrintNumerobis();
+  
 }
 
 Numerobis::~Numerobis() {
@@ -360,116 +362,63 @@ RooCategory* Numerobis::CreateDimDisc(const string& name, const string& desc ) {
   return workspace_->cat(name.c_str());
 }
 
-void Numerobis::PrintNumerobis() {
-  cout << "................................................................................" << endl;
-  cout << "................................................................................" << endl;
-  cout << "................................................................................" << endl;
-  cout << ".................................,fEKDKDEL......................................" << endl;
-  cout << "...............................DE,..jGGGGDGD...;................................" << endl;
-  cout << ".............................KL....jGGGGDGEEE;t##j.............................." << endl;
-  cout << "..........................tDGG...,GGGDDEiifiii#W#W#............................." << endl;
-  cout << ".........................DiGGj...EGGGDEifji##it####............................." << endl;
-  cout << "........................;.DGG...iGGGD#itiiDWWDiiii#:............................" << endl;
-  cout << "......................GG..GGj..iGGGGfitiftWWWiiifit;............................" << endl;
-  cout << ".....................iGG..GG...EGGDGiiiii#WWfiiLiiif............................" << endl;
-  cout << ".....................EGG.:DD..;GGGGDiiij;WWWiii#fDiG............................" << endl;
-  cout << "....................jLGE..Wj..GGGGEiiiiiiWWLi#iG  ijt..........................." << endl;
-  cout << "....................j:GG..E:..GGGDjiiiiii##jG Gj.:iiij#........................." << endl;
-  cout << "...................f..LG..E..:GGDEiiiiiii##f  .if#iitLD#j;......................" << endl;
-  cout << "..................:G..GG..E..LGGDjiiiiiiiiii :DiiiiiiiiiiiifG..................." << endl;
-  cout << "..................DGLiDG..E..GDDDiiiiiiiiiiif fiiiiiiiiiiiiiiD.................." << endl;
-  cout << "..................GGGL:D;.D..GDDE#DiiiijiiiiiiiiiijitiiiiiiiiiE................." << endl;
-  cout << "..................GGG:..G.t.:GDDWWtiiiiiitiiittjiiiiiiiiiiiiiiij;..............." << endl;
-  cout << ".................GfGG:..E.:.iGDDWWKtjiiiiitfiiiKiiiiitiiiiiiiiiiE..............." << endl;
-  cout << ".................D.jGD...;..jDDDWWK#fiiiiiiiiiiLiiiiiiiiiiiiiiiii..............." << endl;
-  cout << "................f:..;GGj....jDDEWWfDiiiiiiiiiiiDfiiiiiiiiiiiiiiiiG.............." << endl;
-  cout << "................#D..LDDDDDDKWEDEWDDjiiiiiiiiiii##iiiiiiitiiiiiiiiD.............." << endl;
-  cout << "................EGi:LEDGLiiiifEEWWDiiiiiiiiiiiij#iiiiiiiiiiiiiiiit.............." << endl;
-  cout << "...............GGDGGi..fiiiiiiiEK#Diiiiiiiftj#Litfiiiiiiiiiiiiiiii;............." << endl;
-  cout << "...............ELGGG,..DiiiiiiiiiW#tiiiiiiiiKjiii#iiiiiiiiiiiiiiiit............." << endl;
-  cout << "...............j:jGGGiifiiiiiiiiiWDDiiiiiiiiEKiiiDiiiiiiiiiiiiiiiit............." << endl;
-  cout << "...............D:.:,GDEiiiL#LiiiiiKLiiiiiiii#WWi;iDiiiiiiiiiiiiiii.............." << endl;
-  cout << "..............:GD::;DDEjiiiLDWifji##iiiiiiiiWWW#LD#iiiiiiiiiiiiiti.............." << endl;
-  cout << "..............EGGGGE,LLKifiijiifiifLiiiiiiiiWWWLiiiWtiiiiiiiiiDii#it............" << endl;
-  cout << "..............jjGGGD..:KiiiiLiiLiij#iiiiiiiiWEWfiiiLWiiiiiiii#ji##ji............" << endl;
-  cout << ".............:i.:iGD:..tiitiiLjDiiiDiiiiiiitDEEfiiiiDDiiiiii#iiDiiDDiE.........." << endl;
-  cout << ".............G,.:.:jGEDDWfiiiiifDiii#iiiiiiDDDDLiiiiiDWDiiiDiLiLjiiLiG.........." << endl;
-  cout << ".............D:;i,:jGDDDGEDiiiii#iiiDtiiiiiDDDDDiiiiiii#WDLiDiDiLiifiE.........." << endl;
-  cout << ".............Ei;tt,fGGGGEjiKtiii#iiiiDiiiiitEDDEifiiiiii:f#iiijtiiLiD..........." << endl;
-  cout << ".............;:::t.t;.....t:;..EKKiiiiLiiiiiLEDEiiiiiii#.GijiDiiiiDf............" << endl;
-  cout << "............G;.;.:.tt.,.;.t,i.DjjEKiiiiDDijiifWiiiiiii#t.ftiijiiititGG.........." << endl;
-  cout << "............;i,f;..i;.i.i.j;i.fifjDKiiiDtitiiiiiiiiii#t.fiDiDiiiiiii#i#........." << endl;
-  cout << "............t:::Lii,:;t:i.jii:     LE#Lii#iiKiiiiDiEG...iLiLiii#iLfi#i#........." << endl;
-  cout << ".............j..,i,t:;j:i.LjiGi     #jG#G##ti#DL#jG....#fi#iiiLiLtiifit........." << endl;
-  cout << "..............j,::.Di:j:i.Ljj i     ,Gjjjj##Diif###...#iiDiitDiiiiiDiE.........." << endl;
-  cout << ".................i.;j.i:t.G;i         iDjjf#########.#iiiijLiiiii#jiE..........." << endl;
-  cout << "..................,::.:;i.LD           f#jj#########GLiiiijiiiii#iii............" << endl;
-  cout << "...................D:..itt.t            if###########iiiiiiiiiLLDiij............" << endl;
-  cout << "..........................t  .      fGLf;;  #####G..#iiiiiiifLiDiii............." << endl;
-  cout << "..........................G  ;   j#Diiiiif. ###. G..LiiiiiifLiiitiL............." << endl;
-  cout << ".........................Gi  j  ##iiiiiiiif.:.   ...tiiiiiiiiiiiii#............." << endl;
-  cout << "........................DG   G####iiiiiiiiii    ,fDiiiiiiiiLiijiiG.............." << endl;
-  cout << "........................D    G,t;ijiiiiiiitD###fiiiitiiiiiiEiiiiif.............." << endl;
-  cout << ".......................#.    L    #iiiiiiiiiiiiiiiiifiiiiiiLijiii;.............." << endl;
-  cout << "......................;L          .Diiiiiiiiiiiiiiiiiiiiiiiifiiii..............." << endl;
-  cout << ".......................i      ft   #iiiiiiiiiiiiiiiiiiiiii#jiiiiL..............." << endl;
-  cout << "......................jj        ;ft,iiiiiiiiiiiiiiiiiiiiij#tiiii#..............." << endl;
-  cout << ".....................j##            fjiiiiiiiiiiiiiiiiii#jiiiii#;..............." << endl;
-  cout << ".....................###D            Gtiiiiiiiiiiiiit###iiiDii#i................" << endl;
-  cout << "..................DLt####G            #iEiifiiiiiiD##iiiiiiijt.................." << endl;
-  cout << ".................G   ######            ;Eiiiiij##j;iiiiiiiiit..................." << endl;
-  cout << "................L    #######:            iG#Gt:   tiiiiiiii#...................." << endl;
-  cout << "...............G     D#######G                    f#iiiiiiG....................." << endl;
-  cout << "..............G       #########G                  DtGjijG#......................" << endl;
-  cout << ".............i:       .##########;   .            #;.;G;,......................." << endl;
-  cout << ".............G         j###########GfffD:         #............................." << endl;
-  cout << "............L           D#############j#####L    ,f............................." << endl;
-  cout << "............G            #############j#####jf   #.............................." << endl;
-  cout << "............j             G##########Lj#####jj###..............................." << endl;
-  cout << "............,              ;#########jj#####jf###..............................." << endl;
-  cout << "............:                G######Gjj#####jL###..............................." << endl;
-  cout << "............:                 j#####jjD#####jD###..............................." << endl;
-  cout << "............;                    D##jj######j####..............................." << endl;
-  cout << "............i                      Djj######j###f..............................." << endl;
-  cout << "............f                      fjD#####DjG; t..............................." << endl;
-  cout << "............G          ::,,:.  .,t#jj######Lt   f..............................." << endl;
-  cout << "............G            ....     Gjj######jf f j..............................." << endl;
-  cout << "............G                    ijjD######jL   i..............................." << endl;
-  cout << "............G;              ,t.  Ljj#######jG,  ;..............................." << endl;
-  cout << "............Lf       .:,;,.      Djj#######jG;  ,:.............................." << endl;
-  cout << "............iG                 ;.fjj#######jf.  ,;.............................." << endl;
-  cout << ".............D             ,,i  GjjL######Dj; : ;i.............................." << endl;
-  cout << ".............D:        ,i..,  G. jj#######Gj: t tt.............................." << endl;
-  cout << "............tff    ,    t;  tL  tjj#######Lj. , Lt.............................." << endl;
-  cout << ".............tD:  .:     .G     Djf#######jj    #..............................." << endl;
-  cout << "............D           Dt      LtL#######jj    #..............................." << endl;
-  cout << ".............;Dt    tDG.        tttjjjjjjDjj   #;..............................." << endl;
-  cout << "...............fDDDGt          ;ttjjjjjjjjjj  ,f................................" << endl;
-  cout << "...............jG              ;fffjjjjjjjjj.#f................................." << endl;
-  cout << "................D.                      :tGL;..................................." << endl;
-  cout << "................jt                          i..................................." << endl;
-  cout << ".................t                     ;,   t..................................." << endl;
-  cout << ".................G                 t        L..................................." << endl;
-  cout << "................f##,             f          D..................................." << endl;
-  cout << "................#####G,        j, .,   ,fD###..................................." << endl;
-  cout << "............G   t###########GDt;LD##########L..................................." << endl;
-  cout << "............j .   ##########LG#j#######f,   .;.................................." << endl;
-  cout << "............f ;     j######i##t#####L,      .:.................................." << endl;
-  cout << "............ji  ,,,,,           .tjfjjfLE#DLiiiiij#i............................" << endl;
-  cout << "...........tiGG            ,fGjiiiiiiDiLiiiLjiiiiDtt#t.........................." << endl;
-  cout << "...........fiif##f:..;tL#DfiiiiiiDLiiDjijiiiLLtiiiDDLiL#........................" << endl;
-  cout << "...........ftiiiiiiiiiiiiiiiiiiiiiijiiKittf#ffiitfjiii#tLiLG...................." << endl;
-  cout << "............tE#GLfDLDiiiiiiiiijiiijtDifiDDiiiiiiiKiiiiDifE;LG..................." << endl;
-  cout << ".....................iELttii;iiDfiiiiDiijLiiEiiii#iiiiKiD###;..................." << endl;
-  cout << "..................................EEG.i;.....;DG....,..........................." << endl;
-  cout << "................................................................................" << endl;
-  cout << "................................................................................" << endl;
-  cout << "................................................................................" << endl;
-  cout << "................................................................................" << endl;
-  cout << "................................................................................" << endl;
-  cout << "................................................................................" << endl;
-  cout << "................................................................................" << endl;
-  cout << "................................................................................" << endl;
+void Numerobis::PrintLogo() {
+  cout << ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . . . . . . . . . . : : . . . . . . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . . . . : . j G : . L D D E i # j : . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . . . .   K G . : G D E i i ; # W E . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . . . j : L . : L D j ; j # # i ; K . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . . . G . E : L G L ; i j W ; ; i i : : . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . . : D . G . G G i i t G # t , . t L ; : . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . j . G : L ; G E i i i ; i   # ; ; ; i , L : : . . . . . . . ." << endl;
+  cout << ". . . . . . . . . G ; L . f L G j i ; t t ; j ; ; t ; i i i ; L . . . . . . . ." << endl;
+  cout << ". . . . . . . . i G D , f f D G G E ; ; i f i ; ; i i i i i i i . : . . . . . ." << endl;
+  cout << ". . . . . . . : L : D i : i G D E L t i i i ; i i i i i i i i i G . . . . . . ." << endl;
+  cout << ". . . . . . . . L , f G ; i i D # f ; i i i i K t i i i i i i i i . . . . . . ." << endl;
+  cout << ". . . . . . .   G G . t i ; i i D K ; i i L # i E i i i i i i i i . . . . . . ." << endl;
+  cout << ". . . . . . . D : : G # ; G ; ; i # ; ; i ; W t ; t i i i i i i i . . . . . . ." << endl;
+  cout << ". . . . . . . D G : G W t i K L i G i i i ; W W t K ; ; i i i G W D . . . . . ." << endl;
+  cout << ". . . . . . . : i L . : ; j L i t t i ; i i E W i ; # i i i i , ; W f . . . . ." << endl;
+  cout << ". . . . . . : ; , : D D W ; ; ; i i G ; i ; G D i ; ; W i K G f f E j . . . . ." << endl;
+  cout << ". . . . . : t : i . . . : : i , K i i t i f E D ; i ; i . i i i i t : . . . . ." << endl;
+  cout << ". . . . . : , . i . t , . . : j L W ; i t i i i i ; ; t D i i i t i ; . . . . ." << endl;
+  cout << ". . . . . : t t i : , . . . f ,     i W ; E D t K L . : j E i G , i ; . . . . ." << endl;
+  cout << ". . . . . . . . , t j . . :           # j W # # # #   ; ; j i i i i L . . . . ." << endl;
+  cout << ". . . . . . . . .   , . j ;             ; D # # # # D i ; ; i K , ; . . . . . ." << endl;
+  cout << ". . . . . . . . . . : .   . :   , W i i ;   # t , : i i i ; i i i j . . . . . ." << endl;
+  cout << ". . . . . . . . . . . . E   i # W ; i ; i i     . t i i i ; t t ; : . . . . . ." << endl;
+  cout << ". . . . . . . . . . . j .   , .   j ; i i ; ; i ; i i i i t t i # . . . . . . ." << endl;
+  cout << ". . . . . . . . . . . E     . L   , ; i i ; i i i i i ; i W ; i j . . . . . . ." << endl;
+  cout << ". . . . . . . : . :   #             D ; i ; ; i i i i i # t i ; . . . . . . . ." << endl;
+  cout << ". . . . . . . . . W # # #             G t j i ; i K t i ; i L : . . . . . . . ." << endl;
+  cout << ". . . . . . : .     j # # W               f i     E i i ; t . . . . . . . . . ." << endl;
+  cout << ". . . . . : . t       # # # # D                   W E ; D . . . . . . . . . . ." << endl;
+  cout << ". . . . . : G           # # # # # # K G ;   .     W . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . .             j # # # # # # t # # f   j   . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . .                 # # # # j W # # j # t . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . .                   G # # j # # # j # . . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . .                       ; t # # # f #   . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . :           , ; ; i , j E # # # G   , . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . L                   ; j # # # E ;   f . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . D                   f t # # # G     K . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . : L             . i   G j # # # j     W . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . f       i t   .     t K # # # t :   K . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . L           t     . t G K # # j t   , . . . . . . . . . . . . . . :" << endl;
+  cout << ". . . . . . .   i i             t t j j j j L E . . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . t                     . t L D . . . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . G                   . :     L . . . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . : # K             t           t . . . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . :   : K # # # # # E D D # # # # K : . . . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . .     ,     t K W L E ; f f :     i D L , . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . : ; E         : G j ; ; t t i i ; f i i G L j . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . G i ; t ; ; ; ; i i ; L , f t t t ; G t i G G f . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . : : . , G E G G f ; D t G G # i j W G E L ; . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . . . . . . : : . . : . : . . . . . . . : . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . . . .N.U.M.E.R.O.B.I.S. . . . . . . . . . . . . . . . . . . ." << endl;
+  cout << ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ." << endl;
+  
+  
   
 }
 

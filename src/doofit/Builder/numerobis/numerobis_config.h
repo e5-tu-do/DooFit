@@ -29,6 +29,9 @@ class NumerobisConfig : public Config::AbsConfig {
   NumerobisConfig(const std::string& name);
   virtual ~NumerobisConfig();
  
+
+  std::string pdf_config_file() const { return pdf_config_file_; }
+ 
  protected:
  
  private:
@@ -63,7 +66,7 @@ class NumerobisConfig : public Config::AbsConfig {
   void PrintOptions() const;
   ///@}
   
-  std::string ptree_filename_;
+  std::string pdf_config_file_;
   
 };
 
