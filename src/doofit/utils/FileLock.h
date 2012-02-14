@@ -118,6 +118,11 @@ namespace utils {
      *  @brief member if file is locked by this FileLock
      **/
     bool is_locked_by_us_;
+    
+    /**
+     *  @brief time (in seconds) to wait after lock to check if locking is not colliding
+     **/
+    int post_lock_waittime_;
   };
   
   /** \struct ExceptionFileLockError

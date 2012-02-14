@@ -17,13 +17,15 @@
 
 // from Project
 #include "doofit/utils/MsgStream.h"
+
 namespace doofit {
 namespace utils {
   using namespace std;
   namespace fs = boost::filesystem;
   
   FileLock::FileLock(const std::string& filename) :
-  is_locked_by_us_(false)
+  is_locked_by_us_(false),
+  post_lock_waittime_(1)
   {
     if (fs::exists(file_)) {
       file_ = fs::canonical(filename);
@@ -55,7 +57,7 @@ namespace utils {
       throw ExceptionFileLockError();
     }
     
-    Sleep(1);
+    Sleep(post_lock_waittime_);
     
     int number_lockfiles_postlock = NumberOfLockfiles();
     if (number_lockfiles_postlock == 1) {
@@ -65,7 +67,7 @@ namespace utils {
       fs::remove(lockfile_);
       
       boost::random::random_device rnd;
-      double wait_time = (static_cast<double>(rnd())/(rnd.max()-rnd.min())-rnd.min())*2.0;
+      double wait_time = (static_cast<double>(rnd())/(rnd.max()-rnd.min())-rnd.min())*2.0*post_lock_waittime_;
       Sleep(wait_time);
       
       return false;
@@ -112,6 +114,8 @@ namespace utils {
   int FileLock::NumberOfLockfiles() const {
     string filename_lock(file_.filename().string() + ".lock");
     int num_lockfiles = 0;
+   
+//    sdebug << "FileLock::NumberOfLockfiles(): file_ = " << file_.filename().string() << ", parent = " << file_.parent_path().string() << endmsg;
     
     // get all files in file_'s directory
     vector<fs::path> elements;

@@ -6,6 +6,7 @@
 // boost
 #include "boost/interprocess/sync/file_lock.hpp"
 #include "boost/filesystem.hpp"
+#include "boost/random/random_device.hpp"
 
 // ROOT
 #include "TTree.h"
@@ -65,14 +66,24 @@ namespace Toy {
       serr << "Filename to save fit result into not set! Cannot store fit result." << endmsg;
       throw ExceptionCannotStoreFitResult();
     }
-    
+
+    TStopwatch sw_lock;
+    sw_lock.Start();
     utils::FileLock flock(filename);
+    boost::random::random_device rnd;
+    int wait_time, wait_i;
     if (!flock.Lock()) {
       swarn << "File to save fit result to " << filename << " is locked. Waiting for unlock." << endmsg;
     }
-    while (!flock.Lock()) {
-      utils::Sleep(2);
+    while (!flock.Lock() && !abort_save_) {
+      wait_time = (static_cast<double>(rnd())/(rnd.max()-rnd.min())-rnd.min()*10.0)+10;
+      wait_i    = 0;
+      while (wait_i<wait_time && !abort_save_) { 
+        utils::Sleep(1.0);
+        wait_i++;
+      }
     }
+    sinfo << "File locking deadtime: " << sw_lock << endmsg;
 
     if (!abort_save_) {
       sinfo << "Saving fit result to file " << filename << endmsg;
