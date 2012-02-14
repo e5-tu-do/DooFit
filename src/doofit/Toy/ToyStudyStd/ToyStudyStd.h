@@ -68,6 +68,8 @@ namespace Toy {
      *  again. If the file will not be unlocked after some time, the tree will 
      *  be saved to an alternative file.
      *
+     *  @warning See warnings for ToyStudyStdConfig::set_store_result_filename_treename().
+     *
      *  @todo Implement fit saving to alternative file after no lock possible
      *
      *  @param fit_result RooFitResult to save
