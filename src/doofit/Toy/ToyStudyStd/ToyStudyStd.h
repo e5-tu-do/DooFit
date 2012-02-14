@@ -68,7 +68,7 @@ namespace Toy {
      *  again. If the file will not be unlocked after some time, the tree will 
      *  be saved to an alternative file.
      *
-     *  @see const Config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename()
+     *  @see const Config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename
      *  @see ToyStudyStdConfig
      *  @see ToyStudyStdConfig::set_store_result_filename_treename()
      *
