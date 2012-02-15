@@ -268,6 +268,9 @@ namespace Toy {
         
         sinfo.increment_indent(2);
         sinfo << "Fitting Gaussian distribution for parameter " << param_name << endmsg;
+        if (fit_plot_dataset != evaluated_values_) {
+          sinfo << "Losing " << evaluated_values_->numEntries() - fit_plot_dataset->numEntries() << "(" << (evaluated_values_->numEntries() - fit_plot_dataset->numEntries())/static_cast<double>(evaluated_values_->numEntries())*100 << "%) toys for this fit due to cuts applied." << endmsg;
+        }
         RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(1), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true));
         fit_result->Print("v");
         delete fit_result;
@@ -354,7 +357,7 @@ namespace Toy {
         }
         problems = true;
       }
-      
+
       double min_distance_to_limits = 
       TMath::Min(TMath::Abs((par.getVal() - par.getMax())/
                             ((par.getMax() - par.getMin())/2)),

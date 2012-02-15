@@ -248,7 +248,7 @@ inline MsgStream& operator<<(MsgStream& lhs, const RooRealVar& var) {
   
   lhs.stream() << var.GetName() << " (" << var.GetTitle() << ") = " << var.getVal();
   if (var.hasAsymError()) {
-    lhs.stream() << " (" << var.getAsymErrorLo() << " +" << var.getAsymErrorHi() << ")";
+    lhs.stream() << " (" << var.getAsymErrorLo() << " +" << var.getAsymErrorHi() << ") (+- " <<  var.getError() << ")";
   } else {
     lhs.stream() << " +- " << var.getError();
   }
