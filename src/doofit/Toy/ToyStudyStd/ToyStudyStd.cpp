@@ -15,6 +15,7 @@
 #include "TMath.h"
 #include "TStopwatch.h"
 #include "TROOT.h"
+#include "TString.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -195,12 +196,15 @@ namespace Toy {
     // loop over fit results and fill all values into RooDataSet
     if (evaluated_values_ != NULL) delete evaluated_values_;
     evaluated_values_ = new RooDataSet("evaluated_values", "evaluated_values", parameter_set);
-    int i = 0;
-    for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_.begin(); it_results != fit_results_.end(); ++it_results) {
-      RooArgSet params = BuildEvaluationArgSet(**it_results);
-      
-      evaluated_values_->add(params);
-      ++i;
+    evaluated_values_->add(parameter_set);
+    int i = 1;
+    if (fit_results_.size() > 1) {
+      for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_.begin()+1; it_results != fit_results_.end(); ++it_results) {
+        RooArgSet params = BuildEvaluationArgSet(**it_results);
+        
+        evaluated_values_->add(params);
+        ++i;
+      }
     }
     
     PrintUnexpectedPullOverview();
@@ -231,37 +235,49 @@ namespace Toy {
       std::pair<double,double> minmax = utils::MedianLimitsForTuple(*evaluated_values_, param_name);
       sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
             
+      RooRealVar* mean             = NULL;
+      RooRealVar* sigma            = NULL;
+      RooGaussian* gauss           = NULL;
+      RooPlot* param_frame         = NULL;
+      RooDataSet* fit_plot_dataset = NULL;
+      
+      TString cut = "";
+      if (config_toystudy_.fit_on_plot_window()) {
+        cut = param_name + ">" + boost::lexical_cast<std::string>(minmax.first) + "&&" + param_name + "<" + boost::lexical_cast<std::string>(minmax.second);
+      }
+      if (config_toystudy_.neglect_parameters_at_limit()) {
+        if (cut.Length() > 0) cut = cut + "&&";
+        cut = cut + "parameters_at_limit < 0.5";
+      }
+      if (config_toystudy_.neglect_minos_problems()) {
+        if (cut.Length() > 0) cut = cut + "&&";
+        cut = cut + "minos_problems < 0.5";
+      }
+      if (cut.Length() > 0) {
+        fit_plot_dataset = new RooDataSet("mcs_dataset_window", "MC study dataset with window for pulls", evaluated_values_, RooArgSet(*parameters), cut);
+      } else {
+        fit_plot_dataset = evaluated_values_;
+      }
+
       // for all pulls fit a gaussian
-      RooRealVar* mean     = NULL;
-      RooRealVar* sigma    = NULL;
-      RooGaussian* gauss   = NULL;
-      RooPlot* param_frame = NULL;
       if (param_name.substr(param_name.length()-5).compare("_pull") == 0 || 
           param_name.substr(param_name.length()-4).compare("_res") == 0) {
-        RooDataSet* fit_dataset = NULL;
-        if (config_toystudy_.fit_on_plot_window()) {
-          TString cut = param_name + ">" + boost::lexical_cast<std::string>(minmax.first) + "&&" + param_name + "<" + boost::lexical_cast<std::string>(minmax.second);
-          fit_dataset = new RooDataSet("mcs_dataset_window", "MC study dataset with window for pulls", evaluated_values_, RooArgSet(*parameter), cut);
-        } else {
-          fit_dataset = evaluated_values_;
-        }
-        
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
         sigma = new RooRealVar("s", "sigma of pull", (minmax.second-minmax.first)/10.0,0,minmax.second-minmax.first);
         gauss = new RooGaussian("pdf_pull", "Gaussian PDF of pull", *parameter, *mean, *sigma);
         
         sinfo.increment_indent(2);
         sinfo << "Fitting Gaussian distribution for parameter " << param_name << endmsg;
-        RooFitResult* fit_result = gauss->fitTo(*fit_dataset, NumCPU(1), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true));
+        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(1), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true));
         fit_result->Print("v");
         delete fit_result;
-        if (fit_dataset != evaluated_values_) delete fit_dataset;
-        
         sinfo.increment_indent(-2);
       }
       
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
-      evaluated_values_->plotOn(frame);
+      fit_plot_dataset->plotOn(frame);
+      if (fit_plot_dataset != evaluated_values_) delete fit_plot_dataset;
+      
       if (gauss != NULL) {
         gauss->plotOn(frame);
         param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
@@ -286,12 +302,16 @@ namespace Toy {
   }
   
   RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) {
-    TStopwatch sw;
     RooArgSet parameters;
 
     const RooArgList& parameter_list = fit_result.floatParsFinal();
     TIterator* parameter_iter        = parameter_list.createIterator();
     RooRealVar* parameter            = NULL;
+    bool problems                    = false;
+    
+    RooRealVar* parameters_at_limit = new RooRealVar("parameters_at_limit","number of parameters close to limits", 0.0, 0.0, 1000.0);
+    RooRealVar* minos_problems      = new RooRealVar("minos_problems","number of parameters with MINOS problems", 0.0, 0.0, 1000.0);
+    
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       TString pull_name = parameter->GetName() + TString("_pull");
       TString pull_desc = TString("Pull of ") + parameter->GetTitle();
@@ -325,14 +345,32 @@ namespace Toy {
       res->setVal(res_value);
             
       if (TMath::Abs(pull_value) > 5.0) {
-        swarn << "Pull for " << parameter->GetName() << " is " << pull_value
+        swarn << "Pull for \"" << parameter->GetName() << "\" is " << pull_value
               << " (too large deviation from expectation)" << endmsg;
-        fit_result.Print();
         if (unexpected_pulls_counter_.count(parameter->GetName()) == 0) {
           unexpected_pulls_counter_[parameter->GetName()] = 1;
         } else {
           unexpected_pulls_counter_[parameter->GetName()]++;
         }
+        problems = true;
+      }
+      
+      double min_distance_to_limits = 
+      TMath::Min(TMath::Abs((par.getVal() - par.getMax())/
+                            ((par.getMax() - par.getMin())/2)),
+                 TMath::Abs((par.getVal() - par.getMin())/
+                            ((par.getMax() - par.getMin())/2)));
+      
+      if (min_distance_to_limits < 1e-5) {
+        swarn << "Parameter distance limit low for: " << par << endmsg;
+        problems = true;
+        parameters_at_limit->setVal(parameters_at_limit->getVal() + 1.0);
+      }
+      
+      if (par.hasAsymError() && (par.getAsymErrorHi() == 0.0 || par.getAsymErrorLo() == 0.0)) {
+        swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
+        problems = true;
+        minos_problems->setVal(minos_problems->getVal() + 1.0);
       }
         
       parameters.addOwned(par);
@@ -340,6 +378,12 @@ namespace Toy {
       parameters.addOwned(*res);
       parameters.addOwned(init);
     }
+    if (problems) {
+      fit_result.Print("v");
+    }
+    
+    parameters.addOwned(*parameters_at_limit);
+    parameters.addOwned(*minos_problems);
 
     delete parameter_iter;
     return parameters;

@@ -84,6 +84,18 @@ namespace Toy {
      *  @return current value of fit_on_plot_window_
      */
     bool fit_on_plot_window() const {return fit_on_plot_window_;}
+    /**
+     *  @brief Getter for neglecting all toy fits where at least one parameter is at/near limit
+     *
+     *  @return current value of neglect_parameters_at_limit_
+     */
+    bool neglect_parameters_at_limit() const {return neglect_parameters_at_limit_;}
+    /**
+     *  @brief Getter for neglecting all toy fits where at least one parameter has MINOS problems
+     *
+     *  @return current value of neglect_minos_problems_
+     */
+    bool neglect_minos_problems() const {return neglect_minos_problems_;}
     ///@}
 
     /** @name Setter actual options
@@ -138,7 +150,19 @@ namespace Toy {
      *  @param fit_on_plot_window new value for fit_on_plot_window_
      */
     void set_fit_on_plot_window(bool& fit_on_plot_window) {fit_on_plot_window_ = fit_on_plot_window;}
-        
+    /**
+     *  @brief Setter for neglecting all toy fits where at least one parameter is at/near limit
+     *
+     *  @param neglect_parameters_at_limit new value for neglect_parameters_at_limit_
+     */
+    void set_neglect_parameters_at_limit(bool& neglect_parameters_at_limit) {neglect_parameters_at_limit_ = neglect_parameters_at_limit;}
+    /**
+     *  @brief Setter for neglecting all toy fits where at least one parameter has MINOS problems
+     *
+     *  @param neglect_minos_problems new value for neglect_minos_problems_
+     */
+    void set_neglect_minos_problems(bool& neglect_minos_problems) {neglect_minos_problems_ = neglect_minos_problems;}
+    
     /**
      *  @brief Adder for file names and tree names to read fit result from
      *
@@ -206,6 +230,14 @@ namespace Toy {
      *  @brief Fit pulls on plotting window instead of full range
      */
     bool fit_on_plot_window_;
+    /**
+     *  @brief Neglect all toy fits where at least one parameter is at/near limit
+     */
+    bool neglect_parameters_at_limit_;
+    /**
+     *  @brief Neglect all toy fits where at least one parameter has MINOS problems
+     */
+    bool neglect_minos_problems_;
     ///@}
   };
 } // namespace Toy

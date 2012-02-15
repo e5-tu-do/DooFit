@@ -10,6 +10,7 @@
 #include "RooArgSet.h"
 #include "TIterator.h"
 #include "RooAbsArg.h"
+#include "RooRealVar.h"
 
 namespace doofit {
 namespace utils {
@@ -231,6 +232,29 @@ inline MsgStream& operator<<(MsgStream& lhs, const RooArgSet& argset) {
       lhs.stream() << "," << arg->GetName();
     }
     lhs.stream() << ")";
+  }
+  
+  return lhs;
+}
+
+/**
+ *  @brief Function to output RooRealVars directly and nicely into MsgStreams
+ *
+ *  This function just prints all RooRealVar including error and range.
+ */
+inline MsgStream& operator<<(MsgStream& lhs, const RooRealVar& var) {
+  using namespace ROOT;
+  using namespace RooFit;
+  
+  lhs.stream() << var.GetName() << " (" << var.GetTitle() << ") = " << var.getVal();
+  if (var.hasAsymError()) {
+    lhs.stream() << " (" << var.getAsymErrorLo() << " +" << var.getAsymErrorHi() << ")";
+  } else {
+    lhs.stream() << " +- " << var.getError();
+  }
+  if (var.isConstant()) lhs.stream() << " C";
+  if (var.hasMin() || var.hasMax()) {
+    lhs.stream() << " L(" << var.getMin() << " - " << var.getMax() << ")";
   }
   
   return lhs;
