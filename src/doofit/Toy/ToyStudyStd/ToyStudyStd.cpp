@@ -312,8 +312,8 @@ namespace Toy {
     RooRealVar* parameter            = NULL;
     bool problems                    = false;
     
-    RooRealVar* parameters_at_limit = new RooRealVar("parameters_at_limit","number of parameters close to limits", 0.0, 0.0, 1000.0);
-    RooRealVar* minos_problems      = new RooRealVar("minos_problems","number of parameters with MINOS problems", 0.0, 0.0, 1000.0);
+    RooRealVar* parameters_at_limit = new RooRealVar("parameters_at_limit","number of parameters close to limits", 0.0, 0.0, 100.0);
+    RooRealVar* minos_problems      = new RooRealVar("minos_problems","number of parameters with MINOS problems", 0.0, 0.0, 100.0);
     
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       TString pull_name = parameter->GetName() + TString("_pull");

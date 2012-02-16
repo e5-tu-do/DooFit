@@ -14,6 +14,8 @@
 //from Roofit
 #include "RooDataSet.h"
 
+#include "doofit/utils/MsgStream.h"
+
 using namespace std;
 
 namespace doofit {
@@ -178,12 +180,12 @@ void utils::printPlot(TCanvas* c, TString name, TString dir)
   if ( dir!="" && !dir.EndsWith("/") ) dir += "/";
 
 //	system("mkdir -p " + dir+"eps/");
-//	system("mkdir -p " + dir+"C/");
+	system("mkdir -p " + dir+"C/");
 	system("mkdir -p " + dir+"png/");
 	system("mkdir -p " + dir+"pdf/");
 
 //  c->Print(dir+"eps/" + name + ".eps");
-//	c->Print(dir+"C/"   + name + ".C");
+	c->Print(dir+"C/"   + name + ".C");
   c->Print(dir+"png/" + name + ".png");
   c->Print(dir+"pdf/" + name + ".pdf");
 }
@@ -531,6 +533,12 @@ std::pair<double,double> utils::MedianLimitsForTuple(const RooDataSet& dataset, 
   if (minmax.first >= minmax.second) {
     minmax.first  = entries[idx_median]*0.98;
     minmax.second = entries[idx_median]*1.02;
+  }
+  
+  // if everything fails, just take all
+  if (minmax.first == 0 && minmax.second == 0) {
+    minmax.first  = entries[0]-0.1*(entries[num_entries-1]-entries[0]);
+    minmax.second = entries[num_entries-1]+0.1*(entries[num_entries-1]-entries[0]);
   }
   
   return minmax;
