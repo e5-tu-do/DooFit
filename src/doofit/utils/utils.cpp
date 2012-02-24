@@ -509,6 +509,9 @@ void utils::PlotResiduals(TString pName, RooPlot * pFrame, RooRealVar * pVar, Ro
   label.Draw();
   
   printPlot(&c1, pName, pDir);
+  
+  // residFrame will also delete resid, as it is owned after RooPlot::addPlotable(...)
+  delete residFrame;
 }
 
 std::pair<double,double> utils::MedianLimitsForTuple(const RooDataSet& dataset, std::string var_name) {
