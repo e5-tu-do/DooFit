@@ -4,7 +4,8 @@
 // from STL
 #include <string>
 
-// forward declarations
+// forward declarations - RooFit
+class RooWorkspace;
 
 namespace doofit {
 namespace builder {
@@ -18,12 +19,14 @@ class Element {
   virtual ~Element();
   
   /** Setter and getter for name_ */
-  std::string name() const { return name_; }
-  void set_name(const std::string& name) { name_ = name; } 
-  
+  std::string id() const { return id_; }
+  void set_id(const std::string& id) { id_ = id; } 
   
  protected:
-  std::string name_;
+  std::string id_;
+  
+  bool initialized_;
+  bool onworkspace_;
   
 };
 
@@ -31,10 +34,10 @@ class Element {
 
 
 } // namespace elements
-} // namespace blueprint 
-} // namespace numerobis 
-} // namespace builder 
-} // namespace doofit 
+} // namespace blueprint
+} // namespace numerobis
+} // namespace builder
+} // namespace doofit
 
 
 #endif // DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_ElEMENTS_ELEMENT_H

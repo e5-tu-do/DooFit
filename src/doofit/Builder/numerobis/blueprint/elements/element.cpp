@@ -8,7 +8,9 @@ namespace elements {
 
 
 Element::Element()
-    : name_("NoName")
+    : id_("NoID")
+    , initialized_(false)
+    , onworkspace_(false)
 {
   
 }
