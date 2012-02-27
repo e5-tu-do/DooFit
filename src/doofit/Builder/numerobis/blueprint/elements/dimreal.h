@@ -1,10 +1,11 @@
-#ifndef DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_ElEMENTS_PARAMELEMENT_H
-#define DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_ElEMENTS_PARAMELEMENT_H
+#ifndef DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_ElEMENTS_DIMREAL_H
+#define DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_ElEMENTS_DIMREAL_H
 
 // from STL
 #include <string>
 
 // from project
+#include "doofit/Builder/numerobis/blueprint/elements/dimelement.h"
 #include "doofit/Builder/numerobis/blueprint/elements/realvalelement.h"
 
 
@@ -14,10 +15,10 @@ namespace numerobis {
 namespace blueprint {
 namespace elements {
 
-class ParamElement : public RealValElement {
+class DimReal : public DimElement, public RealValElement {
  public:
-  ParamElement();
-  virtual ~ParamElement();
+  DimReal();
+  virtual ~DimReal();
   
  protected:
   
@@ -31,4 +32,4 @@ class ParamElement : public RealValElement {
 } // namespace doofit
 
 
-#endif // DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_ElEMENTS_PARAMELEMENT_H
+#endif // DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_ElEMENTS_DIMREAL_H

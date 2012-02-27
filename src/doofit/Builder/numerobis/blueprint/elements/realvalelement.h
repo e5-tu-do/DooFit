@@ -8,19 +8,22 @@
 #include "doofit/Builder/numerobis/blueprint/elements/element.h"
 
 
+// forward declarations - RooFit
+class RooAbsReal;
+
 namespace doofit {
 namespace builder {
 namespace numerobis {
 namespace blueprint {
 namespace elements {
 
-class RealValElement : public Element {
+class RealValElement : public virtual Element {
  public:
   RealValElement();
   virtual ~RealValElement();
   
  protected:
-  
+  RooAbsReal* roo_obj_;
 };
 
 

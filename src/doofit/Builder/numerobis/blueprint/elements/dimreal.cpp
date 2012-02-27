@@ -1,4 +1,4 @@
-#include "doofit/Builder/numerobis/blueprint/elements/realvalelement.h"
+#include "doofit/Builder/numerobis/blueprint/elements/dimreal.h"
 
 namespace doofit {
 namespace builder {
@@ -7,13 +7,11 @@ namespace blueprint {
 namespace elements {
 
 
-RealValElement::RealValElement()
-    : roo_obj_(NULL)
-{
+DimReal::DimReal(){
   
 }
 
-RealValElement::~RealValElement() {
+DimReal::~DimReal() {
   
 }
 

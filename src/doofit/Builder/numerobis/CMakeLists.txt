@@ -3,6 +3,9 @@ add_library(Builder_Numerobis numerobis.cpp numerobis.h numerobis_config.cpp num
 add_library(Builder_Numerobis_Blueprint 
 blueprint/blueprint.cpp blueprint/blueprint.h 
 blueprint/elements/element.cpp blueprint/elements/element.h 
-blueprint/elements/realvalelement.cpp blueprint/elements/realvalelement.h 
+blueprint/elements/dimelement.cpp blueprint/elements/dimelement.h 
+blueprint/elements/realvalelement.cpp blueprint/elements/realvalelement.h
 blueprint/elements/paramelement.cpp blueprint/elements/paramelement.h 
+blueprint/elements/dimreal.cpp blueprint/elements/dimreal.h
+
 )
