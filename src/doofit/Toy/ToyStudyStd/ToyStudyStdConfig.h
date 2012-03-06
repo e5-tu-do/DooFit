@@ -79,11 +79,11 @@ namespace Toy {
      */
     bool handle_asymmetric_errors() const {return handle_asymmetric_errors_;}
     /**
-     *  @brief Getter for fitting pulls on plotting window instead of full range
+     *  @brief Getter for fitting and plotting pulls on quantile window instead of full range
      *
-     *  @return current value of fit_on_plot_window_
+     *  @return current value of fit_plot_on_quantile_window_
      */
-    bool fit_on_plot_window() const {return fit_on_plot_window_;}
+    bool fit_plot_on_quantile_window() const {return fit_plot_on_quantile_window_;}
     /**
      *  @brief Getter for neglecting all toy fits where at least one parameter is at/near limit
      *
@@ -145,11 +145,11 @@ namespace Toy {
      */
     void set_handle_asymmetric_errors(bool handle_asymmetric_errors) {handle_asymmetric_errors_ = handle_asymmetric_errors;}
     /**
-     *  @brief Setter for fitting pulls on plotting window instead of full range
+     *  @brief Setter for fitting and plotting pulls on quantile window instead of full range
      *
-     *  @param fit_on_plot_window new value for fit_on_plot_window_
+     *  @param fit_plot_on_quantile_window new value for fit_plot_on_quantile_window_
      */
-    void set_fit_on_plot_window(bool& fit_on_plot_window) {fit_on_plot_window_ = fit_on_plot_window;}
+    void set_fit_plot_on_quantile_window(bool& fit_plot_on_quantile_window) {fit_plot_on_quantile_window_ = fit_plot_on_quantile_window;}
     /**
      *  @brief Setter for neglecting all toy fits where at least one parameter is at/near limit
      *
@@ -227,9 +227,9 @@ namespace Toy {
      */
     bool handle_asymmetric_errors_;
     /**
-     *  @brief Fit pulls on plotting window instead of full range
+     *  @brief Fit and plot pulls on a sensible quantile based window instead of full range (neglect outliers)
      */
-    bool fit_on_plot_window_;
+    bool fit_plot_on_quantile_window_;
     /**
      *  @brief Neglect all toy fits where at least one parameter is at/near limit
      */

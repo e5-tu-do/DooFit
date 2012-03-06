@@ -21,7 +21,7 @@ namespace Toy {
   ToyStudyStdConfig::ToyStudyStdConfig() : 
   Config::AbsConfig("empty_name"),
   handle_asymmetric_errors_(true),
-  fit_on_plot_window_(true),
+  fit_plot_on_quantile_window_(true),
   neglect_parameters_at_limit_(false),
   neglect_minos_problems_(false)
   {
@@ -51,7 +51,7 @@ namespace Toy {
     }
     
     scfg << "Using asymmetric errors for pulls: " << handle_asymmetric_errors_ << endmsg;
-    scfg << "Fit parameters on plot window:     " << fit_on_plot_window_ << endmsg;
+    scfg << "Fit/plot parameters on quantile window: " << fit_plot_on_quantile_window_ << endmsg;
     scfg << "Neglect parameters at limit:       " << neglect_parameters_at_limit_ << endmsg;
     scfg << "Neglect MINOS problems:            " << neglect_minos_problems_ << endmsg;
   }
@@ -64,7 +64,7 @@ namespace Toy {
     (GetOptionString("read_results_filename_treename").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&read_results_filename_treename_)->composing(), "File names and tree names to read fit results from (set as filename,treename)")
     (GetOptionString("plot_directory").c_str(), po::value<std::string>(&plot_directory_), "Plot directory for evaluation of fit results")
     (GetOptionString("handle_asymmetric_errors").c_str(), po::value<bool>(&handle_asymmetric_errors_)->default_value(true),"Set to false to not use asymmetric errors for pull calculation (c.f. CDF/ANAL/PUBLIC/5776). Default is true. If unsure, use asymmetric errors.")
-    (GetOptionString("fit_on_plot_window").c_str(), po::value<bool>(&fit_on_plot_window_)->default_value(true),"Fit pulls and other distributions on the plotting window instead of the full dataset (default: true; use this to avoid influence of pull values of obviously failed fits).")
+    (GetOptionString("fit_plot_on_quantile_window").c_str(), po::value<bool>(&fit_plot_on_quantile_window_)->default_value(true),"Fit and plot pulls and other distributions on a sensible quantile based window instead of the full dataset (default: true; use this to avoid influence of pull values of obviously failed fits and other outliers).")
     (GetOptionString("neglect_parameters_at_limit").c_str(), po::value<bool>(&neglect_parameters_at_limit_)->default_value(false),"Neglect any toy fit where at least one parameter is near the defined limits (default: false).")
     (GetOptionString("neglect_minos_problems").c_str(), po::value<bool>(&neglect_minos_problems_)->default_value(false),"Neglect any toy fit where at least one parameter has MINOS problems (default: false; only applies, if MINOS was run).");
     

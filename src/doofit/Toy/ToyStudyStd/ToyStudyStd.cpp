@@ -242,7 +242,7 @@ namespace Toy {
       RooDataSet* fit_plot_dataset = NULL;
       
       TString cut = "";
-      if (config_toystudy_.fit_on_plot_window()) {
+      if (config_toystudy_.fit_plot_on_quantile_window()) {
         cut = param_name + ">" + boost::lexical_cast<std::string>(minmax.first) + "&&" + param_name + "<" + boost::lexical_cast<std::string>(minmax.second);
       }
       if (config_toystudy_.neglect_parameters_at_limit()) {
