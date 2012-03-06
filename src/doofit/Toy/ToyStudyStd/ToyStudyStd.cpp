@@ -254,7 +254,7 @@ namespace Toy {
         cut = cut + "minos_problems < 0.5";
       }
       if (cut.Length() > 0) {
-        fit_plot_dataset = new RooDataSet("mcs_dataset_window", "MC study dataset with window for pulls", evaluated_values_, RooArgSet(*parameters), cut);
+        fit_plot_dataset = new RooDataSet("fit_plot_dataset", "Plotting and fitting dataset for ToyStudyStd", evaluated_values_, RooArgSet(*parameters), cut);
       } else {
         fit_plot_dataset = evaluated_values_;
       }
@@ -326,8 +326,8 @@ namespace Toy {
       double par_error = ((RooRealVar*)parameter_list.find(parameter->GetName()))->getError();
       
       RooRealVar& par  = CopyRooRealVar(*parameter);
-      RooRealVar* pull = new RooRealVar(pull_name, pull_desc, -100, 100);
-      RooRealVar* res  = new RooRealVar(res_name, res_desc, -10*par_error, +10*par_error);
+      RooRealVar* pull = new RooRealVar(pull_name, pull_desc, 0.0);
+      RooRealVar* res  = new RooRealVar(res_name, res_desc, 0.0);
       RooRealVar& init = CopyRooRealVar(*(RooRealVar*)fit_result.floatParsInit().find(par.GetName()), std::string(init_name), std::string(init_desc));
       
       double pull_value = 0.0;
@@ -420,7 +420,7 @@ namespace Toy {
   
   void ToyStudyStd::PrintUnexpectedPullOverview() const {
     for (std::map<std::string, int>::const_iterator it=unexpected_pulls_counter_.begin(); it!=unexpected_pulls_counter_.end(); ++it) {
-      sinfo << "Parameter " << (*it).first << ", number of times outside of -5..+5 range: " << (*it).second << endmsg;
+      sinfo << "Pull for parameter " << (*it).first << ", number of times outside of -5..+5 range: " << (*it).second << endmsg;
     }
   }
 } // namespace Toy
