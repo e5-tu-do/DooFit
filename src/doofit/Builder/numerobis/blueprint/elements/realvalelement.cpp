@@ -8,7 +8,6 @@ namespace elements {
 
 
 RealValElement::RealValElement()
-    : roo_obj_(NULL)
 {
   
 }
