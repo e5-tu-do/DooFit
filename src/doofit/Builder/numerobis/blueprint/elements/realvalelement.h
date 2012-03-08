@@ -17,13 +17,13 @@ namespace numerobis {
 namespace blueprint {
 namespace elements {
 
-class RealValElement : public virtual Element {
+class RealValElement : public Element {
  public:
   RealValElement();
   virtual ~RealValElement();
   
  protected:
-  RooAbsReal* roo_obj_;
+  
 };
 
 

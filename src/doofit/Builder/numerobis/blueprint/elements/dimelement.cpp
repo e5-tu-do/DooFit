@@ -7,7 +7,7 @@ namespace blueprint {
 namespace elements {
 
 
-DimElement::DimElement(){
+DimElement::DimElement() {
   
 }
 

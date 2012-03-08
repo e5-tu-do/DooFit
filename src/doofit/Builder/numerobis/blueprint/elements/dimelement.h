@@ -14,7 +14,7 @@ namespace numerobis {
 namespace blueprint {
 namespace elements {
 
-class DimElement : public virtual Element {
+class DimElement {
  public:
   DimElement();
   virtual ~DimElement();

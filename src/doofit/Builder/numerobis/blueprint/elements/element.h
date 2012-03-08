@@ -18,19 +18,37 @@ class Element {
   Element();
   virtual ~Element();
   
-  /** Setter and getter for name_ */
+  /** Getter for id_ */
   std::string id() const { return id_; }
-  void set_id(const std::string& id) { id_ = id; } 
+  /** Setter for id_ */
+  void set_id(const std::string& id) { id_ = id; }
   
  protected:
+  /** Getter for initialized_ */
+  bool initialized() const { return initialized_; }
+  /** Setter for initialized_ */
+  void set_initialized(bool initialized) { initialized_ = initialized; } 
+  
+  /** Getter for onworkspace_ */
+  bool onworkspace() const { return onworkspace_; }
+  /** Setter for onworkspace_ */
+  void set_onworkspace(bool onworkspace) { onworkspace_ = onworkspace; } 
+  
+  /** Getter for ready_ */
+  bool ready() const { return ready_; }
+  /** Setter for ready_ */
+  void set_ready(bool ready) { ready_ = ready; } 
+  
+  
+  
+ private:
   std::string id_;
   
   bool initialized_;
+  bool ready_;
   bool onworkspace_;
   
 };
-
-
 
 
 } // namespace elements
