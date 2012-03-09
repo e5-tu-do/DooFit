@@ -8,8 +8,10 @@ namespace elements {
 
 
 Element::Element()
-    : id_("NoID")
+    : id_rel_("NoRelID")
+    , id_abs_("NoAbsID")
     , initialized_(false)
+    , ready_(false)
     , onworkspace_(false)
 {
   
@@ -18,6 +20,10 @@ Element::Element()
 Element::~Element() {
   
 }
+
+
+
+
 
 } // namespace elements 
 } // namespace blueprint 

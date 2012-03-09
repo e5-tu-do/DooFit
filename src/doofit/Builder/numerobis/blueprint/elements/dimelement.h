@@ -20,7 +20,14 @@ class DimElement {
   virtual ~DimElement();
   
  protected:
+  /** Getter for desc_ */
+  std::string desc() const { return desc_; }
+  /** Setter for desc_ */
+  void set_desc(const std::string& desc) { desc_ = desc; } 
   
+   
+ private:
+  std::string desc_;
 };
 
 

@@ -22,8 +22,22 @@ class RealValElement : public Element {
   RealValElement();
   virtual ~RealValElement();
   
- protected:
+  /** @brief Adds RooFit representation to RooWorkspace
+   *
+   *  Function à la Template Method. Calls other abstract functions:
+   *  @li CreateTempRooObj()
+   */
+  void AddToWorkspace(RooWorkspace* ws);
   
+ protected:
+  /** @brief 
+   *  
+   */
+  virtual RooAbsReal* CreateTempRooObj() = 0;
+  
+  RooAbsReal* GetRooObj() { return roo_obj_; };
+  
+  RooAbsReal* roo_obj_;
 };
 
 

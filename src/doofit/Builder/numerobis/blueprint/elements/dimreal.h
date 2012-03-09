@@ -9,6 +9,9 @@
 #include "doofit/Builder/numerobis/blueprint/elements/realvalelement.h"
 
 
+// forward declarations - RooFit
+class RooRealVar;
+
 namespace doofit {
 namespace builder {
 namespace numerobis {
@@ -21,7 +24,32 @@ class DimReal : public DimElement, public RealValElement {
   virtual ~DimReal();
   
  protected:
+  RooAbsReal* CreateTempRooObj();
+   
+  /** Getter for val_min_ */
+  double val_min() const { return val_min_; }
+  /** Setter for val_min_ */
+  void set_val_min(double val_min) { val_min_ = val_min; } 
   
+  /** Getter for val_max_ */
+  double val_max() const { return val_max_; }
+  /** Setter for val_max_ */
+  void set_val_max(double val_max) { val_max_ = val_max; } 
+  
+  /** Getter for unit_ */
+  std::string unit() const { return unit_; }
+  /** Setter for unit_ */
+  void set_unit(const std::string& unit) { unit_ = unit; } 
+  
+  
+  
+  
+ private:
+  double val_min_;
+  double val_max_;
+  std::string unit_;
+  
+  RooRealVar* roo_obj_;
 };
 
 

@@ -18,12 +18,26 @@ class Element {
   Element();
   virtual ~Element();
   
-  /** Getter for id_ */
-  std::string id() const { return id_; }
-  /** Setter for id_ */
-  void set_id(const std::string& id) { id_ = id; }
+  /** Getter for id_rel_ */
+  std::string id_rel() const { return id_rel_; }
+  /** Setter for id_rel_ */
+  void set_id_rel(const std::string& id_rel) { id_rel_ = id_rel; } 
+  
+  /** Getter for id_abs_ */
+  std::string id_abs() const { return id_abs_; }
+  /** Setter for id_abs_ */
+  void set_id_abs(const std::string& id_abs) { id_abs_ = id_abs; } 
+  
+  /** @brief Initialize the object. 
+   *  
+   */
+   
+  /** @brief Adds RooFit representation to RooWorkspace
+   */
+   virtual void AddToWorkspace(RooWorkspace* ws) = 0;
   
  protected:
+   
   /** Getter for initialized_ */
   bool initialized() const { return initialized_; }
   /** Setter for initialized_ */
@@ -42,7 +56,8 @@ class Element {
   
   
  private:
-  std::string id_;
+  std::string id_rel_;
+  std::string id_abs_;
   
   bool initialized_;
   bool ready_;
