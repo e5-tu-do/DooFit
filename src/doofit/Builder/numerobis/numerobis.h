@@ -49,12 +49,14 @@ class Numerobis {
   
   void AddToWorkspace(RooWorkspace& ws);
   
+  void PrintLogo();
+  
  private:
   RooRealVar* CreateDimReal(const std::string& name, const std::string& desc, double val_min, double val_max, const std::string& unit, const std::string& dim_id);
   RooCategory* CreateDimDisc(const std::string& name, const std::string& desc);
   //RooRealVar* CreateParameterStd(const std::string& name, const std::string& desc, double val_min, double val_max, const std::string unit = "", const std::string& prefix="", const std::string& postfix="");
   
-  void PrintLogo();
+  
   
   const Config::CommonConfig& cfg_com_;
   const NumerobisConfig& cfg_num_;

@@ -10,10 +10,14 @@
 #include "doofit/Builder/numerobis/numerobis.h"
 #include "doofit/Builder/numerobis/numerobis_config.h"
 
+#include "doofit/Builder/numerobis/blueprint/elements/dimreal.h"
+#include "doofit/Builder/numerobis/blueprint/elements/parambasic.h"
+
 using namespace std;
 
 using namespace doofit;
 using namespace doofit::builder::numerobis;
+
 
 int main( int argc, char *argv[] ){
   
@@ -34,8 +38,19 @@ int main( int argc, char *argv[] ){
   Numerobis builder(cfg_com,cfg_bld);
   
   RooWorkspace ws("ws");
-  builder.AddToWorkspace(ws);
+  //builder.AddToWorkspace(ws);
+  
+  builder.PrintLogo();
+  
+  blueprint::elements::DimReal a("a","a","a",0.3,3,"ps");
+  a.AddToWorkspace(&ws);
+  
+  blueprint::elements::ParamBasic b("b","b","b",0.4, 0.3,3,"ps");
+  b.AddToWorkspace(&ws);
+  
   ws.Print();
-
+  
+  
+  
   return 0;
 }

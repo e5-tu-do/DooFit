@@ -21,11 +21,13 @@ namespace elements {
 class DimReal : public DimElement, public RealValElement {
  public:
   DimReal();
+  DimReal(const std::string& id_rel, const std::string& id_abs, const std::string& desc, double val_min, double val_max, const std::string& unit);
+  
   virtual ~DimReal();
   
  protected:
   RooAbsReal* CreateTempRooObj();
-   
+  
   /** @brief Getter for val_min_ */
   double val_min() const { return val_min_; }
   /** @brief Setter for val_min_ */
@@ -39,7 +41,7 @@ class DimReal : public DimElement, public RealValElement {
   /** @brief Getter for unit_ */
   std::string unit() const { return unit_; }
   /** @brief Setter for unit_ */
-  void set_unit(const std::string& unit) { unit_ = unit; } 
+  void set_unit(const std::string& unit) { unit_ = unit; }
   
   
   
