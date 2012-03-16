@@ -10,6 +10,7 @@
 
 // forward declarations - RooFit
 class RooAbsReal;
+class RooAbsArg;
 
 namespace doofit {
 namespace builder {
@@ -20,20 +21,30 @@ namespace elements {
 class RealValElement : public Element {
  public:
   RealValElement();
+  RealValElement(const std::string& id_rel, const std::string& id_abs);
   virtual ~RealValElement();
   
   /** @brief Adds RooFit representation to RooWorkspace
    *
-   *  Function à la Template Method. Calls other abstract functions:
-   *  @li CreateTempRooObj()
+   *  This function will initialize the appropriate RooFit object and import 
+   *  this to the supplied workspace. A vector of the dependants as RooAbsArg* 
+   *  must be supplied in exactly the same order as the dependants vector.
+   *
+   *  @param ws the workspace to add the object to
+   *  @param dependants the dependants to be used for initialization
    */
-  void AddToWorkspace(RooWorkspace* ws);
+  RooAbsArg* AddToWorkspace(RooWorkspace* ws, std::vector<RooAbsArg*> dependants);
   
  protected:
-  /** @brief 
+  /** @brief Create instance of this element as RooFit object
    *  
+   *  Initialize the appropriate RooFit object and return it as RooAbsReal 
+   *  pointer.
+   *
+   *  @param dependants the dependants to be used for initialization
+   *  @return the temporary initialized object to be put onto a workspace
    */
-  virtual RooAbsReal* CreateTempRooObj() = 0;
+  virtual RooAbsReal* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>()) = 0;
   
   RooAbsReal* GetRooObj() { return roo_obj_; };
   

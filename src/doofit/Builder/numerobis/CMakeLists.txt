@@ -7,6 +7,7 @@ blueprint/elements/dimelement.cpp blueprint/elements/dimelement.h
 blueprint/elements/realvalelement.cpp blueprint/elements/realvalelement.h
 blueprint/elements/paramelement.cpp blueprint/elements/paramelement.h 
 blueprint/elements/parambasic.cpp blueprint/elements/parambasic.h 
+blueprint/elements/formula.cpp blueprint/elements/formula.h
 blueprint/elements/dimreal.cpp blueprint/elements/dimreal.h
 blueprint/elements/registrar.cpp blueprint/elements/registrar.h
 )

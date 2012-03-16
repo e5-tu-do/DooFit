@@ -33,7 +33,7 @@ DimReal::~DimReal() {
   
 }
 
-RooAbsReal* DimReal::CreateTempRooObj() {
+RooAbsReal* DimReal::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
   RooRealVar* temp_realvar = new RooRealVar(id_abs().c_str(), desc().c_str(), val_min(), val_max(), unit().c_str());
   return temp_realvar;
 }

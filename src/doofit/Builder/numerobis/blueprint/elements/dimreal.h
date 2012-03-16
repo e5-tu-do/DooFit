@@ -26,7 +26,15 @@ class DimReal : public DimElement, public RealValElement {
   virtual ~DimReal();
   
  protected:
-  RooAbsReal* CreateTempRooObj();
+  /** @brief Create instance of this element as RooFit object
+   *  
+   *  Initialize the appropriate RooFit object and return it as RooAbsReal 
+   *  pointer.
+   *
+   *  @param dependants the dependants to be used for initialization
+   *  @return the temporary initialized object to be put onto a workspace
+   */
+  RooAbsReal* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>());
   
   /** @brief Getter for val_min_ */
   double val_min() const { return val_min_; }
@@ -51,7 +59,7 @@ class DimReal : public DimElement, public RealValElement {
   double val_max_;
   std::string unit_;
   
-  RooRealVar* roo_obj_;
+  //RooRealVar* roo_obj_;
 };
 
 

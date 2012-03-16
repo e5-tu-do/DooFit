@@ -27,7 +27,15 @@ class ParamBasic : public ParamElement {
   virtual ~ParamBasic();
 
  protected:
-  RooAbsReal* CreateTempRooObj();
+  /** @brief Create instance of this element as RooFit object
+   *  
+   *  Initialize the appropriate RooFit object and return it as RooAbsReal 
+   *  pointer.
+   *
+   *  @param dependants the dependants to be used for initialization
+   *  @return the temporary initialized object to be put onto a workspace
+   */
+  RooAbsReal* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>());
 
   /** @brief Getter for val_init_ */
   double val_init() const { return val_init_; }
@@ -58,7 +66,7 @@ class ParamBasic : public ParamElement {
   double val_max_;
   std::string unit_;
 
-  RooRealVar* roo_obj_;
+  //RooRealVar* roo_obj_;
 };
   
 } // namespace elements
