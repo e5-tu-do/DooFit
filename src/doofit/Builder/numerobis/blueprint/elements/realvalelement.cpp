@@ -39,13 +39,15 @@ RooAbsArg* RealValElement::AddToWorkspace(RooWorkspace* ws, std::vector<RooAbsAr
     throw; 
   }
   
-  RooAbsReal* roo_obj_temp = CreateTempRooObj(dependants);
+  if (!onworkspace()){
+    RooAbsReal* roo_obj_temp = CreateTempRooObj(dependants);
 
-  ws->import(*roo_obj_temp);
-  delete roo_obj_temp;
+    ws->import(*roo_obj_temp);
+    delete roo_obj_temp;
   
-  roo_obj_ = ws->function(id_abs().c_str());
-  set_onworkspace(true);
+    roo_obj_ = ws->function(id_abs().c_str());
+    set_onworkspace(true);
+  }
   return dynamic_cast<RooAbsArg*>(roo_obj_);
 }
 

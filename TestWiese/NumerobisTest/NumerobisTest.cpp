@@ -49,6 +49,7 @@ int main( int argc, char *argv[] ){
   std::vector<std::string> elements;
   elements.push_back("a");
   elements.push_back("b");
+  
   blueprint::elements::Formula f("f","f","@0*@1",elements);
   registrar.Declare(f);
 
@@ -62,6 +63,8 @@ int main( int argc, char *argv[] ){
   //b.AddToWorkspace(&ws);
   registrar.Declare(b);
 
+  registrar.Register(&ws, a);
+  registrar.Register(&ws, b);
   registrar.Register(&ws, f);
   
   registrar.Print();
