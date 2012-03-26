@@ -9,6 +9,11 @@ namespace elements {
 // forward declarations
 class Registrar;
 
+/** @class Factory
+ *  @brief Brief description.
+ *
+ *  Detailed description.
+ */  
 class Factory {
  public:
   Factory(Registrar& registrar);
