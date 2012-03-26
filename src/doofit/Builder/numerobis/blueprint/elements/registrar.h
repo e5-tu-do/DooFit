@@ -48,17 +48,6 @@ class Registrar {
   void Print() const;
   
   /**
-   *  @brief Check ready state for an element
-   *
-   *  This function will check for one element if its dependants list is in 
-   *  ready state. If so, this element will be set to ready.
-   *
-   *  @param element the element to check
-   *  @return the ready state of element after check
-   */
-  bool CheckReady(Element& element);
-  
-  /**
    *  @brief Register the element (i.e. instanciate and put on workspace)
    *
    *  This function will (if ready) create the element and its dependants and 
@@ -70,6 +59,17 @@ class Registrar {
   RooAbsArg* Register(RooWorkspace* ws, Element& element);
   
  private:
+  /**
+   *  @brief Check ready state for an element
+   *
+   *  This function will check for one element if its dependants list is in 
+   *  ready state. If so, this element will be set to ready.
+   *
+   *  @param element the element to check
+   *  @return the ready state of element after check
+   */
+  bool CheckReady(Element& element);
+   
   /**
    *  @brief Map of all registered elements so far
    */

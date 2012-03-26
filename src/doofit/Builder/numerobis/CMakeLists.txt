@@ -10,4 +10,5 @@ blueprint/elements/parambasic.cpp blueprint/elements/parambasic.h
 blueprint/elements/formula.cpp blueprint/elements/formula.h
 blueprint/elements/dimreal.cpp blueprint/elements/dimreal.h
 blueprint/elements/registrar.cpp blueprint/elements/registrar.h
+blueprint/elements/factory.cpp blueprint/elements/factory.h
 )
