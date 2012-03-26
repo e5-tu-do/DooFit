@@ -40,7 +40,7 @@ class Registrar {
    *
    *  @param element the element to add
    */
-  void Declare(Element* const element);
+  void Declare(Element* element);
   
   /**
    *  @brief Print all registered elements

@@ -3,6 +3,9 @@
 // from STL
 #include <string>
 
+// from RooFit
+#include "RooWorkspace.h"
+
 // from project
 #include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
 
@@ -37,6 +40,21 @@ Element::~Element() {
   
 }
 
+RooAbsArg* Element::AddToWorkspace(RooWorkspace* ws, std::vector<RooAbsArg*> dependants) {
+  if (!ready()) {
+    throw; 
+  }
+  
+  if (!onworkspace()){
+    RooAbsArg* roo_obj_temp = CreateTempRooObj(dependants);
+
+    ws->import(*roo_obj_temp);
+    delete roo_obj_temp;
+    
+    set_onworkspace(true);
+  }
+  return GetRooObjFromWorkspace(ws);
+}
 
 } // namespace elements 
 } // namespace blueprint 

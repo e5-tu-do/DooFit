@@ -34,7 +34,17 @@ class DimReal : public DimElement, public RealValElement {
    *  @param dependants the dependants to be used for initialization
    *  @return the temporary initialized object to be put onto a workspace
    */
-  RooAbsReal* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>());
+  RooAbsArg* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>());
+
+  /** @brief Create instance of this element as RooFit object
+   *  
+   *  Initialize the appropriate RooFit object and return it as RooAbsArg 
+   *  pointer.
+   *
+   *  @param dependants the dependants to be used for initialization
+   *  @return the temporary initialized object to be put onto a workspace
+   */
+  RooAbsArg* GetRooObjFromWorkspace(RooWorkspace* ws);
   
   /** @brief Getter for val_min_ */
   double val_min() const { return val_min_; }
@@ -54,7 +64,8 @@ class DimReal : public DimElement, public RealValElement {
   
   
   
- private:
+ private: 
+   
   double val_min_;
   double val_max_;
   std::string unit_;

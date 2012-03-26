@@ -34,7 +34,7 @@ Registrar::~Registrar() {
   
 }
 
-void Registrar::Declare(Element* const element) {
+void Registrar::Declare(Element* element) {
   std::string temp_key = element->id_abs();
   elements_.insert(temp_key,  element);
 }

@@ -2,6 +2,7 @@
 
 // from RooFit
 #include "RooRealVar.h"
+#include "RooWorkspace.h"
 
 namespace doofit {
 namespace builder {
@@ -49,7 +50,7 @@ ParamBasic::~ParamBasic() {
 
 }
 
-RooAbsReal* ParamBasic::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
+RooAbsArg* ParamBasic::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
   RooRealVar* temp_realvar = NULL;
   if (val_max_ == val_init_ && val_min_ == val_init_) {
     temp_realvar = new RooRealVar(id_abs().c_str(), desc().c_str(), val_init(), unit().c_str());
@@ -57,6 +58,11 @@ RooAbsReal* ParamBasic::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
     temp_realvar = new RooRealVar(id_abs().c_str(), desc().c_str(), val_init(), val_min(), val_max(), unit().c_str());
   }
   return temp_realvar;
+}
+
+RooAbsArg* ParamBasic::GetRooObjFromWorkspace(RooWorkspace* ws) {
+  roo_obj_ = ws->var(id_abs().c_str());
+  return dynamic_cast<RooAbsReal*>(roo_obj_);
 }
 
 } // namespace elements 

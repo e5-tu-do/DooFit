@@ -2,6 +2,7 @@
 
 // from RooFit
 #include "RooRealVar.h"
+#include "RooWorkspace.h"
 
 namespace doofit {
 namespace builder {
@@ -33,10 +34,17 @@ DimReal::~DimReal() {
   
 }
 
-RooAbsReal* DimReal::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
-  RooRealVar* temp_realvar = new RooRealVar(id_abs().c_str(), desc().c_str(), val_min(), val_max(), unit().c_str());
+RooAbsArg* DimReal::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
+  RooRealVar* temp_realvar = NULL;
+  temp_realvar = new RooRealVar(id_abs().c_str(), desc().c_str(), val_min(), val_max(), unit().c_str());
   return temp_realvar;
 }
+
+RooAbsArg* DimReal::GetRooObjFromWorkspace(RooWorkspace* ws) {
+  roo_obj_ = ws->var(id_abs().c_str());
+  return dynamic_cast<RooAbsReal*>(roo_obj_);
+}
+
 
 } // namespace elements 
 } // namespace blueprint 
