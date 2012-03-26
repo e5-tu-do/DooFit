@@ -4,6 +4,7 @@
 namespace doofit {
 namespace builder {
 namespace numerobis {
+namespace blueprint {
 namespace elements {
 
 // forward declarations
@@ -25,6 +26,7 @@ class Factory {
 };
 
 } // namespace elements 
+} // namespace blueprint 
 } // namespace numerobis 
 } // namespace builder 
 } // namespace doofit 

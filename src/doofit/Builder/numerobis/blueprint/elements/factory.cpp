@@ -8,10 +8,12 @@
 
 namespace doofit {
 namespace builder {
+namespace numerobis {
 namespace blueprint {
 namespace elements {
 
 } // namespace elements 
+} // namespace numerobis 
 } // namespace blueprint 
 } // namespace builder 
 } // namespace doofit 
