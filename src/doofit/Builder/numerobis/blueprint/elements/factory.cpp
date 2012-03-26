@@ -15,7 +15,8 @@ namespace elements {
 Factory::Factory(Registrar& registrar) 
   : registrar_(registrar)
 {}
-  
+
+Factory::~Factory () {}
   
 } // namespace elements 
 } // namespace numerobis 

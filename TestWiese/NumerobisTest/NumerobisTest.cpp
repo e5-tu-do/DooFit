@@ -12,9 +12,7 @@
 #include "doofit/Builder/numerobis/numerobis_config.h"
 
 #include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
-#include "doofit/Builder/numerobis/blueprint/elements/dimreal.h"
-#include "doofit/Builder/numerobis/blueprint/elements/parambasic.h"
-#include "doofit/Builder/numerobis/blueprint/elements/formula.h"
+#include "doofit/Builder/numerobis/blueprint/elements/factory.h"
 
 using namespace std;
 
@@ -45,37 +43,29 @@ int main( int argc, char *argv[] ){
   //builder.PrintLogo();
   
   blueprint::elements::Registrar registrar;
+  blueprint::elements::Factory factory(registrar);
   
   std::vector<std::string> elements;
   elements.push_back("a");
   elements.push_back("b");
   
-  blueprint::elements::Formula f("f","f","@0*@1",elements);
-  registrar.Declare(f);
-
+  factory.AssembleFormula("f","f","@0*@1",elements);
 
   std::vector<std::string> elements2;
   elements2.push_back("f");
   elements2.push_back("c");
-  
-  blueprint::elements::Formula f2("f2","f2","@0*@1",elements2);
-  registrar.Declare(f2);
+
+  factory.AssembleFormula("f2","f2","@0*@1",elements2);
 
   registrar.Print();
   
-  blueprint::elements::DimReal a("a","a","a",0.3,3,"ps");
-  //a.AddToWorkspace(&ws);
-  registrar.Declare(a);
-  
-  blueprint::elements::ParamBasic b("b","b","b",0.4, 0.3,3,"ps");
-  registrar.Declare(b);
+  factory.AssembleDimReal("a","a","a",0.3,3,"ps");
 
-  blueprint::elements::ParamBasic c("c","c","c",0.5, 0.3,3,"ps");
-  registrar.Declare(c);
+  factory.AssembleParamBasic("b", "b", "b", 0.4, 0.3, 3, "ps");
+  factory.AssembleParamBasic("c", "c", "c", 0.5, 0.3, 3, "ps");
   
-//  registrar.Register(&ws, a);
-//  registrar.Register(&ws, b);
-  registrar.Register(&ws, f2);
+  registrar.Register(&ws, "f2");
+  registrar.Register(&ws, "f");
   
   registrar.Print();
   
