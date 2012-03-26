@@ -4,6 +4,9 @@
 #include <string>
 #include <map>
 
+// from BOOST
+#include <boost/foreach.hpp>
+
 // from RooFit
 #include "RooArgList.h"
 
@@ -49,20 +52,20 @@ bool Registrar::CheckReady(Element& element) {
   namespace du = doofit::utils;
   //du::sdebug << "Checking ready for: " << element.id_abs() << du::endmsg;
   
+  // Check if element is ready, if not, check if dependants are ready.
   if (!element.ready()) {
     const std::vector<std::string>& dep = element.dependants();
     bool allready = true;
+    
     std::map<std::string, Element*>::iterator it_el;
-    for (std::vector<std::string>::const_iterator it_dep=dep.begin(); it_dep!=dep.end(); ++it_dep) {
-      //du::sdebug << "Checking ready for dependant: " << *it_dep << du::endmsg;
-      it_el = elements_.find(*it_dep);
+    BOOST_FOREACH (std::string it_dep, dep) {
+      it_el = elements_.find(it_dep);
       if (it_el == elements_.end()) {
         allready = false;
       } else {
         allready &= CheckReady(*it_el->second);
-      }
-    }
-    
+      }  
+    } 
     if (allready) element.set_ready(true);
   }
   
@@ -72,11 +75,14 @@ bool Registrar::CheckReady(Element& element) {
 RooAbsArg* Registrar::Register(RooWorkspace* ws, Element &element) {
   if (CheckReady(element)) {
     const std::vector<std::string>& dep_ids = element.dependants();
+    
+    // Iterate ove dependants and check if dependants exist in elements_. 
+    // If not, throw exception.
+    // If yes, register them and invoke AddToWorkspace
     std::vector<RooAbsArg*> dep_elements;
     std::map<std::string, Element*>::iterator it_el;
-    for (std::vector<std::string>::const_iterator it_dep=dep_ids.begin(); 
-         it_dep!=dep_ids.end(); ++it_dep) {
-      it_el = elements_.find(*it_dep);
+    BOOST_FOREACH(std::string it_dep, dep_ids) {
+      it_el = elements_.find(it_dep);
       if (it_el == elements_.end()) {
         throw UnexpectedException();
       } else {
@@ -84,7 +90,6 @@ RooAbsArg* Registrar::Register(RooWorkspace* ws, Element &element) {
         dep_elements.push_back(Register(ws, dep_element));
       }
     }
-    
     return element.AddToWorkspace(ws, dep_elements);
   }
   return NULL;
