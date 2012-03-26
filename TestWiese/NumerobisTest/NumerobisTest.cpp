@@ -53,6 +53,14 @@ int main( int argc, char *argv[] ){
   blueprint::elements::Formula f("f","f","@0*@1",elements);
   registrar.Declare(f);
 
+
+  std::vector<std::string> elements2;
+  elements2.push_back("f");
+  elements2.push_back("c");
+  
+  blueprint::elements::Formula f2("f2","f2","@0*@1",elements2);
+  registrar.Declare(f2);
+
   registrar.Print();
   
   blueprint::elements::DimReal a("a","a","a",0.3,3,"ps");
@@ -60,12 +68,14 @@ int main( int argc, char *argv[] ){
   registrar.Declare(a);
   
   blueprint::elements::ParamBasic b("b","b","b",0.4, 0.3,3,"ps");
-  //b.AddToWorkspace(&ws);
   registrar.Declare(b);
 
-  registrar.Register(&ws, a);
-  registrar.Register(&ws, b);
-  registrar.Register(&ws, f);
+  blueprint::elements::ParamBasic c("c","c","c",0.5, 0.3,3,"ps");
+  registrar.Declare(c);
+  
+//  registrar.Register(&ws, a);
+//  registrar.Register(&ws, b);
+  registrar.Register(&ws, f2);
   
   registrar.Print();
   
