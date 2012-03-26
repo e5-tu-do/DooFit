@@ -2,6 +2,7 @@
 
 // from RooFit
 #include "RooFormulaVar.h"
+#include "RooWorkspace.h"
 
 // from project
 #include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
@@ -33,7 +34,7 @@ Formula::~Formula() {
   
 }
   
-RooAbsReal* Formula::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
+RooAbsArg* Formula::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
   RooArgList dep_list = VectorToArgList(dependants);
   
   RooFormulaVar* temp_formulavar = NULL;
@@ -41,6 +42,12 @@ RooAbsReal* Formula::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
   
   return temp_formulavar;
 }
+  
+RooAbsArg* Formula::GetRooObjFromWorkspace(RooWorkspace* ws) {
+  roo_obj_ = ws->function(id_abs().c_str());
+  return dynamic_cast<RooFormulaVar*>(roo_obj_);
+}
+
   
 } // namespace elements 
 } // namespace blueprint 

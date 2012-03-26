@@ -28,7 +28,7 @@ class Formula : public RealValElement {
   
   virtual ~Formula();
   
- protected:
+ protected:  
   /** @brief Create instance of this element as RooFit object
    *  
    *  Initialize the appropriate RooFit object and return it as RooAbsReal 
@@ -37,7 +37,17 @@ class Formula : public RealValElement {
    *  @param dependants the dependants to be used for initialization
    *  @return the temporary initialized object to be put onto a workspace
    */
-  RooAbsReal* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>());
+  RooAbsArg* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>());
+
+  /** @brief Create instance of this element as RooFit object
+   *  
+   *  Initialize the appropriate RooFit object and return it as RooAbsArg 
+   *  pointer.
+   *
+   *  @param dependants the dependants to be used for initialization
+   *  @return the temporary initialized object to be put onto a workspace
+   */
+  RooAbsArg* GetRooObjFromWorkspace(RooWorkspace* ws);
   
  private:
   /**
