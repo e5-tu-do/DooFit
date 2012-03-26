@@ -4,6 +4,9 @@
 // from STL
 #include <string>
 
+// from boost
+#include <boost/ptr_container/ptr_map.hpp>
+
 // from project
 #include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
 #include "doofit/Builder/numerobis/blueprint/elements/parambasic.h"
@@ -51,7 +54,7 @@ class Factory {
    *  @param unit unit as string (optional)
    */
   void AssembleParamBasic(const std::string& id_rel, const std::string& id_abs, const std::string& desc, double val_init, double val_min, double val_max, const std::string& unit="") {
-    registrar_.Declare(new ParamBasic(id_rel, id_abs, desc, val_init, val_min, val_max, unit));
+    //registrar_.Declare(new ParamBasic(id_rel, id_abs, desc, val_init, val_min, val_max, unit));
   }
   
   /**
@@ -64,7 +67,11 @@ class Factory {
    *  @param unit unit as string (optional)
    */
   void AssembleParamBasic(const std::string& id_rel, const std::string& id_abs, const std::string& desc, double val_init, const std::string& unit="") {
-    registrar_.Declare(new ParamBasic(id_rel, id_abs, desc, val_init, unit));
+    boost::ptr_map<std::string, Element> elements;
+    std::string bla = "bla";
+    elements.insert(bla, new ParamBasic(id_rel, id_abs, desc, val_init, unit));
+    
+    //registrar_.Declare(new ParamBasic(id_rel, id_abs, desc, val_init, unit));
   }
   
   /**
@@ -78,7 +85,7 @@ class Factory {
    *  @param unit unit as string (optional)
    */
   void AssembleDimReal(const std::string& id_rel, const std::string& id_abs, const std::string& desc, double val_min, double val_max, const std::string& unit) {
-    registrar_.Declare(new DimReal(id_rel, id_abs, desc, val_min, val_max, unit));
+    //registrar_.Declare(new DimReal(id_rel, id_abs, desc, val_min, val_max, unit));
   }
   
   /**
@@ -90,7 +97,7 @@ class Factory {
    *  @param elements elements to use in the formula (in same order as formula)
    */
   void AssembleFormula(const std::string& id_rel, const std::string& id_abs, const std::string& formula, std::vector<std::string> elements) {
-    registrar_.Declare(new Formula(id_rel, id_abs, formula, elements));
+    //registrar_.Declare(new Formula(id_rel, id_abs, formula, elements));
   }
   
  protected:
@@ -99,7 +106,7 @@ class Factory {
   /**
    *  @brief Brief description
    */
-  Registrar registrar_;
+  Registrar& registrar_;
 };
 
 } // namespace elements 
