@@ -42,7 +42,7 @@ int main( int argc, char *argv[] ){
   RooWorkspace ws("ws");
   //builder.AddToWorkspace(ws);
   
-  builder.PrintLogo();
+  //builder.PrintLogo();
   
   blueprint::elements::Registrar registrar;
   

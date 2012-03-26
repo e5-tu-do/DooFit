@@ -3,10 +3,10 @@
 
 // from STL
 #include <string>
-#include <map>
 
 // from boost
 #include <boost/exception/all.hpp>
+#include <boost/ptr_container/ptr_map.hpp>
 
 // from RooFit
 #include "RooArgList.h"
@@ -40,7 +40,7 @@ class Registrar {
    *
    *  @param element the element to add
    */
-  void Declare(Element& element);
+  void Declare(Element* const element);
   
   /**
    *  @brief Print all registered elements
@@ -54,9 +54,9 @@ class Registrar {
    *  put all of them on the supplied workspace.
    *
    *  @param ws the RooWorkspace to put all elements onto
-   *  @param element the element to register
+   *  @param element_name name of the element to register
    */
-  RooAbsArg* Register(RooWorkspace* ws, Element& element);
+  RooAbsArg* Register(RooWorkspace* ws, const std::string& element_name);
   
  private:
   /**
@@ -65,15 +65,15 @@ class Registrar {
    *  This function will check for one element if its dependants list is in 
    *  ready state. If so, this element will be set to ready.
    *
-   *  @param element the element to check
+   *  @param element_name name of the element to check
    *  @return the ready state of element after check
    */
-  bool CheckReady(Element& element);
+  bool CheckReady(const std::string& element_name);
    
   /**
    *  @brief Map of all registered elements so far
    */
-  std::map<std::string, Element*> elements_;
+  boost::ptr_map<std::string, Element> elements_;
 };
 
 /**

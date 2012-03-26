@@ -24,7 +24,9 @@ namespace blueprint {
 namespace elements {
 
 
-Registrar::Registrar(){
+Registrar::Registrar()
+    : elements_()
+{
   
 }
 
@@ -32,8 +34,9 @@ Registrar::~Registrar() {
   
 }
 
-void Registrar::Declare(Element &element) {
-  elements_[element.id_abs()] = &element;
+void Registrar::Declare(Element* const element) {
+  std::string temp_key = element->id_abs();
+  elements_.insert(temp_key,  element);
 }
   
 void Registrar::Print() const {
@@ -41,14 +44,19 @@ void Registrar::Print() const {
   du::sinfo.Ruler();
   du::sinfo << "Registrar contents:" << du::endmsg;
   du::sinfo.increment_indent(2);
-  for (std::map<std::string, Element*>::const_iterator it=elements_.begin();
+  for (boost::ptr_map<std::string, Element>::const_iterator it=elements_.begin();
        it!=elements_.end(); ++it) {
     du::sinfo << *(*it).second << du::endmsg;
   }
   du::sinfo.increment_indent(-2);
 }
   
-bool Registrar::CheckReady(Element& element) {
+bool Registrar::CheckReady(const std::string& element_name) {
+  boost::ptr_map<std::string, Element>::iterator it_element = elements_.find(element_name);
+  if (it_element == elements_.end()) return false;
+  
+  Element* element = *it_element->second();
+  
   namespace du = doofit::utils;
   //du::sdebug << "Checking ready for: " << element.id_abs() << du::endmsg;
   
