@@ -73,13 +73,12 @@ class Factory {
    *  @param id_rel relative id of the object
    *  @param id_abs absolute id of the object
    *  @param desc description of the object
-   *  @param val_init initial value
    *  @param val_min lower limit
    *  @param val_max upper limit
    *  @param unit unit as string (optional)
    */
   void AssembleDimReal(const std::string& id_rel, const std::string& id_abs, const std::string& desc, double val_min, double val_max, const std::string& unit) {
-    registrar_.Declare(new DimReal(id_rel, id_abs, desc, val_init, val_min, val_max, unit));
+    registrar_.Declare(new DimReal(id_rel, id_abs, desc, val_min, val_max, unit));
   }
   
   /**
