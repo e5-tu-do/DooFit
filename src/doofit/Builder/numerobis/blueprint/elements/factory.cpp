@@ -12,6 +12,11 @@ namespace numerobis {
 namespace blueprint {
 namespace elements {
 
+Factory::Factory(Registrar& registrar) 
+  : registrar_(registrar)
+{}
+  
+  
 } // namespace elements 
 } // namespace numerobis 
 } // namespace blueprint 
