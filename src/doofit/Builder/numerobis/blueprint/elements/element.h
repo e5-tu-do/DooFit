@@ -47,7 +47,7 @@ class Element {
    *  @param dependants the dependants to be used for initialization
    *  @return the RooAbsArg on the workspace
    */
-  RooAbsArg* AddToWorkspace(RooWorkspace* ws, std::vector<RooAbsArg*> dependants);
+  RooAbsArg* AddToWorkspace(RooWorkspace* ws, const std::vector<RooAbsArg*>& dependants);
   
   /**
    *  @brief Get list of dependants
@@ -83,7 +83,7 @@ class Element {
    *  @param dependants the dependants to be used for initialization
    *  @return the temporary initialized object to be put onto a workspace
    */
-  virtual RooAbsArg* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>()) = 0;
+  virtual RooAbsArg* CreateTempRooObj(const std::vector<RooAbsArg*>& dependants = std::vector<RooAbsArg*>()) = 0;
   
   /** @brief Create instance of this element as RooFit object
    *  

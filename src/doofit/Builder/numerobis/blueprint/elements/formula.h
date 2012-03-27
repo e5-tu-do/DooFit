@@ -24,7 +24,7 @@ class Registrar;
 class Formula : public RealValElement {
  public:
   Formula();
-  Formula(const std::string& id_rel, const std::string& id_abs, const std::string& formula, std::vector<std::string> elements);
+  Formula(const std::string& id_rel, const std::string& id_abs, const std::string& formula, const std::vector<std::string>& elements);
   
   virtual ~Formula();
   
@@ -37,7 +37,7 @@ class Formula : public RealValElement {
    *  @param dependants the dependants to be used for initialization
    *  @return the temporary initialized object to be put onto a workspace
    */
-  RooAbsArg* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>());
+  RooAbsArg* CreateTempRooObj(const std::vector<RooAbsArg*>& dependants = std::vector<RooAbsArg*>());
 
   /** @brief Create instance of this element as RooFit object
    *  

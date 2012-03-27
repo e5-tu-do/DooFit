@@ -19,7 +19,7 @@ Formula::Formula() {
 }
 
 Formula::Formula(const std::string& id_rel, const std::string& id_abs, 
-                 const std::string& formula, std::vector<std::string> elements) 
+                 const std::string& formula, const std::vector<std::string>& elements) 
 : RealValElement(id_rel, id_abs)
 , formula_(formula)
 {
@@ -34,7 +34,7 @@ Formula::~Formula() {
   
 }
   
-RooAbsArg* Formula::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
+RooAbsArg* Formula::CreateTempRooObj(const std::vector<RooAbsArg*>& dependants) {
   RooArgList dep_list = VectorToArgList(dependants);
   
   RooFormulaVar* temp_formulavar = NULL;

@@ -50,7 +50,7 @@ ParamBasic::~ParamBasic() {
 
 }
 
-RooAbsArg* ParamBasic::CreateTempRooObj(std::vector<RooAbsArg*> dependants) {
+RooAbsArg* ParamBasic::CreateTempRooObj(const std::vector<RooAbsArg*>& dependants) {
   RooRealVar* temp_realvar = NULL;
   if (val_max_ == val_init_ && val_min_ == val_init_) {
     temp_realvar = new RooRealVar(id_abs().c_str(), desc().c_str(), val_init(), unit().c_str());

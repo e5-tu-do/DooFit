@@ -34,7 +34,7 @@ class DimReal : public DimElement, public RealValElement {
    *  @param dependants the dependants to be used for initialization
    *  @return the temporary initialized object to be put onto a workspace
    */
-  RooAbsArg* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>());
+  RooAbsArg* CreateTempRooObj(const std::vector<RooAbsArg*>& dependants = std::vector<RooAbsArg*>());
 
   /** @brief Create instance of this element as RooFit object
    *  

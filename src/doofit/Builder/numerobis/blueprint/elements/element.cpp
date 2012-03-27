@@ -40,7 +40,7 @@ Element::~Element() {
   
 }
 
-RooAbsArg* Element::AddToWorkspace(RooWorkspace* ws, std::vector<RooAbsArg*> dependants) {
+RooAbsArg* Element::AddToWorkspace(RooWorkspace* ws, const std::vector<RooAbsArg*>& dependants) {
   if (!ready()) {
     throw; 
   }

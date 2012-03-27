@@ -25,16 +25,6 @@ class RealValElement : public Element {
   virtual ~RealValElement();
     
  protected:
-  /** @brief Create instance of this element as RooFit object
-   *  
-   *  Initialize the appropriate RooFit object and return it as RooAbsReal 
-   *  pointer.
-   *
-   *  @param dependants the dependants to be used for initialization
-   *  @return the temporary initialized object to be put onto a workspace
-   */
-  virtual RooAbsArg* CreateTempRooObj(std::vector<RooAbsArg*> dependants = std::vector<RooAbsArg*>()) = 0;
-  
   RooAbsReal* GetRooObj() { return roo_obj_; };
   
   RooAbsReal* roo_obj_;

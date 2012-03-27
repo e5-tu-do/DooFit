@@ -92,7 +92,7 @@ class Factory {
    *  @param formula formula
    *  @param elements elements to use in the formula (in same order as formula)
    */
-  void AssembleFormula(const std::string& id_rel, const std::string& id_abs, const std::string& formula, std::vector<std::string> elements) {
+  void AssembleFormula(const std::string& id_rel, const std::string& id_abs, const std::string& formula, const std::vector<std::string>& elements) {
     registrar_.Declare(new Formula(id_rel, id_abs, formula, elements));
   }
   
