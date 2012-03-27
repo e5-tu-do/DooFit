@@ -1,6 +1,9 @@
 #ifndef DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_PDFS_BASICPDF_H
 #define DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_PDFS_BASICPDF_H
 
+// from STL
+#include <string>
+
 //from project
 #include "pdf.h"
 
@@ -13,6 +16,7 @@ namespace pdfs {
 class BasicPdf : public Pdf {
  public:
   BasicPdf();
+  BasicPdf(const std::string& id_rel, const std::string& id_abs);
   virtual ~BasicPdf();
  protected:
   

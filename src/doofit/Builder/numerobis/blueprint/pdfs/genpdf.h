@@ -1,6 +1,9 @@
 #ifndef DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_PDFS_GENPDF_H
 #define DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_PDFS_GENPDF_H
 
+// from STL
+#include <string>
+
 //from project
 #include "basicpdf.h"
 
@@ -13,6 +16,7 @@ namespace pdfs {
 class GenPdf : public BasicPdf {
  public:
   GenPdf();
+  GenPdf(const std::string& id_rel, const std::string& id_abs);
   virtual ~GenPdf();
  protected:
   
