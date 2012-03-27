@@ -55,18 +55,6 @@ class GaussPdf : public GenPdf {
   virtual RooAbsPdf* GetRooObjFromWorkspace(RooWorkspace* ws);
   
  private:
-  /**
-   *  @brief absolute ID of the associated dimension
-   */
-  std::string id_abs_dimension_;
-  /**
-   *  @brief absolute ID of the associated mean
-   */
-  std::string id_abs_mean_;
-  /**
-   *  @brief absolute ID of the associated sigma
-   */
-  std::string id_abs_sigma_;  
 };
 
 } // namespace pdfs
