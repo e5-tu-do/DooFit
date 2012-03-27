@@ -16,15 +16,15 @@ namespace blueprint {
 namespace elements {
 
 
-Element::Element()
-    : id_rel_("NoRelID")
-    , id_abs_("NoAbsID")
-    , initialized_(false)
-    , ready_(false)
-    , onworkspace_(false)
-{
-  
-}
+// Element::Element()
+//     : id_rel_("NoRelID")
+//     , id_abs_("NoAbsID")
+//     , initialized_(false)
+//     , ready_(false)
+//     , onworkspace_(false)
+// {
+//   
+// }
   
 Element::Element(const std::string& id_rel, const std::string& id_abs)
  : id_rel_(id_rel)

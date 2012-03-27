@@ -10,7 +10,7 @@
  *  @date 2012-02-08
  *  @date $Date$
  *  @version $Rev$
- */
+**/
 #ifndef DOOFIT_BUILDER_NUMEROBIS_NUMEROBIS_CONFIG_H
 #define DOOFIT_BUILDER_NUMEROBIS_NUMEROBIS_CONFIG_H
 
@@ -37,7 +37,7 @@ class NumerobisConfig : public Config::AbsConfig {
  private:
   /** @name Virtual functions
    *  Implementation of pure virtual functions.
-   */
+  **/
   ///@{
   /**
    *  \brief Define options for the derived class.
@@ -45,7 +45,7 @@ class NumerobisConfig : public Config::AbsConfig {
    *  This function will define all options for the derived CommonConfig class.
    * 
    *  @see Config::AbsConfig::DefineOptions()
-   */
+  **/
   void DefineOptions();
   
   /**
@@ -55,14 +55,14 @@ class NumerobisConfig : public Config::AbsConfig {
    *  members.
    *  
    *  @see Config::AbsConfig::LoadOptions()
-   */
+  **/
   void LoadOptions();
   
   /**
    *  \brief Print all options for this object.
    *
    *  Virtual function that will print all options for this Config object.
-   */
+  **/
   void PrintOptions() const;
   ///@}
   

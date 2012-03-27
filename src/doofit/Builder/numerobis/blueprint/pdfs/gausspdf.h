@@ -20,7 +20,7 @@ class GaussPdf : public GenPdf {
  public:
   /**
    *  @brief Default constructor for GaussPdf
-   */
+  **/
   GaussPdf();
   
   /**
@@ -32,7 +32,7 @@ class GaussPdf : public GenPdf {
    *  @param id_abs_mean absolute id of the mean
    *  @param id_abs_sigma absolute id of the sigma
    
-   */
+  **/
   GaussPdf(const std::string& id_rel, const std::string& id_abs, const std::string& id_abs_dimension, const std::string& id_abs_mean, const std::string& id_abs_sigma);
   
   virtual ~GaussPdf();
@@ -44,7 +44,7 @@ class GaussPdf : public GenPdf {
    *
    *  @param dependants the dependants to be used for initialization
    *  @return the temporary initialized object to be put onto a workspace
-   */
+  **/
   virtual RooAbsPdf* CreateTempRooObj(const std::map<std::string, RooAbsArg*>& dependants);
   
   /** @brief Create instance of this element as RooFit object
@@ -54,13 +54,13 @@ class GaussPdf : public GenPdf {
    *
    *  @param dependants the dependants to be used for initialization
    *  @return the temporary initialized object to be put onto a workspace
-   */
+  **/
   virtual RooAbsPdf* GetRooObjFromWorkspace(RooWorkspace* ws);
   
  private:
   /**
    *  @brief Pointer to RooFit object on workspace
-   */
+  **/
   RooGaussian* roo_obj_;
 };
 

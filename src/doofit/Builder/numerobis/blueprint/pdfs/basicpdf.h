@@ -21,7 +21,7 @@ class BasicPdf : public Pdf {
  protected:
   
  private:
-  /* data */
+  /* data**/
 };
 
 } // namespace pdfs

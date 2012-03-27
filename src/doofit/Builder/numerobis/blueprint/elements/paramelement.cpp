@@ -7,7 +7,9 @@ namespace blueprint {
 namespace elements {
 
 
-ParamElement::ParamElement(){
+ParamElement::ParamElement(const std::string& id_rel, const std::string& id_abs)
+    : RealValElement(id_rel, id_abs)
+{
   
 }
 

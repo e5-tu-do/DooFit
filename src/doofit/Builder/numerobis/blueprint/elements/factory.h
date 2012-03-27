@@ -27,19 +27,19 @@ class Registrar;
  *
  *  In this first iteration this factory will merely function as a wrapper for
  *  Elements' constructors.
- */  
+**/  
 class Factory {
  public:
   /**
    *  @brief Constructor for this Factory with the Registrar to use
    *
    *  @param registrar the Registrar for registering the Elements
-   */
+  **/
   Factory(Registrar& registrar);
   
   /**
    *  @brief Destructor
-   */
+  **/
   virtual ~Factory ();
   
   /**
@@ -52,7 +52,7 @@ class Factory {
    *  @param val_min lower limit
    *  @param val_max upper limit
    *  @param unit unit as string (optional)
-   */
+  **/
   void AssembleParamBasic(const std::string& id_rel, const std::string& id_abs, const std::string& desc, double val_init, double val_min, double val_max, const std::string& unit="") {
     registrar_.Declare(new ParamBasic(id_rel, id_abs, desc, val_init, val_min, val_max, unit));
   }
@@ -65,7 +65,7 @@ class Factory {
    *  @param desc description of the object
    *  @param val_init initial value
    *  @param unit unit as string (optional)
-   */
+  **/
   void AssembleParamBasic(const std::string& id_rel, const std::string& id_abs, const std::string& desc, double val_init, const std::string& unit="") {    
     registrar_.Declare(new ParamBasic(id_rel, id_abs, desc, val_init, unit));
   }
@@ -79,7 +79,7 @@ class Factory {
    *  @param val_min lower limit
    *  @param val_max upper limit
    *  @param unit unit as string (optional)
-   */
+  **/
   void AssembleDimReal(const std::string& id_rel, const std::string& id_abs, const std::string& desc, double val_min, double val_max, const std::string& unit) {
     registrar_.Declare(new DimReal(id_rel, id_abs, desc, val_min, val_max, unit));
   }
@@ -91,7 +91,7 @@ class Factory {
    *  @param id_abs absolute id of the object
    *  @param formula formula
    *  @param elements elements to use in the formula (in same order as formula)
-   */
+  **/
   void AssembleFormula(const std::string& id_rel, const std::string& id_abs, const std::string& formula, const std::vector<std::string>& elements) {
     registrar_.Declare(new Formula(id_rel, id_abs, formula, elements));
   }
@@ -101,7 +101,7 @@ class Factory {
  private:
   /**
    *  @brief Brief description
-   */
+  **/
   Registrar& registrar_;
 };
 

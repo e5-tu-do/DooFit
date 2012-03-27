@@ -39,12 +39,12 @@ class Registrar {
    *  linking with other elements.
    *
    *  @param element the element to add
-   */
+  **/
   void Declare(Element* element);
   
   /**
    *  @brief Print all registered elements
-   */
+  **/
   void Print() const;
   
   /**
@@ -55,7 +55,7 @@ class Registrar {
    *
    *  @param ws the RooWorkspace to put all elements onto
    *  @param element_name name of the element to register
-   */
+  **/
   RooAbsArg* Register(RooWorkspace* ws, const std::string& element_name);
   
  private:
@@ -67,12 +67,12 @@ class Registrar {
    *
    *  @param element_name name of the element to check
    *  @return the ready state of element after check
-   */
+  **/
   bool CheckReady(const std::string& element_name);
    
   /**
    *  @brief Map of all registered elements so far
-   */
+  **/
   boost::ptr_map<std::string, Element> elements_;
 };
 
@@ -81,12 +81,12 @@ class Registrar {
  *
  *  @param vec the vector to convert
  *  @return the RooArgList based on the vector
- */
+**/
 RooArgList VectorToArgList(std::vector<RooAbsArg*> vec);
   
 /** \struct UnexpectedException
  *  \brief Unexpected exception that should not even occur
- */
+**/
 struct UnexpectedException: public virtual boost::exception, public virtual std::exception { 
   virtual const char* what() const throw() { return "Unexpected exception"; }
 };

@@ -23,18 +23,18 @@ class Registrar;
   
 class Element {
  public:
-  Element();
+  //Element();
   Element(const std::string& id_rel, const std::string& id_abs);
   virtual ~Element();
   
-  /** Getter for id_rel_ */
+  /** Getter for id_rel_**/
   std::string id_rel() const { return id_rel_; }
-  /** Setter for id_rel_ */
+  /** Setter for id_rel_**/
   void set_id_rel(const std::string& id_rel) { id_rel_ = id_rel; } 
   
-  /** Getter for id_abs_ */
+  /** Getter for id_abs_**/
   std::string id_abs() const { return id_abs_; }
-  /** Setter for id_abs_ */
+  /** Setter for id_abs_**/
   void set_id_abs(const std::string& id_abs) { id_abs_ = id_abs; } 
   
   /** @brief Adds RooFit representation to RooWorkspace
@@ -46,7 +46,7 @@ class Element {
    *  @param ws the workspace to add the object to
    *  @param dependants the dependants to be used for initialization
    *  @return the RooAbsArg on the workspace
-   */
+  **/
   RooAbsArg* AddToWorkspace(RooWorkspace* ws, const std::vector<RooAbsArg*>& dependants);
   
   /**
@@ -56,22 +56,22 @@ class Element {
    *  std::vector<std::string> with absolute IDs as vector elements
    *
    *  @return the dependants of this element
-   */
+  **/
   const std::vector<std::string>& dependants() const { return dependants_; }
   
-  /** Getter for initialized_ */
+  /** Getter for initialized_**/
   bool initialized() const { return initialized_; }
-  /** Setter for initialized_ */
+  /** Setter for initialized_**/
   void set_initialized(bool initialized) { initialized_ = initialized; } 
   
-  /** Getter for onworkspace_ */
+  /** Getter for onworkspace_**/
   bool onworkspace() const { return onworkspace_; }
-  /** Setter for onworkspace_ */
+  /** Setter for onworkspace_**/
   void set_onworkspace(bool onworkspace) { onworkspace_ = onworkspace; } 
   
-  /** Getter for ready_ */
+  /** Getter for ready_**/
   bool ready() const { return ready_; }
-  /** Setter for ready_ */
+  /** Setter for ready_**/
   void set_ready(bool ready) { ready_ = ready; }
   
  protected:
@@ -82,7 +82,7 @@ class Element {
    *
    *  @param dependants the dependants to be used for initialization
    *  @return the temporary initialized object to be put onto a workspace
-   */
+  **/
   virtual RooAbsArg* CreateTempRooObj(const std::vector<RooAbsArg*>& dependants = std::vector<RooAbsArg*>()) = 0;
   
   /** @brief Create instance of this element as RooFit object
@@ -92,12 +92,12 @@ class Element {
    *
    *  @param dependants the dependants to be used for initialization
    *  @return the temporary initialized object to be put onto a workspace
-   */
+  **/
   virtual RooAbsArg* GetRooObjFromWorkspace(RooWorkspace* ws) = 0;
    
   /**
    *  @brief List of dependants
-   */
+  **/
   std::vector<std::string> dependants_;
   
  private:
@@ -121,7 +121,7 @@ namespace utils {
  *  @brief Function to output Numerobis elements directly and nicely into MsgStreams
  *
  *  This function just prints all information in a Element nicely.
- */
+**/
 inline MsgStream& operator<<(MsgStream& lhs, const doofit::builder::numerobis::blueprint::elements::Element& element) {
   lhs.stream() << "Element: " << element.id_abs();
   

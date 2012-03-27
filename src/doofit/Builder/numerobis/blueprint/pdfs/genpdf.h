@@ -21,7 +21,7 @@ class GenPdf : public BasicPdf {
  protected:
   
  private:
-  /* data */
+  /* data**/
 };
 
 } // namespace pdfs

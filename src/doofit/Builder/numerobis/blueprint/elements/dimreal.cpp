@@ -10,16 +10,13 @@ namespace numerobis {
 namespace blueprint {
 namespace elements {
 
-
-DimReal::DimReal(){
-  
-}
-
 DimReal::DimReal(const std::string& id_rel, const std::string& id_abs, 
                  const std::string& desc, double val_min, double val_max, const std::string& unit) 
-    : val_min_(val_min)
+    : RealValElement(id_rel, id_abs)
+    , val_min_(val_min)
     , val_max_(val_max)
     , unit_(unit)
+    , roo_obj_(NULL)
 {
   set_id_rel(id_rel);
   set_id_abs(id_abs);

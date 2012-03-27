@@ -23,14 +23,14 @@ class Pdf {
    Pdf(const std::string& id_rel, const std::string& id_abs);
    virtual ~Pdf();
 
-   /** Getter for id_rel_ */
+   /** Getter for id_rel_**/
    std::string id_rel() const { return id_rel_; }
-   /** Setter for id_rel_ */
+   /** Setter for id_rel_**/
    void set_id_rel(const std::string& id_rel) { id_rel_ = id_rel; } 
 
-   /** Getter for id_abs_ */
+   /** Getter for id_abs_**/
    std::string id_abs() const { return id_abs_; }
-   /** Setter for id_abs_ */
+   /** Setter for id_abs_**/
    void set_id_abs(const std::string& id_abs) { id_abs_ = id_abs; } 
 
    /** @brief Adds RooFit representation to RooWorkspace
@@ -42,7 +42,7 @@ class Pdf {
     *  @param ws the workspace to add the object to
     *  @param dependants the dependants to be used for initialization
     *  @return the RooAbsPdf on the workspace
-    */
+   **/
    RooAbsPdf* AddToWorkspace(RooWorkspace* ws, const std::map<std::string,RooAbsArg*>& dependants);
 
    /**
@@ -53,22 +53,22 @@ class Pdf {
     *  IDs as value.
     *
     *  @return the dependants of this element
-    */
+   **/
    const std::map<std::string, std::string>& dependants() const { return dependants_; }
 
-   /** Getter for initialized_ */
+   /** Getter for initialized_**/
    bool initialized() const { return initialized_; }
-   /** Setter for initialized_ */
+   /** Setter for initialized_**/
    void set_initialized(bool initialized) { initialized_ = initialized; } 
 
-   /** Getter for onworkspace_ */
+   /** Getter for onworkspace_**/
    bool onworkspace() const { return onworkspace_; }
-   /** Setter for onworkspace_ */
+   /** Setter for onworkspace_**/
    void set_onworkspace(bool onworkspace) { onworkspace_ = onworkspace; } 
 
-   /** Getter for ready_ */
+   /** Getter for ready_**/
    bool ready() const { return ready_; }
-   /** Setter for ready_ */
+   /** Setter for ready_**/
    void set_ready(bool ready) { ready_ = ready; }
 
   protected:
@@ -79,7 +79,7 @@ class Pdf {
     *
     *  @param dependants the dependants to be used for initialization
     *  @return the temporary initialized object to be put onto a workspace
-    */
+   **/
    virtual RooAbsPdf* CreateTempRooObj(const std::map<std::string, RooAbsArg*>& dependants) = 0;
 
    /** @brief Create instance of this element as RooFit object
@@ -89,12 +89,12 @@ class Pdf {
     *
     *  @param dependants the dependants to be used for initialization
     *  @return the temporary initialized object to be put onto a workspace
-    */
+   **/
    virtual RooAbsPdf* GetRooObjFromWorkspace(RooWorkspace* ws) = 0;
 
    /**
     *  @brief List of dependants
-    */
+   **/
    std::map<std::string,std::string> dependants_;
 
  

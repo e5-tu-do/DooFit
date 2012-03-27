@@ -10,17 +10,15 @@ namespace numerobis {
 namespace blueprint {
 namespace elements {
 
-ParamBasic::ParamBasic(){
-
-}
-
 ParamBasic::ParamBasic(const std::string& id_rel, const std::string& id_abs, 
                        const std::string& desc, double val_init, double val_min, 
                        double val_max, const std::string& unit) 
-    : val_init_(val_init)
+    : ParamElement(id_rel, id_abs)
+    , val_init_(val_init)
     , val_min_(val_min)
     , val_max_(val_max)
     , unit_(unit)
+    , roo_obj_(NULL)
 {
   set_id_rel(id_rel);
   set_id_abs(id_abs);
@@ -33,10 +31,12 @@ ParamBasic::ParamBasic(const std::string& id_rel, const std::string& id_abs,
 ParamBasic::ParamBasic(const std::string& id_rel, const std::string& id_abs, 
                        const std::string& desc, double val_init, 
                        const std::string& unit) 
-    : val_init_(val_init)
+    : ParamElement(id_rel, id_abs)
+    , val_init_(val_init)
     , val_min_(val_init_)
     , val_max_(val_init_)
     , unit_(unit)
+    , roo_obj_(NULL)
 {
   set_id_rel(id_rel);
   set_id_abs(id_abs);

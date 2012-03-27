@@ -15,16 +15,9 @@ namespace numerobis {
 namespace blueprint {
 namespace elements {
 
-
-RealValElement::RealValElement() 
-    : roo_obj_(NULL)
-{
-  
-}
   
 RealValElement::RealValElement(const std::string& id_rel, const std::string& id_abs) 
     : Element(id_rel, id_abs)
-    , roo_obj_(NULL)
 {
   
 }

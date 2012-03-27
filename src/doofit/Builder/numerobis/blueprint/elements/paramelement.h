@@ -16,13 +16,13 @@ namespace elements {
 
 class ParamElement : public RealValElement {
  public:
-  ParamElement();
+  ParamElement(const std::string& id_rel, const std::string& id_abs);
   virtual ~ParamElement();
   
  protected:
-  /** Getter for desc_ */
+  /** Getter for desc_**/
   std::string desc() const { return desc_; }
-  /** Setter for desc_ */
+  /** Setter for desc_**/
   void set_desc(const std::string& desc) { desc_ = desc; } 
   
    

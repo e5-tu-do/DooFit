@@ -10,7 +10,7 @@
  *  @date 2012-02-08
  *  @date $Date$
  *  @version $Rev$
- */
+**/
 #ifndef DOOFIT_BUILDER_NUMEROBIS_NUMEROBIS_H
 #define DOOFIT_BUILDER_NUMEROBIS_NUMEROBIS_H
 

@@ -20,14 +20,11 @@ namespace elements {
 
 class RealValElement : public Element {
  public:
-  RealValElement();
   RealValElement(const std::string& id_rel, const std::string& id_abs);
   virtual ~RealValElement();
     
  protected:
-  RooAbsReal* GetRooObj() { return roo_obj_; };
-  
-  RooAbsReal* roo_obj_;
+
 };
 
 
