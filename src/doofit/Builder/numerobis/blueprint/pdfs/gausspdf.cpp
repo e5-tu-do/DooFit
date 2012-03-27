@@ -7,6 +7,7 @@
 // from RooFit
 #include "RooAbsReal.h"
 #include "RooGaussian.h"
+#include "RooWorkspace.h"
 
 namespace doofit {
 namespace builder {
@@ -14,13 +15,16 @@ namespace numerobis {
 namespace blueprint {
 namespace pdfs {
 
-GaussPdf::GaussPdf() {
+GaussPdf::GaussPdf()
+  : roo_obj_(NULL)
+{
   set_initialized(false);
   set_ready(false);  
 }
 
 GaussPdf::GaussPdf(const std::string& id_rel, const std::string& id_abs, const std::string& id_abs_dimension, const std::string& id_abs_mean, const std::string& id_abs_sigma)
   : GenPdf(id_rel, id_abs)
+  , roo_obj_(NULL)
 {
   set_initialized(true);
   set_ready(false);
@@ -53,9 +57,8 @@ RooAbsPdf* GaussPdf::CreateTempRooObj(const std::map<std::string, RooAbsArg*>& d
 }
 
 RooAbsPdf* GaussPdf::GetRooObjFromWorkspace(RooWorkspace* ws) {
-  //roo_obj_ = ws->pdf(id_abs().c_str());
-  //return dynamic_cast<RooGaussian*>(roo_obj_);
-  return NULL;
+  roo_obj_ = dynamic_cast<RooGaussian*>(ws->pdf(id_abs().c_str()));
+  return roo_obj_;
 }
 
 } // namespace pdfs

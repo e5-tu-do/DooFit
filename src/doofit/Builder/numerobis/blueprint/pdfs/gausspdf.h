@@ -7,6 +7,9 @@
 //from project
 #include "genpdf.h"
 
+// forward declaration
+class RooGaussian;
+
 namespace doofit {
 namespace builder {
 namespace numerobis {
@@ -55,6 +58,10 @@ class GaussPdf : public GenPdf {
   virtual RooAbsPdf* GetRooObjFromWorkspace(RooWorkspace* ws);
   
  private:
+  /**
+   *  @brief Pointer to RooFit object on workspace
+   */
+  RooGaussian* roo_obj_;
 };
 
 } // namespace pdfs
