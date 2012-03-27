@@ -1,5 +1,12 @@
 #include "pdf.h"
 
+// from STL
+#include <string>
+
+// from RooFit
+#include "RooWorkspace.h"
+#include "RooAbsPdf.h"
+
 namespace doofit {
 namespace builder {
 namespace numerobis {
@@ -22,6 +29,25 @@ Pdf::Pdf(const std::string& id_rel, const std::string& id_abs)
     , onworkspace_(false)
 { }
 
+Pdf::~Pdf() {
+  
+}
+
+RooAbsPdf* Pdf::AddToWorkspace(RooWorkspace* ws, const std::map<std::string,RooAbsArg*>& dependants) {
+  if (!ready()) {
+    throw; 
+  }
+  
+  if (!onworkspace()){
+    RooAbsPdf* roo_obj_temp = CreateTempRooObj(dependants);
+
+    ws->import(*roo_obj_temp);
+    delete roo_obj_temp;
+    
+    set_onworkspace(true);
+  }
+  return GetRooObjFromWorkspace(ws);
+}
 
 } // namespace pdfs 
 } // namespace blueprint 

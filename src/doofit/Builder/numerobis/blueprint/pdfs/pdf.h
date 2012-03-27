@@ -43,7 +43,7 @@ class Pdf {
     *  @param dependants the dependants to be used for initialization
     *  @return the RooAbsPdf on the workspace
     */
-   RooAbsPdf* AddToWorkspace(RooWorkspace* ws, std::map<std::string,RooAbsArg*> dependants);
+   RooAbsPdf* AddToWorkspace(RooWorkspace* ws, const std::map<std::string,RooAbsArg*>& dependants);
 
    /**
     *  @brief Get list of dependants
