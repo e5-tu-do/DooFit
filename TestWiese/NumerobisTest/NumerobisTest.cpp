@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 // from RooFit
 #include "RooWorkspace.h"
@@ -20,7 +21,6 @@ using namespace std;
 
 using namespace doofit;
 using namespace doofit::builder::numerobis;
-
 
 int run( int argc, char *argv[] ){
   namespace numi = doofit::builder::numerobis::blueprint;
@@ -46,8 +46,8 @@ int run( int argc, char *argv[] ){
   
   //builder.PrintLogo();
   
-  blueprint::elements::Registrar registrar;
-  blueprint::elements::Factory factory(registrar);
+  numi::elements::Registrar registrar;
+  numi::elements::Factory factory(registrar);
   
   std::vector<std::string> elements;
   elements.push_back("a");
@@ -73,9 +73,15 @@ int run( int argc, char *argv[] ){
   
   registrar.Print();
   
-  ws.Print("t");
+  numi::pdfs::GaussPdf pdf("pdfGauss", "pdfGauss", "a", "b", "c");
+  std::map<std::string, RooAbsArg*> pdf_elements;
+  pdf_elements["dimension"] = ws.var("a");
+  pdf_elements["mean"] = ws.var("b");
+  pdf_elements["sigma"] = ws.var("c");
+  pdf.set_ready(true);
+  pdf.AddToWorkspace(&ws, pdf_elements);
   
-  numi::pdfs::GaussPdf("pdfGauss", "pdfGauss", "a", "b", "c");
+  ws.Print("t");
   
   return 0;
 }
