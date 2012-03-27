@@ -19,6 +19,8 @@ BasicPdf::BasicPdf(const std::string& id_rel, const std::string& id_abs)
   
 }
 
+BasicPdf::~BasicPdf() {}
+  
 } // namespace pdfs
 } // namespace blueprint 
 } // namespace numerobis 

@@ -14,6 +14,8 @@
 #include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
 #include "doofit/Builder/numerobis/blueprint/elements/factory.h"
 
+#include "doofit/Builder/numerobis/blueprint/pdfs/gausspdf.h"
+
 using namespace std;
 
 using namespace doofit;
@@ -21,6 +23,8 @@ using namespace doofit::builder::numerobis;
 
 
 int run( int argc, char *argv[] ){
+  namespace numi = doofit::builder::numerobis::blueprint;
+  
   
   //string filename = argv[1];
 
@@ -71,15 +75,14 @@ int run( int argc, char *argv[] ){
   
   ws.Print("t");
   
-  
+  numi::pdfs::GaussPdf("pdfGauss", "pdfGauss", "a", "b", "c");
   
   return 0;
 }
 
 
 int main( int argc, char *argv[] ) {
-  for (int i=0; i<1000; ++i) {
+  for (int i=0; i<1; ++i) {
     run(argc,argv);
   }
-  while (true) {}
 }

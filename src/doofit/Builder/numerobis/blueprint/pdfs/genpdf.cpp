@@ -19,6 +19,8 @@ GenPdf::GenPdf(const std::string& id_rel, const std::string& id_abs)
   
 }
   
+GenPdf::~GenPdf() {}
+  
 } // namespace pdfs
 } // namespace blueprint 
 } // namespace numerobis 

@@ -34,6 +34,25 @@ class GaussPdf : public GenPdf {
   
   virtual ~GaussPdf();
  protected:
+  /** @brief Create instance of this element as RooFit object
+   *  
+   *  Initialize the appropriate RooFit object and return it as RooAbsPdf 
+   *  pointer.
+   *
+   *  @param dependants the dependants to be used for initialization
+   *  @return the temporary initialized object to be put onto a workspace
+   */
+  virtual RooAbsPdf* CreateTempRooObj(const std::map<std::string, RooAbsArg*>& dependants);
+  
+  /** @brief Create instance of this element as RooFit object
+   *  
+   *  Initialize the appropriate RooFit object and return it as RooAbsArg 
+   *  pointer.
+   *
+   *  @param dependants the dependants to be used for initialization
+   *  @return the temporary initialized object to be put onto a workspace
+   */
+  virtual RooAbsPdf* GetRooObjFromWorkspace(RooWorkspace* ws);
   
  private:
   /**

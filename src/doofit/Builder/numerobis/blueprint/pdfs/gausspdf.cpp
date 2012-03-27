@@ -1,5 +1,9 @@
 #include "gausspdf.h"
 
+// from STL
+#include <string>
+#include <map>
+
 namespace doofit {
 namespace builder {
 namespace numerobis {
@@ -22,6 +26,14 @@ GaussPdf::GaussPdf(const std::string& id_rel, const std::string& id_abs, const s
 }
   
 GaussPdf::~GaussPdf() {
+  
+}
+
+RooAbsPdf* GaussPdf::CreateTempRooObj(const std::map<std::string, RooAbsArg*>& dependants) {
+  
+}
+
+RooAbsPdf* GaussPdf::GetRooObjFromWorkspace(RooWorkspace* ws) {
   
 }
 
