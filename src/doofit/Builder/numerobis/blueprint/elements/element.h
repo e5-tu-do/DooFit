@@ -99,9 +99,6 @@ class Element {
    *  @brief List of dependants
    */
   std::vector<std::string> dependants_;
-   
-  
-  
   
  private:
   std::string id_rel_;
@@ -110,7 +107,6 @@ class Element {
   bool initialized_;
   bool ready_;
   bool onworkspace_;
-  
 };
 
 } // namespace elements
