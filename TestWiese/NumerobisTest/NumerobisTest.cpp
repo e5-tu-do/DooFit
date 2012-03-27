@@ -20,7 +20,7 @@ using namespace doofit;
 using namespace doofit::builder::numerobis;
 
 
-int main( int argc, char *argv[] ){
+int run( int argc, char *argv[] ){
   
   //string filename = argv[1];
 
@@ -74,4 +74,12 @@ int main( int argc, char *argv[] ){
   
   
   return 0;
+}
+
+
+int main( int argc, char *argv[] ) {
+  for (int i=0; i<1000; ++i) {
+    run(argc,argv);
+  }
+  while (true) {}
 }
