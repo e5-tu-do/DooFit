@@ -45,8 +45,7 @@ class Element {
   Element(const std::string& id_rel, const std::string& id_abs);
   virtual ~Element();
   
-  /** @name getter_setter_ids
-   *  Getters/Setters for IDs
+  /** @name Getter/Setters for IDs
    */
   ///@{
   /** 
