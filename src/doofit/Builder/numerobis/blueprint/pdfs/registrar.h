@@ -23,6 +23,7 @@ namespace blueprint {
   
 namespace elements {
 class Element;
+class Registrar;
 } // namespace pdfs 
 
 namespace pdfs {
@@ -32,7 +33,12 @@ class Pdf;
   
 class Registrar {
  public:
-  Registrar();
+  /**
+   *  @brief Constructor for PDF registrar with element registrar
+   *
+   *  @param element_registrar the element registrar to use
+   */
+  Registrar(doofit::builder::numerobis::blueprint::elements::Registrar& element_registrar);
   virtual ~Registrar();
 
   /**
@@ -77,6 +83,11 @@ class Registrar {
    *  @brief Map of all registered elements so far
   **/
   boost::ptr_map<std::string, Pdf> pdfs_;
+  
+  /**
+   *  @brief Element registrar to be used for accessing elements
+   */
+  doofit::builder::numerobis::blueprint::elements::Registrar& element_registrar_;
 };
   
 /** \struct UnexpectedException

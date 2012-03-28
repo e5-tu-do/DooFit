@@ -12,6 +12,7 @@
 // from project
 #include "doofit/utils/MsgStream.h"
 #include "doofit/Builder/numerobis/blueprint/elements/element.h"
+#include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
 #include "doofit/Builder/numerobis/blueprint/pdfs/pdf.h"
 
 // forward decalaration
@@ -24,8 +25,9 @@ namespace blueprint {
 namespace pdfs {
 
 
-Registrar::Registrar()
-    : pdfs_()
+Registrar::Registrar(doofit::builder::numerobis::blueprint::elements::Registrar& element_registrar)
+  : pdfs_()
+  , element_registrar_(element_registrar)
 {
   
 }
