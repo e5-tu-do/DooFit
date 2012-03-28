@@ -45,6 +45,10 @@ class Element {
   Element(const std::string& id_rel, const std::string& id_abs);
   virtual ~Element();
   
+  /** @name getter_setter_ids
+   *  Getters/Setters for IDs
+   */
+  ///@{
   /** 
    * @brief Getter for id_rel_
    **/
@@ -62,6 +66,7 @@ class Element {
    * @brief Setter for id_abs_
    **/
   void set_id_abs(const std::string& id_abs) { id_abs_ = id_abs; } 
+  ///@}
   
   /** @brief Adds RooFit representation to RooWorkspace
    *
