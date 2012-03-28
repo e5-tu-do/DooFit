@@ -5,6 +5,8 @@
 #include <map>
 #include <string>
 
+// from project
+#include "doofit/utils//MsgStream.h"
 
 // forward declarations - RooFit
 class RooAbsArg;
@@ -111,6 +113,32 @@ class Pdf {
 } // namespace blueprint 
 } // namespace numerobis 
 } // namespace builder 
+} // namespace doofit
+
+namespace doofit {
+namespace utils {
+/**
+ *  @brief Function to output Numerobis PDFs directly and nicely into 
+ *         MsgStreams
+ *
+ *  This function just prints all information in a PDF nicely.
+**/
+inline MsgStream& operator<<(MsgStream& lhs, const doofit::builder::numerobis::blueprint::pdfs::Pdf& pdf) {
+  lhs.stream() << "PDF: " << pdf.id_abs();
+  
+  if (pdf.initialized()) {
+    lhs.stream() << " initialized";
+  }
+  if (pdf.ready()) {
+    lhs.stream() << " ready";
+  }
+  if (pdf.onworkspace()) {
+    lhs.stream() << " on workspace";
+  }
+  
+  return lhs;
+}
+} // namespace utils
 } // namespace doofit
 
 #endif // DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_PDFS_PDF_H

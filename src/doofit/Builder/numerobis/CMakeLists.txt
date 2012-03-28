@@ -22,4 +22,6 @@ blueprint/pdfs/datapdf.cpp blueprint/pdfs/datapdf.h
 blueprint/pdfs/gaussresol.cpp blueprint/pdfs/gaussresol.h
 blueprint/pdfs/decaypdf.cpp blueprint/pdfs/decaypdf.h
 blueprint/pdfs/gausspdf.cpp blueprint/pdfs/gausspdf.h
+blueprint/pdfs/registrar.cpp blueprint/pdfs/registrar.h
+blueprint/pdfs/factory.cpp blueprint/pdfs/factory.h
 )
