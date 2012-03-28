@@ -18,7 +18,7 @@ namespace numerobis {
 namespace blueprint {
 namespace elements {
   
-/** @namespace elements
+/** @namespace doofit::builder::numerobis::blueprint::elements
  *
  *  @brief Elements namespace in Numerobis/Blueprint
  *
