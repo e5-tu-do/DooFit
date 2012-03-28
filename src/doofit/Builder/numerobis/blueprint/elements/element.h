@@ -29,6 +29,15 @@ namespace elements {
 // forward declarations - Numerobis...
 class Registrar;
   
+/**
+ *  @class doofit::builder::numerobis::blueprint::elements::Element
+ *  @brief The elements mother class for all PDF elements
+ *
+ *  This abstract class is base class for all PDF elements used in 
+ *  doofit::builder::numerobis::blueprint. It carries relative and absolute IDs
+ *  as well as different states of readyness. Also the AddToWorkspace() 
+ *  function is supplied to add the RooFit object to a RooWorkspace.
+ */
 class Element {
  public:
   //Element();
