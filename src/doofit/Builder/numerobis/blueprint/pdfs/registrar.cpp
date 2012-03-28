@@ -87,28 +87,30 @@ bool Registrar::CheckReady(const std::string& pdf_name) {
 }
 
 RooAbsArg* Registrar::Register(RooWorkspace* ws, const std::string& pdf_name) {
-//  if (CheckReady(element_name)) {
-//    Element* element = elements_.find(element_name)->second;
-//    
-//    const std::vector<std::string>& dep_ids = element->dependants();
-//    
-//    // Iterate over dependants and check if dependants exist in elements_. 
-//    // If not, throw exception.
-//    // If yes, register them and invoke AddToWorkspace
-//    std::vector<RooAbsArg*> dep_elements;
-//    boost::ptr_map<std::string, Element>::iterator it_el;
-//    BOOST_FOREACH(std::string it_dep, dep_ids) {
-//      it_el = elements_.find(it_dep);
-//      if (it_el == elements_.end()) {
-//        throw UnexpectedException();
-//      } else {
-//        Element* dep_element = it_el->second;
-//        dep_elements.push_back(Register(ws, dep_element->id_abs()));
-//      }
-//    }
-//    return element->AddToWorkspace(ws, dep_elements);
-//  }
-//  return NULL;
+  if (CheckReady(pdf_name)) {
+    Pdf* pdf = pdfs_.find(pdf_name)->second;
+    const std::map<std::string, std::string>& dep = pdf->dependants();
+ 
+    // Iterate over dependants and check if dependants exist in elements 
+    // or in pdfs_. 
+    // If not, throw exception.
+    // If yes, register them and invoke AddToWorkspace
+    std::map<std::string, RooAbsArg*> dep_rooobj;
+    for (std::map<std::string, std::string>::const_iterator it_dep=dep.begin();
+         it_dep != dep.end(); ++it_dep) {
+      if (element_registrar_.CheckReady(it_dep->second)) {
+        // dependant is element
+        dep_rooobj[it_dep->first] = element_registrar_.Register(ws, it_dep->second);
+      } else if (CheckReady(it_dep->second)) {
+        // dependant is PDF
+        dep_rooobj[it_dep->first] = Register(ws, it_dep->second);
+      } else {
+        throw UnexpectedException();
+      }
+    }
+    return pdf->AddToWorkspace(ws, dep_rooobj);
+  }
+  return NULL;
 }
 
 } // namespace pdfs 

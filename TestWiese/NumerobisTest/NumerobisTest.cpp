@@ -55,7 +55,8 @@ int run( int argc, char *argv[] ){
   numi::pdfs::GaussPdf* pdf = new numi::pdfs::GaussPdf("pdfGauss", "pdfGauss", "a", "b", "c");
   registrar_pdfs.Declare(pdf);
   sdebug << registrar_pdfs.CheckReady("pdfGauss") << endmsg;
-
+  sdebug << registrar_pdfs.Register(&ws, "pdfGauss") << endmsg;
+  
   std::vector<std::string> elements;
   elements.push_back("a");
   elements.push_back("b");
@@ -76,9 +77,6 @@ int run( int argc, char *argv[] ){
   factory.AssembleParamBasic("b", "b", "b", 0.4, 0.3, 3, "ps");
   factory.AssembleParamBasic("c", "c", "c", 0.5, 0.3, 3, "ps");
   
-  registrar_elements.Register(&ws, "f2");
-  registrar_elements.Register(&ws, "f");
-  
   registrar_elements.Print();
   registrar_pdfs.Print();
   
@@ -86,14 +84,16 @@ int run( int argc, char *argv[] ){
   
   registrar_pdfs.Print();
 
-  std::map<std::string, RooAbsArg*> pdf_elements;
-  pdf_elements["dimension"] = ws.var("a");
-  pdf_elements["mean"] = ws.var("b");
-  pdf_elements["sigma"] = ws.var("c");
-  pdf->AddToWorkspace(&ws, pdf_elements);
+  sdebug << registrar_pdfs.Register(&ws, "pdfGauss") << endmsg;
   
   registrar_pdfs.Print();
   
+  registrar_elements.Register(&ws, "f2");
+  registrar_elements.Register(&ws, "f");
+  
+  registrar_elements.Print();
+  registrar_pdfs.Print();
+
   ws.Print("t");
   
   return 0;
