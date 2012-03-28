@@ -58,7 +58,6 @@ class Registrar {
   **/
   RooAbsArg* Register(RooWorkspace* ws, const std::string& element_name);
   
- private:
   /**
    *  @brief Check ready state for an element
    *
@@ -67,9 +66,10 @@ class Registrar {
    *
    *  @param element_name name of the element to check
    *  @return the ready state of element after check
-  **/
+   **/
   bool CheckReady(const std::string& element_name);
-   
+  
+ private:   
   /**
    *  @brief Map of all registered elements so far
   **/

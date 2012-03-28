@@ -16,6 +16,7 @@
 #include "doofit/Builder/numerobis/blueprint/elements/factory.h"
 
 #include "doofit/Builder/numerobis/blueprint/pdfs/gausspdf.h"
+#include "doofit/Builder/numerobis/blueprint/pdfs/registrar.h"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ using namespace doofit::builder::numerobis;
 
 int run( int argc, char *argv[] ){
   namespace numi = doofit::builder::numerobis::blueprint;
-  
+  using namespace doofit::utils;
   
   //string filename = argv[1];
 
@@ -46,9 +47,15 @@ int run( int argc, char *argv[] ){
   
   //builder.PrintLogo();
   
-  numi::elements::Registrar registrar;
-  numi::elements::Factory factory(registrar);
+  numi::elements::Registrar registrar_elements;
+  numi::elements::Factory factory(registrar_elements);
   
+  numi::pdfs::Registrar registrar_pdfs(registrar_elements);
+  
+  numi::pdfs::GaussPdf* pdf = new numi::pdfs::GaussPdf("pdfGauss", "pdfGauss", "a", "b", "c");
+  registrar_pdfs.Declare(pdf);
+  sdebug << registrar_pdfs.CheckReady("pdfGauss") << endmsg;
+
   std::vector<std::string> elements;
   elements.push_back("a");
   elements.push_back("b");
@@ -61,25 +68,31 @@ int run( int argc, char *argv[] ){
 
   factory.AssembleFormula("f2","f2","@0*@1",elements2);
 
-  registrar.Print();
+  registrar_elements.Print();
+  registrar_pdfs.Print();
   
   factory.AssembleDimReal("a","a","a",0.3,3,"ps");
 
   factory.AssembleParamBasic("b", "b", "b", 0.4, 0.3, 3, "ps");
   factory.AssembleParamBasic("c", "c", "c", 0.5, 0.3, 3, "ps");
   
-  registrar.Register(&ws, "f2");
-  registrar.Register(&ws, "f");
+  registrar_elements.Register(&ws, "f2");
+  registrar_elements.Register(&ws, "f");
   
-  registrar.Print();
+  registrar_elements.Print();
+  registrar_pdfs.Print();
   
-  numi::pdfs::GaussPdf pdf("pdfGauss", "pdfGauss", "a", "b", "c");
+  sdebug << registrar_pdfs.CheckReady("pdfGauss") << endmsg;
+  
+  registrar_pdfs.Print();
+
   std::map<std::string, RooAbsArg*> pdf_elements;
   pdf_elements["dimension"] = ws.var("a");
   pdf_elements["mean"] = ws.var("b");
   pdf_elements["sigma"] = ws.var("c");
-  pdf.set_ready(true);
-  pdf.AddToWorkspace(&ws, pdf_elements);
+  pdf->AddToWorkspace(&ws, pdf_elements);
+  
+  registrar_pdfs.Print();
   
   ws.Print("t");
   

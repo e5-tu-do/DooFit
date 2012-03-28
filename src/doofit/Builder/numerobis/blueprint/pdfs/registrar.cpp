@@ -54,32 +54,36 @@ void Registrar::Print() const {
 }
   
 bool Registrar::CheckReady(const std::string& pdf_name) {
-//  boost::ptr_map<std::string, Element>::iterator it_element = elements_.find(element_name);
-//  if (it_element == elements_.end()) return false;
-//  
-//  Element* element = it_element->second;
-//  
-//  namespace du = doofit::utils;
-//  //du::sdebug << "Checking ready for: " << element.id_abs() << du::endmsg;
-//  
-//  // Check if element is ready, if not, check if dependants are ready.
-//  if (!element->ready()) {
-//    const std::vector<std::string>& dep = element->dependants();
-//    bool allready = true;
-//    
-//    boost::ptr_map<std::string, Element>::iterator it_el;
-//    BOOST_FOREACH (std::string it_dep, dep) {
-//      it_el = elements_.find(it_dep);
-//      if (it_el == elements_.end()) {
-//        allready = false;
-//      } else {
-//        allready &= CheckReady(it_el->second->id_abs());
-//      }  
-//    } 
-//    if (allready) element->set_ready(true);
-//  }
-//  
-//  return element->ready();
+  boost::ptr_map<std::string, Pdf>::iterator it_pdf = pdfs_.find(pdf_name);
+  if (it_pdf == pdfs_.end()) return false;
+  
+  Pdf* pdf = it_pdf->second;
+  
+  namespace du = doofit::utils;
+  namespace el = doofit::builder::numerobis::blueprint::elements;
+  //du::sdebug << "Checking ready for: " << pdf.id_abs() << du::endmsg;
+  
+  // Check if PDF is ready, if not, check if dependants are ready.
+  if (!pdf->ready()) {
+    const std::map<std::string, std::string>& dep = pdf->dependants();
+    bool allready = true;
+  
+    for (std::map<std::string, std::string>::const_iterator it_dep=dep.begin();
+         it_dep != dep.end(); ++it_dep) {
+      // first check if the dependant is available as element
+      // if not, try as pdf
+      if (!element_registrar_.CheckReady(it_dep->second)) {
+        it_pdf = pdfs_.find(it_dep->second);
+        if (it_pdf == pdfs_.end()) {
+          allready = false;
+        } else {
+          allready &= CheckReady(it_pdf->second->id_abs());
+        }
+      }
+    }
+    if (allready) pdf->set_ready(true);
+  }
+  return pdf->ready();  
 }
 
 RooAbsArg* Registrar::Register(RooWorkspace* ws, const std::string& pdf_name) {

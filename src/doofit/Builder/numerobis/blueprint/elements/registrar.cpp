@@ -65,13 +65,12 @@ bool Registrar::CheckReady(const std::string& element_name) {
     const std::vector<std::string>& dep = element->dependants();
     bool allready = true;
     
-    boost::ptr_map<std::string, Element>::iterator it_el;
     BOOST_FOREACH (std::string it_dep, dep) {
-      it_el = elements_.find(it_dep);
-      if (it_el == elements_.end()) {
+      it_element = elements_.find(it_dep);
+      if (it_element == elements_.end()) {
         allready = false;
       } else {
-        allready &= CheckReady(it_el->second->id_abs());
+        allready &= CheckReady(it_element->second->id_abs());
       }  
     } 
     if (allready) element->set_ready(true);

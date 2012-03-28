@@ -67,7 +67,6 @@ class Registrar {
   **/
   RooAbsArg* Register(RooWorkspace* ws, const std::string& pdf_name);
   
- private:
   /**
    *  @brief Check ready state for a PDF
    *
@@ -76,9 +75,10 @@ class Registrar {
    *
    *  @param pdf_name name of the PDF to check
    *  @return the ready state of PDF after check
-  **/
+   **/
   bool CheckReady(const std::string& pdf_name);
-   
+  
+ private:
   /**
    *  @brief Map of all registered elements so far
   **/
