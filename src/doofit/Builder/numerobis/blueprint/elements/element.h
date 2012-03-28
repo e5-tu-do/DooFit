@@ -17,6 +17,14 @@ namespace builder {
 namespace numerobis {
 namespace blueprint {
 namespace elements {
+  
+/** @namespace elements
+ *
+ *  @brief Elements namespace in Numerobis/Blueprint
+ *
+ *  All elements which go into PDFs are grouped into this workspace as well as 
+ *  the approprate Registrar and Factory acting as interface to outside code.
+ */
 
 // forward declarations - Numerobis...
 class Registrar;
