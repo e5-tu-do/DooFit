@@ -35,7 +35,8 @@ class Registrar;
  *
  *  This abstract class is base class for all PDF elements used in 
  *  doofit::builder::numerobis::blueprint. It carries relative and absolute IDs
- *  as well as different states of readyness. Also the AddToWorkspace() 
+ *  as well as different states of readyness. Also the 
+ *  Element::AddToWorkspace(RooWorkspace*, const std::vector<RooAbsArg*>&) 
  *  function is supplied to add the RooFit object to a RooWorkspace.
  */
 class Element {
