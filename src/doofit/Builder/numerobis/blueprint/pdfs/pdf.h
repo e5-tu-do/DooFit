@@ -40,7 +40,6 @@ namespace pdfs {
  */
 class Pdf {
  public:
-   Pdf();
    Pdf(const std::string& id_rel, const std::string& id_abs);
    virtual ~Pdf();
 

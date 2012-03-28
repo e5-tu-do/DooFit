@@ -15,13 +15,6 @@ namespace numerobis {
 namespace blueprint {
 namespace pdfs {
 
-GaussPdf::GaussPdf()
-  : roo_obj_(NULL)
-{
-  set_initialized(false);
-  set_ready(false);  
-}
-
 GaussPdf::GaussPdf(const std::string& id_rel, const std::string& id_abs, const std::string& id_abs_dimension, const std::string& id_abs_mean, const std::string& id_abs_sigma)
   : GenPdf(id_rel, id_abs)
   , roo_obj_(NULL)

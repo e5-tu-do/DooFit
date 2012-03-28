@@ -17,12 +17,7 @@ namespace blueprint {
 namespace pdfs {
 
 class GaussPdf : public GenPdf {
- public:
-  /**
-   *  @brief Default constructor for GaussPdf
-  **/
-  GaussPdf();
-  
+ public:  
   /**
    *  @brief Constructor for GaussPdf with arguments
    *

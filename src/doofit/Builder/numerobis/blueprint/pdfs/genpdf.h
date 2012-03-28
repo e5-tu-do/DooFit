@@ -15,7 +15,6 @@ namespace pdfs {
 
 class GenPdf : public BasicPdf {
  public:
-  GenPdf();
   GenPdf(const std::string& id_rel, const std::string& id_abs);
   virtual ~GenPdf();
  protected:

@@ -15,7 +15,6 @@ namespace pdfs {
 
 class BasicPdf : public Pdf {
  public:
-  BasicPdf();
   BasicPdf(const std::string& id_rel, const std::string& id_abs);
   virtual ~BasicPdf();
  protected:

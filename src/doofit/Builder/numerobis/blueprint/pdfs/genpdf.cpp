@@ -9,10 +9,6 @@ namespace numerobis {
 namespace blueprint {
 namespace pdfs {
 
-GenPdf::GenPdf() {
-  
-}
-
 GenPdf::GenPdf(const std::string& id_rel, const std::string& id_abs) 
   : BasicPdf(id_rel, id_abs)
 {
