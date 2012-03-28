@@ -36,15 +36,27 @@ class Pdf {
    Pdf(const std::string& id_rel, const std::string& id_abs);
    virtual ~Pdf();
 
-   /** Getter for id_rel_**/
-   std::string id_rel() const { return id_rel_; }
-   /** Setter for id_rel_**/
-   void set_id_rel(const std::string& id_rel) { id_rel_ = id_rel; } 
-
-   /** Getter for id_abs_**/
-   std::string id_abs() const { return id_abs_; }
-   /** Setter for id_abs_**/
-   void set_id_abs(const std::string& id_abs) { id_abs_ = id_abs; } 
+  /** @name Getter/Setters for IDs
+   */
+  ///@{
+  /** 
+   * @brief Getter for id_rel_
+   **/
+  std::string id_rel() const { return id_rel_; }
+  /** 
+   * @brief Setter for id_rel_
+   **/
+  void set_id_rel(const std::string& id_rel) { id_rel_ = id_rel; } 
+  
+  /** 
+   * @brief Getter for id_abs_
+   **/
+  std::string id_abs() const { return id_abs_; }
+  /** 
+   * @brief Setter for id_abs_
+   **/
+  void set_id_abs(const std::string& id_abs) { id_abs_ = id_abs; } 
+  ///@}
 
    /** @brief Adds RooFit representation to RooWorkspace
     *
@@ -69,20 +81,36 @@ class Pdf {
    **/
    const std::map<std::string, std::string>& dependants() const { return dependants_; }
 
-   /** Getter for initialized_**/
-   bool initialized() const { return initialized_; }
-   /** Setter for initialized_**/
-   void set_initialized(bool initialized) { initialized_ = initialized; } 
-
-   /** Getter for onworkspace_**/
-   bool onworkspace() const { return onworkspace_; }
-   /** Setter for onworkspace_**/
-   void set_onworkspace(bool onworkspace) { onworkspace_ = onworkspace; } 
-
-   /** Getter for ready_**/
-   bool ready() const { return ready_; }
-   /** Setter for ready_**/
-   void set_ready(bool ready) { ready_ = ready; }
+  /** @name Getter/Setters for readyness state
+   */
+  ///@{
+  /** 
+   * @brief Getter for initialized_
+   **/
+  bool initialized() const { return initialized_; }
+  /** 
+   * @brief Setter for initialized_
+   **/
+  void set_initialized(bool initialized) { initialized_ = initialized; } 
+  
+  /** 
+   * @brief Getter for onworkspace_
+   **/
+  bool onworkspace() const { return onworkspace_; }
+  /** 
+   * @brief Setter for onworkspace_
+   **/
+  void set_onworkspace(bool onworkspace) { onworkspace_ = onworkspace; } 
+  
+  /** 
+   * @brief Getter for ready_
+   **/
+  bool ready() const { return ready_; }
+  /** 
+   * @brief Setter for ready_
+   **/
+  void set_ready(bool ready) { ready_ = ready; }
+  ///@}
 
   protected:
    /** @brief Create instance of this element as RooFit object
