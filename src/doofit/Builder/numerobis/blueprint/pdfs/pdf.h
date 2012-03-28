@@ -18,6 +18,15 @@ namespace builder {
 namespace numerobis {
 namespace blueprint {
 namespace pdfs {
+  
+/** @namespace doofit::builder::numerobis::blueprint::pdfs
+ *
+ *  @brief PDF namespace in Numerobis/Blueprint
+ *
+ *  All elements which represent PDFs are grouped into this workspace as well 
+ *  as the approprate Registrar and Factory acting as interface to outside 
+ *  code.
+ */
 
 class Pdf {
  public:
