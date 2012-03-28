@@ -28,9 +28,17 @@ namespace pdfs {
  *  code.
  */
 
+/**
+ *  @class doofit::builder::numerobis::blueprint::pdfs::Pdf
+ *  @brief The elements mother class for all PDFs
+ *
+ *  This abstract class is base class for all PDFs used in 
+ *  doofit::builder::numerobis::blueprint. It carries relative and absolute IDs
+ *  as well as different states of readyness. Also the 
+ *  Pdf::AddToWorkspace(RooWorkspace*, const std::map<std::string,RooAbsArg*>&) 
+ *  function is supplied to add the RooFit object to a RooWorkspace.
+ */
 class Pdf {
-
-  
  public:
    Pdf();
    Pdf(const std::string& id_rel, const std::string& id_abs);
