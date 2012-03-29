@@ -13,6 +13,10 @@
 // from project
 #include "doofit/utils//MsgStream.h"
 #include "doofit/Builder/numerobis/blueprint/elements/element.h"
+#include "doofit/Builder/numerobis/blueprint/elements/dimreal.h"
+#include "doofit/Builder/numerobis/blueprint/elements/parambasic.h"
+#include "doofit/Builder/numerobis/blueprint/elements/formula.h"
+
 
 // forward decalaration
 class RooWorkspace;
@@ -26,6 +30,8 @@ namespace elements {
 
 Registrar::Registrar()
     : elements_()
+    , dim_reals_()
+    , param_basics_()
 {
   
 }
@@ -34,7 +40,22 @@ Registrar::~Registrar() {
   
 }
 
-void Registrar::Declare(Element* element) {
+void Registrar::Declare(DimReal* dim_real) {
+  DeclareElement(dim_real);
+  dim_reals_.insert(dim_real->id_abs());
+}
+
+void Registrar::Declare(ParamBasic* param_basic) {
+  DeclareElement(param_basic);
+  param_basics_.insert(param_basic->id_abs());
+}
+
+void Registrar::Declare(Formula* formula) {
+  DeclareElement(formula);
+  formulas_.insert(formula->id_abs());
+}
+
+void Registrar::DeclareElement(Element* element) {
   std::string temp_key = element->id_abs();
   elements_.insert(temp_key,  element);
 }

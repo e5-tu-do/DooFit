@@ -2,6 +2,7 @@
 #define DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_ELEMENTS_REGISTRAR_H
 
 // from STL
+#include <set>
 #include <string>
 
 // from boost
@@ -25,13 +26,21 @@ namespace blueprint {
 namespace elements {
 
 // forward decalarations
-class Element;  
+class Element;
+class DimReal;
+class Formula;
+class ParamBasic;
   
 class Registrar {
  public:
   Registrar();
   virtual ~Registrar();
-
+  
+  /**
+   *  @brief Print all registered elements
+  **/
+  void Print() const;
+  
   /**
    *  @brief Declare a new element in this registrar
    *
@@ -40,12 +49,9 @@ class Registrar {
    *
    *  @param element the element to add
   **/
-  void Declare(Element* element);
-  
-  /**
-   *  @brief Print all registered elements
-  **/
-  void Print() const;
+  void Declare(DimReal* dim_real);
+  void Declare(ParamBasic* param_basic);
+  void Declare(Formula* formula);
   
   /**
    *  @brief Register the element (i.e. instanciate and put on workspace)
@@ -69,11 +75,25 @@ class Registrar {
    **/
   bool CheckReady(const std::string& element_name);
   
- private:   
+ private:
+  /**
+   *  @brief Declare a new element in this registrar
+   *
+   *  The element will be added to the elements_ container to be available for
+   *  linking with other elements.
+   *
+   *  @param element the element to add
+  **/
+  void DeclareElement(Element* element);
+     
   /**
    *  @brief Map of all registered elements so far
   **/
   boost::ptr_map<std::string, Element> elements_;
+  
+  std::set<std::string> dim_reals_;
+  std::set<std::string> param_basics_;
+  std::set<std::string> formulas_;
 };
 
 /**
