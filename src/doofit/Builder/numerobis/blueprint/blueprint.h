@@ -31,7 +31,7 @@ class Blueprint {
   elements::Registrar reg_elems_;
   elements::Factory   fac_elems_;
   pdfs::Registrar     reg_pdfs_;
-  //pdfs::Factory       fac_pdfs_;
+  pdfs::Factory       fac_pdfs_;
   
   
   // std::string pdf_pre_;

@@ -9,6 +9,7 @@ Blueprint::Blueprint()
     : reg_elems_()
     , fac_elems_(reg_elems_)
     , reg_pdfs_(reg_elems_)
+    , fac_pdfs_(reg_pdfs_)
 {
   
 }
