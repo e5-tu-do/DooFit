@@ -5,7 +5,11 @@ namespace builder {
 namespace numerobis {
 namespace blueprint {
 
-Blueprint::Blueprint() {
+Blueprint::Blueprint() 
+    : reg_elems_()
+    , fac_elems_(reg_elems_)
+    , reg_pdfs_(reg_elems_)
+{
   
 }
 

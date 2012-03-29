@@ -37,6 +37,7 @@ Registrar::~Registrar() {
 }
 
 void Registrar::Declare(Pdf* pdf) {
+  // Add a consistency check, if name is already 
   std::string temp_key = pdf->id_abs();
   pdfs_.insert(temp_key, pdf);
 }

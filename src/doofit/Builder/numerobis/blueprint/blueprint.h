@@ -4,6 +4,14 @@
 // from STL
 #include <string>
 
+// from project
+#include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
+#include "doofit/Builder/numerobis/blueprint/elements/factory.h"
+#include "doofit/Builder/numerobis/blueprint/pdfs/registrar.h"
+#include "doofit/Builder/numerobis/blueprint/pdfs/factory.h"
+
+
+
 // forward declarations
 class RooWorkspace;
 
@@ -17,12 +25,18 @@ class Blueprint {
   Blueprint();
   virtual ~Blueprint();
   
-  void AddToWorkspace();
+  
   
  private:
-  std::string pdf_pre_;
-  std::string var_pre_;
-  std::string par_pre_;
+  elements::Registrar reg_elems_;
+  elements::Factory   fac_elems_;
+  pdfs::Registrar     reg_pdfs_;
+  //pdfs::Factory       fac_pdfs_;
+  
+  
+  // std::string pdf_pre_;
+  // std::string var_pre_;
+  // std::string par_pre_;
   
   // map names
   

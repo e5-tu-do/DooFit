@@ -37,7 +37,7 @@ class Registrar {
    *  @brief Constructor for PDF registrar with element registrar
    *
    *  @param element_registrar the element registrar to use
-   */
+  **/
   Registrar(doofit::builder::numerobis::blueprint::elements::Registrar& element_registrar);
   virtual ~Registrar();
 
@@ -75,7 +75,7 @@ class Registrar {
    *
    *  @param pdf_name name of the PDF to check
    *  @return the ready state of PDF after check
-   **/
+  **/
   bool CheckReady(const std::string& pdf_name);
   
  private:
@@ -86,7 +86,7 @@ class Registrar {
   
   /**
    *  @brief Element registrar to be used for accessing elements
-   */
+  **/
   doofit::builder::numerobis::blueprint::elements::Registrar& element_registrar_;
 };
   
