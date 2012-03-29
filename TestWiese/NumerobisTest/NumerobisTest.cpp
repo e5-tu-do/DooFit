@@ -17,6 +17,7 @@
 
 #include "doofit/Builder/numerobis/blueprint/pdfs/gausspdf.h"
 #include "doofit/Builder/numerobis/blueprint/pdfs/registrar.h"
+#include "doofit/Builder/numerobis/blueprint/pdfs/factory.h"
 
 using namespace std;
 
@@ -48,12 +49,12 @@ int run( int argc, char *argv[] ){
   //builder.PrintLogo();
   
   numi::elements::Registrar registrar_elements;
-  numi::elements::Factory factory(registrar_elements);
+  numi::elements::Factory factory_elements(registrar_elements);
   
   numi::pdfs::Registrar registrar_pdfs(registrar_elements);
+  numi::pdfs::Factory factory_pdfs(registrar_pdfs);
   
-  numi::pdfs::GaussPdf* pdf = new numi::pdfs::GaussPdf("pdfGauss", "pdfGauss", "a", "b", "c");
-  registrar_pdfs.Declare(pdf);
+  factory_pdfs.AssembleGaussPdf("pdfGauss", "pdfGauss", "a", "b", "c");
   sdebug << registrar_pdfs.CheckReady("pdfGauss") << endmsg;
   sdebug << registrar_pdfs.Register(&ws, "pdfGauss") << endmsg;
   
@@ -61,21 +62,21 @@ int run( int argc, char *argv[] ){
   elements.push_back("a");
   elements.push_back("b");
   
-  factory.AssembleFormula("f","f","@0*@1",elements);
+  factory_elements.AssembleFormula("f","f","@0*@1",elements);
 
   std::vector<std::string> elements2;
   elements2.push_back("f");
   elements2.push_back("c");
 
-  factory.AssembleFormula("f2","f2","@0*@1",elements2);
+  factory_elements.AssembleFormula("f2","f2","@0*@1",elements2);
 
   registrar_elements.Print();
   registrar_pdfs.Print();
   
-  factory.AssembleDimReal("a","a","a",0.3,3,"ps");
+  factory_elements.AssembleDimReal("a","a","a",0.3,3,"ps");
 
-  factory.AssembleParamBasic("b", "b", "b", 0.4, 0.3, 3, "ps");
-  factory.AssembleParamBasic("c", "c", "c", 0.5, 0.3, 3, "ps");
+  factory_elements.AssembleParamBasic("b", "b", "b", 0.4, 0.3, 3, "ps");
+  factory_elements.AssembleParamBasic("c", "c", "c", 0.5, 0.3, 3, "ps");
   
   registrar_elements.Print();
   registrar_pdfs.Print();
