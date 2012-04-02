@@ -24,4 +24,6 @@ blueprint/pdfs/decaypdf.cpp blueprint/pdfs/decaypdf.h
 blueprint/pdfs/gausspdf.cpp blueprint/pdfs/gausspdf.h
 blueprint/pdfs/registrar.cpp blueprint/pdfs/registrar.h
 blueprint/pdfs/factory.cpp blueprint/pdfs/factory.h
+blueprint/pdfs/dimension.cpp blueprint/pdfs/dimension.h
+blueprint/pdfs/component.cpp blueprint/pdfs/component.h
 )
