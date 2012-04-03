@@ -61,6 +61,25 @@ class Dimension {
   void set_id_abs(const std::string& id_abs) { id_abs_ = id_abs; } 
   ///@}
   
+  /** 
+   * @brief Getter for id_abs_dimelement_
+   **/
+  std::string id_abs_dimelement() const { return id_abs_dimelement_; }
+  /** 
+   * @brief Setter for id_abs_dimelement_
+   **/
+  void set_id_abs_dimelement(const std::string& id_abs_dimelement) { id_abs_dimelement_ = id_abs_dimelement; }
+  
+  /** 
+   * @brief Getter for ids_abs_pdfs_
+   **/
+  const std::vector<std::string>& ids_abs_pdfs() const { return ids_abs_pdfs_; }
+  /** 
+   * @brief Setter for ids_abs_pdfs_
+   **/
+  void set_ids_abs_pdfs(const std::vector<std::string>& ids_abs_pdfs) { ids_abs_pdfs_ = ids_abs_pdfs; }
+  
+  
  protected:  
  private:
   std::string id_rel_;
