@@ -24,7 +24,7 @@ namespace elements {
  *
  *  All elements which go into PDFs are grouped into this workspace as well as 
  *  the approprate Registrar and Factory acting as interface to outside code.
- */
+**/
 
 // forward declarations - Numerobis...
 class Registrar;
@@ -38,7 +38,7 @@ class Registrar;
  *  as well as different states of readyness. Also the 
  *  Element::AddToWorkspace(RooWorkspace*, const std::vector<RooAbsArg*>&) 
  *  function is supplied to add the RooFit object to a RooWorkspace.
- */
+**/
 class Element {
  public:
   //Element();

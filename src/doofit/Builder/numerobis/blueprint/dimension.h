@@ -1,5 +1,5 @@
-#ifndef DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_PDFS_DIMENSION_H
-#define DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_PDFS_DIMENSION_H
+#ifndef DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_DIMENSION_H
+#define DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_DIMENSION_H
 
 // from STL
 #include <string>
@@ -12,7 +12,6 @@ namespace doofit {
 namespace builder {
 namespace numerobis {
 namespace blueprint {
-namespace pdfs {
 
 /** @class Dimension
  *  @brief A dimension representing a dimension PDF (contains 1+ PDF(s))
@@ -96,10 +95,9 @@ class Dimension {
   std::vector<std::string> ids_abs_pdfs_;
 };
 
-} // namespace pdfs 
 } // namespace blueprint 
 } // namespace numerobis 
 } // namespace builder 
 } // namespace doofit 
 
-#endif // DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_PDFS_DIMENSION_H
+#endif // DOOFIT_BUILDER_NUMEROBIS_BLUEPRINT_DIMENSION_H

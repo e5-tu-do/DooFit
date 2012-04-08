@@ -1,4 +1,4 @@
-#include "doofit/Builder/numerobis/blueprint/pdfs/dimension.h"
+#include "doofit/Builder/numerobis/blueprint/dimension.h"
 
 // from project
 #include "doofit/Builder/numerobis/blueprint/pdfs/pdf.h"
@@ -7,7 +7,6 @@ namespace doofit {
 namespace builder {
 namespace numerobis {
 namespace blueprint {
-namespace pdfs {
 
 Dimension::Dimension(const std::string& id_rel, const std::string& id_abs, 
                      const std::string& id_abs_dimelement, 
@@ -22,7 +21,6 @@ Dimension::Dimension(const std::string& id_rel, const std::string& id_abs,
   
 Dimension::~Dimension () {}
   
-} // namespace pdfs 
 } // namespace numerobis 
 } // namespace blueprint 
 } // namespace builder 

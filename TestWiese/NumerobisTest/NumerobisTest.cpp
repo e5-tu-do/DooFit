@@ -12,6 +12,8 @@
 #include "doofit/Builder/numerobis/numerobis.h"
 #include "doofit/Builder/numerobis/numerobis_config.h"
 
+#include "doofit/Builder/numerobis/blueprint/blueprint.h"
+
 #include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
 #include "doofit/Builder/numerobis/blueprint/elements/factory.h"
 
@@ -47,6 +49,8 @@ int run( int argc, char *argv[] ){
   //builder.AddToWorkspace(ws);
   
   //builder.PrintLogo();
+  
+  numi::Blueprint blueprint;
   
   numi::elements::Registrar registrar_elements;
   numi::elements::Factory factory_elements(registrar_elements);

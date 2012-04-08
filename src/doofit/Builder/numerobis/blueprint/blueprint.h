@@ -4,6 +4,9 @@
 // from STL
 #include <string>
 
+// from boost
+#include <boost/ptr_container/ptr_map.hpp>
+
 // from project
 #include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
 #include "doofit/Builder/numerobis/blueprint/elements/factory.h"
@@ -30,9 +33,12 @@ class Blueprint {
  private:
   elements::Registrar reg_elems_;
   elements::Factory   fac_elems_;
+  
   pdfs::Registrar     reg_pdfs_;
   pdfs::Factory       fac_pdfs_;
   
+  //boost::ptr_map<std::string, pdfs::Component> comps_;
+  //boost::ptr_map<std::string, pdfs::Dimension> dimensions_;
   
   // std::string pdf_pre_;
   // std::string var_pre_;
