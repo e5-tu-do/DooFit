@@ -21,6 +21,8 @@
 #include "doofit/Builder/numerobis/blueprint/pdfs/registrar.h"
 #include "doofit/Builder/numerobis/blueprint/pdfs/factory.h"
 
+#include "doofit/Builder/numerobis/blueprint/component.h"
+
 using namespace std;
 
 using namespace doofit;
@@ -99,6 +101,17 @@ int run( int argc, char *argv[] ){
   registrar_elements.Print();
   registrar_pdfs.Print();
 
+  std::vector<std::string> dimensions;
+  dimensions.push_back("pdfGauss");
+  numi::Component c("pdfSig", "pdfSig", "pdfSigYield", dimensions);
+  
+  factory_elements.AssembleParamBasic("pdfSigYield", "pdfSigYield", "pdfSigYield", 1, 0, 3e8);
+  registrar_elements.Register(&ws, "pdfSigYield");
+  
+  std::vector<RooAbsArg*> pdfs_dimensions;
+  pdfs_dimensions.push_back(ws.pdf("pdfGauss"));
+  c.set_ready(true);
+  c.AddToWorkspace(&ws, ws.var("pdfSigYield"), pdfs_dimensions);
   ws.Print("t");
   
   return 0;
