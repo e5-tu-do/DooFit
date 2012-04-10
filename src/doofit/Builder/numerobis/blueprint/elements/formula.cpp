@@ -6,6 +6,7 @@
 
 // from project
 #include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
+#include "doofit/Builder/numerobis/blueprint/blueprint.h"
 
 namespace doofit {
 namespace builder {

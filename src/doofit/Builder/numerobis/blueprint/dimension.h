@@ -90,7 +90,7 @@ class Dimension {
   std::string id_abs_dimelement_;
   
   /**
-   *  @brief absolute ID(s) of PDF(s) to for this dimension
+   *  @brief absolute ID(s) of PDF(s) to use for this dimension
    */
   std::vector<std::string> ids_abs_pdfs_;
 };

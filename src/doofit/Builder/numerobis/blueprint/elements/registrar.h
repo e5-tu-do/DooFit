@@ -95,14 +95,6 @@ class Registrar {
   std::set<std::string> param_basics_;
   std::set<std::string> formulas_;
 };
-
-/**
- *  @brief Convert a vector of RooAbsArgs to a RooArgList
- *
- *  @param vec the vector to convert
- *  @return the RooArgList based on the vector
-**/
-RooArgList VectorToArgList(std::vector<RooAbsArg*> vec);
   
 /** \struct UnexpectedException
  *  \brief Unexpected exception that should not even occur

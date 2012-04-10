@@ -62,6 +62,13 @@ class Blueprint {
   
 };
 
+/**
+ *  @brief Convert a vector of RooAbsArgs to a RooArgList
+ *
+ *  @param vec the vector to convert
+ *  @return the RooArgList based on the vector
+**/
+RooArgList VectorToArgList(std::vector<RooAbsArg*> vec);
 
 
 

@@ -19,7 +19,7 @@ namespace blueprint {
  *  Objects of this class represent a component in a fit. It will contain/link 
  *  to several Dimension objects and an extended PDF which combines the product
  *  of the corresponding dimension PDFs.
-**/  
+ **/  
 class Component {
  public:
   /**
@@ -29,8 +29,12 @@ class Component {
    *
    *  @param id_rel this Component's relative ID
    *  @param id_abs this Component's absolute ID
+   *  @param id_abs_yield absolute ID of the yield element
+   *  @param id_abs_dimensions vector of absolute IDs of dimensions to use
    */
-  Component(const std::string& id_rel, const std::string& id_abs);
+  Component(const std::string& id_rel, const std::string& id_abs, 
+            const std::string& id_abs_yield, 
+            const std::vector<std::string>& id_abs_dimensions);
   
   /**
    *  @brief Destructor.
@@ -59,10 +63,69 @@ class Component {
   void set_id_abs(const std::string& id_abs) { id_abs_ = id_abs; } 
   ///@}
   
+  /** @name Getter/Setters for readyness state
+   */
+  ///@{
+  /** 
+   * @brief Getter for initialized_
+   **/
+  bool initialized() const { return initialized_; }
+  /** 
+   * @brief Setter for initialized_
+   **/
+  void set_initialized(bool initialized) { initialized_ = initialized; } 
+  
+  /** 
+   * @brief Getter for onworkspace_
+   **/
+  bool onworkspace() const { return onworkspace_; }
+  /** 
+   * @brief Setter for onworkspace_
+   **/
+  void set_onworkspace(bool onworkspace) { onworkspace_ = onworkspace; } 
+  
+  /** 
+   * @brief Getter for ready_
+   **/
+  bool ready() const { return ready_; }
+  /** 
+   * @brief Setter for ready_
+   **/
+  void set_ready(bool ready) { ready_ = ready; }
+  ///@}
+  
+  /** @brief Adds RooFit representation to RooWorkspace
+   *
+   *  This function will initialize the appropriate RooFit object and import 
+   *  this to the supplied workspace. A vector of the dependants as RooAbsArg* 
+   *  must be supplied in exactly the same order as the dependants vector.
+   *
+   *  @param ws the workspace to add the object to
+   *  @param yield the yield to construct an extended PDF
+   *  @param dependants the dependant PDFs to be used for initialization
+   *  @return the RooAbsArg on the workspace
+   **/
+  RooAbsArg* AddToWorkspace(RooWorkspace* ws, RooAbsReal* yield,
+                            const std::vector<RooAbsArg*>& dependants);
+  
  protected:  
  private:
   std::string id_rel_;
   std::string id_abs_;
+  
+  bool initialized_;
+  bool ready_;
+  bool onworkspace_;
+  
+  /**
+   *  @brief absolute ID of the yield parameter element to use
+   */
+  std::string id_abs_yield_;
+  
+  /**
+   *  @brief absolute ID(s) of dimension(s) to use for this component
+   */
+  std::vector<std::string> ids_abs_dimensions_;
 };
 
 } // namespace blueprint 

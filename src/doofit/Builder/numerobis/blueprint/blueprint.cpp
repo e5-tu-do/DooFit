@@ -18,6 +18,15 @@ Blueprint::~Blueprint() {
   
 }
 
+RooArgList VectorToArgList(std::vector<RooAbsArg*> vec) {
+  RooArgList list; 
+  for (std::vector<RooAbsArg*>::const_iterator it=vec.begin(); 
+       it!=vec.end(); ++it) {
+    list.add(**it, true);
+  }
+  return list;
+}
+
 } // namespace blueprint 
 } // namespace numerobis 
 } // namespace builder 

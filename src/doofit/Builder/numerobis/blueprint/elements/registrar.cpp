@@ -125,15 +125,6 @@ RooAbsArg* Registrar::Register(RooWorkspace* ws, const std::string& element_name
   return NULL;
 }
   
-RooArgList VectorToArgList(std::vector<RooAbsArg*> vec) {
-  RooArgList list; 
-  for (std::vector<RooAbsArg*>::const_iterator it=vec.begin(); 
-       it!=vec.end(); ++it) {
-    list.add(**it, true);
-  }
-  return list;
-}
-  
 } // namespace elements 
 } // namespace blueprint 
 } // namespace numerobis 
