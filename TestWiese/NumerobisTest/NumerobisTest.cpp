@@ -54,59 +54,53 @@ int run( int argc, char *argv[] ){
   
   numi::Blueprint blueprint;
   
-  numi::elements::Registrar registrar_elements;
-  numi::elements::Factory factory_elements(registrar_elements);
-  
-  numi::pdfs::Registrar registrar_pdfs(registrar_elements);
-  numi::pdfs::Factory factory_pdfs(registrar_pdfs);
-  
-  factory_pdfs.AssembleGaussPdf("pdfGauss", "pdfGauss", "a", "b", "c");
-  sdebug << registrar_pdfs.CheckReady("pdfGauss") << endmsg;
-  sdebug << registrar_pdfs.Register(&ws, "pdfGauss") << endmsg;
+  blueprint.fac_pdfs().AssembleGaussPdf("pdfGauss", "pdfGauss", "a", "b", "c");
+  sdebug << blueprint.reg_pdfs().CheckReady("pdfGauss") << endmsg;
+  sdebug << blueprint.reg_pdfs().Register(&ws, "pdfGauss") << endmsg;
   
   std::vector<std::string> elements;
   elements.push_back("a");
   elements.push_back("b");
   
-  factory_elements.AssembleFormula("f","f","@0*@1",elements);
+  blueprint.fac_elements().AssembleFormula("f","f","@0*@1",elements);
 
   std::vector<std::string> elements2;
   elements2.push_back("f");
   elements2.push_back("c");
 
-  factory_elements.AssembleFormula("f2","f2","@0*@1",elements2);
+  blueprint.fac_elements().AssembleFormula("f2","f2","@0*@1",elements2);
 
-  registrar_elements.Print();
-  registrar_pdfs.Print();
+  blueprint.reg_elements().Print();
+  blueprint.reg_pdfs().Print();
   
-  factory_elements.AssembleDimReal("a","a","a",0.3,3,"ps");
+  blueprint.fac_elements().AssembleDimReal("a","a","a",0.3,3,"ps");
 
-  factory_elements.AssembleParamBasic("b", "b", "b", 0.4, 0.3, 3, "ps");
-  factory_elements.AssembleParamBasic("c", "c", "c", 0.5, 0.3, 3, "ps");
+  blueprint.fac_elements().AssembleParamBasic("b", "b", "b", 0.4, 0.3, 3, "ps");
+  blueprint.fac_elements().AssembleParamBasic("c", "c", "c", 0.5, 0.3, 3, "ps");
   
-  registrar_elements.Print();
-  registrar_pdfs.Print();
+  blueprint.reg_elements().Print();
+  blueprint.reg_pdfs().Print();
   
-  sdebug << registrar_pdfs.CheckReady("pdfGauss") << endmsg;
+  sdebug << blueprint.reg_pdfs().CheckReady("pdfGauss") << endmsg;
   
-  registrar_pdfs.Print();
+  blueprint.reg_pdfs().Print();
 
-  sdebug << registrar_pdfs.Register(&ws, "pdfGauss") << endmsg;
+  sdebug << blueprint.reg_pdfs().Register(&ws, "pdfGauss") << endmsg;
   
-  registrar_pdfs.Print();
+  blueprint.reg_pdfs().Print();
   
-  registrar_elements.Register(&ws, "f2");
-  registrar_elements.Register(&ws, "f");
+  blueprint.reg_elements().Register(&ws, "f2");
+  blueprint.reg_elements().Register(&ws, "f");
   
-  registrar_elements.Print();
-  registrar_pdfs.Print();
+  blueprint.reg_elements().Print();
+  blueprint.reg_pdfs().Print();
 
   std::vector<std::string> dimensions;
   dimensions.push_back("pdfGauss");
   numi::Component c("pdfSig", "pdfSig", "pdfSigYield", dimensions);
   
-  factory_elements.AssembleParamBasic("pdfSigYield", "pdfSigYield", "pdfSigYield", 1, 0, 3e8);
-  registrar_elements.Register(&ws, "pdfSigYield");
+  blueprint.fac_elements().AssembleParamBasic("pdfSigYield", "pdfSigYield", "pdfSigYield", 1, 0, 3e8);
+  blueprint.reg_elements().Register(&ws, "pdfSigYield");
   
   std::vector<RooAbsArg*> pdfs_dimensions;
   pdfs_dimensions.push_back(ws.pdf("pdfGauss"));

@@ -12,8 +12,8 @@
 #include "doofit/Builder/numerobis/blueprint/elements/factory.h"
 #include "doofit/Builder/numerobis/blueprint/pdfs/registrar.h"
 #include "doofit/Builder/numerobis/blueprint/pdfs/factory.h"
-
-
+#include "doofit/Builder/numerobis/blueprint/component.h"
+#include "doofit/Builder/numerobis/blueprint/dimension.h"
 
 // forward declarations
 class RooWorkspace;
@@ -28,17 +28,32 @@ class Blueprint {
   Blueprint();
   virtual ~Blueprint();
   
-  
-  
+  /** 
+   * @brief Getter for reg_elements_
+   **/
+  elements::Registrar& reg_elements() { return reg_elements_; }
+  /** 
+   * @brief Getter for fac_elements_
+   **/
+  elements::Factory& fac_elements() { return fac_elements_; }
+  /** 
+   * @brief Getter for reg_pdfs_
+   **/
+  pdfs::Registrar& reg_pdfs() { return reg_pdfs_; }
+  /** 
+   * @brief Getter for fac_pdfs_
+   **/
+  pdfs::Factory& fac_pdfs() { return fac_pdfs_; }
+
  private:
-  elements::Registrar reg_elems_;
-  elements::Factory   fac_elems_;
+  elements::Registrar reg_elements_;
+  elements::Factory   fac_elements_;
   
   pdfs::Registrar     reg_pdfs_;
   pdfs::Factory       fac_pdfs_;
   
-  //boost::ptr_map<std::string, pdfs::Component> comps_;
-  //boost::ptr_map<std::string, pdfs::Dimension> dimensions_;
+  boost::ptr_map<std::string, Component> comps_;
+  boost::ptr_map<std::string, Dimension> dimensions_;
   
   // std::string pdf_pre_;
   // std::string var_pre_;

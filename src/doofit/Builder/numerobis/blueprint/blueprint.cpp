@@ -6,9 +6,9 @@ namespace numerobis {
 namespace blueprint {
 
 Blueprint::Blueprint() 
-    : reg_elems_()
-    , fac_elems_(reg_elems_)
-    , reg_pdfs_(reg_elems_)
+    : reg_elements_()
+    , fac_elements_(reg_elements_)
+    , reg_pdfs_(reg_elements_)
     , fac_pdfs_(reg_pdfs_)
 {
   
