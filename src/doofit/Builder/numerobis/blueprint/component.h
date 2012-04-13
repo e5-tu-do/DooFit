@@ -23,9 +23,10 @@ namespace blueprint {
 class Component {
  public:
   /**
-   *  @brief Constructor for Component with one Dimension
+   *  @brief Constructor for Component with a vector of dimensions
    *
-   *  Detailed description.
+   *  Create a component depending on a vector of dimensions and a yield
+   *  parameter.
    *
    *  @param id_rel this Component's relative ID
    *  @param id_abs this Component's absolute ID

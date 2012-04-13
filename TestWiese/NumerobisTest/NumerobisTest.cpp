@@ -85,7 +85,10 @@ int run( int argc, char *argv[] ){
   
   blueprint.reg_pdfs().Print();
 
-  sdebug << blueprint.reg_pdfs().Register(&ws, "pdfGauss") << endmsg;
+  blueprint.AssembleDimension("pdfSigMass", "Mass", "a", "pdfGauss");
+  blueprint.RegisterDimensions(&ws);
+  
+  //sdebug << blueprint.reg_pdfs().Register(&ws, "pdfGauss") << endmsg;
   
   blueprint.reg_pdfs().Print();
   

@@ -24,7 +24,8 @@ class Dimension {
   /**
    *  @brief Constructor for dimension with one PDF
    *
-   *  Detailed description.
+   *  Creates a dimension depending on one PDF and one dimension element
+   *  as absolute IDs
    *
    *  @param id_rel this Dimension's relative ID
    *  @param id_abs this Dimension's absolute ID
