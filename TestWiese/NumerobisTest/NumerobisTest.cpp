@@ -72,6 +72,9 @@ int run( int argc, char *argv[] ){
 
   blueprint.reg_elements().Print();
   blueprint.reg_pdfs().Print();
+
+  blueprint.AssembleDimension("pdfSigMass", "Mass", "a", "pdfGauss");
+  sdebug << "Registering dimensions: " << blueprint.RegisterDimensions(&ws) << endmsg;
   
   blueprint.fac_elements().AssembleDimReal("a","a","a",0.3,3,"ps");
 
@@ -85,8 +88,7 @@ int run( int argc, char *argv[] ){
   
   blueprint.reg_pdfs().Print();
 
-  blueprint.AssembleDimension("pdfSigMass", "Mass", "a", "pdfGauss");
-  blueprint.RegisterDimensions(&ws);
+  sdebug << "Registering dimensions: " << blueprint.RegisterDimensions(&ws) << endmsg;
   
   //sdebug << blueprint.reg_pdfs().Register(&ws, "pdfGauss") << endmsg;
   

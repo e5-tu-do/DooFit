@@ -37,16 +37,16 @@ Blueprint::~Blueprint() {
 }
 
 bool Blueprint::RegisterDimensions(RooWorkspace* workspace) {
+  bool all_registered = true;
   for (boost::ptr_map<std::string, Dimension>::const_iterator it = dimensions_.begin();
        it != dimensions_.end(); ++it) {
-    reg_elements_.Register(workspace, it->second->id_abs_dimelement());
+    all_registered &= static_cast<bool>(reg_elements_.Register(workspace, it->second->id_abs_dimelement()));
     const std::vector<std::string>& pdfs_ids = it->second->ids_abs_pdfs();
     BOOST_FOREACH(std::string it_pdf_id, pdfs_ids) {
-      reg_pdfs_.Register(workspace, it_pdf_id);
+      all_registered &= static_cast<bool>(reg_pdfs_.Register(workspace, it_pdf_id));
     }
   }
-  
-  return false;
+  return all_registered;
 }
   
 RooArgList VectorToArgList(std::vector<RooAbsArg*> vec) {
