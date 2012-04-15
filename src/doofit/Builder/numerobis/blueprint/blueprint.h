@@ -67,7 +67,7 @@ class Blueprint {
    *  @param id_abs_yield absolute ID of the yield element
    *  @param id_abs_dimensions vector of absolute IDs of dimensions to use
    */
-  void AssembleDimension(const std::string& id_rel, const std::string& id_abs, 
+  void AssembleComponent(const std::string& id_rel, const std::string& id_abs, 
                          const std::string& id_abs_yield, 
                          const std::vector<std::string>& id_abs_dimensions) {
     Component* com = new Component(id_rel, id_abs, id_abs_yield, id_abs_dimensions);
@@ -87,7 +87,46 @@ class Blueprint {
    */
   bool RegisterDimensions(RooWorkspace* workspace);
   
+  /**
+   *  @brief Register all components
+   *
+   *  This function will try to register all components (by trying to register
+   *  all dependants in the process). If all components could be registered 
+   *  properly, it will return true.
+   *
+   *  @param workspace the workspace to register all elements and PDFs to
+   *  @return true if all dependants and therefore all components could be registered
+   */
+  bool RegisterComponents(RooWorkspace* workspace);
+  
  private:
+  
+  /**
+   *  @brief Register one dimension
+   *
+   *  This function will try to register one dimensions (by trying to register
+   *  all dependants in the process). If all dependants could be registered 
+   *  properly, it will return true.
+   *
+   *  @param workspace the workspace to register all elements and PDFs to
+   *  @param id_abs_dim the absolute ID of the dimension to register   
+   *  @return true if all dependants and therefore all dimensions could be registered
+   */
+  bool RegisterDimension(RooWorkspace* workspace, const std::string& id_abs_dim);
+  
+  /**
+   *  @brief Register one components
+   *
+   *  This function will try to register one components (by trying to register
+   *  all dependants in the process). If all dependants could be registered 
+   *  properly, it will return true.
+   *
+   *  @param workspace the workspace to register all elements and PDFs to
+   *  @param id_abs_comp the absolute ID of the component to register   
+   *  @return true if all dependants and therefore all components could be registered
+   */
+  RooAbsArg* RegisterComponent(RooWorkspace* workspace, const std::string& id_abs_comp);
+  
   elements::Registrar reg_elements_;
   elements::Factory   fac_elements_;
   

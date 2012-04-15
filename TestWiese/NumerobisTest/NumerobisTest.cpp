@@ -23,6 +23,8 @@
 
 #include "doofit/Builder/numerobis/blueprint/component.h"
 
+#include "doofit/utils//MsgStream.h"
+
 using namespace std;
 
 using namespace doofit;
@@ -74,7 +76,11 @@ int run( int argc, char *argv[] ){
   blueprint.reg_pdfs().Print();
 
   blueprint.AssembleDimension("pdfSigMass", "Mass", "a", "pdfGauss");
-  sdebug << "Registering dimensions: " << blueprint.RegisterDimensions(&ws) << endmsg;
+  std::vector<std::string> dimensions;
+  dimensions.push_back("pdfSigMass");
+  blueprint.AssembleComponent("pdfSig", "Sig", "pdfSigYield", dimensions);
+  
+  sdebug << "Registering components: " << blueprint.RegisterComponents(&ws) << endmsg;
   
   blueprint.fac_elements().AssembleDimReal("a","a","a",0.3,3,"ps");
 
@@ -88,7 +94,7 @@ int run( int argc, char *argv[] ){
   
   blueprint.reg_pdfs().Print();
 
-  sdebug << "Registering dimensions: " << blueprint.RegisterDimensions(&ws) << endmsg;
+  sdebug << "Registering components: " << blueprint.RegisterComponents(&ws) << endmsg;
   
   //sdebug << blueprint.reg_pdfs().Register(&ws, "pdfGauss") << endmsg;
   
@@ -100,17 +106,10 @@ int run( int argc, char *argv[] ){
   blueprint.reg_elements().Print();
   blueprint.reg_pdfs().Print();
 
-  std::vector<std::string> dimensions;
-  dimensions.push_back("pdfGauss");
-  numi::Component c("pdfSig", "pdfSig", "pdfSigYield", dimensions);
-  
   blueprint.fac_elements().AssembleParamBasic("pdfSigYield", "pdfSigYield", "pdfSigYield", 1, 0, 3e8);
-  blueprint.reg_elements().Register(&ws, "pdfSigYield");
   
-  std::vector<RooAbsArg*> pdfs_dimensions;
-  pdfs_dimensions.push_back(ws.pdf("pdfGauss"));
-  c.set_ready(true);
-  c.AddToWorkspace(&ws, ws.var("pdfSigYield"), pdfs_dimensions);
+  sdebug << "Registering components: " << blueprint.RegisterComponents(&ws) << endmsg;
+  
   ws.Print("t");
   
   return 0;

@@ -95,6 +95,23 @@ class Component {
   void set_ready(bool ready) { ready_ = ready; }
   ///@}
   
+  /** 
+   * @brief Getter for id_abs_yield_
+   **/
+  const std::string& id_abs_yield() const { return id_abs_yield_; }
+  /** 
+   * @brief Setter for id_abs_yield_
+   **/
+  void set_id_abs_yield(const std::string& id_abs_yield) { id_abs_yield_ = id_abs_yield; }
+  /** 
+   * @brief Getter for ids_abs_dimensions_
+   **/
+  const std::vector<std::string>& ids_abs_dimensions() const { return ids_abs_dimensions_; }
+  /** 
+   * @brief Setter for ids_abs_dimensions_
+   **/
+  void set_ids_abs_dimensions(const std::vector<std::string>& ids_abs_dimensions) { ids_abs_dimensions_ = ids_abs_dimensions; }
+  
   /** @brief Adds RooFit representation to RooWorkspace
    *
    *  This function will initialize the appropriate RooFit object and import 

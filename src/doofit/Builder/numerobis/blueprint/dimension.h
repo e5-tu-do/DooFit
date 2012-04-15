@@ -95,7 +95,7 @@ class Dimension {
   /** 
    * @brief Getter for id_abs_dimelement_
    **/
-  std::string id_abs_dimelement() const { return id_abs_dimelement_; }
+  const std::string& id_abs_dimelement() const { return id_abs_dimelement_; }
   /** 
    * @brief Setter for id_abs_dimelement_
    **/
@@ -119,6 +119,11 @@ class Dimension {
    **/
   void set_ids_abs_pdf(const std::string& ids_abs_pdf) { ids_abs_pdfs_.clear();
     ids_abs_pdfs_.push_back(ids_abs_pdf); }
+  
+  /**
+   *  @brief Get the corresponding PDF absolute ID
+   */
+  const std::string& PdfId() const { return ids_abs_pdf(); }
   
  protected:  
  private:
