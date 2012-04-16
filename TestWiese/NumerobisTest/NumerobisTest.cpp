@@ -75,10 +75,10 @@ int run( int argc, char *argv[] ){
   blueprint.reg_elements().Print();
   blueprint.reg_pdfs().Print();
 
-  blueprint.AssembleDimension("pdfSigMass", "Mass", "a", "pdfGauss");
+  blueprint.AssembleDimension("Mass", "pdfSigMass", "a", "pdfGauss");
   std::vector<std::string> dimensions;
   dimensions.push_back("pdfSigMass");
-  blueprint.AssembleComponent("pdfSig", "Sig", "pdfSigYield", dimensions);
+  blueprint.AssembleComponent("Sig", "pdfSig", "pdfSigYield", dimensions);
   
   sdebug << "Registering components: " << blueprint.RegisterComponents(&ws) << endmsg;
   

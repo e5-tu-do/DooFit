@@ -52,12 +52,9 @@ bool Blueprint::RegisterDimensions(RooWorkspace* workspace) {
   
 bool Blueprint::RegisterDimension(RooWorkspace* workspace, const std::string& id_abs_dim) {
   bool all_registered = true;
-  
-  sdebug << "Dimension " << id_abs_dim << " to be registered" << endmsg;
-  
   boost::ptr_map<std::string, Dimension>::const_iterator it = dimensions_.find(id_abs_dim);
   if (it == dimensions_.end()) return false;
-  
+
   all_registered &= static_cast<bool>(reg_elements_.Register(workspace, it->second->id_abs_dimelement()));
   const std::vector<std::string>& pdfs_ids = it->second->ids_abs_pdfs();
   BOOST_FOREACH(std::string it_pdf_id, pdfs_ids) {
@@ -78,9 +75,6 @@ bool Blueprint::RegisterComponents(RooWorkspace* workspace) {
 
 RooAbsArg* Blueprint::RegisterComponent(RooWorkspace* workspace, const std::string& id_abs_comp) {
   bool all_registered = true;
-  
-  sdebug << "Component " << id_abs_comp << " to be registered" << endmsg;
-
   boost::ptr_map<std::string, Component>::iterator it = comps_.find(id_abs_comp);
   if (it == comps_.end()) return NULL;
 
@@ -89,9 +83,6 @@ RooAbsArg* Blueprint::RegisterComponent(RooWorkspace* workspace, const std::stri
   const std::vector<std::string>& dims_ids = it->second->ids_abs_dimensions();
   std::vector<RooAbsArg*> pdfs_dimensions;
   BOOST_FOREACH(std::string it_dim_id, dims_ids) {
-    
-    sdebug << "Component " << id_abs_comp << ": registering dimension " << it_dim_id << endmsg;
-    
     all_registered &= RegisterDimension(workspace, it_dim_id);
     boost::ptr_map<std::string, Dimension>::iterator it = dimensions_.find(it_dim_id);
     if (it != dimensions_.end()) {
@@ -100,8 +91,6 @@ RooAbsArg* Blueprint::RegisterComponent(RooWorkspace* workspace, const std::stri
   }
   
   if (all_registered) {
-    sdebug << "Component " << id_abs_comp << " ready to go on workspace" << endmsg;
-    
     Component* comp = it->second;
     
     comp->set_ready(true);
