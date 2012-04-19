@@ -30,12 +30,13 @@ class Component {
    *
    *  @param id_rel this Component's relative ID
    *  @param id_abs this Component's absolute ID
-   *  @param id_abs_yield absolute ID of the yield element
    *  @param id_abs_dimensions vector of absolute IDs of dimensions to use
+   *  @param id_abs_yield absolute ID of the yield element (if omitted, 
+   *                      will assume non extended component)
    */
   Component(const std::string& id_rel, const std::string& id_abs, 
-            const std::string& id_abs_yield, 
-            const std::vector<std::string>& id_abs_dimensions);
+            const std::vector<std::string>& id_abs_dimensions,
+            const std::string& id_abs_yield="");
   
   /**
    *  @brief Destructor.
@@ -112,6 +113,15 @@ class Component {
    **/
   void set_ids_abs_dimensions(const std::vector<std::string>& ids_abs_dimensions) { ids_abs_dimensions_ = ids_abs_dimensions; }
   
+  /** 
+   * @brief Getter for is_extended_
+   **/
+  bool is_extended() const { return is_extended_; }
+  /** 
+   * @brief Setter for is_extended_
+   **/
+  void set_is_extended(const bool& is_extended) { is_extended_ = is_extended; }
+  
   /** @brief Adds RooFit representation to RooWorkspace
    *
    *  This function will initialize the appropriate RooFit object and import 
@@ -119,12 +129,13 @@ class Component {
    *  must be supplied in exactly the same order as the dependants vector.
    *
    *  @param ws the workspace to add the object to
-   *  @param yield the yield to construct an extended PDF
    *  @param dependants the dependant PDFs to be used for initialization
+   *  @param yield the yield to construct an extended PDF (can be omitted in non-extended case)
    *  @return the RooAbsArg on the workspace
    **/
-  RooAbsArg* AddToWorkspace(RooWorkspace* ws, RooAbsReal* yield,
-                            const std::vector<RooAbsArg*>& dependants);
+  RooAbsArg* AddToWorkspace(RooWorkspace* ws,
+                            const std::vector<RooAbsArg*>& dependants, 
+                            RooAbsReal* yield=NULL);
   
  protected:  
  private:
@@ -134,6 +145,11 @@ class Component {
   bool initialized_;
   bool ready_;
   bool onworkspace_;
+  
+  /**
+   *  @brief whether this component is to be extended or not
+   */
+  bool is_extended_;
   
   /**
    *  @brief absolute ID of the yield parameter element to use

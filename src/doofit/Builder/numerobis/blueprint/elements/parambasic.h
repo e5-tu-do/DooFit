@@ -47,7 +47,6 @@ class ParamBasic : public ParamElement {
   **/
   RooAbsArg* GetRooObjFromWorkspace(RooWorkspace* ws);
   
-  
   RooRealVar* GetRooObj() { return roo_obj_; }
   
   /** @brief Getter for val_init_**/
@@ -69,9 +68,6 @@ class ParamBasic : public ParamElement {
   std::string unit() const { return unit_; }
   /** @brief Setter for unit_**/
   void set_unit(const std::string& unit) { unit_ = unit; }
-
-
-
 
  private:
   double val_init_;

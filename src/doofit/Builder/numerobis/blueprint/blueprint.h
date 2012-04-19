@@ -64,13 +64,14 @@ class Blueprint {
    *
    *  @param id_rel this Component's relative ID
    *  @param id_abs this Component's absolute ID
-   *  @param id_abs_yield absolute ID of the yield element
    *  @param id_abs_dimensions vector of absolute IDs of dimensions to use
+   *  @param id_abs_yield absolute ID of the yield element (if omitted, 
+   *                      will assume non extended component)
    */
   void AssembleComponent(const std::string& id_rel, const std::string& id_abs, 
-                         const std::string& id_abs_yield, 
-                         const std::vector<std::string>& id_abs_dimensions) {
-    Component* com = new Component(id_rel, id_abs, id_abs_yield, id_abs_dimensions);
+                         const std::vector<std::string>& id_abs_dimensions,
+                         const std::string& id_abs_yield="") {
+    Component* com = new Component(id_rel, id_abs, id_abs_dimensions, id_abs_yield);
     std::string temp_key = com->id_abs();
     comps_.insert(temp_key, com);
   }

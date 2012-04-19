@@ -78,8 +78,11 @@ RooAbsArg* Blueprint::RegisterComponent(RooWorkspace* workspace, const std::stri
   boost::ptr_map<std::string, Component>::iterator it = comps_.find(id_abs_comp);
   if (it == comps_.end()) return NULL;
 
-  RooAbsReal* yield = dynamic_cast<RooAbsReal*>(reg_elements_.Register(workspace, it->second->id_abs_yield()));
-  all_registered &= static_cast<bool>(yield);
+  RooAbsReal* yield = NULL;
+  if (it->second->is_extended()) {
+    yield = dynamic_cast<RooAbsReal*>(reg_elements_.Register(workspace, it->second->id_abs_yield()));
+    all_registered &= static_cast<bool>(yield);
+  }
   const std::vector<std::string>& dims_ids = it->second->ids_abs_dimensions();
   std::vector<RooAbsArg*> pdfs_dimensions;
   BOOST_FOREACH(std::string it_dim_id, dims_ids) {
@@ -94,7 +97,7 @@ RooAbsArg* Blueprint::RegisterComponent(RooWorkspace* workspace, const std::stri
     Component* comp = it->second;
     
     comp->set_ready(true);
-    return comp->AddToWorkspace(workspace, yield, pdfs_dimensions);
+    return comp->AddToWorkspace(workspace, pdfs_dimensions, yield);
   } else {
     return NULL;
   }
