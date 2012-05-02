@@ -204,6 +204,14 @@ void TestToys(int argc, char *argv[]) {
   delete data;
   
   tstudy.ReadFitResults();
+  
+  std::vector<RooFitResult*> results = tstudy.fit_results();
+  for (std::vector<RooFitResult*>::const_iterator it = results.begin();
+       it != results.end(); ++it) {
+    (*it)->Print();
+  }
+  
+  
   tstudy.EvaluateFitResults();
   tstudy.PlotEvaluatedParameters();
     

@@ -122,6 +122,13 @@ namespace Toy {
     void PlotEvaluatedParameters();
     ///@}
     
+    /** @name Helper functions
+     *  Helper functions for not yet implemented usage
+     */
+    ///@{
+    const std::vector<RooFitResult*>& fit_results() const {return fit_results_;}
+    ///@}
+    
     RooDataSet* evaluated_values() const { return evaluated_values_; }
     
    protected:
