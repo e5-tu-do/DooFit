@@ -58,15 +58,20 @@ namespace Toy {
      */
     ///@{
     /**
-     *  @brief Store a fit result into TTree
+     *  @brief Store one or more fit results into TTree
      *
-     *  This function will save the given fit result to a TTree in a ROOT file. 
+     *  This function will save the given fit result(s) to a TTree in a ROOT 
+     *  file. 
      *  The latter can be configured via 
      *  ToyStudyStdConfig::set_store_result_filename_treename(). Writing the 
      *  tree to the file is collision-safe, i.e. the file will be locked before 
      *  write and if locked the function will wait for the file to be unlocked 
      *  again. If the file will not be unlocked after some time, the tree will 
      *  be saved to an alternative file.
+     *  
+     *  If the branch name(s) are specified, it is assumed that in case the 
+     *  file already exists, the tree and given branches also exist in the 
+     *  accordingly.
      *
      *  @see const Config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename
      *  @see ToyStudyStdConfig
@@ -76,9 +81,15 @@ namespace Toy {
      *
      *  @todo Implement fit saving to alternative file after no lock possible
      *
-     *  @param fit_result RooFitResult to save
+     *  @param fit_result1 first RooFitResult to save
+     *  @param branch_name1 name of branch for first fit result (optional)
+     *  @param fit_result2 second RooFitResult to save (optional)
+     *  @param branch_name2 name of branch for second fit result (optional)
      */
-    void StoreFitResult(const RooFitResult* fit_result) const;
+    void StoreFitResult(const RooFitResult* fit_result1, 
+                        const std::string& branch_name1="fit_results",
+                        const RooFitResult* fit_result2=NULL, 
+                        const std::string& branch_name2="fit_results2") const;
     ///@}
 
     /** @name Evaluation functions
@@ -91,8 +102,10 @@ namespace Toy {
      *  A list of fit result files as defined in 
      *  ToyStudyStdConfig::set_read_results_filename_treename() will be read in
      *  and stored internally in the toy factory. 
+     *
+     *  @param branch_name name of branch for fit results (optional)
      */
-    void ReadFitResults();
+    void ReadFitResults(const std::string& branch_name="fit_results");
     /**
      *  @brief Evaluate read in fit results
      *

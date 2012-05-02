@@ -57,7 +57,10 @@ namespace Toy {
     }
   }
   
-  void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result) const {
+  void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result1, 
+                                   const std::string& branch_name1,
+                                   const RooFitResult* fit_result2, 
+                                   const std::string& branch_name2) const {
     signal(SIGINT, ToyStudyStd::HandleSignal);
     signal(SIGTERM, ToyStudyStd::HandleSignal);
     
@@ -103,9 +106,28 @@ namespace Toy {
           
           if (tree_results == NULL) {
             tree_results = new TTree(treename.c_str(), "Tree for toy study fit results");
-            tree_results->Branch("fit_results", "RooFitResult", &fit_result, 64000, 0);
-          } else {      
-            tree_results->SetBranchAddress("fit_results", &fit_result);
+            tree_results->Branch(branch_name1.c_str(), "RooFitResult", &fit_result1, 64000, 0);
+            if (fit_result2 != NULL) {
+              tree_results->Branch(branch_name2.c_str(), "RooFitResult", &fit_result2, 64000, 0);
+            }
+          } else {  
+            if (tree_results->GetBranch(branch_name1.c_str()) == NULL) {
+              serr << "Cannot store fit result! Tree exists but branch " << branch_name1 << " is unknown." << endmsg;
+              f.Close();
+              flock.Unlock();
+              throw ExceptionCannotStoreFitResult();
+            }
+            if (fit_result2 != NULL && tree_results->GetBranch(branch_name2.c_str()) == NULL) {
+              serr << "Cannot store fit result! Tree exists but branch " << branch_name2 << " is unknown." << endmsg;
+              f.Close();
+              flock.Unlock();
+              throw ExceptionCannotStoreFitResult();
+            }
+            
+            tree_results->SetBranchAddress(branch_name1.c_str(), &fit_result1);
+            if (fit_result2 != NULL) {
+              tree_results->SetBranchAddress(branch_name2.c_str(), &fit_result2);
+            }
           }
           
           tree_results->Fill();
@@ -132,7 +154,7 @@ namespace Toy {
     signal(SIGTERM, SIG_DFL);
   }
   
-  void ToyStudyStd::ReadFitResults() {
+  void ToyStudyStd::ReadFitResults(const std::string& branch_name) {
     const std::vector<doofit::Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
     
     sinfo.Ruler();
@@ -154,7 +176,7 @@ namespace Toy {
       TFile file((*it_files).first().c_str(), "read");
       TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
             
-      TBranch* result_branch = tree->GetBranch("fit_results");
+      TBranch* result_branch = tree->GetBranch(branch_name.c_str());
       RooFitResult* fit_result = NULL;
       result_branch->SetAddress(&fit_result);
       
