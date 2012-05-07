@@ -126,7 +126,30 @@ namespace Toy {
      *  Helper functions for not yet implemented usage
      */
     ///@{
-    const std::vector<RooFitResult*>& fit_results() const {return fit_results_;}
+    /**
+     *  @brief Return vector of read in fit results.
+     *
+     *  This function will return a vector of currently read in fit results. The
+     *  results are constant pointers which indicates that the caller must not
+     *  delete these. All ever read in fit results will be deleted upon 
+     *  destruction of this toy study. Emptying the stored result vector via
+     *  EmptyResults() will not destroy the fit results, it will just prepare 
+     *  the toy study to read in new results.
+     *
+     *  @return Currently stored fit results
+     */
+    const std::vector<const RooFitResult*> GetFitResults() const;
+    
+    /**
+     *  @brief Empty stored vector of fit results.
+     *
+     *  Too prevent mistakes and misuse, the ToyStudyStd will not read in new 
+     *  fit results if fit results are already read in. This function will empty
+     *  the vector of stored fit results to be able to read in new results.  
+     *  Previously accessed fit results via GetFitResults() are still valid and
+     *  will only be deleted upon destruction of this ToyStudyStd.
+     */
+    void EmptyResults() { fit_results_.clear(); }
     ///@}
     
     RooDataSet* evaluated_values() const { return evaluated_values_; }
@@ -201,9 +224,13 @@ namespace Toy {
      */
     const ToyStudyStdConfig& config_toystudy_;
     /**
-     *  \brief Container for read in fit results
+     *  \brief Container for read in and active fit results
      */
     std::vector<RooFitResult*> fit_results_;
+    /**
+     *  \brief Container for all ever read in fit results
+     */
+    std::vector<RooFitResult*> fit_results_bookkeep_;
     /**
      *  \brief RooDataSet for all evaluated parameters, their pulls and so on
      */

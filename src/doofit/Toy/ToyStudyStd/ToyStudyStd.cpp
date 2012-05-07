@@ -45,6 +45,7 @@ namespace Toy {
   config_common_(cfg_com),
   config_toystudy_(cfg_tstudy),
   fit_results_(),
+  fit_results_bookkeep_(),
   evaluated_values_(NULL)
   {
     abort_save_ = false;
@@ -52,7 +53,7 @@ namespace Toy {
   
   ToyStudyStd::~ToyStudyStd() {
     if (evaluated_values_ != NULL) delete evaluated_values_;
-    for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_.begin(); it_results != fit_results_.end(); ++it_results) {
+    for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
       delete *it_results;
     }
   }
@@ -165,14 +166,16 @@ namespace Toy {
     }
     
     if (fit_results_.size() > 0) {
-      swarn << "Reading in fit results while results are already stored." << endmsg;
+      serr << "Reading in fit results while results are already stored. Empty stored fit results first." << endmsg;
+      throw ExceptionCannotReadFitResult();
     } 
     
     int results_stored = 0;
     int results_neglected = 0;
     
     for (std::vector<doofit::Config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
-      sinfo << "Loading fit results from " << (*it_files).first() << endmsg;
+      sinfo << "Loading fit results from " << (*it_files).first() 
+            << " from branch " << branch_name << endmsg;
       TFile file((*it_files).first().c_str(), "read");
       TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
             
@@ -187,6 +190,7 @@ namespace Toy {
         if (FitResultOkay(*fit_result)) {
           //fit_results_.push_back(new RooFitResult(*fit_result));
           fit_results_.push_back(fit_result);
+          fit_results_bookkeep_.push_back(fit_result);
           results_stored++;
         } else {
           results_neglected++;
@@ -324,6 +328,18 @@ namespace Toy {
     
     utils::printPlotCloseStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     sinfo.Ruler();
+  }
+  
+  const std::vector<const RooFitResult*> ToyStudyStd::GetFitResults() const {
+    std::vector<const RooFitResult*> new_vector;
+    new_vector.reserve(fit_results_.size());
+    
+    for (std::vector<RooFitResult*>::const_iterator it = fit_results_.begin();
+         it != fit_results_.end(); ++it) {
+      new_vector.push_back(*it);
+    }
+    
+    return new_vector;
   }
   
   RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) {
