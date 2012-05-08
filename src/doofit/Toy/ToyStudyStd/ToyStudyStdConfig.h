@@ -3,6 +3,7 @@
 
 // STL
 #include <vector>
+#include <string> 
 
 // from project
 #ifndef __CINT__
@@ -96,6 +97,12 @@ namespace Toy {
      *  @return current value of neglect_minos_problems_
      */
     bool neglect_minos_problems() const {return neglect_minos_problems_;}
+    /**
+     *  @brief Getter for file to read generation values of parameters from 
+     *
+     *  @return current value of parameter_genvalue_read_file_
+     */
+    const std::string& parameter_genvalue_read_file() const {return parameter_genvalue_read_file_;}
     ///@}
 
     /** @name Setter actual options
@@ -162,6 +169,18 @@ namespace Toy {
      *  @param neglect_minos_problems new value for neglect_minos_problems_
      */
     void set_neglect_minos_problems(bool& neglect_minos_problems) {neglect_minos_problems_ = neglect_minos_problems;}
+    /**
+     *  @brief Setter for file to read generation values of parameters from 
+     *
+     *  To calculate a pull based on different values as generation values than
+     *  the init values used in the fit, specifying a parameter file here gives
+     *  the possibility to read in different parameter values than the 
+     *  initialization values stored in the fit result. If not specified, the 
+     *  init values of the fit results will be used
+     *
+     *  @param parameter_genvalue_read_file new value for parameter_genvalue_read_file_
+     */
+    void set_parameter_genvalue_read_file(const std::string& parameter_genvalue_read_file) {parameter_genvalue_read_file_ = parameter_genvalue_read_file;}
     
     /**
      *  @brief Adder for file names and tree names to read fit result from
@@ -238,6 +257,10 @@ namespace Toy {
      *  @brief Neglect all toy fits where at least one parameter has MINOS problems
      */
     bool neglect_minos_problems_;
+    /**
+     *  @brief File to read generation values of parameters from before pull calculation
+     */
+    std::string parameter_genvalue_read_file_;
     ///@}
   };
 } // namespace Toy

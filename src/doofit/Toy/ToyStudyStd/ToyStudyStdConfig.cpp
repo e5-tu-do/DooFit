@@ -54,6 +54,9 @@ namespace Toy {
     scfg << "Fit/plot parameters on quantile window: " << fit_plot_on_quantile_window_ << endmsg;
     scfg << "Neglect parameters at limit:       " << neglect_parameters_at_limit_ << endmsg;
     scfg << "Neglect MINOS problems:            " << neglect_minos_problems_ << endmsg;
+    if (parameter_genvalue_read_file().size()>0) {
+      scfg << "Read generation values from:       " << parameter_genvalue_read_file() << endmsg;
+    }
   }
   
   void ToyStudyStdConfig::DefineOptions() {
@@ -66,7 +69,8 @@ namespace Toy {
     (GetOptionString("handle_asymmetric_errors").c_str(), po::value<bool>(&handle_asymmetric_errors_)->default_value(true),"Set to false to not use asymmetric errors for pull calculation (c.f. CDF/ANAL/PUBLIC/5776). Default is true. If unsure, use asymmetric errors.")
     (GetOptionString("fit_plot_on_quantile_window").c_str(), po::value<bool>(&fit_plot_on_quantile_window_)->default_value(true),"Fit and plot pulls and other distributions on a sensible quantile based window instead of the full dataset (default: true; use this to avoid influence of pull values of obviously failed fits and other outliers).")
     (GetOptionString("neglect_parameters_at_limit").c_str(), po::value<bool>(&neglect_parameters_at_limit_)->default_value(false),"Neglect any toy fit where at least one parameter is near the defined limits (default: false).")
-    (GetOptionString("neglect_minos_problems").c_str(), po::value<bool>(&neglect_minos_problems_)->default_value(false),"Neglect any toy fit where at least one parameter has MINOS problems (default: false; only applies, if MINOS was run).");
+    (GetOptionString("neglect_minos_problems").c_str(), po::value<bool>(&neglect_minos_problems_)->default_value(false),"Neglect any toy fit where at least one parameter has MINOS problems (default: false; only applies, if MINOS was run).")
+    (GetOptionString("parameter_genvalue_read_file").c_str(), po::value<std::string>(&parameter_genvalue_read_file_),"Read in generation values from this file instead of using the init values in the fit results (default: empty, i.e. use init values).");
     
     descs_visible_.push_back(generation);
   }

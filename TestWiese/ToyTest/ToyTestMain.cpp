@@ -184,7 +184,7 @@ void TestToys(int argc, char *argv[]) {
   //cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
   
   ToyFactoryStd tfac(cfg_com, cfg_tfac);
-  
+
   cfg_com.PrintAll();
   
   RooDataSet* data = NULL;
@@ -198,25 +198,25 @@ void TestToys(int argc, char *argv[]) {
     
   pdf->getParameters(data)->readFromFile("generation.par");
   RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(true), Hesse(false), Verbose(false),Timer(true));
-  
+    
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
   tstudy.StoreFitResult(fit_result, "fr1", fit_result, "fr2");
   delete data;
   
-  tstudy.ReadFitResults("fr1");
-  std::vector<const RooFitResult*> results = tstudy.GetFitResults();
-  tstudy.EmptyResults();
-  for (std::vector<const RooFitResult*>::const_iterator it = results.begin();
-       it != results.end(); ++it) {
-    (*it)->Print();
-  }
-  tstudy.ReadFitResults("fr2");
-  std::vector<const RooFitResult*> results2 = tstudy.GetFitResults();
-  tstudy.EmptyResults();
-  for (std::vector<const RooFitResult*>::const_iterator it = results2.begin();
-       it != results2.end(); ++it) {
-    (*it)->Print();
-  }
+//  tstudy.ReadFitResults("fr1");
+//  std::vector<const RooFitResult*> results = tstudy.GetFitResults();
+//  tstudy.EmptyResults();
+//  for (std::vector<const RooFitResult*>::const_iterator it = results.begin();
+//       it != results.end(); ++it) {
+//    (*it)->Print();
+//  }
+//  tstudy.ReadFitResults("fr2");
+//  std::vector<const RooFitResult*> results2 = tstudy.GetFitResults();
+//  tstudy.EmptyResults();
+//  for (std::vector<const RooFitResult*>::const_iterator it = results2.begin();
+//       it != results2.end(); ++it) {
+//    (*it)->Print();
+//  }
   tstudy.ReadFitResults("fr1");
   
   tstudy.EvaluateFitResults();

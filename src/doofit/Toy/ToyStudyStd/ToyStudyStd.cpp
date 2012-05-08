@@ -344,7 +344,12 @@ namespace Toy {
   
   RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) {
     RooArgSet parameters;
-
+    
+    RooArgSet parameter_init_list    = fit_result.floatParsInit();
+    if (config_toystudy_.parameter_genvalue_read_file().size() > 0) {
+      parameter_init_list.readFromFile(config_toystudy_.parameter_genvalue_read_file().c_str());
+    }
+    
     const RooArgList& parameter_list = fit_result.floatParsFinal();
     TIterator* parameter_iter        = parameter_list.createIterator();
     RooRealVar* parameter            = NULL;
@@ -366,7 +371,7 @@ namespace Toy {
       RooRealVar& par  = CopyRooRealVar(*parameter);
       RooRealVar* pull = new RooRealVar(pull_name, pull_desc, 0.0);
       RooRealVar* res  = new RooRealVar(res_name, res_desc, 0.0);
-      RooRealVar& init = CopyRooRealVar(*(RooRealVar*)fit_result.floatParsInit().find(par.GetName()), std::string(init_name), std::string(init_desc));
+      RooRealVar& init = CopyRooRealVar(*(RooRealVar*)parameter_init_list.find(par.GetName()), std::string(init_name), std::string(init_desc));
       
       double pull_value = 0.0;
       
