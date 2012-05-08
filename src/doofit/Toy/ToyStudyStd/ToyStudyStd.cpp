@@ -177,9 +177,23 @@ namespace Toy {
       sinfo << "Loading fit results from " << (*it_files).first() 
             << " from branch " << branch_name << endmsg;
       TFile file((*it_files).first().c_str(), "read");
+      if (file.IsZombie() || !file.IsOpen()) {
+        serr << "Cannot open file " << (*it_files).first() << " which may be not existing or corrupted." << endmsg;
+        throw ExceptionCannotReadFitResult();
+      }
+
       TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
-            
+      if (tree == NULL) {
+        serr << "Cannot find tree " << (*it_files).second() << " in file. Cannot read in fit results." << endmsg;
+        throw ExceptionCannotReadFitResult();
+      }
+
       TBranch* result_branch = tree->GetBranch(branch_name.c_str());
+      if (result_branch == NULL) {
+        serr << "Cannot find branch " << branch_name << " in tree. Cannot read in fit results." << endmsg;
+        throw ExceptionCannotReadFitResult();
+      }
+
       RooFitResult* fit_result = NULL;
       result_branch->SetAddress(&fit_result);
       
