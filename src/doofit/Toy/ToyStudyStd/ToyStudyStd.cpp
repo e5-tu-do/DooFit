@@ -214,7 +214,7 @@ namespace Toy {
         fit_result = NULL;
       }
       
-      delete result_branch;
+      //delete result_branch;
       delete tree;
       file.Close();
     }
