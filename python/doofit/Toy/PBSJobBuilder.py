@@ -20,7 +20,7 @@ from optparse import OptionParser
 #  Syntax/Example for a proto job file:
 #  
 #  @code
-#\#!/bin/sh
+####!/bin/sh
 #
 ##PBS -N %(job_name)s
 ##PBS -o %(out_file)s
