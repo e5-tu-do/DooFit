@@ -68,6 +68,8 @@ from optparse import OptionParser
 #  @code 
 #PBSJobBuilder.py proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu min_seed
 #  @endcode
+#
+#  Additional options are available via the <tt>--help</tt> option.
 # 
 #  Afterwards, a submit script <tt>submit_job_base_name.sh</tt> will be created 
 #  inside the jobs directory to easily submit all jobs. <tt>num_pbs_jobs</tt> 
