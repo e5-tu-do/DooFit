@@ -61,7 +61,7 @@ from optparse import OptionParser
 #@li @c job_number: the number of the individual job
 #@li @c scan_value: the current scan value
 #@li @c jobs_dir:   the job directory
-#@li @c parametern: additional arbitrary parameter n (as configured by <tt>-n</tt> or <tt>--parameter-n</tt>
+#@li @c parametern: additional arbitrary parameter n (as configured by <tt>-n</tt> or <tt>--parameter-n</tt>)
 #
 #@section pbsjobbuilder_calling Calling PBSJobBuilder.py
 #
