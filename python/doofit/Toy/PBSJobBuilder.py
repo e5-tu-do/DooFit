@@ -20,7 +20,7 @@ from optparse import OptionParser
 #  Syntax/Example for a proto job file:
 #  
 #  @code
-##!/bin/sh
+#"#!/bin/sh
 #
 ##PBS -N %(job_name)s
 ##PBS -o %(out_file)s
@@ -107,7 +107,8 @@ def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_it
         'num_cpu'    : str(num_cpu),
         'job_number' : str(job_index),
         'cwd'        : os.getcwd(),
-        'scan_value' : scan_value
+        'scan_value' : scan_value,
+        'jobs_dir'   : jobs_dir
         }
       min_seed = create_single_job(proto_script, settings_dict, jobs_dir, num_iterations_per_job, min_seed)
       submit_file.writelines('qsub ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
