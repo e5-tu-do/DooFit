@@ -20,7 +20,7 @@ from optparse import OptionParser
 #  Syntax/Example for a proto job file:
 #  
 #  @code
-#//#!/bin/sh
+##!/bin/sh
 #
 ##PBS -N %(job_name)s
 ##PBS -o %(out_file)s
@@ -43,7 +43,7 @@ from optparse import OptionParser
 #
 #for i in `seq %(seeds)s`;
 #do
-#  time echo toy --scan=%(scan_value)s --seed=$i --output=result_%(job_number)s.root --num_cpu=%(num_cpu)s >> %(log_file)s
+#  time echo toy --scan=%(scan_value)s --seed=$i --output=%(jobs_dir)s/result_%(job_number)s.root --num_cpu=%(num_cpu)s >> %(log_file)s
 #done
 #
 #echo finished job number %(job_number)s
@@ -61,6 +61,7 @@ from optparse import OptionParser
 #@li @c job_number: the number of the individual job
 #@li @c scan_value: the current scan value
 #@li @c jobs_dir:   the job directory
+#@li @c parametern: additional arbitrary parameter n (as configured by <tt>-n</tt> or <tt>--parameter-n</tt>
 #
 #@section pbsjobbuilder_calling Calling PBSJobBuilder.py
 #
@@ -97,7 +98,6 @@ def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_it
   scan_value = options.scanstart
   job_index  = 0
   while scan_value <= options.scanend:
-    print 'at', scan_value
     for i in range(0,num_jobs):
       settings_dict = {
         'job_name'   : job_base_name + '_' + str(job_index),
@@ -109,7 +109,8 @@ def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_it
         'job_number' : str(job_index),
         'cwd'        : os.getcwd(),
         'scan_value' : scan_value,
-        'jobs_dir'   : jobs_dir
+        'jobs_dir'   : jobs_dir,
+        'parametern' : options.parametern
         }
       min_seed = create_single_job(proto_script, settings_dict, jobs_dir, num_iterations_per_job, min_seed)
       submit_file.writelines('qsub ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
@@ -127,6 +128,7 @@ if __name__ == "__main__":
   parser.add_option("-s", "--scan-start", action="store", type="float", dest="scanstart", default=0.0, help="Start value of scan parameter")
   parser.add_option("-e", "--scan-end", action="store", type="float", dest="scanend", default=0.0, help="End value of scan parameter")
   parser.add_option("-i", "--scan-increment", action="store", type="float", dest="scanincrement", default=0.0, help="Increment value of scan parameter")
+  parser.add_option("-n", "--parameter-n", action="store", type="int", dest="parametern", default=0, help="Additional arbitrary parameter n (e.g. number of toys)")
   (options, args) = parser.parse_args()
   if len(args) < 8:
     print 'Usage: ' + sys.argv[0] + ' proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu min_seed'
