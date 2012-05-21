@@ -20,7 +20,7 @@ from optparse import OptionParser
 #  Syntax/Example for a proto job file:
 #  
 #  @code
-####!/bin/sh
+#@###!/bin/sh
 #
 ##PBS -N %(job_name)s
 ##PBS -o %(out_file)s
@@ -60,6 +60,7 @@ from optparse import OptionParser
 #@li @c seeds:    the seeds for the iterations in this individual job to use (will be generated as <tt>minseed maxseed</tt> compatible to the above @c for statement)
 #@li @c job_number: the number of the individual job
 #@li @c scan_value: the current scan value
+#@li @c jobs_dir:   the job directory
 #
 #@section pbsjobbuilder_calling Calling PBSJobBuilder.py
 #
