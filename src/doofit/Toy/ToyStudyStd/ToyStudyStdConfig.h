@@ -127,6 +127,12 @@ namespace Toy {
      */
     void set_store_result_filename_treename(const Config::CommaSeparatedPair& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
     /**
+     *  @brief Setter for file name pattern and tree name to read fit result from
+     *
+     *  @param result_file_tree new value for store_result_filename_treename_
+     */
+    void set_read_results_filename_treename_pattern(const Config::CommaSeparatedPair& read_results_filename_treename_pattern) {read_results_filename_treename_pattern_ = read_results_filename_treename_pattern;}
+    /**
      *  @brief Setter for file names and tree names to read fit result from
      *
      *  @param result_file_tree new value for read_results_filename_treename_
@@ -222,6 +228,14 @@ namespace Toy {
     void PrintOptions() const;
     ///@}
     
+    /**
+     *  @brief Parse read file pattern and extend read file/tree list
+     *
+     *  This function will parse read_results_filename_treename_pattern_ and 
+     *  extend read_results_filename_treename_ accordingly.
+     */
+    void ParseReadFileTreePattern();
+    
    private:
     /** @name Actual options
      *  The actual options members.
@@ -237,6 +251,15 @@ namespace Toy {
      *  @brief File names and tree names to read fit result from
      */
     std::vector<Config::CommaSeparatedPair> read_results_filename_treename_;
+    /**
+     *  @brief File name pattern and tree name to read fit result from
+     *
+     *  The list in read_results_filename_treename_ will be extended by all
+     *  files matching this pattern.
+     *
+     *  @see ToyStudyStdConfig::set_read_results_filename_treename_pattern()
+     */
+    Config::CommaSeparatedPair read_results_filename_treename_pattern_;
     /**
      *  @brief Plot directory for evaluation of fit results
      */

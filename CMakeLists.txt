@@ -32,7 +32,7 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 project(DooFit)
 cmake_minimum_required(VERSION 2.6)
 
-FIND_PACKAGE(Boost 1.48 COMPONENTS program_options filesystem thread system random REQUIRED)
+FIND_PACKAGE(Boost 1.48 COMPONENTS program_options filesystem regex thread system random REQUIRED)
 find_package(ROOT REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR})
