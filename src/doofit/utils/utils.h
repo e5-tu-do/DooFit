@@ -5,12 +5,17 @@
 #ifndef utils_h
 #define utils_h
 
+// from STL
 #include <iostream>
 #include <fstream>
 #include <list>
 #include <map>
 #include <sys/stat.h>
 #include <utility>
+#include <queue>
+
+// from BOOST
+#include <boost/thread.hpp>
 
 #include "TLorentzVector.h"
 #include "TLorentzRotation.h"
@@ -38,6 +43,52 @@
 namespace doofit {
   namespace utils
   {
+    /** @class concurrent_ptr_queue
+     *  @brief Thread-safe concurrent queue for pointers 
+     *
+     *  This is a thread-safe queue for pointers able for the producer/consumer
+     *  pattern of a thread adding pointers to this and another consuming these.
+     *
+     *  Adapted from http://www.justsoftwaresolutions.co.uk/threading/implementing-a-thread-safe-queue-using-condition-variables.html
+     */
+    template<typename Data>
+    class concurrent_ptr_queue
+    {
+    private:
+      std::queue<Data*> the_queue;
+      mutable boost::mutex the_mutex;
+      boost::condition_variable the_condition_variable;
+    public:
+      void push(Data* data)
+      {
+        boost::mutex::scoped_lock lock(the_mutex);
+        the_queue.push(data);
+        lock.unlock();
+        the_condition_variable.notify_one();
+      }
+      
+      bool empty() const
+      {
+        boost::mutex::scoped_lock lock(the_mutex);
+        return the_queue.empty();
+      }
+      
+      Data* wait_and_pop()
+      {
+        Data* popped_value;
+        boost::mutex::scoped_lock lock(the_mutex);
+        while(the_queue.empty())
+        {
+          the_condition_variable.wait(lock);
+        }
+        
+        popped_value=the_queue.front();
+        the_queue.pop();
+        return popped_value;
+      }
+    };
+    
+    
     /// Terminal color enum to be used for example in MsgStream class.
     enum TerminalColor {
       kTextBlack   = 0,

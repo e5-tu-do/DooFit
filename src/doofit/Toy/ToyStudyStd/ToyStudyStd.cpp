@@ -46,9 +46,11 @@ namespace Toy {
   config_toystudy_(cfg_tstudy),
   fit_results_(),
   fit_results_bookkeep_(),
-  evaluated_values_(NULL)
+  evaluated_values_(NULL),
+  accepting_fit_results_(true)
   {
     abort_save_ = false;
+    fitresult_save_worker_ = boost::thread(&ToyStudyStd::SaveFitResultWorker, this);
   }
   
   ToyStudyStd::~ToyStudyStd() {
@@ -56,6 +58,8 @@ namespace Toy {
     for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
       delete *it_results;
     }
+    accepting_fit_results_ = false;
+    fitresult_save_worker_.join();
   }
   
   void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result1, 
@@ -469,15 +473,24 @@ namespace Toy {
     
     return *new_var;
   }
+
+  void ToyStudyStd::PrintUnexpectedPullOverview() const {
+    for (std::map<std::string, int>::const_iterator it=unexpected_pulls_counter_.begin(); it!=unexpected_pulls_counter_.end(); ++it) {
+      sinfo << "Pull for parameter " << (*it).first << ", number of times outside of -5..+5 range: " << (*it).second << endmsg;
+    }
+  }
   
   void ToyStudyStd::HandleSignal(int param) {
     swarn << "Caught signal " << param << " during save of fit result. Will try to end gracefully without damaging the file." << endmsg;
     abort_save_ = true;
   }
   
-  void ToyStudyStd::PrintUnexpectedPullOverview() const {
-    for (std::map<std::string, int>::const_iterator it=unexpected_pulls_counter_.begin(); it!=unexpected_pulls_counter_.end(); ++it) {
-      sinfo << "Pull for parameter " << (*it).first << ", number of times outside of -5..+5 range: " << (*it).second << endmsg;
+  void ToyStudyStd::SaveFitResultWorker() {
+    while (accepting_fit_results_ && !fit_results_save_queue_.empty()) {
+      
+      utils::Sleep(1);
+      serr << "Still saving" << endmsg;
+      
     }
   }
 } // namespace Toy

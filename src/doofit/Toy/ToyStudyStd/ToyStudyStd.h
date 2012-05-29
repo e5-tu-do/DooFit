@@ -3,13 +3,18 @@
 
 // STL
 
+// BOOST
+#include <boost/thread.hpp>
+
 // ROOT
 
 // from RooFit
 #include "RooArgSet.h"
+#include "RooFitResult.h"
 
 // from project
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include "doofit/utils/utils.h"
 
 // forward declarations
 class RooFitResult;
@@ -214,6 +219,15 @@ namespace Toy {
      */
     static void HandleSignal(int param);
     
+    /**
+     *  @brief Worker function for asynchronous saving of fit results
+     *
+     *  This function will take care of saving fit results into a file 
+     *  asynchrously when a file lock could be acquired.
+     *
+     */
+    void SaveFitResultWorker();
+    
    private:
     /**
      *  \brief CommonConfig instance to use
@@ -251,6 +265,23 @@ namespace Toy {
      *  will try to end gracefully afterwards.
      */
     static bool abort_save_;
+    
+    /**
+     *  @brief Thread for asynchronous saving of fit results
+     */
+    boost::thread fitresult_save_worker_;
+    /**
+     *  @brief State variable determining if this class is still accepting fit results
+     *
+     *  This variable will be set to true upon construction and false upon 
+     *  destruction to allow the saving thread to finish properly.
+     * 
+     */
+    bool accepting_fit_results_;
+    /**
+     *  @brief Thread-safe queue for fit results to save
+     */
+    doofit::utils::concurrent_ptr_queue<RooFitResult> fit_results_save_queue_;
   };
   
   /** \struct ExceptionCannotStoreFitResult
