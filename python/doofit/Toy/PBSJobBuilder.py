@@ -43,7 +43,7 @@ from optparse import OptionParser
 #
 #for i in `seq %(seeds)s`;
 #do
-#  time echo toy --scan=%(scan_value)s --seed=$i --output=%(jobs_dir)s/result_%(job_number)s.root --num_cpu=%(num_cpu)s >> %(log_file)s
+#  time echo toy --scanstart=%(scan1_start)s --scanend=%(scan1_end)s --scan2start=%(scan2_start)s --scan2end=%(scan2_end)s --seed=$i --output=%(jobs_dir)s/result_%(job_number)s.root --num_cpu=%(num_cpu)s >> %(log_file)s
 #done
 #
 #echo finished job number %(job_number)s
@@ -59,7 +59,10 @@ from optparse import OptionParser
 #@li @c num_cpu:  the number of CPUs to use
 #@li @c seeds:    the seeds for the iterations in this individual job to use (will be generated as <tt>minseed maxseed</tt> compatible to the above @c for statement)
 #@li @c job_number: the number of the individual job
-#@li @c scan_value: the current scan value
+#@li @c scan1_start: the current scan value 1 starting point
+#@li @c scan1_end: the current scan value 1 ending point
+#@li @c scan2_start: the current scan value 2 starting point
+#@li @c scan2_end: the current scan value 2 ending point
 #@li @c jobs_dir:   the job directory
 #@li @c parametern: additional arbitrary parameter n (as configured by <tt>-n</tt> or <tt>--parameter-n</tt>)
 #
@@ -95,27 +98,33 @@ def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_it
   submit_file_name = os.path.join(jobs_dir,'submit_' + job_base_name + '.sh')
   submit_file = open(submit_file_name, 'w')
   submit_file.writelines('#!/bin/sh\n')
-  scan_value = options.scanstart
+  scan2_value = options.scan2start
   job_index  = 0
-  while scan_value <= options.scanend:
-    for i in range(0,num_jobs):
-      settings_dict = {
-        'job_name'   : job_base_name + '_' + str(job_index),
-        'out_file'   : os.path.join(jobs_dir,'o_' + job_base_name + '_' + str(job_index) + '.log'),
-        'err_file'   : os.path.join(jobs_dir,'e_' + job_base_name + '_' + str(job_index) + '.log'),
-        'log_file'   : os.path.join(jobs_dir,'l_' + job_base_name + '_' + str(job_index) + '.log'),
-        'walltime'   : walltime,
-        'num_cpu'    : str(num_cpu),
-        'job_number' : str(job_index),
-        'cwd'        : os.getcwd(),
-        'scan_value' : scan_value,
-        'jobs_dir'   : jobs_dir,
-        'parametern' : options.parametern
-        }
-      min_seed = create_single_job(proto_script, settings_dict, jobs_dir, num_iterations_per_job, min_seed)
-      submit_file.writelines('qsub ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
-      job_index += 1
-    scan_value += options.scanincrement
+  while scan2_value <= options.scan2end:
+    scan1_value = options.scan1start
+    while scan1_value <= options.scan1end:
+      for i in range(0,num_jobs):
+        settings_dict = {
+          'job_name'   : job_base_name + '_' + str(job_index),
+          'out_file'   : os.path.join(jobs_dir,'o_' + job_base_name + '_' + str(job_index) + '.log'),
+          'err_file'   : os.path.join(jobs_dir,'e_' + job_base_name + '_' + str(job_index) + '.log'),
+          'log_file'   : os.path.join(jobs_dir,'l_' + job_base_name + '_' + str(job_index) + '.log'),
+          'walltime'   : walltime,
+          'num_cpu'    : str(num_cpu),
+          'job_number' : str(job_index),
+          'cwd'        : os.getcwd(),
+          'scan1_start': scan1_value,
+          'scan1_end'  : min(scan1_value+options.scan1increment*(options.scan1perjob-1),options.scan1end),
+          'scan2_start': scan2_value,
+          'scan2_end'  : min(scan2_value+options.scan2increment*(options.scan2perjob-1),options.scan2end),
+          'jobs_dir'   : jobs_dir,
+          'parametern' : options.parametern
+          }
+        min_seed = create_single_job(proto_script, settings_dict, jobs_dir, num_iterations_per_job, min_seed)
+        submit_file.writelines('qsub ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
+        job_index += 1
+      scan1_value += options.scan1increment*options.scan1perjob
+    scan2_value += options.scan2increment*options.scan2perjob
   print 'Jobs successfully created. Maximum seed used: ' + str(min_seed-1)
   print 'Submit jobs via this command:'
   print 'sh ' + submit_file_name
@@ -125,9 +134,14 @@ if __name__ == "__main__":
  %prog proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu min_seed
     """
   parser = OptionParser(usage, version="0.1")
-  parser.add_option("-s", "--scan-start", action="store", type="float", dest="scanstart", default=0.0, help="Start value of scan parameter")
-  parser.add_option("-e", "--scan-end", action="store", type="float", dest="scanend", default=0.0, help="End value of scan parameter")
-  parser.add_option("-i", "--scan-increment", action="store", type="float", dest="scanincrement", default=0.0, help="Increment value of scan parameter")
+  parser.add_option("", "--scan1-start", action="store", type="float", dest="scan1start", default=0.0, help="Start value of scan parameter 1")
+  parser.add_option("", "--scan1-end", action="store", type="float", dest="scan1end", default=0.0, help="End value of scan parameter 1")
+  parser.add_option("", "--scan1-increment", action="store", type="float", dest="scan1increment", default=0.0, help="Increment value of scan parameter 1")
+  parser.add_option("", "--scan1-per-job", action="store", type="float", dest="scan1perjob", default=1.0, help="Number of scan points per job (default 1) for scan parameter 1")
+  parser.add_option("", "--scan2-start", action="store", type="float", dest="scan2start", default=0.0, help="Start value of scan parameter 2")
+  parser.add_option("", "--scan2-end", action="store", type="float", dest="scan2end", default=0.0, help="End value of scan parameter 2")
+  parser.add_option("", "--scan2-increment", action="store", type="float", dest="scan2increment", default=0.0, help="Increment value of scan parameter 2")
+  parser.add_option("", "--scan2-per-job", action="store", type="float", dest="scan2perjob", default=1.0, help="Number of scan points per job (default 1) for scan parameter 2")
   parser.add_option("-n", "--parameter-n", action="store", type="int", dest="parametern", default=0, help="Additional arbitrary parameter n (e.g. number of toys)")
   (options, args) = parser.parse_args()
   if len(args) < 8:
