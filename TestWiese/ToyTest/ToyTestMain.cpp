@@ -233,21 +233,23 @@ void TestToys(int argc, char *argv[]) {
   cfg_com.PrintAll();
   
   RooDataSet* data = NULL;
-  
-//  for (int i=0; i<100000; ++i) {
-  data = tfac.Generate();
-//    delete data;
-//    gObjectTable->Print(); 
-//    utils::sdebug << i << utils::endmsg;
-//  }
-    
-  pdf->getParameters(data)->readFromFile("generation.par");
-  RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(true), Hesse(false), Verbose(false),Timer(true));
-    
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
-  tstudy.StoreFitResult(fit_result, "fr1", fit_result, "fr2");
-  delete data;
-  
+
+  for (int i=0; i<10; ++i) {
+    data = tfac.Generate();
+    //    delete data;
+    //    gObjectTable->Print(); 
+    //    utils::sdebug << i << utils::endmsg;
+    //  }
+    
+    pdf->getParameters(data)->readFromFile("generation.par");
+    RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
+    RooFitResult* fit_result2 = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
+    
+    tstudy.StoreFitResult(fit_result, fit_result2);
+    delete data;
+  }
+    
 //  tstudy.ReadFitResults("fr1");
 //  std::vector<const RooFitResult*> results = tstudy.GetFitResults();
 //  tstudy.EmptyResults();
@@ -262,13 +264,15 @@ void TestToys(int argc, char *argv[]) {
 //       it != results2.end(); ++it) {
 //    (*it)->Print();
 //  }
-  tstudy.ReadFitResults("fr1");
+  tstudy.ReadFitResults();
   
   tstudy.EvaluateFitResults();
   tstudy.PlotEvaluatedParameters();
     
-  PlotToyFit(ws, pdf);
+  //PlotToyFit(ws, pdf);
   delete ws;
+  
+  //while (true) {}
 }
 
 int main(int argc, char *argv[]) {

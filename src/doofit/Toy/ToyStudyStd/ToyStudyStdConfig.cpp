@@ -22,6 +22,8 @@ namespace doofit {
 namespace Toy {
   ToyStudyStdConfig::ToyStudyStdConfig() : 
   Config::AbsConfig("empty_name"),
+  fit_result1_branch_name_("fit_results"),
+  fit_result2_branch_name_("fit_results2"),
   handle_asymmetric_errors_(true),
   fit_plot_on_quantile_window_(true),
   neglect_parameters_at_limit_(false),
@@ -42,6 +44,8 @@ namespace Toy {
   void ToyStudyStdConfig::PrintOptions() const {
     if (store_result_filename_treename_.first().size() > 0) {
       scfg << "File and tree to save result to:   " << store_result_filename_treename_ << endmsg;
+      scfg << "Branch name fit result 1:          " << fit_result1_branch_name_ << endmsg;
+      scfg << "Branch name fit result 2:          " << fit_result2_branch_name_ << endmsg;
     }
     
     for (vector<Config::CommaSeparatedPair>::const_iterator it = read_results_filename_treename_.begin(); it != read_results_filename_treename_.end(); ++it) {
@@ -66,6 +70,8 @@ namespace Toy {
     
     generation->add_options()
     (GetOptionString("store_result_filename_treename").c_str(), po::value<Config::CommaSeparatedPair>(&store_result_filename_treename_),"File name and tree name to save fit results to (set as filename,treename)")
+    (GetOptionString("fit_result1_branch_name").c_str(), po::value<std::string>(&fit_result1_branch_name_)->default_value("fit_results"),"Fit result 1 branch name in tree")
+    (GetOptionString("fit_result2_branch_name").c_str(), po::value<std::string>(&fit_result2_branch_name_)->default_value("fit_results2"),"Fit result 2 branch name in tree")
     (GetOptionString("read_results_filename_treename").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&read_results_filename_treename_)->composing(), "File names and tree names to read fit results from (set as filename,treename)")
     (GetOptionString("read_results_filename_treename_pattern").c_str(), po::value<Config::CommaSeparatedPair>(&read_results_filename_treename_pattern_),"File name pattern and tree name to read fit result from (set as regexfilenamepattern,treename)")
     (GetOptionString("plot_directory").c_str(), po::value<std::string>(&plot_directory_), "Plot directory for evaluation of fit results")

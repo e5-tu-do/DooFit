@@ -61,6 +61,18 @@ namespace Toy {
      */
     const Config::CommaSeparatedPair& store_result_filename_treename() const {return store_result_filename_treename_;}
     /**
+     *  @brief Getter for fit result 1 branch name
+     *
+     *  @return current value of fit_result1_branch_name_
+     */
+    const std::string& fit_result1_branch_name() const {return fit_result1_branch_name_;}
+    /**
+     *  @brief Getter for fit result 2 branch name
+     *
+     *  @return current value of fit_result2_branch_name_
+     */
+    const std::string& fit_result2_branch_name() const {return fit_result2_branch_name_;}
+    /**
      *  @brief Getter for file names and tree names to read fit result from
      *
      *  @return current value of read_results_filename_treename_
@@ -126,6 +138,18 @@ namespace Toy {
      *  @param result_file_tree new value for store_result_filename_treename_
      */
     void set_store_result_filename_treename(const Config::CommaSeparatedPair& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
+    /**
+     *  @brief Setter for fit result 1 branch name
+     *
+     *  @param fit_result1_branch_name new value for fit_result1_branch_name_
+     */
+    void set_fit_result1_branch_name(const std::string& fit_result1_branch_name) {fit_result1_branch_name_ = fit_result1_branch_name;}
+    /**
+     *  @brief Setter for fit result 2 branch name
+     *
+     *  @param fit_result2_branch_name new value for fit_result2_branch_name_
+     */
+    void set_fit_result2_branch_name(const std::string& fit_result2_branch_name) {fit_result2_branch_name_ = fit_result2_branch_name;}
     /**
      *  @brief Setter for file name pattern and tree name to read fit result from
      *
@@ -247,6 +271,18 @@ namespace Toy {
      *  @see ToyStudyStdConfig::set_store_result_filename_treename()
      */
     Config::CommaSeparatedPair store_result_filename_treename_;
+    /**
+     *  @brief Fit result 1 branch name
+     *
+     *  @see ToyStudyStdConfig::set_fit_result1_branch_name()
+     */
+    std::string fit_result1_branch_name_;
+    /**
+     *  @brief Fit result 2 branch name
+     *
+     *  @see ToyStudyStdConfig::set_fit_result2_branch_name()
+     */
+    std::string fit_result2_branch_name_;
     /**
      *  @brief File names and tree names to read fit result from
      */

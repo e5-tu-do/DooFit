@@ -2,11 +2,14 @@
 
 // STL
 #include <string>
+#include <utility>
+#include <queue>
 
 // boost
 #include "boost/interprocess/sync/file_lock.hpp"
 #include "boost/filesystem.hpp"
 #include "boost/random/random_device.hpp"
+#include <boost/thread.hpp>
 
 // ROOT
 #include "TTree.h"
@@ -54,27 +57,40 @@ namespace Toy {
   }
   
   ToyStudyStd::~ToyStudyStd() {
+    accepting_fit_results_ = false;
+    fit_results_save_queue_.disable_queue();
+    fitresult_save_worker_.join();
+    
     if (evaluated_values_ != NULL) delete evaluated_values_;
     for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
       delete *it_results;
     }
-    accepting_fit_results_ = false;
-    fitresult_save_worker_.join();
   }
   
-  void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result1, 
-                                   const std::string& branch_name1,
-                                   const RooFitResult* fit_result2, 
-                                   const std::string& branch_name2) const {
-    signal(SIGINT, ToyStudyStd::HandleSignal);
+  void ToyStudyStd::StoreFitResult(RooFitResult* fit_result1, 
+                                  RooFitResult* fit_result2) {
+    if (!accepting_fit_results_) {
+      serr << "No longer accepting fit results." << endmsg;
+    } else {
+      const string& filename = config_toystudy_.store_result_filename_treename().first();
+      const string& treename = config_toystudy_.store_result_filename_treename().second();
+      if (filename.length() == 0 || treename.length() == 0) {
+        serr << "File name and or tree name to save fit result into not set! Cannot store fit result." << endmsg;
+        throw ExceptionCannotStoreFitResult();
+      }
+      
+      fit_results_save_queue_.push(make_pair(fit_result1,fit_result2));
+      sinfo << "Accepting fit result 1 for deferred saving" << endmsg;
+      if (fit_result2 != NULL) {
+        sinfo << "Accepting fit result 2 for deferred saving" << endmsg;
+      }
+    }
+    
+    /*
+     signal(SIGINT, ToyStudyStd::HandleSignal);
     signal(SIGTERM, ToyStudyStd::HandleSignal);
     
-    const string& filename = config_toystudy_.store_result_filename_treename().first();
-    const string& treename = config_toystudy_.store_result_filename_treename().second();
-    if (filename.length() == 0) {
-      serr << "Filename to save fit result into not set! Cannot store fit result." << endmsg;
-      throw ExceptionCannotStoreFitResult();
-    }
+    
 
     TStopwatch sw_lock;
     sw_lock.Start();
@@ -111,27 +127,27 @@ namespace Toy {
           
           if (tree_results == NULL) {
             tree_results = new TTree(treename.c_str(), "Tree for toy study fit results");
-            tree_results->Branch(branch_name1.c_str(), "RooFitResult", &fit_result1, 64000, 0);
+            tree_results->Branch(config_toystudy_.fit_result1_branch_name().c_str(), "RooFitResult", &fit_result1, 64000, 0);
             if (fit_result2 != NULL) {
-              tree_results->Branch(branch_name2.c_str(), "RooFitResult", &fit_result2, 64000, 0);
+              tree_results->Branch(config_toystudy_.fit_result2_branch_name().c_str(), "RooFitResult", &fit_result2, 64000, 0);
             }
           } else {  
-            if (tree_results->GetBranch(branch_name1.c_str()) == NULL) {
-              serr << "Cannot store fit result! Tree exists but branch " << branch_name1 << " is unknown." << endmsg;
+            if (tree_results->GetBranch(config_toystudy_.fit_result1_branch_name().c_str()) == NULL) {
+              serr << "Cannot store fit result! Tree exists but branch " << config_toystudy_.fit_result1_branch_name() << " is unknown." << endmsg;
               f.Close();
               flock.Unlock();
               throw ExceptionCannotStoreFitResult();
             }
-            if (fit_result2 != NULL && tree_results->GetBranch(branch_name2.c_str()) == NULL) {
-              serr << "Cannot store fit result! Tree exists but branch " << branch_name2 << " is unknown." << endmsg;
+            if (fit_result2 != NULL && tree_results->GetBranch(config_toystudy_.fit_result2_branch_name().c_str()) == NULL) {
+              serr << "Cannot store fit result! Tree exists but branch " << config_toystudy_.fit_result2_branch_name() << " is unknown." << endmsg;
               f.Close();
               flock.Unlock();
               throw ExceptionCannotStoreFitResult();
             }
             
-            tree_results->SetBranchAddress(branch_name1.c_str(), &fit_result1);
+            tree_results->SetBranchAddress(config_toystudy_.fit_result1_branch_name().c_str(), &fit_result1);
             if (fit_result2 != NULL) {
-              tree_results->SetBranchAddress(branch_name2.c_str(), &fit_result2);
+              tree_results->SetBranchAddress(config_toystudy_.fit_result2_branch_name().c_str(), &fit_result2);
             }
           }
           
@@ -157,9 +173,15 @@ namespace Toy {
     
     signal(SIGINT, SIG_DFL);
     signal(SIGTERM, SIG_DFL);
+     */
   }
   
   void ToyStudyStd::ReadFitResults(const std::string& branch_name) {
+    // stop saving if there are still deferred fit results to be saved.
+    accepting_fit_results_ = false;
+    fit_results_save_queue_.disable_queue();
+    fitresult_save_worker_.join();
+    
     const std::vector<doofit::Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
     
     sinfo.Ruler();
@@ -486,11 +508,146 @@ namespace Toy {
   }
   
   void ToyStudyStd::SaveFitResultWorker() {
-    while (accepting_fit_results_ && !fit_results_save_queue_.empty()) {
+    TStopwatch sw_lock;
+    sw_lock.Reset();
+    std::queue<std::pair<RooFitResult*, RooFitResult*> > saver_queue;
+    
+    while (accepting_fit_results_ || !fit_results_save_queue_.empty() || !saver_queue.empty()) { 
       
-      utils::Sleep(1);
-      serr << "Still saving" << endmsg;
+      sdebug << "SaveFitResultWorker(): starting loop with " << saver_queue.size() << " elements in our own queue." << endmsg;
       
+      const string& filename = config_toystudy_.store_result_filename_treename().first();
+      const string& treename = config_toystudy_.store_result_filename_treename().second();
+      unsigned int save_counter = 1;
+      
+      // if our own queue is empty, we need to wait for new fit results to come 
+      // in anyway.
+      if (saver_queue.empty()) {
+        sdebug << "SaveFitResultWorker(): waiting for fit results as we have none." << endmsg;
+        
+        std::pair<RooFitResult*, RooFitResult*> fit_results;
+        if (fit_results_save_queue_.wait_and_pop(fit_results)) {
+          saver_queue.push(fit_results);
+          sdebug << "SaveFitResultWorker(): got a fit result pair." << endmsg;
+        } else {
+          sdebug << "SaveFitResultWorker(): got no fit result pair." << endmsg;
+        }
+      }
+      
+      // if global queue has entries, we should get them all
+      while (!fit_results_save_queue_.empty()) {
+        std::pair<RooFitResult*, RooFitResult*> fit_results;
+        if (fit_results_save_queue_.wait_and_pop(fit_results)) {
+          saver_queue.push(fit_results);
+          sdebug << "SaveFitResultWorker(): got another fit result pair." << endmsg;
+        } else {
+          sdebug << "SaveFitResultWorker(): got no other fit result pair." << endmsg;
+        }
+      }
+      
+      if (!saver_queue.empty()) {
+        utils::FileLock flock(filename);
+        boost::random::random_device rnd;
+        int wait_time, wait_i;
+        sw_lock.Start(false);
+        if (!flock.Lock()) {
+          wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*30.0+10.0;
+          swarn << "File to save fit result to " << filename << " is locked. Will try again in " << wait_time << " s." << endmsg;
+          utils::Sleep(wait_time);
+          boost::this_thread::yield();
+        } else {
+          signal(SIGINT, ToyStudyStd::HandleSignal);
+          signal(SIGTERM, ToyStudyStd::HandleSignal);
+          sinfo << "File locking deadtime: " << sw_lock << endmsg;
+          
+          if (!abort_save_) {
+            sinfo << "Saving fit result to file " << filename << endmsg;
+            bool file_existing = fs::exists(filename);
+            TFile f(fs::absolute(filename).string().c_str(),"update");
+            if (f.IsZombie() || !f.IsOpen()) {
+              serr << "Cannot open file which may be corrupted." << endmsg;
+              flock.Unlock();
+              throw ExceptionCannotStoreFitResult();
+            } else {
+              if (!abort_save_) {
+                std::pair<RooFitResult*, RooFitResult*> fit_results = saver_queue.front();
+                saver_queue.pop();
+                RooFitResult* fit_result1 = fit_results.first;
+                RooFitResult* fit_result2 = fit_results.second;
+                
+                TTree* tree_results = NULL;
+                if (file_existing) {      
+                  tree_results = (TTree*)f.Get(treename.c_str());
+                } 
+                
+                if (tree_results == NULL) {
+                  tree_results = new TTree(treename.c_str(), "Tree for toy study fit results");
+                  tree_results->Branch(config_toystudy_.fit_result1_branch_name().c_str(), "RooFitResult", &fit_result1, 64000, 0);
+                  if (fit_result2 != NULL) {
+                    tree_results->Branch(config_toystudy_.fit_result2_branch_name().c_str(), "RooFitResult", &fit_result2, 64000, 0);
+                  }
+                } else {  
+                  if (tree_results->GetBranch(config_toystudy_.fit_result1_branch_name().c_str()) == NULL) {
+                    serr << "Cannot store fit result! Tree exists but branch " << config_toystudy_.fit_result1_branch_name() << " is unknown." << endmsg;
+                    f.Close();
+                    flock.Unlock();
+                    throw ExceptionCannotStoreFitResult();
+                  }
+                  if (fit_result2 != NULL && tree_results->GetBranch(config_toystudy_.fit_result2_branch_name().c_str()) == NULL) {
+                    serr << "Cannot store fit result! Tree exists but branch " << config_toystudy_.fit_result2_branch_name() << " is unknown." << endmsg;
+                    f.Close();
+                    flock.Unlock();
+                    throw ExceptionCannotStoreFitResult();
+                  }
+                  
+                  tree_results->SetBranchAddress(config_toystudy_.fit_result1_branch_name().c_str(), &fit_result1);
+                  if (fit_result2 != NULL) {
+                    tree_results->SetBranchAddress(config_toystudy_.fit_result2_branch_name().c_str(), &fit_result2);
+                  }
+                }
+                                
+                tree_results->Fill();
+                
+                delete fit_result1;
+                delete fit_result2;
+                
+                while (!saver_queue.empty()) {
+                  fit_results = saver_queue.front();
+                  saver_queue.pop();
+                  fit_result1 = fit_results.first;
+                  fit_result2 = fit_results.second;
+                  tree_results->Fill();
+                  save_counter++;
+                  delete fit_result1;
+                  delete fit_result2;
+                }
+                
+                tree_results->Write("",TObject::kOverwrite);
+                
+                sinfo << "Deferred saving of " << save_counter << " fit results (resp. pairs of fit results) successful." << endmsg;
+              } else {
+                swarn << "Caught signal. Did not save fit result although file was opened. Trying to close file gracefully." << endmsg;
+              }
+              
+              f.Close();
+              
+              flock.Unlock();
+            }
+          } else {
+            flock.Unlock();
+            swarn << "Aborting save as signal to end execution was caught before." << endmsg;
+          }
+          sw_lock.Stop();
+          sw_lock.Reset();
+        }
+        if (abort_save_) {
+          swarn << "Caught signal. If we reached this, the file should have been closed gracefully without damage." << endmsg;
+          exit(1);
+        }
+      }
+      
+      signal(SIGINT, SIG_DFL);
+      signal(SIGTERM, SIG_DFL);
     }
   }
 } // namespace Toy

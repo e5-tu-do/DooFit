@@ -74,27 +74,25 @@ namespace Toy {
      *  again. If the file will not be unlocked after some time, the tree will 
      *  be saved to an alternative file.
      *  
-     *  If the branch name(s) are specified, it is assumed that in case the 
-     *  file already exists, the tree and given branches also exist in the 
-     *  accordingly.
+     *  Branch name(s) are specified via ToyStudyStdConfig.
+     *
+     *  NOTE: Passing pointers to this function, it is assumed that this 
+     *        ToyStudyStd instance takes over ownership of the fit result(s).
      *
      *  @see const Config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename
      *  @see ToyStudyStdConfig
      *  @see ToyStudyStdConfig::set_store_result_filename_treename()
+     *  @see ToyStudyStdConfig::set_fit_result1_branch_name()
      *
      *  @warning See warnings for doofit::Toy::ToyStudyStdConfig::set_store_result_filename_treename(const Config::CommaSeparatedPair&)
      *
      *  @todo Implement fit saving to alternative file after no lock possible
      *
      *  @param fit_result1 first RooFitResult to save
-     *  @param branch_name1 name of branch for first fit result (optional)
      *  @param fit_result2 second RooFitResult to save (optional)
-     *  @param branch_name2 name of branch for second fit result (optional)
      */
-    void StoreFitResult(const RooFitResult* fit_result1, 
-                        const std::string& branch_name1="fit_results",
-                        const RooFitResult* fit_result2=NULL, 
-                        const std::string& branch_name2="fit_results2") const;
+    void StoreFitResult(RooFitResult* fit_result1, 
+                        RooFitResult* fit_result2=NULL);
     ///@}
 
     /** @name Evaluation functions
@@ -281,7 +279,7 @@ namespace Toy {
     /**
      *  @brief Thread-safe queue for fit results to save
      */
-    doofit::utils::concurrent_ptr_queue<RooFitResult> fit_results_save_queue_;
+    doofit::utils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_save_queue_;
   };
   
   /** \struct ExceptionCannotStoreFitResult

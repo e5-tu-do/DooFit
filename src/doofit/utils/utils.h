@@ -43,48 +43,52 @@
 namespace doofit {
   namespace utils
   {
-    /** @class concurrent_ptr_queue
+    /** @class concurrent_queue
      *  @brief Thread-safe concurrent queue for pointers 
      *
-     *  This is a thread-safe queue for pointers able for the producer/consumer
-     *  pattern of a thread adding pointers to this and another consuming these.
+     *  This is a thread-safe queue able for the producer/consumer pattern of a 
+     *  thread adding objects to this and another consuming these. Utilising 
+     *  std::queue it's restrictions apply.
      *
      *  Adapted from http://www.justsoftwaresolutions.co.uk/threading/implementing-a-thread-safe-queue-using-condition-variables.html
      */
     template<typename Data>
-    class concurrent_ptr_queue
+    class concurrent_queue
     {
     private:
-      std::queue<Data*> the_queue;
+      std::queue<Data> the_queue;
       mutable boost::mutex the_mutex;
       boost::condition_variable the_condition_variable;
     public:
-      void push(Data* data)
-      {
+      void push(const Data& data) {
         boost::mutex::scoped_lock lock(the_mutex);
         the_queue.push(data);
         lock.unlock();
         the_condition_variable.notify_one();
       }
       
-      bool empty() const
-      {
+      bool empty() const {
         boost::mutex::scoped_lock lock(the_mutex);
         return the_queue.empty();
       }
       
-      Data* wait_and_pop()
-      {
-        Data* popped_value;
+      void disable_queue() {
+        the_condition_variable.notify_one();
+      }
+      
+      bool wait_and_pop(Data& popped_value) {
         boost::mutex::scoped_lock lock(the_mutex);
-        while(the_queue.empty())
-        {
+        if (the_queue.empty()) {
           the_condition_variable.wait(lock);
         }
         
-        popped_value=the_queue.front();
-        the_queue.pop();
-        return popped_value;
+        if (!the_queue.empty()) {
+          popped_value=the_queue.front();
+          the_queue.pop();
+          return true;
+        } else {
+          return false;
+        }
       }
     };
     
