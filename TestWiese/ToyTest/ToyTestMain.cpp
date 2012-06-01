@@ -235,7 +235,7 @@ void TestToys(int argc, char *argv[]) {
   RooDataSet* data = NULL;
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
 
-  for (int i=0; i<10; ++i) {
+  for (int i=0; i<1000; ++i) {
     data = tfac.Generate();
     //    delete data;
     //    gObjectTable->Print(); 
@@ -248,6 +248,8 @@ void TestToys(int argc, char *argv[]) {
     
     tstudy.StoreFitResult(fit_result, fit_result2);
     delete data;
+    
+    Sleep(20);
   }
     
 //  tstudy.ReadFitResults("fr1");

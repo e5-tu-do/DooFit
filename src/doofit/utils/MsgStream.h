@@ -199,15 +199,13 @@ inline MsgStream& operator<<(MsgStream& lhs, bool b) {
 
 /**
  *  @brief Function to output TStopwatches directly and nicely into MsgStreams
- *
- *  This function includes stop of stopwatch and reset after printing.
  */
 inline MsgStream& operator<<(MsgStream& lhs, TStopwatch& sw) {
-  sw.Stop();
+  //sw.Stop();
   
   lhs.stream() << "t(CPU) = " << sw.CpuTime() << " s; t(Real) = " << sw.RealTime() << " s.";
   
-  sw.Reset();
+  //sw.Reset();
   return lhs;
 }
 

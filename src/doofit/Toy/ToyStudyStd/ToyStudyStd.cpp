@@ -4,6 +4,7 @@
 #include <string>
 #include <utility>
 #include <queue>
+#include <list>
 
 // boost
 #include "boost/interprocess/sync/file_lock.hpp"
@@ -511,6 +512,10 @@ namespace Toy {
     TStopwatch sw_lock;
     sw_lock.Reset();
     std::queue<std::pair<RooFitResult*, RooFitResult*> > saver_queue;
+
+    // list of last 5 dead times for averaging to find a new flexible wait time
+    std::list<double> deadtimes;
+    deadtimes.push_back(10.0);
     
     while (accepting_fit_results_ || !fit_results_save_queue_.empty() || !saver_queue.empty()) { 
       
@@ -551,14 +556,28 @@ namespace Toy {
         int wait_time, wait_i;
         sw_lock.Start(false);
         if (!flock.Lock()) {
-          wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*30.0+10.0;
+          // get new wait time based on last deadtimes's average
+          double new_wait_time = 0.0;
+          for (std::list<double>::const_iterator it = deadtimes.begin();
+               it != deadtimes.end(); ++it) {
+            new_wait_time += *it;
+          }
+          new_wait_time += sw_lock.RealTime();
+          sdebug << sw_lock.RealTime() << endmsg;
+          sw_lock.Start(false);
+          new_wait_time /= deadtimes.size()+1;
+          
+          wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*new_wait_time+10.0;
           swarn << "File to save fit result to " << filename << " is locked. Will try again in " << wait_time << " s." << endmsg;
           utils::Sleep(wait_time);
           boost::this_thread::yield();
         } else {
           signal(SIGINT, ToyStudyStd::HandleSignal);
           signal(SIGTERM, ToyStudyStd::HandleSignal);
+          sw_lock.Stop();
           sinfo << "File locking deadtime: " << sw_lock << endmsg;
+          deadtimes.push_back(sw_lock.RealTime());
+          while (deadtimes.size() > 5) deadtimes.pop_front();
           
           if (!abort_save_) {
             sinfo << "Saving fit result to file " << filename << endmsg;

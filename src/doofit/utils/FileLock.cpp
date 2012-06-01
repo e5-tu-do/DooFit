@@ -122,7 +122,7 @@ namespace utils {
     copy(fs::directory_iterator(file_.parent_path()), fs::directory_iterator(), back_inserter(elements));
     for (vector<fs::path>::const_iterator it (elements.begin()); it != elements.end(); ++it) {
       string element_name((*it).filename().string());
-      if (element_name.length() > filename_lock.length() && 
+      if (element_name.length() >= filename_lock.length() && 
           element_name.substr(0,filename_lock.length()).compare(filename_lock) == 0) {
         num_lockfiles++;
       }
