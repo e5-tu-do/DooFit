@@ -68,11 +68,21 @@ namespace Toy {
      *  This function will save the given fit result(s) to a TTree in a ROOT 
      *  file. 
      *  The latter can be configured via 
-     *  ToyStudyStdConfig::set_store_result_filename_treename(). Writing the 
-     *  tree to the file is collision-safe, i.e. the file will be locked before 
-     *  write and if locked the function will wait for the file to be unlocked 
-     *  again. If the file will not be unlocked after some time, the tree will 
-     *  be saved to an alternative file.
+     *  ToyStudyStdConfig::set_store_result_filename_treename(). The branch 
+     *  names for the fit results need to be configured via 
+     *  ToyStudyStdConfig::set_fit_result1_branch_name() and 
+     *  ToyStudyStdConfig::set_fit_result2_branch_name() respectively (or via
+     *  config files or command line parameters).
+     *
+     *  Fit results are stored temporarily in ToyStudyStd and written to the 
+     *  tree/file deferredly in a separate thread so that no deadtime should 
+     *  occur directly (see locking below).
+     * 
+     *  Writing the tree to the file is collision-safe, i.e. the file will be 
+     *  locked before  write and if locked the saver thread will wait for the 
+     *  file to be unlocked again. If the file will not be unlocked after some 
+     *  time, the tree will be saved to an alternative file (not yet 
+     *  implemented).
      *  
      *  Branch name(s) are specified via ToyStudyStdConfig.
      *
