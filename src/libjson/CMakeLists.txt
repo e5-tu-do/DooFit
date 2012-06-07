@@ -1,0 +1,16 @@
+add_library(libjson
+  Source/internalJSONNode.cpp    
+  Source/JSONAllocator.cpp            
+  Source/JSONChildren.cpp             
+  Source/JSONDebug.cpp         
+  Source/JSONIterators.cpp
+  Source/JSONMemory.cpp        
+  Source/JSONNode_Mutex.cpp    
+  Source/JSONNode.cpp          
+  Source/JSONPreparse.cpp      
+  Source/JSONStream.cpp        
+  Source/JSONValidator.cpp     
+  Source/JSONWorker.cpp      
+  Source/JSONWriter.cpp      
+  Source/libjson.cpp         
+)
