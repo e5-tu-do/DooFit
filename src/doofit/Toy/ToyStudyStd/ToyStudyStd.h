@@ -87,7 +87,8 @@ namespace Toy {
      *  Branch name(s) are specified via ToyStudyStdConfig.
      *
      *  NOTE: Passing pointers to this function, it is assumed that this 
-     *        ToyStudyStd instance takes over ownership of the fit result(s).
+     *        ToyStudyStd instance does *not* take over ownership of the fit 
+     *        result(s) (in contrast to previous versions).
      *
      *  @see const Config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename
      *  @see ToyStudyStdConfig

@@ -80,7 +80,14 @@ namespace Toy {
         throw ExceptionCannotStoreFitResult();
       }
       
-      fit_results_save_queue_.push(make_pair(fit_result1,fit_result2));
+      RooFitResult* fit_result1_copy = new RooFitResult(*fit_result1);
+      RooFitResult* fit_result2_copy = NULL;
+      
+      if (fit_result2 != NULL) {
+        fit_result2_copy = new RooFitResult(*fit_result2);
+      }
+      
+      fit_results_save_queue_.push(make_pair(fit_result1_copy,fit_result2_copy));
       sinfo << "Accepting fit result 1 for deferred saving" << endmsg;
       if (fit_result2 != NULL) {
         sinfo << "Accepting fit result 2 for deferred saving" << endmsg;
@@ -241,7 +248,6 @@ namespace Toy {
         fit_result = NULL;
       }
       
-      //delete result_branch;
       delete tree;
       file.Close();
     }
@@ -589,6 +595,7 @@ namespace Toy {
               throw ExceptionCannotStoreFitResult();
             } else {
               if (!abort_save_) {
+                sdebug << "SaveFitResultWorker(): number of results in queue: " << saver_queue.size() << endmsg;
                 std::pair<RooFitResult*, RooFitResult*> fit_results = saver_queue.front();
                 saver_queue.pop();
                 RooFitResult* fit_result1 = fit_results.first;
@@ -621,6 +628,8 @@ namespace Toy {
                   
                   tree_results->SetBranchAddress(config_toystudy_.fit_result1_branch_name().c_str(), &fit_result1);
                   if (fit_result2 != NULL) {
+                    tree_results->Print();
+                    fit_result2->Print();
                     tree_results->SetBranchAddress(config_toystudy_.fit_result2_branch_name().c_str(), &fit_result2);
                   }
                 }
@@ -635,6 +644,10 @@ namespace Toy {
                   saver_queue.pop();
                   fit_result1 = fit_results.first;
                   fit_result2 = fit_results.second;
+                  
+                  fit_result1->Print();
+                  fit_result2->Print();
+                  
                   tree_results->Fill();
                   save_counter++;
                   delete fit_result1;
