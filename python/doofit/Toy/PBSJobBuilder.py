@@ -61,8 +61,10 @@ from optparse import OptionParser
 #@li @c job_number: the number of the individual job
 #@li @c scan1_start: the current scan value 1 starting point
 #@li @c scan1_end: the current scan value 1 ending point
+#@li @c scan1_increment: the increment for scan value 1
 #@li @c scan2_start: the current scan value 2 starting point
 #@li @c scan2_end: the current scan value 2 ending point
+#@li @c scan2_increment: the increment for scan value 2
 #@li @c jobs_dir:   the job directory
 #@li @c parametern: additional arbitrary parameter n (as configured by <tt>-n</tt> or <tt>--parameter-n</tt>)
 #
@@ -115,8 +117,10 @@ def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_it
           'cwd'        : os.getcwd(),
           'scan1_start': scan1_value,
           'scan1_end'  : min(scan1_value+options.scan1increment*(options.scan1perjob-1),options.scan1end),
+          'scan1_increment' : options.scan1increment,
           'scan2_start': scan2_value,
           'scan2_end'  : min(scan2_value+options.scan2increment*(options.scan2perjob-1),options.scan2end),
+          'scan2_increment' : options.scan2increment,
           'jobs_dir'   : jobs_dir,
           'parametern' : options.parametern
           }
