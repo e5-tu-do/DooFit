@@ -20,6 +20,7 @@
 #include "TStopwatch.h"
 #include "TROOT.h"
 #include "TString.h"
+#include "TThread.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -515,6 +516,7 @@ namespace Toy {
   }
   
   void ToyStudyStd::SaveFitResultWorker() {
+    TThread this_tthread;
     TStopwatch sw_lock;
     sw_lock.Reset();
     std::queue<std::pair<RooFitResult*, RooFitResult*> > saver_queue;
