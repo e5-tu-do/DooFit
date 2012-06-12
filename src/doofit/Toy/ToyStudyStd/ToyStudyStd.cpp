@@ -560,6 +560,7 @@ namespace Toy {
       }
       
       if (!saver_queue.empty()) {
+        sw_lock.Stop();
         boost::mutex::scoped_lock fitresult_save_worker_local_lock(fitresult_save_worker_mutex_);
         
         utils::FileLock flock(filename);
