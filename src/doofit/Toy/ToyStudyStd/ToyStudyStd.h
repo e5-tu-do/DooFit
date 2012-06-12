@@ -257,7 +257,7 @@ namespace Toy {
      */
     void LockSaveFitResultMutex() {
       // disabling this line enables full asynchrous deferred writing of fit results. 
-      //fitresult_save_worker_mutex_.lock();
+      fitresult_save_worker_mutex_.lock();
     }
     
     /**
