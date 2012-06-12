@@ -239,6 +239,28 @@ namespace Toy {
     
    private:
     /**
+     *  @brief End the save fit result worker thread and wait for it to save everything
+     */
+    void EndSaveFitResultWorker() {
+      accepting_fit_results_ = false;
+      fit_results_save_queue_.disable_queue();
+      fitresult_save_worker_mutex_.unlock();
+      fitresult_save_worker_.join();
+    }
+    
+    /**
+     *  @brief Lock the fitresult_save_worker_mutex_ to stop saver thread
+     *
+     *  In order to let the saver thread save fit results half-asynchronously 
+     *  this function will lock the fitresult_save_worker_mutex_ to hold the 
+     *  thread until the next fit results are handled over.
+     */
+    void LockSaveFitResultMutex() {
+      // disabling this line enables full asynchrous deferred writing of fit results. 
+      //fitresult_save_worker_mutex_.lock();
+    }
+    
+    /**
      *  \brief CommonConfig instance to use
      */
     const Config::CommonConfig& config_common_;
@@ -276,9 +298,13 @@ namespace Toy {
     static bool abort_save_;
     
     /**
-     *  @brief Thread for asynchronous saving of fit results
+     *  @brief Thread for (half-)asynchronous saving of fit results
      */
     boost::thread fitresult_save_worker_;
+    /**
+     *  @brief Mutex for (half-)asynchronous saving of fit results
+     */
+    boost::mutex fitresult_save_worker_mutex_;
     /**
      *  @brief State variable determining if this class is still accepting fit results
      *

@@ -54,14 +54,13 @@ namespace Toy {
   evaluated_values_(NULL),
   accepting_fit_results_(true)
   {
+    LockSaveFitResultMutex();
     abort_save_ = false;
     fitresult_save_worker_ = boost::thread(&ToyStudyStd::SaveFitResultWorker, this);
   }
   
   ToyStudyStd::~ToyStudyStd() {
-    accepting_fit_results_ = false;
-    fit_results_save_queue_.disable_queue();
-    fitresult_save_worker_.join();
+    EndSaveFitResultWorker();
     
     if (evaluated_values_ != NULL) delete evaluated_values_;
     for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
@@ -74,6 +73,8 @@ namespace Toy {
     if (!accepting_fit_results_) {
       serr << "No longer accepting fit results." << endmsg;
     } else {
+      fitresult_save_worker_mutex_.unlock();
+      
       const string& filename = config_toystudy_.store_result_filename_treename().first();
       const string& treename = config_toystudy_.store_result_filename_treename().second();
       if (filename.length() == 0 || treename.length() == 0) {
@@ -93,6 +94,8 @@ namespace Toy {
       if (fit_result2 != NULL) {
         sinfo << "Accepting fit result 2 for deferred saving" << endmsg;
       }
+      
+      LockSaveFitResultMutex();
     }
     
     /*
@@ -187,9 +190,7 @@ namespace Toy {
   
   void ToyStudyStd::ReadFitResults(const std::string& branch_name) {
     // stop saving if there are still deferred fit results to be saved.
-    accepting_fit_results_ = false;
-    fit_results_save_queue_.disable_queue();
-    fitresult_save_worker_.join();
+    EndSaveFitResultWorker();
     
     const std::vector<doofit::Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
     
@@ -559,6 +560,8 @@ namespace Toy {
       }
       
       if (!saver_queue.empty()) {
+        boost::mutex::scoped_lock fitresult_save_worker_local_lock(fitresult_save_worker_mutex_);
+        
         utils::FileLock flock(filename);
         boost::random::random_device rnd;
         int wait_time, wait_i;
@@ -577,6 +580,7 @@ namespace Toy {
           
           wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*new_wait_time+10.0;
           swarn << "File to save fit result to " << filename << " is locked. Will try again in " << wait_time << " s." << endmsg;
+          fitresult_save_worker_local_lock.unlock();
           utils::Sleep(wait_time);
           boost::this_thread::yield();
         } else {
