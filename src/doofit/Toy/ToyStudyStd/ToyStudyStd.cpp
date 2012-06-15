@@ -52,18 +52,25 @@ namespace Toy {
   fit_results_(),
   fit_results_bookkeep_(),
   evaluated_values_(NULL),
-  accepting_fit_results_(true)
+  accepting_fit_results_(true),
+  reading_fit_results_(false),
+  fit_results_read_queue_(10)
   {
     LockSaveFitResultMutex();
     abort_save_ = false;
-    fitresult_save_worker_ = boost::thread(&ToyStudyStd::SaveFitResultWorker, this);
+    fitresult_save_worker_   = boost::thread(&ToyStudyStd::SaveFitResultWorker, this);
   }
   
   ToyStudyStd::~ToyStudyStd() {
-    EndSaveFitResultWorker();
+    FinishFitResultSaving();
+    reading_fit_results_ = false;
+    fitresult_reader_worker_.join();
     
     if (evaluated_values_ != NULL) delete evaluated_values_;
     for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
+      delete *it_results;
+    }
+    for (std::vector<RooFitResult*>::const_iterator it_results = fit_results2_bookkeep_.begin(); it_results != fit_results2_bookkeep_.end(); ++it_results) {
       delete *it_results;
     }
   }
@@ -97,167 +104,46 @@ namespace Toy {
       
       LockSaveFitResultMutex();
     }
-    
-    /*
-     signal(SIGINT, ToyStudyStd::HandleSignal);
-    signal(SIGTERM, ToyStudyStd::HandleSignal);
-    
-    
-
-    TStopwatch sw_lock;
-    sw_lock.Start();
-    utils::FileLock flock(filename);
-    boost::random::random_device rnd;
-    int wait_time, wait_i;
-    if (!flock.Lock()) {
-      swarn << "File to save fit result to " << filename << " is locked. Waiting for unlock." << endmsg;
-    }
-    while (!flock.Lock() && !abort_save_) {
-      wait_time = (static_cast<double>(rnd())/(rnd.max()-rnd.min())-rnd.min()*10.0)+10;
-      wait_i    = 0;
-      while (wait_i<wait_time && !abort_save_) { 
-        utils::Sleep(1.0);
-        wait_i++;
-      }
-    }
-    sinfo << "File locking deadtime: " << sw_lock << endmsg;
-
-    if (!abort_save_) {
-      sinfo << "Saving fit result to file " << filename << endmsg;
-      bool file_existing = fs::exists(filename);
-      TFile f(fs::absolute(filename).string().c_str(),"update");
-      if (f.IsZombie() || !f.IsOpen()) {
-        serr << "Cannot open file which may be corrupted." << endmsg;
-        flock.Unlock();
-        throw ExceptionCannotStoreFitResult();
-      } else {
-        if (!abort_save_) {
-          TTree* tree_results = NULL;
-          if (file_existing) {      
-            tree_results = (TTree*)f.Get(treename.c_str());
-          } 
-          
-          if (tree_results == NULL) {
-            tree_results = new TTree(treename.c_str(), "Tree for toy study fit results");
-            tree_results->Branch(config_toystudy_.fit_result1_branch_name().c_str(), "RooFitResult", &fit_result1, 64000, 0);
-            if (fit_result2 != NULL) {
-              tree_results->Branch(config_toystudy_.fit_result2_branch_name().c_str(), "RooFitResult", &fit_result2, 64000, 0);
-            }
-          } else {  
-            if (tree_results->GetBranch(config_toystudy_.fit_result1_branch_name().c_str()) == NULL) {
-              serr << "Cannot store fit result! Tree exists but branch " << config_toystudy_.fit_result1_branch_name() << " is unknown." << endmsg;
-              f.Close();
-              flock.Unlock();
-              throw ExceptionCannotStoreFitResult();
-            }
-            if (fit_result2 != NULL && tree_results->GetBranch(config_toystudy_.fit_result2_branch_name().c_str()) == NULL) {
-              serr << "Cannot store fit result! Tree exists but branch " << config_toystudy_.fit_result2_branch_name() << " is unknown." << endmsg;
-              f.Close();
-              flock.Unlock();
-              throw ExceptionCannotStoreFitResult();
-            }
-            
-            tree_results->SetBranchAddress(config_toystudy_.fit_result1_branch_name().c_str(), &fit_result1);
-            if (fit_result2 != NULL) {
-              tree_results->SetBranchAddress(config_toystudy_.fit_result2_branch_name().c_str(), &fit_result2);
-            }
-          }
-          
-          tree_results->Fill();
-          tree_results->Write("",TObject::kOverwrite);
-        } else {
-          swarn << "Caught signal. Did not save fit result although file was opened. Trying to close file gracefully." << endmsg;
-        }
-          
-        f.Close();
-        
-        flock.Unlock();
-      }
-    } else {
-      flock.Unlock();
-      swarn << "Aborting save as signal to end execution was caught before." << endmsg;
-    }
-    
-    if (abort_save_) {
-      swarn << "Caught signal. If we reached this, the file should have been closed gracefully without damage." << endmsg;
-      exit(1);
-    }
-    
-    signal(SIGINT, SIG_DFL);
-    signal(SIGTERM, SIG_DFL);
-     */
   }
   
-  void ToyStudyStd::ReadFitResults(const std::string& branch_name) {
+  void ToyStudyStd::ReadFitResults() {
     // stop saving if there are still deferred fit results to be saved.
-    EndSaveFitResultWorker();
+    FinishFitResultSaving();
     
-    const std::vector<doofit::Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
-    
-    sinfo.Ruler();
-    
-    if (results_files.size() == 0) {
-      serr << "No files to read fit results from are specified. Cannot read in." << endmsg;
-      throw ExceptionCannotReadFitResult();
+    reading_fit_results_ = true;
+    if (!fitresult_reader_worker_.joinable()) {
+      fitresult_reader_worker_ = boost::thread(&ToyStudyStd::ReadFitResultWorker, this);
     }
-    
-    if (fit_results_.size() > 0) {
-      serr << "Reading in fit results while results are already stored. Empty stored fit results first." << endmsg;
-      throw ExceptionCannotReadFitResult();
-    } 
-    
-    int results_stored = 0;
-    int results_neglected = 0;
-    
-    for (std::vector<doofit::Config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
-      sinfo << "Loading fit results from " << (*it_files).first() 
-            << " from branch " << branch_name << endmsg;
-      TFile file((*it_files).first().c_str(), "read");
-      if (file.IsZombie() || !file.IsOpen()) {
-        serr << "Cannot open file " << (*it_files).first() << " which may be not existing or corrupted." << endmsg;
-        throw ExceptionCannotReadFitResult();
+  }
+  
+  std::pair<RooFitResult*, RooFitResult*> ToyStudyStd::GetFitResult() {
+    std::pair<RooFitResult*, RooFitResult*> fit_results(NULL,NULL);
+    if (!fitresult_reader_worker_.joinable()) {
+      return fit_results;
+    } else {
+      bool got_one = false;
+      while (!got_one && reading_fit_results_) {
+        got_one = fit_results_read_queue_.wait_and_pop(fit_results);
       }
-
-      TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
-      if (tree == NULL) {
-        serr << "Cannot find tree " << (*it_files).second() << " in file. Cannot read in fit results." << endmsg;
-        throw ExceptionCannotReadFitResult();
-      }
-
-      TBranch* result_branch = tree->GetBranch(branch_name.c_str());
-      if (result_branch == NULL) {
-        serr << "Cannot find branch " << branch_name << " in tree. Cannot read in fit results." << endmsg;
-        throw ExceptionCannotReadFitResult();
-      }
-
-      RooFitResult* fit_result = NULL;
-      result_branch->SetAddress(&fit_result);
-      
-      for (int i=0; i<tree->GetEntries(); ++i) {
-        result_branch->GetEntry(i);
-        
-        // save a copy
-        if (FitResultOkay(*fit_result)) {
-          //fit_results_.push_back(new RooFitResult(*fit_result));
-          fit_results_.push_back(fit_result);
-          fit_results_bookkeep_.push_back(fit_result);
-          results_stored++;
-        } else {
-          results_neglected++;
-          swarn << "Fit result number " << i << " in file " << *it_files << " negelected." << endmsg;
-        }
-        //delete fit_result;
-        fit_result = NULL;
-      }
-      
-      delete tree;
-      file.Close();
+      // if we got_one, return, if not return default NULL pointer pair
+      // (this will happen if the worker stopped)
+      return fit_results;
     }
-    sinfo << "Read in " << results_stored << " fit results. (" << results_neglected << " results negelected, that is " << static_cast<double>(results_neglected)/static_cast<double>(results_stored+results_neglected)*100.0 << "%)" << endmsg;
-    sinfo.Ruler();
   }
   
   void ToyStudyStd::EvaluateFitResults() {
+    std::pair<RooFitResult*, RooFitResult*> fit_results(NULL,NULL);
+    do {
+      fit_results = GetFitResult();
+      
+      if (fit_results.first != NULL) {
+        fit_results_.push_back(fit_results.first);
+        fit_results_bookkeep_.push_back(fit_results.first);
+        fit_results2_.push_back(fit_results.second);
+        fit_results2_bookkeep_.push_back(fit_results.second);
+      }
+    } while (fit_results.first != NULL); 
+    
     sinfo.Ruler();
     sinfo << "Evaluating fit results" << endmsg;
     if (fit_results_.size() <= 0) {
@@ -378,19 +264,7 @@ namespace Toy {
     utils::printPlotCloseStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     sinfo.Ruler();
   }
-  
-  const std::vector<const RooFitResult*> ToyStudyStd::GetFitResults() const {
-    std::vector<const RooFitResult*> new_vector;
-    new_vector.reserve(fit_results_.size());
     
-    for (std::vector<RooFitResult*>::const_iterator it = fit_results_.begin();
-         it != fit_results_.end(); ++it) {
-      new_vector.push_back(*it);
-    }
-    
-    return new_vector;
-  }
-  
   RooArgSet ToyStudyStd::BuildEvaluationArgSet(const RooFitResult& fit_result) {
     RooArgSet parameters;
     
@@ -516,6 +390,95 @@ namespace Toy {
     abort_save_ = true;
   }
   
+  void ToyStudyStd::ReadFitResultWorker() {
+    TThread this_tthread;
+    
+    const std::vector<doofit::Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
+    
+    sinfo.Ruler();
+    
+    if (results_files.size() == 0) {
+      serr << "No files to read fit results from are specified. Cannot read in." << endmsg;
+      throw ExceptionCannotReadFitResult();
+    }
+    
+    if (fit_results_.size() > 0) {
+      serr << "Reading in fit results while results are already stored. Empty stored fit results first." << endmsg;
+      throw ExceptionCannotReadFitResult();
+    }
+    
+    int results_stored = 0;
+    int results_neglected = 0;
+    
+    for (std::vector<doofit::Config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
+      sinfo << "Loading fit results from " << (*it_files).first() 
+      << " from branch " << config_toystudy_.fit_result1_branch_name() << endmsg;
+      TFile file((*it_files).first().c_str(), "read");
+      if (file.IsZombie() || !file.IsOpen()) {
+        serr << "Cannot open file " << (*it_files).first() << " which may be not existing or corrupted." << endmsg;
+        throw ExceptionCannotReadFitResult();
+      }
+      
+      TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
+      if (tree == NULL) {
+        serr << "Cannot find tree " << (*it_files).second() << " in file. Cannot read in fit results." << endmsg;
+        throw ExceptionCannotReadFitResult();
+      }
+      
+      TBranch* result_branch = tree->GetBranch(config_toystudy_.fit_result1_branch_name().c_str());
+      TBranch* result2_branch = tree->GetBranch(config_toystudy_.fit_result2_branch_name().c_str());
+      if (result_branch == NULL) {
+        serr << "Cannot find branch " << config_toystudy_.fit_result1_branch_name() << " in tree. Cannot read in fit results." << endmsg;
+        throw ExceptionCannotReadFitResult();
+      }
+      
+      RooFitResult* fit_result  = NULL;
+      RooFitResult* fit_result2 = NULL;
+      result_branch->SetAddress(&fit_result);
+      
+      if (result2_branch != NULL) {
+        result2_branch->SetAddress(&fit_result2);
+      }
+      
+      for (int i=0; i<tree->GetEntries(); ++i) {
+        result_branch->GetEntry(i);
+        if (result2_branch != NULL) {
+          result2_branch->GetEntry(i);
+        }
+        // save a copy
+        if (fit_result != NULL && FitResultOkay(*fit_result)) {
+          fit_results_read_queue_.push(make_pair(fit_result,fit_result2));
+          
+          results_stored++;
+        } else {
+          if (fit_result == NULL) {
+            serr << "Fit result number " << i << " in file " << *it_files << " is NULL and therefore negelected. This indicates corrupted files and should never happen." << endmsg;
+            while (true) {}
+          } else {
+            delete fit_result;
+            if (fit_result2 != NULL) {
+              delete fit_result2;
+            }
+            
+            swarn << "Fit result number " << i << " in file " << *it_files << " negelected." << endmsg;
+          }
+          results_neglected++;
+          
+        }
+        fit_result = NULL;
+        fit_result2 = NULL;
+      }
+      
+      delete tree;
+      file.Close();
+    }
+    fit_results_read_queue_.disable_queue();
+    sinfo << "Read in " << results_stored << " fit results. (" << results_neglected << " results negelected, that is " << static_cast<double>(results_neglected)/static_cast<double>(results_stored+results_neglected)*100.0 << "%)" << endmsg;
+    sinfo.Ruler();
+    
+    reading_fit_results_ = false;
+  }
+  
   void ToyStudyStd::SaveFitResultWorker() {
     TThread this_tthread;
     TStopwatch sw_lock;
@@ -557,15 +520,18 @@ namespace Toy {
         } else {
           sdebug << "SaveFitResultWorker(): got no other fit result pair." << endmsg;
         }
+        sdebug << "queue size: " << fit_results_save_queue_.size() << endmsg;   
       }
       
+      bool sleep = false;
+      int wait_time;
       if (!saver_queue.empty()) {
         sw_lock.Stop();
         boost::mutex::scoped_lock fitresult_save_worker_local_lock(fitresult_save_worker_mutex_);
         
         utils::FileLock flock(filename);
         boost::random::random_device rnd;
-        int wait_time, wait_i;
+        
         sw_lock.Start(false);
         if (!flock.Lock()) {
           // get new wait time based on last deadtimes's average
@@ -575,15 +541,12 @@ namespace Toy {
             new_wait_time += *it;
           }
           new_wait_time += sw_lock.RealTime();
-          sdebug << sw_lock.RealTime() << endmsg;
           sw_lock.Start(false);
           new_wait_time /= deadtimes.size()+1;
           
           wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*new_wait_time+10.0;
           swarn << "File to save fit result to " << filename << " is locked. Will try again in " << wait_time << " s." << endmsg;
-          fitresult_save_worker_local_lock.unlock();
-          utils::Sleep(wait_time);
-          boost::this_thread::yield();
+          sleep = true;
         } else {
           signal(SIGINT, ToyStudyStd::HandleSignal);
           signal(SIGTERM, ToyStudyStd::HandleSignal);
@@ -684,6 +647,11 @@ namespace Toy {
           exit(1);
         }
       }
+      boost::this_thread::yield();
+      if (sleep) {
+        utils::Sleep(wait_time);
+      }
+      
       
       signal(SIGINT, SIG_DFL);
       signal(SIGTERM, SIG_DFL);

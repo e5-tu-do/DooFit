@@ -59,9 +59,18 @@ namespace doofit {
       std::queue<Data> the_queue;
       mutable boost::mutex the_mutex;
       boost::condition_variable the_condition_variable;
+      boost::condition_variable the_condition_variable_popped;
+      int max_size_;
     public:
+      concurrent_queue(int max_size=-1) : max_size_(max_size) {}
+      
       void push(const Data& data) {
         boost::mutex::scoped_lock lock(the_mutex);
+        
+        while (max_size_ > 0 && the_queue.size() >= max_size_) {
+          the_condition_variable_popped.wait(lock);
+        }
+        
         the_queue.push(data);
         lock.unlock();
         the_condition_variable.notify_one();
@@ -78,17 +87,24 @@ namespace doofit {
       
       bool wait_and_pop(Data& popped_value) {
         boost::mutex::scoped_lock lock(the_mutex);
+        bool locked = true;
         if (the_queue.empty()) {
-          the_condition_variable.wait(lock);
+          locked = the_condition_variable.timed_wait(lock, boost::posix_time::seconds(1));
         }
         
-        if (!the_queue.empty()) {
+        if (locked && !the_queue.empty()) {
           popped_value=the_queue.front();
           the_queue.pop();
+          the_condition_variable_popped.notify_one();
           return true;
         } else {
           return false;
         }
+      }
+      
+      int size() {
+        boost::mutex::scoped_lock lock(the_mutex);
+        return the_queue.size();
       }
     };
     

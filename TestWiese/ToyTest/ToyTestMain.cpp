@@ -235,7 +235,7 @@ void TestToys(int argc, char *argv[]) {
   RooDataSet* data = NULL;
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
 
-  for (int i=0; i<1000; ++i) {
+  for (int i=0; i<2; ++i) {
     data = tfac.Generate();
     //    delete data;
     //    gObjectTable->Print(); 
@@ -249,8 +249,8 @@ void TestToys(int argc, char *argv[]) {
     tstudy.StoreFitResult(fit_result, fit_result2);
     delete data;
     
-    Sleep(20);
   }
+  tstudy.FinishFitResultSaving();
     
 //  tstudy.ReadFitResults("fr1");
 //  std::vector<const RooFitResult*> results = tstudy.GetFitResults();
@@ -266,17 +266,76 @@ void TestToys(int argc, char *argv[]) {
 //       it != results2.end(); ++it) {
 //    (*it)->Print();
 //  }
+
   tstudy.ReadFitResults();
-  
   tstudy.EvaluateFitResults();
   tstudy.PlotEvaluatedParameters();
-    
+  
   //PlotToyFit(ws, pdf);
   delete ws;
   
   //while (true) {}
 }
 
+    boost::recursive_mutex bla;
+    boost::condition_variable_any v1;
+    boost::condition_variable_any v2;
+    boost::recursive_mutex::scoped_lock lock(bla);
+    int got_processed = 0;
+    const int n = 10;
+
+    void ProcessNIterations() {
+      got_processed = 0;
+      // have some mutex or whatever unlocked here so that the worker thread can 
+      // start or resume. 
+      // my idea: have some sort of mutex lock that unlocks here and a condition
+      // variable v1 that is notified while the thread is waiting for that.
+      lock.unlock();
+      v1.notify_one();
+      
+      // while the thread is working to do the iterations this function should wait
+      // because there is no use to proceed until the n iterations are done
+      // my idea: have another condition v2 variable that we wait for here and lock
+      // afterwards so the thread is blocked/paused
+      while (got_processed < n) {
+        v2.wait(lock);
+      }
+    }
+
+    void WorkerThread() {
+      int counter = 0;
+      // wait for something to start
+      // my idea: acquire a mutex lock here that was locked elsewhere before and 
+      // wait for ProcessNIterations() to unlock it so this can start
+      boost::recursive_mutex::scoped_lock internal_lock(bla);
+      
+      for (;;) {
+        for (;;) {
+          // here do the iterations
+          counter++;
+          std::cout << "iteration #" << counter << std::endl;
+          got_processed++;
+          
+          if (counter >= n) {
+            // we've done n iterations; pause here
+            // my idea: unlock the mutex, notify v2
+            internal_lock.unlock();
+            v2.notify_one();
+            
+            while (got_processed > 0) {
+              // when ProcessNIterations() is called again, resume here
+              // my idea: wait for v1 reacquiring the mutex again
+              v1.wait(internal_lock);
+            }
+            counter = 0;
+          }
+        }
+      }
+    }
+
 int main(int argc, char *argv[]) {
   TestToys(argc, argv);
 }
+
+
+    

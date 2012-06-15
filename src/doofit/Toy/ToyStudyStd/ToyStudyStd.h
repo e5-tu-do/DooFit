@@ -15,6 +15,7 @@
 // from project
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
 #include "doofit/utils/utils.h"
+#include "doofit/utils/MsgStream.h"
 
 // forward declarations
 class RooFitResult;
@@ -90,6 +91,9 @@ namespace Toy {
      *        ToyStudyStd instance does *not* take over ownership of the fit 
      *        result(s) (in contrast to previous versions).
      *
+     *  NOTE: Calling of ToyStudyStd::FinishFitResultSaving() might be 
+     *        necessary to finish writing of fit results.
+     *
      *  @see const Config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename
      *  @see ToyStudyStdConfig
      *  @see ToyStudyStdConfig::set_store_result_filename_treename()
@@ -104,6 +108,18 @@ namespace Toy {
      */
     void StoreFitResult(RooFitResult* fit_result1, 
                         RooFitResult* fit_result2=NULL);
+    
+    /**
+     *  @brief End the save fit result worker thread and wait for it to save everything
+     */
+    void FinishFitResultSaving() {
+      if (accepting_fit_results_) {
+        accepting_fit_results_ = false;
+        fit_results_save_queue_.disable_queue();
+        fitresult_save_worker_mutex_.unlock();
+        fitresult_save_worker_.join();
+      }
+    }
     ///@}
 
     /** @name Evaluation functions
@@ -115,11 +131,27 @@ namespace Toy {
      *
      *  A list of fit result files as defined in 
      *  ToyStudyStdConfig::set_read_results_filename_treename() will be read in
-     *  and stored internally in the toy factory. 
+     *  and stored internally in the toy factory. Branch names are handled
+     *  via corresponding Config object.
      *
-     *  @param branch_name name of branch for fit results (optional)
+     *  This function will just invoke the reader worker thread which will load
+     *  fit results in the background.
      */
-    void ReadFitResults(const std::string& branch_name="fit_results");
+    void ReadFitResults();
+    /**
+     *  @brief Get a read in fit result (pair)
+     *
+     *  While the fit result reader is reading in fit results in the background
+     *  this function will get one of these fit result (or fit result pairs if 
+     *  two results are to be read in simultaneously). Null pointers are 
+     *  returned if no more fit results are available.
+     *
+     *  Using this function, ToyStudyStd gives up ownership of these fit 
+     *  results. The caller needs to delete these after usage.
+     *
+     *  @return pair of fit results that have been read in
+     */
+    std::pair<RooFitResult*, RooFitResult*> GetFitResult();
     /**
      *  @brief Evaluate read in fit results
      *
@@ -140,20 +172,6 @@ namespace Toy {
      *  Helper functions for not yet implemented usage
      */
     ///@{
-    /**
-     *  @brief Return vector of read in fit results.
-     *
-     *  This function will return a vector of currently read in fit results. The
-     *  results are constant pointers which indicates that the caller must not
-     *  delete these. All ever read in fit results will be deleted upon 
-     *  destruction of this toy study. Emptying the stored result vector via
-     *  EmptyResults() will not destroy the fit results, it will just prepare 
-     *  the toy study to read in new results.
-     *
-     *  @return Currently stored fit results
-     */
-    const std::vector<const RooFitResult*> GetFitResults() const;
-    
     /**
      *  @brief Empty stored vector of fit results.
      *
@@ -237,16 +255,14 @@ namespace Toy {
      */
     void SaveFitResultWorker();
     
-   private:
     /**
-     *  @brief End the save fit result worker thread and wait for it to save everything
+     *  @brief Worker function for reading of fit results
+     *
+     *  This function will take care of reading fit results from a file. 
      */
-    void EndSaveFitResultWorker() {
-      accepting_fit_results_ = false;
-      fit_results_save_queue_.disable_queue();
-      fitresult_save_worker_mutex_.unlock();
-      fitresult_save_worker_.join();
-    }
+    void ReadFitResultWorker();
+    
+   private:
     
     /**
      *  @brief Lock the fitresult_save_worker_mutex_ to stop saver thread
@@ -277,6 +293,14 @@ namespace Toy {
      */
     std::vector<RooFitResult*> fit_results_bookkeep_;
     /**
+     *  \brief Container for read in and active second fit results
+     */
+    std::vector<RooFitResult*> fit_results2_;
+    /**
+     *  \brief Container for all ever read in second fit results
+     */
+    std::vector<RooFitResult*> fit_results2_bookkeep_;
+    /**
      *  \brief RooDataSet for all evaluated parameters, their pulls and so on
      */
     RooDataSet* evaluated_values_;
@@ -296,7 +320,11 @@ namespace Toy {
      *  will try to end gracefully afterwards.
      */
     static bool abort_save_;
-    
+
+    /** @name Save worker members
+     *  Member objects for the save worker thread
+     */
+    ///@{
     /**
      *  @brief Thread for (half-)asynchronous saving of fit results
      */
@@ -317,6 +345,29 @@ namespace Toy {
      *  @brief Thread-safe queue for fit results to save
      */
     doofit::utils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_save_queue_;
+    ///@}
+    
+    /** @name Reader worker members
+     *  Member objects for the reader worker thread
+     */
+    ///@{
+    /**
+     *  @brief Thread for reading of fit results
+     */
+    boost::thread fitresult_reader_worker_;
+    /**
+     *  @brief State variable determining if this class is still reading fit results
+     *
+     *  This variable will be set to true upon construction and false upon 
+     *  destruction to allow the reader thread to finish properly.
+     * 
+     */
+    bool reading_fit_results_;
+    /**
+     *  @brief Thread-safe queue for fit results to read in
+     */
+    doofit::utils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_read_queue_;
+    ///@}
   };
   
   /** \struct ExceptionCannotStoreFitResult
