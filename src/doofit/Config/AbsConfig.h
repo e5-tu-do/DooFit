@@ -16,17 +16,8 @@
  * supplied which allow easy integration of DooFit in any other CMake project.
  *
  * @subsection mp_building Building DooFit
- * 
- * To build DooFit, download it either as a release version or checkout from 
- * SVN. Create a @c build directory where you invoke CMake and install DooFit.
- * 
- * @code
- * cmake -DCMAKE_INSTALL_PREFIX=/path/to/install/to /path/of/doofit/source
- * make
- * make install
- * @endcode
  *
- * Afterwards set the environment variable @c $DOOFITSYS to the install location
+ * First set the environment variable @c $DOOFITSYS to the install location
  * as set above. If not installing into a standard location like @c /usr/local
  * or similar, you also have to set @c $LD_LIBRARY_PATH (on Linux) or 
  * @c $DYLD_LIBRARY_PATH (on Mac OS) to include @c $DOOFITSYS/lib. Best practice
@@ -37,6 +28,19 @@
  * export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOFITSYS/lib
  * export PATH=$PATH:$DOOFITSYS/bin
  * @endcode
+ *
+ * If setting in your <tt>~/.bashrc</tt>, remember to log out and in once or 
+ * copy the corresponding lines also into your terminal.
+ * 
+ * To build DooFit, download it either as a release version or checkout from 
+ * SVN. Create a @c build directory where you invoke CMake and install DooFit.
+ * 
+ * @code
+ * cmake -DCMAKE_INSTALL_PREFIX=$DOOFITSYS /path/of/doofit/source
+ * make
+ * make install
+ * @endcode
+ *
  * 
  * @subsection mp_externalusage Using DooFit from an external project
  *
