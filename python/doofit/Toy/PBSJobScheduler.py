@@ -22,7 +22,9 @@ def number_running_jobs():
   return number_jobs
 
 def submit_jobs(files):
-  n_submit = max_number_jobs - number_running_jobs()
+  n_running = number_running_jobs()
+  n_submit = max_number_jobs - n_running
+  print 'There are', n_running, 'jobs currently running. We can submit another', n_submit, 'jobs.'
   while n_submit > 0 and len(files) > 0:
     file = os.path.expanduser(os.path.abspath(files.pop(0)))
     print 'Submitting job', file
