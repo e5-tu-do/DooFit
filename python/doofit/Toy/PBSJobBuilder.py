@@ -129,6 +129,9 @@ def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_it
         job_index += 1
       scan1_value += options.scan1increment*options.scan1perjob
     scan2_value += options.scan2increment*options.scan2perjob
+  control_file_name = os.path.join(jobs_dir,'control_' + job_base_name + '')
+  control_file = open(control_file_name, 'w')
+  control_file.writelines(os.path.join(jobs_dir,job_base_name + '_*.sh'))
   print 'Jobs successfully created. Maximum seed used: ' + str(min_seed-1)
   print 'Submit jobs via this command:'
   print 'sh ' + submit_file_name
