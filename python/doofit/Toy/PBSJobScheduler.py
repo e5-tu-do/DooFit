@@ -44,7 +44,6 @@ def auto_submit(control_file):
   print 'Submitting jobs from control file', os.path.expanduser(os.path.abspath(control_file))
   f = open(control_file, 'r')
   for line in f:
-    print glob.glob(line)
     submit_jobs(glob.glob(line))
 
 if __name__ == "__main__":
