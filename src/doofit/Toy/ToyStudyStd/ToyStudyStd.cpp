@@ -491,7 +491,7 @@ namespace Toy {
     
     while (accepting_fit_results_ || !fit_results_save_queue_.empty() || !saver_queue.empty()) { 
       
-      sdebug << "SaveFitResultWorker(): starting loop with " << saver_queue.size() << " elements in our own queue." << endmsg;
+      //sdebug << "SaveFitResultWorker(): starting loop with " << saver_queue.size() << " elements in our own queue." << endmsg;
       
       const string& filename = config_toystudy_.store_result_filename_treename().first();
       const string& treename = config_toystudy_.store_result_filename_treename().second();
@@ -500,14 +500,14 @@ namespace Toy {
       // if our own queue is empty, we need to wait for new fit results to come 
       // in anyway.
       if (saver_queue.empty()) {
-        sdebug << "SaveFitResultWorker(): waiting for fit results as we have none." << endmsg;
+        //sdebug << "SaveFitResultWorker(): waiting for fit results as we have none." << endmsg;
         
         std::pair<RooFitResult*, RooFitResult*> fit_results;
         if (fit_results_save_queue_.wait_and_pop(fit_results)) {
           saver_queue.push(fit_results);
-          sdebug << "SaveFitResultWorker(): got a fit result pair." << endmsg;
+          //sdebug << "SaveFitResultWorker(): got a fit result pair." << endmsg;
         } else {
-          sdebug << "SaveFitResultWorker(): got no fit result pair." << endmsg;
+          //sdebug << "SaveFitResultWorker(): got no fit result pair." << endmsg;
         }
       }
       
@@ -516,11 +516,11 @@ namespace Toy {
         std::pair<RooFitResult*, RooFitResult*> fit_results;
         if (fit_results_save_queue_.wait_and_pop(fit_results)) {
           saver_queue.push(fit_results);
-          sdebug << "SaveFitResultWorker(): got another fit result pair." << endmsg;
+          //sdebug << "SaveFitResultWorker(): got another fit result pair." << endmsg;
         } else {
-          sdebug << "SaveFitResultWorker(): got no other fit result pair." << endmsg;
+          //sdebug << "SaveFitResultWorker(): got no other fit result pair." << endmsg;
         }
-        sdebug << "queue size: " << fit_results_save_queue_.size() << endmsg;   
+        //sdebug << "queue size: " << fit_results_save_queue_.size() << endmsg;   
       }
       
       bool sleep = false;
@@ -565,7 +565,7 @@ namespace Toy {
               throw ExceptionCannotStoreFitResult();
             } else {
               if (!abort_save_) {
-                sdebug << "SaveFitResultWorker(): number of results in queue: " << saver_queue.size() << endmsg;
+                //sdebug << "SaveFitResultWorker(): number of results in queue: " << saver_queue.size() << endmsg;
                 std::pair<RooFitResult*, RooFitResult*> fit_results = saver_queue.front();
                 saver_queue.pop();
                 RooFitResult* fit_result1 = fit_results.first;
