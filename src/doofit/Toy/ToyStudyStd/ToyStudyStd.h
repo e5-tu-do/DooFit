@@ -147,11 +147,23 @@ namespace Toy {
      *  returned if no more fit results are available.
      *
      *  Using this function, ToyStudyStd gives up ownership of these fit 
-     *  results. The caller needs to delete these after usage.
+     *  results. The caller needs to release these via 
+     *  ToyStudyStd::ReleaseFitResult()
      *
      *  @return pair of fit results that have been read in
      */
     std::pair<RooFitResult*, RooFitResult*> GetFitResult();
+    /**
+     *  @brief Release a fit result (pair) for deletion
+     *
+     *  While the fit result reader is reading in fit results in the background
+     *  this function will take one of these fit result (or fit result pairs if 
+     *  two results are to be read in simultaneously) for deletion as apparently
+     *  RooFit's constructor/destructor methods are not thread-safe.
+     *
+     *  @param fit_results pair of fit results to release
+     */
+    void ReleaseFitResult(std::pair<RooFitResult*, RooFitResult*> fit_results);
     /**
      *  @brief Evaluate read in fit results
      *
@@ -367,6 +379,10 @@ namespace Toy {
      *  @brief Thread-safe queue for fit results to read in
      */
     doofit::utils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_read_queue_;
+    /**
+     *  @brief Thread-safe queue for fit results to delete
+     */
+    doofit::utils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_release_queue_;
     ///@}
   };
   

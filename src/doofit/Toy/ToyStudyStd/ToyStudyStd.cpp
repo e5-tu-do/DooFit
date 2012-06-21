@@ -131,6 +131,10 @@ namespace Toy {
     }
   }
   
+  void ToyStudyStd::ReleaseFitResult(std::pair<RooFitResult*, RooFitResult*> fit_results) {
+    fit_results_release_queue_.push(fit_results);
+  }
+  
   void ToyStudyStd::EvaluateFitResults() {
     std::pair<RooFitResult*, RooFitResult*> fit_results(NULL,NULL);
     do {
@@ -397,6 +401,8 @@ namespace Toy {
     
     sinfo.Ruler();
     
+    config_toystudy_.Print();
+    
     if (results_files.size() == 0) {
       serr << "No files to read fit results from are specified. Cannot read in." << endmsg;
       throw ExceptionCannotReadFitResult();
@@ -467,6 +473,14 @@ namespace Toy {
         }
         fit_result = NULL;
         fit_result2 = NULL;
+        
+        while (fit_results_release_queue_.size() > 0) {
+          std::pair<RooFitResult*,RooFitResult*> fit_results = std::pair<RooFitResult*,RooFitResult*>(NULL,NULL);
+          if (fit_results_release_queue_.wait_and_pop(fit_results)) {
+            if (fit_results.first != NULL) delete fit_results.first;
+            if (fit_results.second != NULL) delete fit_results.second;
+          }
+        }
       }
       
       delete tree;
