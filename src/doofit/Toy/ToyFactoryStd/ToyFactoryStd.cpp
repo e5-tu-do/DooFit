@@ -429,7 +429,6 @@ namespace Toy {
           }
         }
         std::cout.precision(15);
-        sdebug << "coef: " << coef << " => " << coef*expected_yield << endmsg;
         
         if (!add_pdf_extended && pdf.mustBeExtended()) {
           sub_yield = coef;
@@ -453,14 +452,12 @@ namespace Toy {
         }
         
         yield_lost_due_rounding += sub_yield - boost::math::iround(sub_yield);
-        sdebug << "yield_lost_due_rounding: " << yield_lost_due_rounding << endmsg;
         int add_roundup_yield = boost::math::iround(yield_lost_due_rounding);
         if (TMath::Abs(add_roundup_yield) >= 1 && TMath::Abs(yield_lost_due_rounding) != 0.5) {
           sub_yield += add_roundup_yield;
           yield_lost_due_rounding = 0.0;
         }
         
-        sdebug << "Sub yield is " << sub_yield << endmsg;
         if (data) {
           RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield, false, sub_proto_data);
           AppendDatasets(data, data_temp);
