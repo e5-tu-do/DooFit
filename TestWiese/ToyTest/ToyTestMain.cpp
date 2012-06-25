@@ -235,7 +235,7 @@ void TestToys(int argc, char *argv[]) {
   RooDataSet* data = NULL;
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
 
-  for (int i=0; i<2; ++i) {
+  for (int i=0; i<20000; ++i) {
     data = tfac.Generate();
     //    delete data;
     //    gObjectTable->Print(); 
@@ -243,12 +243,11 @@ void TestToys(int argc, char *argv[]) {
     //  }
     
     pdf->getParameters(data)->readFromFile("generation.par");
-    RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
-    RooFitResult* fit_result2 = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Strategy(2), Minos(false), Hesse(false), Verbose(false),Timer(true));
+    RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Minos(false), Hesse(false), Verbose(false),Timer(true), Minimizer("Minuit2"));
     
-    tstudy.StoreFitResult(fit_result, fit_result2);
+    tstudy.StoreFitResult(fit_result);
     delete data;
-    
+    sinfo << i << endmsg;
   }
   tstudy.FinishFitResultSaving();
     

@@ -401,8 +401,6 @@ namespace Toy {
     
     sinfo.Ruler();
     
-    config_toystudy_.Print();
-    
     if (results_files.size() == 0) {
       serr << "No files to read fit results from are specified. Cannot read in." << endmsg;
       throw ExceptionCannotReadFitResult();
@@ -447,6 +445,7 @@ namespace Toy {
       }
       
       for (int i=0; i<tree->GetEntries(); ++i) {
+        sdebug << results_stored << endmsg;
         result_branch->GetEntry(i);
         if (result2_branch != NULL) {
           result2_branch->GetEntry(i);
@@ -612,8 +611,6 @@ namespace Toy {
                   
                   tree_results->SetBranchAddress(config_toystudy_.fit_result1_branch_name().c_str(), &fit_result1);
                   if (fit_result2 != NULL) {
-                    tree_results->Print();
-                    fit_result2->Print();
                     tree_results->SetBranchAddress(config_toystudy_.fit_result2_branch_name().c_str(), &fit_result2);
                   }
                 }
@@ -628,9 +625,6 @@ namespace Toy {
                   saver_queue.pop();
                   fit_result1 = fit_results.first;
                   fit_result2 = fit_results.second;
-                  
-                  fit_result1->Print();
-                  fit_result2->Print();
                   
                   tree_results->Fill();
                   save_counter++;

@@ -347,7 +347,11 @@ namespace Toy {
       int yield_to_generate = boost::math::iround(expected_yield);
       
       RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
+#if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
+      data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
+#else
       data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
+#endif
       delete obs_argset;
       if (proto_set != NULL) {
         delete proto_set;
