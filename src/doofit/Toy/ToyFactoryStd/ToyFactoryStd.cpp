@@ -31,6 +31,8 @@
 #include "RooRealVar.h"
 #include "RooCategory.h"
 #include "RooEffProd.h"
+#include "RooSimultaneous.h"
+#include "RooSuperCategory.h"
 
 // from Project
 #include "doofit/Config/CommonConfig.h"
@@ -150,7 +152,7 @@ namespace Toy {
   }
   
   bool ToyFactoryStd::PdfIsDecomposable(const RooAbsPdf& pdf) const {
-    if (strcmp(pdf.IsA()->GetName(),"RooSimultaneous") == 0 
+    if (PdfIsSimultaneous(pdf) 
         || PdfIsAdded(pdf)
         || PdfIsProduct(pdf)
         || PdfIsExtended(pdf)) {
@@ -320,6 +322,8 @@ namespace Toy {
         data = GenerateForAddedPdf(pdf, argset_generation_observables, expected_yield, extended, proto_data);
       } else if (PdfIsProduct(pdf)) {
         data = GenerateForProductPdf(pdf, argset_generation_observables, expected_yield, extended, proto_data);
+      } else if (PdfIsSimultaneous(pdf)) {
+        data = GenerateForSimultaneousPdf(pdf, argset_generation_observables, expected_yield, extended, proto_data);
       } else {
         serr << "PDF is decomposable, but decomposition is not yet implemented. Giving up." << endmsg;
         throw;
@@ -513,6 +517,50 @@ namespace Toy {
     }
     delete it;
     
+    sinfo.set_indent(sinfo.indent()-2);
+    return data;
+  }
+  
+  RooDataSet* ToyFactoryStd::GenerateForSimultaneousPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
+    sinfo << "RooSimultaneous " << pdf.GetName() << " will be decomposed." << endmsg;
+    sinfo.set_indent(sinfo.indent()+2);
+
+    RooSimultaneous& sim_pdf = dynamic_cast<RooSimultaneous&>(pdf);
+    const RooAbsCategoryLValue& sim_cat_grr = (sim_pdf.indexCat());
+    RooAbsCategoryLValue& sim_cat = *dynamic_cast<RooAbsCategoryLValue*>(sim_pdf.findServer(sim_cat_grr.GetName()));
+    
+    RooDataSet* data = NULL;
+    
+    RooCatType* sim_cat_type = NULL;
+    TIterator* sim_cat_type_iter = sim_cat.typeIterator();
+    while((sim_cat_type=(RooCatType*)sim_cat_type_iter->Next())) {
+      std::string sim_cat_name = sim_cat_type->GetName();
+      sim_cat.setLabel(sim_cat_name.c_str());
+      RooAbsPdf& sub_pdf = *(sim_pdf.getPdf(sim_cat_name.c_str()));
+      
+      sinfo << "Generating for simultaneous sub PDF " << sub_pdf.GetName() << " for category " << sim_cat.getLabel() << endmsg;
+      RooDataSet* data_temp = GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield, extended, proto_data);
+      data_temp->addColumn(sim_cat);
+      
+      // add categories if super category
+      RooSuperCategory* sim_super_cat = dynamic_cast<RooSuperCategory*>(&sim_cat);
+      if (sim_super_cat != NULL) {
+        RooLinkedListIter* it  = (RooLinkedListIter*)sim_super_cat->inputCatList().createIterator();
+        RooAbsArg*         arg = NULL;
+        
+        while ((arg=(RooAbsArg*)it->Next())) {
+          data_temp->addColumn(*arg);
+        }
+        delete it;
+      }
+      
+      if (data) {
+        AppendDatasets(data, data_temp);
+      } else {
+        data = data_temp;
+      }
+    }
+    delete sim_cat_type_iter;
     sinfo.set_indent(sinfo.indent()-2);
     return data;
   }

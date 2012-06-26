@@ -169,6 +169,20 @@ namespace Toy {
         return false;
       }
     }
+    
+    /**
+     *  @brief Checks if a RooAbsPdf is a simultaneous pdf
+     *
+     *  @param pdf pdf to check for simultaneous pdf
+     *  @return whether pdf is product or not
+     */
+    bool PdfIsSimultaneous(const RooAbsPdf& pdf) const {
+      if (std::strcmp(pdf.IsA()->GetName(),"RooSimultaneous") == 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
     ///@}
     
     /** @name Dataset combination functions
@@ -305,6 +319,27 @@ namespace Toy {
      *  @todo check for PDF arguments to be uncorrelated
      */
     RooDataSet* GenerateForProductPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, std::vector<RooDataSet*> proto_data=std::vector<RooDataSet*>()) const;
+    
+    /**
+     *  @brief Generate a toy sample for a given RooSimultaneous.
+     *
+     *  Helper function to be used by ToyFactoryStd::GenerateForPdf().
+     *
+     *  @param pdf PDF to generate sample for
+     *  @param argset_generation_observables Argument set with variables in which 
+     *                                       dimensions to generate
+     *  @param expected_yield Expected yield to generate (if equals 0, then get 
+     *                        yield from PDF itself)
+     *  @param extended determine if PDF is to be generated with Extended() 
+     *                  RooCmdArg. If so, the generated yield will be poisson 
+     *                  distributed around the expected value.
+     *  @param proto_data Proto dataset to use for this PDF. 
+     *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
+     *          ownership of this sample. Therefore, the invoker of this function
+     *          must take care of proper deletion afterwards.
+     *  @todo check for PDF arguments to be uncorrelated
+     */
+    RooDataSet* GenerateForSimultaneousPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield=0, bool extended=true, std::vector<RooDataSet*> proto_data=std::vector<RooDataSet*>()) const;
     
     /**
      *  @brief Generate a toy sample for discrete variables.
