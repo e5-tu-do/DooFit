@@ -89,13 +89,13 @@ namespace Toy {
         throw ExceptionCannotStoreFitResult();
       }
       
-      //RooFitResult* fit_result1_copy = new RooFitResult(*fit_result1);
-      RooFitResult* fit_result1_copy = fit_result1;
+      RooFitResult* fit_result1_copy = new RooFitResult(*fit_result1);
+      //RooFitResult* fit_result1_copy = fit_result1;
       RooFitResult* fit_result2_copy = NULL;
       
       if (fit_result2 != NULL) {
-        //fit_result2_copy = new RooFitResult(*fit_result2);
-        fit_result2_copy = fit_result2;
+        fit_result2_copy = new RooFitResult(*fit_result2);
+        //fit_result2_copy = fit_result2;
       }
       
       fit_results_save_queue_.push(make_pair(fit_result1_copy,fit_result2_copy));
@@ -615,7 +615,10 @@ namespace Toy {
                     tree_results->SetBranchAddress(config_toystudy_.fit_result2_branch_name().c_str(), &fit_result2);
                   }
                 }
-                                
+                     
+                fit_result1->Print();
+                fit_result2->Print();
+                
                 tree_results->Fill();
                 
                 delete fit_result1;

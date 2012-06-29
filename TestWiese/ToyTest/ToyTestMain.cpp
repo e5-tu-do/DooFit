@@ -244,8 +244,9 @@ void TestToys(int argc, char *argv[]) {
     
     pdf->getParameters(data)->readFromFile("generation.par");
     RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Minos(false), Hesse(false), Verbose(false),Timer(true), Minimizer("Minuit2"));
-    
-    tstudy.StoreFitResult(fit_result);
+    RooFitResult* fit_result2 = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Minos(false), Hesse(false), Verbose(false),Timer(true), Minimizer("Minuit2"));
+
+    tstudy.StoreFitResult(fit_result,fit_result2);
     delete data;
     sinfo << i << endmsg;
   }
