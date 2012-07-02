@@ -89,7 +89,9 @@ namespace Toy {
      *
      *  NOTE: Passing pointers to this function, it is assumed that this 
      *        ToyStudyStd instance does take over ownership of the fit 
-     *        result(s) (in contrast to previous versions).
+     *        result(s) (in contrast to previous versions). FitResults passed
+     *        over will be deleted afterwards and are not guaranteed to live 
+     *        on afterwards.
      *
      *  NOTE: Calling of ToyStudyStd::FinishFitResultSaving() might be 
      *        necessary to finish writing of fit results.
