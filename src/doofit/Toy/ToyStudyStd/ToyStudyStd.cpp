@@ -89,13 +89,13 @@ namespace Toy {
         throw ExceptionCannotStoreFitResult();
       }
       
-      RooFitResult* fit_result1_copy = new RooFitResult(*fit_result1);
-      //RooFitResult* fit_result1_copy = fit_result1;
+      //RooFitResult* fit_result1_copy = new RooFitResult(*fit_result1);
+      RooFitResult* fit_result1_copy = fit_result1;
       RooFitResult* fit_result2_copy = NULL;
       
       if (fit_result2 != NULL) {
-        fit_result2_copy = new RooFitResult(*fit_result2);
-        //fit_result2_copy = fit_result2;
+        //fit_result2_copy = new RooFitResult(*fit_result2);
+        fit_result2_copy = fit_result2;
       }
       
       fit_results_save_queue_.push(make_pair(fit_result1_copy,fit_result2_copy));
