@@ -334,7 +334,7 @@ namespace Toy {
       RooDataSet * proto_set = NULL;
       if (proto_data.size() > 0) {
         proto_set = MergeDatasetVector(proto_data);
-        sinfo << " Proto dataset is available with " << proto_set->numEntries() << " entries.";
+        sinfo << " Proto dataset is available with " << proto_set->numEntries() << " entries in following dimensions: " << *proto_set->get();
       }
       sinfo << endmsg;
       
@@ -351,6 +351,11 @@ namespace Toy {
       int yield_to_generate = boost::math::iround(expected_yield);
       
       RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
+      // if necessary, remove observables already generated as proto set
+      if (proto_set != NULL) {
+        obs_argset->remove(*proto_set->get(),true,true);
+      }
+            
 #if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
       data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
 #else
