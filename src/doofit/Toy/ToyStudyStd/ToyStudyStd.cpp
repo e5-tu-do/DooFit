@@ -616,13 +616,12 @@ namespace Toy {
                   }
                 }
                      
-                fit_result1->Print();
-                fit_result2->Print();
-                
                 tree_results->Fill();
                 
                 delete fit_result1;
-                delete fit_result2;
+                if (fit_result2 != NULL) { 
+				  delete fit_result2;
+				}
                 
                 while (!saver_queue.empty()) {
                   fit_results = saver_queue.front();
@@ -633,7 +632,9 @@ namespace Toy {
                   tree_results->Fill();
                   save_counter++;
                   delete fit_result1;
-                  delete fit_result2;
+                  if (fit_result2 != NULL) {
+					delete fit_result2;
+				  }
                 }
                 
                 tree_results->Write("",TObject::kOverwrite);
