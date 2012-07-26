@@ -185,6 +185,27 @@ namespace Toy {
     }
     ///@}
     
+    /** @name Parameter value functions
+     *  Functions to set parameter values before and after generation
+     */
+    ///@{
+    /**
+     *  @brief Set parameters according to the specified parameter file
+     *
+     *  All parameters of the PDF to generate will be set according to the 
+     *  parameter file set in the Config object.
+     */
+    void ReadParametersFromFile();
+    
+    /**
+     *  @brief Draw constrained parameters from constraining PDFs
+     *
+     *  Parameters described via constraining PDFs will be drawn accordingly to
+     *  assure that a constrained fit situation is handled correctly.
+     */
+    void DrawConstrainedParameters();
+    ///@}
+    
     /** @name Dataset combination functions
      *  Functions to combine sub datasets together (merge, append)
      */

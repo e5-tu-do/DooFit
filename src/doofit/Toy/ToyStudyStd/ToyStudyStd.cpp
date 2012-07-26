@@ -82,8 +82,8 @@ namespace Toy {
     } else {
       fitresult_save_worker_mutex_.unlock();
       
-      const string& filename = config_toystudy_.store_result_filename_treename().first();
-      const string& treename = config_toystudy_.store_result_filename_treename().second();
+      const std::string& filename = config_toystudy_.store_result_filename_treename().first();
+      const std::string& treename = config_toystudy_.store_result_filename_treename().second();
       if (filename.length() == 0 || treename.length() == 0) {
         serr << "File name and or tree name to save fit result into not set! Cannot store fit result." << endmsg;
         throw ExceptionCannotStoreFitResult();
@@ -98,7 +98,7 @@ namespace Toy {
         fit_result2_copy = fit_result2;
       }
       
-      fit_results_save_queue_.push(make_pair(fit_result1_copy,fit_result2_copy));
+      fit_results_save_queue_.push(std::make_pair(fit_result1_copy,fit_result2_copy));
       sinfo << "Accepting fit result 1 for deferred saving" << endmsg;
       if (fit_result2 != NULL) {
         sinfo << "Accepting fit result 2 for deferred saving" << endmsg;
@@ -453,7 +453,7 @@ namespace Toy {
         }
         // save a copy
         if (fit_result != NULL && FitResultOkay(*fit_result)) {
-          fit_results_read_queue_.push(make_pair(fit_result,fit_result2));
+          fit_results_read_queue_.push(std::make_pair(fit_result,fit_result2));
           
           results_stored++;
         } else {
@@ -507,8 +507,8 @@ namespace Toy {
       
       //sdebug << "SaveFitResultWorker(): starting loop with " << saver_queue.size() << " elements in our own queue." << endmsg;
       
-      const string& filename = config_toystudy_.store_result_filename_treename().first();
-      const string& treename = config_toystudy_.store_result_filename_treename().second();
+      const std::string& filename = config_toystudy_.store_result_filename_treename().first();
+      const std::string& treename = config_toystudy_.store_result_filename_treename().second();
       unsigned int save_counter = 1;
       
       // if our own queue is empty, we need to wait for new fit results to come 

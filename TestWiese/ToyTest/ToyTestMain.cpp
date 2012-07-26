@@ -151,6 +151,11 @@ RooWorkspace* BuildPDF() {
   argset_obs.add(*tag);
   ws->defineSet("argset_obs",argset_obs);  
   
+  // adding external constraints
+  RooGaussian* pdf_constr_mean2 = Pdf2WsStd::Mass::Gaussian(ws, "pdf_constr_mean2", "Gaussian constraint pdf for mean2", "mean2", "mean2_mu", "mean2_sigma");
+  
+  ws->defineSet("constraint_pdfs", "pdf_constr_mean2");  
+  
   ws->Print("t");
   
   TFile wsfile("ws.root", "recreate");
@@ -217,9 +222,9 @@ void TestToys(int argc, char *argv[]) {
   
   cfg_com.CheckHelpFlagAndPrintHelp();
     
-  //RooWorkspace* ws = BuildPDF();
-  TFile ws_file("ws.root", "read");
-  RooWorkspace* ws = (RooWorkspace*)ws_file.Get("ws");
+  RooWorkspace* ws = BuildPDF();
+//  TFile ws_file("ws.root", "read");
+//  RooWorkspace* ws = (RooWorkspace*)ws_file.Get("ws");
   
   RooAbsPdf* pdf = ws->pdf("pdf_add");
   ws->Print();
@@ -228,6 +233,8 @@ void TestToys(int argc, char *argv[]) {
   //cfg_tfac.set_generation_pdf_workspace("pdfFull");
   //cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
   
+  //cfg_tfac.set_argset_constraining_pdfs(ws->set("constraint_pdfs"));
+  
   ToyFactoryStd tfac(cfg_com, cfg_tfac);
 
   cfg_com.PrintAll();
@@ -235,20 +242,23 @@ void TestToys(int argc, char *argv[]) {
   RooDataSet* data = NULL;
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
 
-  for (int i=0; i<20000; ++i) {
+  for (int i=0; i<200; ++i) {
     data = tfac.Generate();
     //    delete data;
     //    gObjectTable->Print(); 
     //    utils::sdebug << i << utils::endmsg;
     //  }
     
-    pdf->getParameters(data)->readFromFile("generation.par");
-    RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Minos(false), Hesse(false), Verbose(false),Timer(true), Minimizer("Minuit2"));
-    RooFitResult* fit_result2 = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Minos(false), Hesse(false), Verbose(false),Timer(true), Minimizer("Minuit2"));
+//    pdf->getParameters(data)->readFromFile("generation.par");
+//    ws->pdf("pdf_constr_mean2")->getParameters(data)->readFromFile("generation.par");
+    pdf->getParameters(data)->find("mean2")->Print();
+    RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Verbose(false),Timer(true), Minimizer("Minuit2"), ExternalConstraints(*ws->set("constraint_pdfs")));
+    
+    //PlotToyFit(ws, pdf);
 
-    tstudy.StoreFitResult(fit_result,fit_result2);
+    sinfo << "fit no " << i << endmsg;
+    tstudy.StoreFitResult(fit_result);
     delete data;
-    sinfo << i << endmsg;
   }
   tstudy.FinishFitResultSaving();
     
@@ -267,71 +277,15 @@ void TestToys(int argc, char *argv[]) {
 //    (*it)->Print();
 //  }
 
-  tstudy.ReadFitResults();
-  tstudy.EvaluateFitResults();
-  tstudy.PlotEvaluatedParameters();
+//  tstudy.ReadFitResults();
+//  tstudy.EvaluateFitResults();
+//  tstudy.PlotEvaluatedParameters();
   
   //PlotToyFit(ws, pdf);
   delete ws;
   
   //while (true) {}
 }
-
-    boost::recursive_mutex bla;
-    boost::condition_variable_any v1;
-    boost::condition_variable_any v2;
-    boost::recursive_mutex::scoped_lock lock(bla);
-    int got_processed = 0;
-    const int n = 10;
-
-    void ProcessNIterations() {
-      got_processed = 0;
-      // have some mutex or whatever unlocked here so that the worker thread can 
-      // start or resume. 
-      // my idea: have some sort of mutex lock that unlocks here and a condition
-      // variable v1 that is notified while the thread is waiting for that.
-      lock.unlock();
-      v1.notify_one();
-      
-      // while the thread is working to do the iterations this function should wait
-      // because there is no use to proceed until the n iterations are done
-      // my idea: have another condition v2 variable that we wait for here and lock
-      // afterwards so the thread is blocked/paused
-      while (got_processed < n) {
-        v2.wait(lock);
-      }
-    }
-
-    void WorkerThread() {
-      int counter = 0;
-      // wait for something to start
-      // my idea: acquire a mutex lock here that was locked elsewhere before and 
-      // wait for ProcessNIterations() to unlock it so this can start
-      boost::recursive_mutex::scoped_lock internal_lock(bla);
-      
-      for (;;) {
-        for (;;) {
-          // here do the iterations
-          counter++;
-          std::cout << "iteration #" << counter << std::endl;
-          got_processed++;
-          
-          if (counter >= n) {
-            // we've done n iterations; pause here
-            // my idea: unlock the mutex, notify v2
-            internal_lock.unlock();
-            v2.notify_one();
-            
-            while (got_processed > 0) {
-              // when ProcessNIterations() is called again, resume here
-              // my idea: wait for v1 reacquiring the mutex again
-              v1.wait(internal_lock);
-            }
-            counter = 0;
-          }
-        }
-      }
-    }
 
 int main(int argc, char *argv[]) {
   TestToys(argc, argv);

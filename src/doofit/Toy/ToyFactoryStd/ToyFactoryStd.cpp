@@ -61,28 +61,9 @@ namespace Toy {
     TStopwatch sw;
     sw.Start();
     
-    if (config_toyfactory_.parameter_read_file().size() > 0) {
-      if (!boost::filesystem::exists(config_toyfactory_.parameter_read_file())) {
-        serr << "Cannot read parameters from file " << config_toyfactory_.parameter_read_file() << endmsg;
-        throw NotGeneratingDataException();
-      }
-      sinfo << "Reading parameters from " << config_toyfactory_.parameter_read_file() << endmsg;
-      try {
-        RooArgSet* argset_parameters = config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables());
-        argset_parameters->readFromFile(config_toyfactory_.parameter_read_file().c_str());
-        delete argset_parameters;
-      } catch (const PdfNotSetException& e) {
-        if (config_toyfactory_.discrete_probabilities().size() == 0) {
-          // could not generate continous sample via PDF, nor is a discrete sample requested
-          serr << "Not generating any data as neither PDF if set nor discrete variables are requested." << endmsg;
-          throw NotGeneratingDataException();
-        }
-      } catch (const ArgSetNotSetException& e) {
-        serr << "Cannot generate any data as observables argument set is not set." << endmsg;
-        throw e;
-      }  
-    }
-    
+    ReadParametersFromFile();
+    DrawConstrainedParameters();
+        
     // try to generate with PDF (if set)
     RooDataSet* data = NULL;
     try {
@@ -146,6 +127,8 @@ namespace Toy {
       delete argset_parameters;
     }
     
+    //ReadParametersFromFile();
+    
     sinfo.Ruler();
     
     return data;
@@ -159,6 +142,75 @@ namespace Toy {
       return true;
     } else {
       return false;
+    }
+  }
+  
+  void ToyFactoryStd::ReadParametersFromFile() {
+    if (config_toyfactory_.parameter_read_file().size() > 0) {
+      if (!boost::filesystem::exists(config_toyfactory_.parameter_read_file())) {
+        serr << "Cannot read parameters from file " << config_toyfactory_.parameter_read_file() << endmsg;
+        throw NotGeneratingDataException();
+      }
+      sinfo << "Reading parameters from " << config_toyfactory_.parameter_read_file() << endmsg;
+      try {
+        RooArgSet* argset_parameters = config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables());
+        argset_parameters->readFromFile(config_toyfactory_.parameter_read_file().c_str());
+        delete argset_parameters;
+      } catch (const PdfNotSetException& e) {
+        if (config_toyfactory_.discrete_probabilities().size() == 0) {
+          // could not generate continous sample via PDF, nor is a discrete sample requested
+          serr << "Not setting any parameters as neither PDF if set nor discrete variables are requested." << endmsg;
+          throw NotGeneratingDataException();
+        }
+      } catch (const ArgSetNotSetException& e) {
+        serr << "Cannot set parameters as observables argument set is not set." << endmsg;
+        throw e;
+      }  
+    }
+  }
+  
+  void ToyFactoryStd::DrawConstrainedParameters() {
+    const RooArgSet* argset_constraining_pdfs = config_toyfactory_.argset_constraining_pdfs();
+    if (argset_constraining_pdfs) {
+      sinfo << "Drawing values of constrained parameters." << endmsg;
+      sinfo.set_indent(sinfo.indent()+2);
+      
+      TIterator* arg_it = argset_constraining_pdfs->createIterator();
+      RooAbsArg* arg = NULL;
+      RooArgSet* parameters = config_toyfactory_.generation_pdf()->getParameters(config_toyfactory_.argset_generation_observables());
+
+      while ((arg = (RooAbsArg*)arg_it->Next())) {
+        RooAbsPdf* constr_pdf    = dynamic_cast<RooAbsPdf*>(arg);
+        RooArgSet* constr_params = constr_pdf->getObservables(parameters);
+        
+        sinfo << "Drawing for " << *constr_params << " with PDF " << constr_pdf->GetName() << endmsg;
+        
+        if (config_toyfactory_.parameter_read_file().size() > 0) {
+          if (!boost::filesystem::exists(config_toyfactory_.parameter_read_file())) {
+            serr << "Cannot read parameters from file " << config_toyfactory_.parameter_read_file() << endmsg;
+            throw NotGeneratingDataException();
+          }
+          RooArgSet* argset_parameters = constr_pdf->getParameters(constr_params);
+          argset_parameters->readFromFile(config_toyfactory_.parameter_read_file().c_str());
+          delete argset_parameters;
+        }
+        RooDataSet * constr_data = constr_pdf->generate(*constr_params, 1);
+    
+        TIterator* par_it = constr_data->get(0)->createIterator();
+        RooAbsArg* par = NULL;
+        while ((par = (RooAbsArg*)par_it->Next())) {
+          RooRealVar* par_real = dynamic_cast<RooRealVar*>(par);
+          dynamic_cast<RooRealVar*>(parameters->find(par_real->GetName()))->setVal(par_real->getVal());
+        }
+        delete par_it;
+        
+        delete constr_params;
+        delete constr_data;
+      }
+      
+      delete parameters;
+      delete arg_it;
+      sinfo.set_indent(sinfo.indent()-2);
     }
   }
   
@@ -268,7 +320,7 @@ namespace Toy {
   RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     RooDataSet* data = NULL;
     bool have_to_delete_proto_data = false;
-        
+    
     const std::vector<Config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
     if (matched_proto_sections.size() > 0) {
       // @todo If PDF ist extended AND no yield is set, we need to get yield from
@@ -579,7 +631,7 @@ namespace Toy {
     //  3. the corresponding values of the variable as C style array
     //  4. the number how many times the variable was generated as C style array
     //  5. number of entries in C style arrays
-    vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> > disc_vars;
+    std::vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> > disc_vars;
     
     // prepare everything:
     //  - check variables for validity
@@ -643,7 +695,7 @@ namespace Toy {
     int j;
     
     sinfo << "Generating discrete dataset for ";
-    for (vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> >::const_iterator it = disc_vars.begin(); it != disc_vars.end(); ++it) {
+    for (std::vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> >::const_iterator it = disc_vars.begin(); it != disc_vars.end(); ++it) {
       if (it != disc_vars.begin()) sinfo << ", ";
       sinfo << (*it).get<0>()->GetName();
     }
@@ -653,7 +705,7 @@ namespace Toy {
     for (int i=0; i<yield; ++i) {
       // loop over variables (thanks to previous preparations, the only call 
       // consuming relevant CPU time is the call to RooDataSet::addFast(...))
-      for (vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> >::const_iterator it = disc_vars.begin(); it != disc_vars.end(); ++it) {   
+      for (std::vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> >::const_iterator it = disc_vars.begin(); it != disc_vars.end(); ++it) {   
         // get all stuff from the tuple
         RooAbsArg* disc_var   = (*it).get<0>();
         double* cum_probs     = (*it).get<1>();
@@ -681,7 +733,7 @@ namespace Toy {
     }
     
     // table print and cleanup
-    for (vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> >::const_iterator it = disc_vars.begin(); it != disc_vars.end(); ++it) {       
+    for (std::vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> >::const_iterator it = disc_vars.begin(); it != disc_vars.end(); ++it) {       
       sinfo << "Generation table for " << (*it).get<0>()->GetName() << ": ";
       for (int i=0; i<(*it).get<4>(); ++i) {
         if (i > 0) sinfo << ", ";

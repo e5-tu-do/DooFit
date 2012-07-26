@@ -114,6 +114,10 @@ namespace Toy {
      */
     const std::vector<Config::CommaSeparatedPair>& proto_sections() const {return proto_sections_;}
     /**
+     *  \brief Getter for RooArgSet* with all constraining PDFs to draw from
+     */
+    const RooArgSet* argset_constraining_pdfs() const; 
+    /**
      *  @brief Getter for fixed data set size (in contrast to poisson smearing)
      *
      *  @see ToyFactoryStd::set_dataset_size_fixed(bool)
@@ -139,13 +143,13 @@ namespace Toy {
      *
      *  @return current filename to read from
      */
-    const string& parameter_read_file() const {return parameter_read_file_;}
+    const std::string& parameter_read_file() const {return parameter_read_file_;}
     /**
      *  @brief Getter for file to save parameters to after generation
      *
      *  @return current filename to save to
      */
-    const string& parameter_save_file() const {return parameter_save_file_;}
+    const std::string& parameter_save_file() const {return parameter_save_file_;}
     ///@}
     
     /** @name Setter actual options
@@ -192,7 +196,7 @@ namespace Toy {
      *  Setting this workspace is only sensible if also using setters for PDF and
      *  argument set names.
      *
-     *  @see ToyFactoryStdConfig::set_argset_generation_observables_workspace(const string&)
+     *  @see ToyFactoryStdConfig::set_argset_generation_observables_workspace(const std::string&)
      *  @see ToyFactoryStdConfig::set_generation_pdf_workspace(const std::string&)
      *
      *  @param ws RooWorkspace to use
@@ -226,6 +230,20 @@ namespace Toy {
      *  @param name Name of RooArgSet on workspace
      */
     void set_argset_generation_observables_workspace(const std::string& name); 
+    /**
+     *  @brief Setter for RooArgSet* name with all constraining PDFs to generate 
+     *         constrained parameters from on linked workspace
+     *
+     *  If a workspace is linked and no RooArgSet* with constraining PDFs is set 
+     *  via the appropriate setter itself, a RooArgSet* will be loaded from the 
+     *  workspace with the supplied name.
+     *
+     *  @see ToyFactoryStdConfig::set_workspace(const RooWorkspace*)
+     *  @see ToyFactoryStdConfig::set_generation_pdf_workspace(const std::string&)
+     *
+     *  @param name Name of RooArgSet on workspace
+     */
+    void set_argset_constraining_pdfs_workspace(const std::string& name); 
     /**
      *  \brief Setter for random seed
      *
@@ -262,6 +280,11 @@ namespace Toy {
      *  @param proto_sections vector of Config::CommaSeparatedPair to use
      */
     void set_proto_sections(const std::vector<Config::CommaSeparatedPair>& proto_sections) {proto_sections_ = proto_sections;}
+    /**
+     *  \brief Setter for RooArgSet* with all constraining PDFs to draw from
+     */
+    void set_argset_constraining_pdfs(const RooArgSet* argset_constraining_pdfs) 
+    {argset_constraining_pdfs_ = argset_constraining_pdfs;}
     /**
      *  @brief Setter for fixed data set size (in contrast to poisson smearing)
      *
@@ -304,13 +327,13 @@ namespace Toy {
      *
      *  @param filename filename to read from
      */
-    void set_parameter_read_file(const string& filename) {parameter_read_file_ = filename;}
+    void set_parameter_read_file(const std::string& filename) {parameter_read_file_ = filename;}
     /**
      *  @brief Setter for file to save parameters to after generation
      *
      *  @param filename filename to save to
      */
-    void set_parameter_save_file(const string& filename) {parameter_save_file_ = filename;}
+    void set_parameter_save_file(const std::string& filename) {parameter_save_file_ = filename;}
     
     /**
      *  \brief Add a discrete probability distribution
@@ -418,6 +441,14 @@ namespace Toy {
      */  
     std::string argset_generation_observables_workspace_;
     /**
+     *  @brief Name of RooArgSet with all constraining PDFs to generate 
+     *         constrained parameters from on linked workspace
+     *
+     *  @see ToyFactoryStdConfig::argset_constraining_pdfs_
+     *  @see ToyFactoryStdConfig::workspace_
+     */  
+    std::string argset_constraining_pdfs_workspace_;    
+    /**
      *  \brief Random seed to use for the toy factory upon initialization
      */
     int random_seed_;
@@ -442,6 +473,13 @@ namespace Toy {
      */
     std::vector<Config::CommaSeparatedPair> proto_sections_;
     /**
+     *  @brief RooArgSet with all constraining PDFs to generate constrained parameters from
+     *
+     *  All PDFs in this RooArgSet will be used to draw constrained parameters 
+     *  from for using the toy factory in constrained fits.
+     */
+    const RooArgSet* argset_constraining_pdfs_;
+    /**
      *  @brief Option for fixed data set size (in contrast to poisson smearing)
      *
      *  This option determines if the size of the dataset is to be fixed or 
@@ -461,11 +499,11 @@ namespace Toy {
     /**
      *  @brief File to read parameters from before generation
      */
-    string parameter_read_file_;
+    std::string parameter_read_file_;
     /**
      *  @brief File to save parameters to after generation
      */
-    string parameter_save_file_;
+    std::string parameter_save_file_;
     ///@}
     
     /** @name Other private members
@@ -514,7 +552,7 @@ namespace Toy {
    *  \brief Exception for not set RooArgSet in ToyFactoryStdConfig
    */
   struct ArgSetNotSetException: public virtual boost::exception, public virtual std::exception { 
-    virtual const char* what() const throw() { return "Observables argument set not set"; }
+    virtual const char* what() const throw() { return "Argument set not set"; }
   };
 #endif /* __CINT __ */
 } // namespace Toy

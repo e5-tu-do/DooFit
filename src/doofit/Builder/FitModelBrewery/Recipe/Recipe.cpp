@@ -1,6 +1,7 @@
 #include "doofit/Builder/FitModelBrewery/Recipe/Recipe.h"
 
 // from STL
+#include <utility>
 
 // from project
 /// from utils
@@ -12,6 +13,8 @@ namespace doofit {
 namespace builder {
 namespace fitmodelbrewery {
 
+  using namespace std;
+  
 Recipe::Recipe() 
     : map_dims_real_(),
       map_dims_discrete_(),

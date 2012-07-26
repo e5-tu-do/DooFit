@@ -38,6 +38,7 @@ namespace Toy {
   generation_pdf_workspace_(""),
   argset_generation_observables_workspace_(""),
   random_seed_(0),
+  argset_constraining_pdfs_(NULL),
   ws_file_(NULL)
   {
     swarn << "Usage of ToyFactoryStdConfig::ToyFactoryStdConfig() is not recommended!" <<endmsg;
@@ -52,6 +53,7 @@ namespace Toy {
   generation_pdf_workspace_(""),
   argset_generation_observables_workspace_(""),
   random_seed_(0),
+  argset_constraining_pdfs_(NULL),
   ws_file_(NULL)
   {
   }
@@ -117,9 +119,18 @@ namespace Toy {
     }  
   }
   
+  const RooArgSet* ToyFactoryStdConfig::argset_constraining_pdfs() const {
+    if (argset_constraining_pdfs_) { 
+      return argset_constraining_pdfs_;
+    } else if (argset_constraining_pdfs_workspace_.length() > 0 && workspace() && workspace()->set(argset_constraining_pdfs_workspace_.c_str())) {
+      return workspace()->set(argset_constraining_pdfs_workspace_.c_str());
+    } else {
+      return NULL;
+    }  
+  }
+  
   void ToyFactoryStdConfig::set_generation_pdf_workspace(const std::string& name) {
     generation_pdf_workspace_ = name;
-    
     if (generation_pdf_) {
       swarn << "WARNING: Setting PDF to be loaded from workspace although it is already directly specified. Will ignore workspace." << endmsg;
     }
@@ -127,9 +138,16 @@ namespace Toy {
   
   void ToyFactoryStdConfig::set_argset_generation_observables_workspace(const std::string& name) {
     argset_generation_observables_workspace_ = name;
-    
     if (argset_generation_observables_) {
       swarn << "WARNING: Setting argument set to be loaded from workspace although it is already directly specified. Will ignore workspace." << endmsg;
+    }
+  }
+  
+  void ToyFactoryStdConfig::set_argset_constraining_pdfs_workspace(const std::string& name) {
+    argset_constraining_pdfs_workspace_ = name;
+    
+    if (argset_constraining_pdfs_) {
+      swarn << "WARNING: Setting argument set for constraining PDFs to be loaded from workspace although it is already directly specified. Will ignore workspace." << endmsg;
     }
   }
   
@@ -172,24 +190,43 @@ namespace Toy {
       scfg << "(not set)" << endmsg;
     }
     
+    scfg << "Fixed size dataset:        " << dataset_size_fixed_ << endmsg;
+    
+    for (vector<Config::DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities_.begin(); it != discrete_probabilities_.end(); ++it) {
+      scfg << "Discrete probability:      " << *it << endmsg;
+    }
+    for (vector<Config::CommaSeparatedPair>::const_iterator it = proto_sections_.begin(); it != proto_sections_.end(); ++it) {
+      scfg << "Proto dataset section:     " << *it << endmsg;
+    }
+    
+    scfg << "Constraining PDFs:         ";
+    if (argset_constraining_pdfs()) {
+      TIterator* arg_it = argset_constraining_pdfs()->createIterator();
+      RooAbsArg* arg = NULL;
+      bool first = true;
+      
+      while ((arg = (RooAbsArg*)arg_it->Next())) {
+        if (!first) {
+          scfg << ", ";
+        } else {
+          first = false;
+        }
+        
+        scfg << arg->GetName();
+      }
+      scfg << endmsg;
+      delete arg_it;
+    }
+    
     scfg << "Workspace:                 ";
     if (workspace()) {
       scfg << "(is set)" << endmsg;
       
       scfg << " PDF name (workspace):     " << generation_pdf_workspace_ << endmsg;
-      scfg << " Argset name (workspace):  " << argset_generation_observables_workspace_ << endmsg;
+      scfg << " Argset name observables (workspace):       " << argset_generation_observables_workspace_ << endmsg;
+      scfg << " Argset name constraining PDFs (workspace): " << argset_constraining_pdfs_workspace_ << endmsg;
     } else {
       scfg << "(is not set)" << endmsg;
-    }
-    
-    scfg << "Fixed size dataset:        " << dataset_size_fixed_ << endmsg;
-    
-    
-    for (vector<Config::DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities_.begin(); it != discrete_probabilities_.end(); ++it) {
-      scfg << "Discrete probability: " << *it << endmsg;
-    }
-    for (vector<Config::CommaSeparatedPair>::const_iterator it = proto_sections_.begin(); it != proto_sections_.end(); ++it) {
-      scfg << "Proto dataset section: " << *it << endmsg;
     }
 
     if (workspace_filename_name_.first().length() > 0) {
@@ -219,6 +256,8 @@ namespace Toy {
      "Name of PDF to generate for on linked workspace")
     (GetOptionString("argset_name_ws").c_str(), po::value<string>(&argset_generation_observables_workspace_),
      "Name of variables argset to generate for on linked workspace")
+    (GetOptionString("argset_constraining_name_ws").c_str(), po::value<string>(&argset_constraining_pdfs_workspace_),
+     "Name of constraining PDFs argset to use on linked workspace")
     (GetOptionString("discrete_probabilities").c_str(), po::value<vector<Config::DiscreteProbabilityDistribution> >(&discrete_probabilities_)->composing(), "Discrete probability distribution for variables (can be multiply defined). The string representation is var_name,value1,prob1,value2,prob2,...,valueN,probN")
     (GetOptionString("proto_section").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&proto_sections_)->composing(), "Proto dataset generation section. Specify sub PDF name and config section to use for proto data for this PDF. String representation is pdf_name,section")
     (GetOptionString("dataset_size_fixed").c_str(), po::value<bool>(&dataset_size_fixed_)->default_value(false),"Set to true to generate a fixed size dataset (instead of poisson distributed size which is default)")
