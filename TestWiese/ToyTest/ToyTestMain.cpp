@@ -52,48 +52,7 @@ using namespace RooFit;
 using namespace doofit;
 using namespace doofit::utils;
 
-class Worker
-{
-public: 
-  
-  Worker(unsigned N, float guess, unsigned iter) 
-  : m_Number(N),
-  m_Guess(guess),
-  m_Iterations(iter)
-  {
-  }
-  
-  void operator()()
-  {
-    std::cout << "Worker: calculating sqrt(" << m_Number
-    << "), itertations = "
-    << m_Iterations << std::endl;
-    
-    // Use Newton's Method
-    float   x;
-    float   x_last = m_Guess;
-    
-    for (unsigned i=0; i < m_Iterations; i++)
-    {
-      x = x_last - (x_last*x_last-m_Number)/
-      (2*x_last);
-      x_last = x;
-      
-      std::cout << "Iter " << i << " = "
-      << x << std::endl;
-    }
-    
-    std::cout << "Worker: Answer = " << x << std::endl;
-  }
-  
-private:
-  
-  unsigned    m_Number;
-  float       m_Guess;
-  unsigned    m_Iterations;
-};
-
-
+/// just a helper function to build a PDF
 RooWorkspace* BuildPDF() {
   RooWorkspace* ws = new RooWorkspace("ws");
   ws->Print();
@@ -165,6 +124,7 @@ RooWorkspace* BuildPDF() {
   return ws;
 }
 
+/// just a helper function to plot a single fit
 void PlotToyFit(RooWorkspace* ws, const RooAbsPdf* pdf) {
   TFile f("data.root","read");
   RooDataSet* data = (RooDataSet*)f.Get("dataset");
@@ -204,6 +164,7 @@ void PlotToyFit(RooWorkspace* ws, const RooAbsPdf* pdf) {
   delete data;
 }
 
+/// using Doofit's toy mechanisms
 void TestToys(int argc, char *argv[]) {
   using namespace Toy;
   using namespace RooFit;
@@ -211,11 +172,8 @@ void TestToys(int argc, char *argv[]) {
   Config::CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
   
-  BuilderStdConfig cfg_bld("builder");
-  cfg_bld.InitializeOptions(cfg_com);
-  
   ToyFactoryStdConfig cfg_tfac("toyfac");
-  cfg_tfac.InitializeOptions(cfg_bld);
+  cfg_tfac.InitializeOptions(cfg_com);
   
   ToyStudyStdConfig cfg_tstudy("toystudy");
   cfg_tstudy.InitializeOptions(cfg_tfac);
@@ -259,24 +217,10 @@ void TestToys(int argc, char *argv[]) {
     sinfo << "fit no " << i << endmsg;
     tstudy.StoreFitResult(fit_result);
     delete data;
+
   }
   tstudy.FinishFitResultSaving();
     
-//  tstudy.ReadFitResults("fr1");
-//  std::vector<const RooFitResult*> results = tstudy.GetFitResults();
-//  tstudy.EmptyResults();
-//  for (std::vector<const RooFitResult*>::const_iterator it = results.begin();
-//       it != results.end(); ++it) {
-//    (*it)->Print();
-//  }
-//  tstudy.ReadFitResults("fr2");
-//  std::vector<const RooFitResult*> results2 = tstudy.GetFitResults();
-//  tstudy.EmptyResults();
-//  for (std::vector<const RooFitResult*>::const_iterator it = results2.begin();
-//       it != results2.end(); ++it) {
-//    (*it)->Print();
-//  }
-
 //  tstudy.ReadFitResults();
 //  tstudy.EvaluateFitResults();
 //  tstudy.PlotEvaluatedParameters();

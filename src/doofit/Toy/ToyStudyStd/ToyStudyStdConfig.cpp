@@ -102,20 +102,22 @@ namespace Toy {
       const boost::regex filename_pattern_regex(filename_path.string());
       std::vector<std::string> all_matching_files;
       
-      boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
-      for( boost::filesystem::directory_iterator i(parent_path); i != end_itr; ++i ) {
-        
-        // Skip if not a file
-        if(!fs::is_regular_file(i->status())) continue;
-        
-        boost::smatch what;
-        // Skip if no match
-        if(!boost::regex_match(i->path().filename().string(), what, filename_pattern_regex)) continue;
-        
-        std::string result_file_tree_str = i->path().string() + "," + treename;
-        Config::CommaSeparatedPair result_file_tree;
-        result_file_tree.Parse(result_file_tree_str);
-        AddReadResultsFilenameTreename(result_file_tree);
+      if (fs::is_directory(parent_path)) {
+        boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
+        for( boost::filesystem::directory_iterator i(parent_path); i != end_itr; ++i ) {
+          
+          // Skip if not a file
+          if(!fs::is_regular_file(i->status())) continue;
+          
+          boost::smatch what;
+          // Skip if no match
+          if(!boost::regex_match(i->path().filename().string(), what, filename_pattern_regex)) continue;
+          
+          std::string result_file_tree_str = i->path().string() + "," + treename;
+          Config::CommaSeparatedPair result_file_tree;
+          result_file_tree.Parse(result_file_tree_str);
+          AddReadResultsFilenameTreename(result_file_tree);
+        }
       }
     }
   }
