@@ -12,7 +12,12 @@ from optparse import OptionParser
 #  individual job files from this. The user can supply a job base name, job 
 #  directory for jobs and logs, number of PBS jobs to run, number of iterations 
 #  in each PBS job, walltime and number of CPUs to use.
-#  
+# 
+#  The proto job is basically the job to be run on the PBS cluster with a bunch
+#  of keywords to be replaced (settings for the toy run, individual job settings
+#  for one specific job and so on). See below for a list of keywords and 
+#  possibilities.
+# 
 #  Also each iteration can get a unique seed starting at 1.
 #
 #  @section pbsjobbuilder_protojob The proto job file
