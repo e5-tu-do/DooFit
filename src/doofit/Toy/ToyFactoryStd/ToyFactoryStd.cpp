@@ -367,7 +367,7 @@ namespace Toy {
         sinfo << "RooExtendPdf " << pdf.GetName() << "(" << sub_pdf.GetName() << "," << yield.GetName() << "=" << yield.getVal() << ") will be decomposed." << endmsg;
         
         sinfo.set_indent(sinfo.indent()+2);
-                
+        
         data = GenerateForPdf(sub_pdf, argset_generation_observables, expected_yield>0 ? expected_yield : yield.getVal(), extended, proto_data);
         sinfo.set_indent(sinfo.indent()-2);
       } else if (PdfIsAdded(pdf)) {
@@ -429,6 +429,7 @@ namespace Toy {
   
   RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     // if no external yield set, get expectation from PDF
+    bool expected_yield_set = (expected_yield>0);
     if (expected_yield==0) {
       expected_yield = pdf.expectedEvents(argset_generation_observables);
     }
@@ -453,6 +454,10 @@ namespace Toy {
     }
     
     sinfo << "will be decomposed. Expecting " << expected_yield << " events." << endmsg;
+    if (add_pdf_extended && expected_yield_set) {
+      swarn << "Although PDF is extended, an external yield has been set. PDF itself would expect " << pdf.expectedEvents(argset_generation_observables) << " events." << endmsg;
+      swarn << "Will generate " << expected_yield << " events instead (external set yield via config file/command line or higher PDFs)." << endmsg;
+    }
     sinfo.set_indent(sinfo.indent()+2);
     
     RooAbsPdf* sub_pdf = NULL;
@@ -580,8 +585,13 @@ namespace Toy {
   
   RooDataSet* ToyFactoryStd::GenerateForSimultaneousPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     sinfo << "RooSimultaneous " << pdf.GetName() << " will be decomposed." << endmsg;
+    if (expected_yield>0) {
+      swarn << "A yield to generate is set for the simultaneous PDF. This will lead to all simultaneous sub PDFs" << endmsg;
+      swarn << "being generated in this size (yield=" << expected_yield << "). This is generally not what is intended for simultaneous PDFs." << endmsg;
+      swarn << "It is advised to use extended PDFs in each sample and not set a yield to generate via the expected_yield option." << endmsg;
+    }
     sinfo.set_indent(sinfo.indent()+2);
-
+    
     RooSimultaneous& sim_pdf = dynamic_cast<RooSimultaneous&>(pdf);
     const RooAbsCategoryLValue& sim_cat_grr = (sim_pdf.indexCat());
     RooAbsCategoryLValue& sim_cat = *dynamic_cast<RooAbsCategoryLValue*>(sim_pdf.findServer(sim_cat_grr.GetName()));
