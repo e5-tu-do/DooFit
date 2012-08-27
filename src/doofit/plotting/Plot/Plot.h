@@ -18,6 +18,14 @@ class RooAbsRealLValue;
 class RooAbsData;
 
 namespace doofit {
+/** @namespace doofit::plotting
+ *
+ *  @brief Plotting subsystem namespace.
+ *
+ *  This namespace is responsible for plotting.
+ *
+ */
+  
 namespace plotting {
   /** @class Plot
    *  @brief A simple plot based on a dataset and optional PDFs
