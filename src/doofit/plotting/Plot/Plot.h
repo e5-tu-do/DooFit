@@ -42,25 +42,25 @@ namespace plotting {
    *  Usage is shown via this example:
    *
    *@code
-   *#include "doofit/plotting/Plot/Plot.h"
-   *#include "RooRealVar.h"
-   *#include "RooGaussian.h"
-   *#include "RooDataSet.h"
-   *#include "RooArgList.h"
+   * #include "doofit/plotting/Plot/Plot.h"
+   * #include "RooRealVar.h"
+   * #include "RooGaussian.h"
+   * #include "RooDataSet.h"
+   * #include "RooArgList.h"
    *
-   *int main(int argc, char *argv[]) {
-   *  using namespace doofit::plotting;
+   * int main(int argc, char *argv[]) {
+   *   using namespace doofit::plotting;
    *
-   *  RooRealVar mass("mass","mass",5200,5400, "MeV/c^{2}");
-   *  RooRealVar mean("mean","mean",5300);
-   *  RooRealVar sigma("sigma","sigma",20);
-   *  RooGaussian g("g","g",mass,mean,sigma);
+   *   RooRealVar mass("mass","mass",5200,5400, "MeV/c^{2}");
+   *   RooRealVar mean("mean","mean",5300);
+   *   RooRealVar sigma("sigma","sigma",20);
+   *   RooGaussian g("g","g",mass,mean,sigma);
    * 
-   *  RooDataSet* data = g.generate(mass, 1000);
+   *   RooDataSet* data = g.generate(mass, 1000);
    *
-   *  Plot myplot(mass, *data, RooArgList(g));
-   *  myplot.PlotIt();
-   *}
+   *   Plot myplot(mass, *data, RooArgList(g));
+   *   myplot.PlotIt();
+   * }
    *@endcode
    */
   
