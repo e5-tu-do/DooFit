@@ -51,7 +51,7 @@ namespace plotting {
    * int main(int argc, char *argv[]) {
    *   using namespace doofit::plotting;
    *
-   *   RooRealVar mass("mass","mass",5200,5400, "MeV/c^{2}");
+   *   RooRealVar mass("mass","mass",5200,5400,"MeV/c^{2}");
    *   RooRealVar mean("mean","mean",5300);
    *   RooRealVar sigma("sigma","sigma",20);
    *   RooGaussian g("g","g",mass,mean,sigma);
