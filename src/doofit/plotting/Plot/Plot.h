@@ -62,6 +62,13 @@ namespace plotting {
    *   myplot.PlotIt();
    * }
    * @endcode
+   *
+   *  Plot will simply plot the given dataset in the supplied variable. If PDFs
+   *  are also supplied (optional), they are plotted as well (currently there is
+   *  only support for one PDF). A pull plot is automatically created if PDFs 
+   *  are supplied.
+   *
+   *  doofit::utils methods are used for plotting assuring nice and shiny plots.
    */
   
   class Plot {
