@@ -33,6 +33,8 @@
 // from Project
 #include "doofit/Config/CommonConfig.h"
 
+#include "doofit/plotting/Plot/Plot.h"
+
 #include "doofit/Builder/BuilderStd/BuilderStd.h"
 #include "doofit/Builder/BuilderStd/BuilderStdConfig.h"
 
@@ -212,6 +214,12 @@ void TestToys(int argc, char *argv[]) {
     pdf->getParameters(data)->find("mean2")->Print();
     RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Verbose(false),Timer(true), Minimizer("Minuit2"), ExternalConstraints(*ws->set("constraint_pdfs")));
     
+//    utils::setStyle();
+//    RooPlot* plot_frame = ws->var("mass")->frame();
+//    data->plotOn(plot_frame);
+//    ws->pdf("pdf_add")->plotOn(plot_frame);
+//    utils::PlotResiduals("mass", plot_frame, ws->var("mass"), ws->pdf("pdf_add"),"Plot/", true);
+    
     //PlotToyFit(ws, pdf);
 
     sinfo << "fit no " << i << endmsg;
@@ -232,6 +240,18 @@ void TestToys(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
+  using namespace doofit::plotting;
+  
+  RooRealVar mass("mass","mass",5200,5400, "MeV/c^{2}");
+  RooRealVar mean("mean","mean",5300);
+  RooRealVar sigma("sigma","sigma",20);
+  RooGaussian g("g","g",mass,mean,sigma);
+  
+  RooDataSet* data = g.generate(mass, 1000);
+  
+  Plot myplot(mass, *data, RooArgList(g));
+  myplot.PlotIt();
+  
   TestToys(argc, argv);
 }
 

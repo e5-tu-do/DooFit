@@ -39,6 +39,7 @@
 #include "RooHist.h"
 #include "RooCmdArg.h"
 #include "RooGlobalFunc.h"
+#include "RooAbsRealLValue.h"
 
 namespace doofit {
   namespace utils
@@ -137,9 +138,12 @@ namespace doofit {
     void		drawOrdered(TH1* h1, TH1* h2, TH1* h3=0, TH1* h4=0);
     
     void		addEtaPtLabels(TH2D* h);
-    void 		PlotResiduals(TString pName, RooPlot * pFrame, RooRealVar * pVar, RooAbsPdf * pPDF, 
-                          TString pDir = "", bool normalize = true, bool plot_log = false, 
-                          TLatex label = TLatex(1.,1.,""));
+
+    void 		PlotSimple(TString pName, RooPlot * pFrame, const RooAbsRealLValue * pVar,  TString pDir = "", bool plot_logy = false, TLatex label = TLatex(1.,1.,""), bool plot_logx = false);
+    
+    void 		PlotResiduals(TString pName, RooPlot * pFrame, const RooAbsRealLValue * pVar, RooAbsPdf * pPDF, 
+                          TString pDir = "", bool normalize = true, bool plot_logy = false, 
+                          TLatex label = TLatex(1.,1.,""), bool plot_logx = false);
     
     ///Do an Asymmetry Plot for a given NTuple the name of the time variable and a variable name that is used for a cut (+/-1) to separate two mixing states
     void plotAsymmetry(TString pPlotName, TTree * pTuple, TString pVarTime, TString pVarMix, int pBins = 20, double pRngMax = 0.01, double pRngMin = 0.00, TString pTimeUnit = "ns");
@@ -187,6 +191,24 @@ namespace doofit {
      *  @return pair of (double,double) as (min,max) to use for plotting
      */
     std::pair<double,double> MedianLimitsForTuple(const RooDataSet& dataset, std::string var_name);
+    
+    /**
+     *  @brief Get TTree with decativated branches for faster RooFit import
+     *
+     *  This function will open a TFile, get a TTree inside and deactivate all 
+     *  unnecessary branches so a import in RooFit is much faster
+     *
+     *  @param file_name file name of TFile to open
+     *  @param tree_name tree name in TFile to open
+     *  @param argset RooArgSet of parameters to activate
+     *  @return pointer to TFile and TTree with (de)activated branches
+     *
+     *  @code
+     *  std::pair<TFile*,TTree*> file_tree = LoadTTreeActivatedBranches("myfile.root", "mytree", observables);
+     *  TTree* tree = file_tree.second;
+     *  @endcode
+     */
+    std::pair<TFile*,TTree*> LoadTTreeActivatedBranches(std::string file_name, std::string tree_name, const RooArgSet& argset);
   };
 };
 #endif // #ifdef utils_h

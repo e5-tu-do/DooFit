@@ -11,8 +11,16 @@
 // POSIX/UNIX
 #include <unistd.h>
 
+//from ROOT
+#include "TFile.h"
+#include "TTree.h"
+#include "RooArgSet.h"
+#include "TROOT.h"
+
 //from Roofit
 #include "RooDataSet.h"
+#include "RooAbsArg.h"
+#include "RooLinkedListIter.h"
 
 #include "doofit/utils/MsgStream.h"
 
@@ -26,6 +34,8 @@ namespace doofit {
  */
 void utils::setStyle(TString option)
 {
+  gROOT->SetStyle("Plain");
+
 	// text font
 	int font = 132;
 	gStyle->SetTitleFont(font, "xyz");	// set the all 3 axes title font
@@ -434,9 +444,56 @@ void utils::addEtaPtLabels(TH2D* h)
 	h->GetYaxis()->SetTitle("y");
 }
 
-void utils::PlotResiduals(TString pName, RooPlot * pFrame, RooRealVar * pVar, RooAbsPdf * pPDF, 
-                          TString pDir, bool normalize, bool plot_log,
-                          TLatex label
+void utils::PlotSimple(TString pName, RooPlot * pFrame, const RooAbsRealLValue * pVar, TString pDir, bool plot_logy, TLatex label, bool plot_logx) {
+	setStyle();
+  gStyle->SetTitle(0);
+  
+  // some global definitions
+  double pad_border       = 0.02;
+  double pad_relysplit    = 0.00;
+  double left_margin      = 0.16;
+  double top_label_size   = 0.06;
+  double top_title_offset = 1.2;
+  double title2label_size_ratio = 1.1;
+  
+  // derived definitions
+  double pad_ysplit     = (1.0-2.*pad_border)*pad_relysplit;
+  double bottom_label_size = top_label_size*(1.-pad_relysplit)/pad_relysplit;
+  double bottom_title_offset = top_title_offset/(1.-pad_relysplit)*pad_relysplit;
+  
+  double plot_min = pFrame->GetXaxis()->GetXmin();
+  double plot_max = pFrame->GetXaxis()->GetXmax();
+  
+  TCanvas c1("c1","c1",900,630);
+  TPad* pad = (TPad*)c1.cd();
+  label.Draw();
+  if(plot_logy){
+    pad->SetLogy(1);
+  }
+  if (plot_logx) {
+    pad->SetLogx(1);
+  }
+  pad->SetPad(pad_border,pad_ysplit,1.-pad_border,1.-pad_border);
+  pad->SetLeftMargin(left_margin);
+  pad->SetBottomMargin(left_margin);
+
+//  pFrame->SetLabelSize(0.0,"x");
+  pFrame->SetLabelSize(top_label_size,"y");
+  pFrame->SetTitleSize(top_label_size*title2label_size_ratio,"y");
+  pFrame->GetYaxis()->SetTitleOffset(top_title_offset);
+  
+	pFrame->Draw();
+            
+  pad = (TPad*)c1.cd(0);
+  label.SetTextSize(0.05);
+  label.Draw();
+  
+  printPlot(&c1, pName, pDir);
+}
+  
+void utils::PlotResiduals(TString pName, RooPlot * pFrame, const RooAbsRealLValue * pVar, RooAbsPdf * pPDF, 
+                          TString pDir, bool normalize, bool plot_logy,
+                          TLatex label, bool plot_logx
                           ) {
 	setStyle();
   gStyle->SetTitle(0);
@@ -462,8 +519,11 @@ void utils::PlotResiduals(TString pName, RooPlot * pFrame, RooRealVar * pVar, Ro
   
   TPad* pad = (TPad*)c1.cd(1);
   label.Draw();
-  if(plot_log){
+  if(plot_logy){
     pad->SetLogy(1);
+  }
+  if (plot_logx) {
+    pad->SetLogx(1);
   }
   pad->SetPad(pad_border,pad_ysplit,1.-pad_border,1.-pad_border);
   pad->SetLeftMargin(left_margin);
@@ -485,8 +545,11 @@ void utils::PlotResiduals(TString pName, RooPlot * pFrame, RooRealVar * pVar, Ro
   pad->SetLeftMargin(left_margin);
   pad->SetTopMargin(0.);
   pad->SetBottomMargin(0.4);
-  
+  if (plot_logx) {
+    pad->SetLogx(1);
+  }
   RooPlot * residFrame = pVar->frame(RooFit::Title("Residuals"));
+  
   residFrame->GetXaxis()->SetLimits(plot_min,plot_max);
   
   residFrame->addPlotable(resid, "P");
@@ -585,6 +648,33 @@ void utils::plotAsymmetry(TString pPlotName, TTree * pTuple, TString pVarTime, T
         delete hUpSum;
         delete hUpDif;
         delete hUpAsy;
+}
+  
+std::pair<TFile*,TTree*> utils::LoadTTreeActivatedBranches(std::string file_name, std::string tree_name, const RooArgSet& argset) {
+  TFile* file = new TFile(file_name.c_str());
+  
+  if (file == NULL || file->IsZombie() || file->GetNkeys() <= 1) {
+    serr << "File " << file_name << " could not be opened properly." << endmsg;
+    throw 1;
+  }
+  
+  TTree* tree = dynamic_cast<TTree*>(file->Get(tree_name.c_str()));
+  if (tree == NULL) {
+    serr << "Tree " << tree_name << " could not be opened properly." << endmsg;
+    throw 2;
+  }
+  
+  tree->SetBranchStatus("*", 0);
+  
+  RooLinkedListIter* it  = (RooLinkedListIter*)argset.createIterator();
+  RooAbsArg*         arg = NULL;
+  
+  while ((arg=(RooAbsArg*)it->Next())) {
+    tree->SetBranchStatus(arg->GetName(), 1);
+  }
+  delete it;
+  
+  return make_pair<TFile*,TTree*>(file, tree);
 }
 };
 

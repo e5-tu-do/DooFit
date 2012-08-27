@@ -10,9 +10,9 @@ mean_time3 =  5300.0 L(5250 - 5350) // [MeV/c^{2}]
 sigma_time1 =  15.000 L(1 - 40) // [MeV/c^{2}]
 sigma_time2 =  15.000 L(1 - 40) // [MeV/c^{2}]
 sigma_time3 =  15.000 L(1 - 40) // [MeV/c^{2}]
-yield1 =  100 L(0 - 1000000) 
-yield2 =  100 L(0 - 1000000) 
-yield3 =  100 L(0 - 1000000)
+yield1 =  1000 L(0 - 1000000) 
+yield2 =  1000 L(0 - 1000000) 
+yield3 =  1000 L(0 - 1000000)
 mean2_mu = 5300 C L(-INF - INF)
 mean2_sigma = 0.1 C L(-INF - INF)
 
