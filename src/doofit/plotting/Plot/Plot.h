@@ -41,7 +41,7 @@ namespace plotting {
    *
    *  Usage is shown via this example:
    *
-   *@code
+   * @code
    * #include "doofit/plotting/Plot/Plot.h"
    * #include "RooRealVar.h"
    * #include "RooGaussian.h"
@@ -61,7 +61,7 @@ namespace plotting {
    *   Plot myplot(mass, *data, RooArgList(g));
    *   myplot.PlotIt();
    * }
-   *@endcode
+   * @endcode
    */
   
   class Plot {
