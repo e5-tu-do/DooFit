@@ -202,7 +202,7 @@ void TestToys(int argc, char *argv[]) {
   RooDataSet* data = NULL;
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
 
-  for (int i=0; i<200; ++i) {
+  for (int i=0; i<100; ++i) {
     data = tfac.Generate();
     //    delete data;
     //    gObjectTable->Print(); 
@@ -213,6 +213,10 @@ void TestToys(int argc, char *argv[]) {
 //    ws->pdf("pdf_constr_mean2")->getParameters(data)->readFromFile("generation.par");
     pdf->getParameters(data)->find("mean2")->Print();
     RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Verbose(false),Timer(true), Minimizer("Minuit2"), ExternalConstraints(*ws->set("constraint_pdfs")));
+    
+    using namespace doofit::plotting;
+    Plot myplot(*ws->var("mass"), *data, RooArgList(*pdf, *ws->pdf("time1")));
+    myplot.PlotItLogNoLogY();
     
 //    utils::setStyle();
 //    RooPlot* plot_frame = ws->var("mass")->frame();
@@ -229,9 +233,9 @@ void TestToys(int argc, char *argv[]) {
   }
   tstudy.FinishFitResultSaving();
     
-//  tstudy.ReadFitResults();
-//  tstudy.EvaluateFitResults();
-//  tstudy.PlotEvaluatedParameters();
+  tstudy.ReadFitResults();
+  tstudy.EvaluateFitResults();
+  tstudy.PlotEvaluatedParameters();
   
   //PlotToyFit(ws, pdf);
   delete ws;
@@ -240,18 +244,6 @@ void TestToys(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
-  using namespace doofit::plotting;
-  
-  RooRealVar mass("mass","mass",5200,5400, "MeV/c^{2}");
-  RooRealVar mean("mean","mean",5300);
-  RooRealVar sigma("sigma","sigma",20);
-  RooGaussian g("g","g",mass,mean,sigma);
-  
-  RooDataSet* data = g.generate(mass, 1000);
-  
-  Plot myplot(mass, *data, RooArgList(g));
-  myplot.PlotIt();
-  
   TestToys(argc, argv);
 }
 
