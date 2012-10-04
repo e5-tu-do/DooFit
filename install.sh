@@ -19,7 +19,7 @@ echo "Starting build"
 echo
 
 cmake -DCMAKE_INSTALL_PREFIX=/doosoft/DooFit/$ROOTVERS $2
-make VERBOSE="" -j 4
+make VERBOSE=""
 sudo make install
 cd /
 rm -rf /tmp/$uuid
