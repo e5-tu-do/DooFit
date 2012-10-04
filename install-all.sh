@@ -4,5 +4,5 @@ source /lhcbsoft/tu-dortmund/LHCbSoftwareSetup.sh x86_64-slc5-gcc43-opt > /dev/n
 
 for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
 do
-  ./install.sh $ver $1
+  bash ./install.sh $ver $1
 done

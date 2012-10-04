@@ -1,5 +1,4 @@
 #!/bin/bash
-
 uuid=`uuidgen -r`
 
 function catch_errors {
