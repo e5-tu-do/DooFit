@@ -11,7 +11,7 @@
  * @section mp_simplesetup Simple setup via global DooSoftware installation
  * 
  * On all machines with a DooSoftware installation setup of DooFit is very 
- * simple. In this case you can skip the next two steps. Just call 
+ * simple. In this case you can skip the next building step. Just call 
  * dooSoftwareSetup after setting up LHCb software and DaVinci/ROOT and the
  * DooSoftware magic will do the rest.
  * 
