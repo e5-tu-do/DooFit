@@ -8,7 +8,14 @@
  * RooFit by providing high level functions for generating complex PDFs, fitting
  * these, plotting or conducting toy studies.
  *
- * @section mp_installation Installation
+ * @section mp_simplesetup Simple setup via global DooSoftware installation
+ * 
+ * On all machines with a DooSoftware installation setup of DooFit is very 
+ * simple. In this case you can skip the next two steps. Just call 
+ * dooSoftwareSetup after setting up LHCb software and DaVinci/ROOT and the
+ * DooSoftware magic will do the rest.
+ * 
+ * @section mp_installation Manual Installation
  *
  * The intended usage of DooFit is as a framework and therefore @a not to build
  * custom user code inside of DooFit. However, DooFit can be easily installed 
@@ -30,7 +37,9 @@
  * @endcode
  *
  * If setting in your <tt>~/.bashrc</tt>, remember to log out and in once or 
- * copy the corresponding lines also into your terminal.
+ * copy the corresponding lines also into your terminal (in case of DooSoftware
+ * installation you can just use ~/LocalDooSoftware.sh, see 
+ * https://wiki.e5.physik.tu-dortmund.de/LHCb/Software/DooSoftwareUsage).
  * 
  * To build DooFit, download it either as a release version or checkout from 
  * SVN. Create a @c build directory where you invoke CMake and install DooFit.
