@@ -1,0 +1,18 @@
+#!/bin/bash
+
+module=$1
+base_dir=$2
+expected_args=2
+
+if [ $# -ne $expected_args ]
+then
+  echo "Usage: `basename $0` Module BaseDir"
+  exit 2
+fi
+
+source /lhcbsoft/tu-dortmund/LHCbSoftwareSetup.sh x86_64-slc5-gcc43-opt > /dev/null 2>&1
+
+for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
+do
+  bash InstallDooSoftwareProjectSingleDVVersion $module $ver $base_dir
+done

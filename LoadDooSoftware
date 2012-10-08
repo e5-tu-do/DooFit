@@ -11,7 +11,8 @@ echo "Loading DooSoftware for ROOT $ROOTVERS"
 
 export DOOFITSYS=/doosoft/DooFit/ROOT_v$ROOTVERS
 
-if [ -e "~/LocalDooSoftware.sh" ]; then
+if [ -e "$HOME/LocalDooSoftware.sh" ]; then
+  echo "Using local LocalDooSoftware.sh to override global software."
   source ~/LocalDooSoftware.sh
 fi
 

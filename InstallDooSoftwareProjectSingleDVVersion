@@ -1,0 +1,40 @@
+#!/bin/bash
+uuid=`uuidgen -r`
+
+module=$1
+dv_version=$2
+base_dir=$3
+expected_args=3
+
+if [ $# -ne $expected_args ]
+then
+  echo "Usage: `basename $0` Module DaVinciVersion BaseDir"
+  exit 2
+fi
+
+function catch_errors {
+  echo "Could not complete build for DaVinci $dv_version"
+  rm -rf /tmp/$uuid
+  exit 1
+}
+
+trap catch_errors ERR
+
+echo "Installing software for DaVinci $dv_version"
+source /lhcbsoft/tu-dortmund/LHCbSoftwareSetup.sh x86_64-slc5-gcc43-opt > /dev/null 2>&1
+source SetupProject.sh DaVinci $dv_version > /dev/null 2>&1
+mkdir /tmp/$uuid
+cd /tmp/$uuid
+echo "Starting build"
+echo
+
+cmake -DCMAKE_INSTALL_PREFIX=/doosoft/$module/ROOT_v$ROOTVERS $base_dir
+make VERBOSE="" -j 8
+sudo make install
+cd /
+rm -rf /tmp/$uuid
+
+echo
+echo "Build successful for DaVinci $dv_version"
+echo
+
