@@ -10,6 +10,7 @@ fi
 echo "Loading DooSoftware for ROOT $ROOTVERS"
 
 export DOOFITSYS=/doosoft/DooFit/ROOT_v$ROOTVERS
+export DOOCORESYS=/doosoft/DooCore/ROOT_v$ROOTVERS
 
 if [ -e "$HOME/LocalDooSoftware.sh" ]; then
   echo "Using local LocalDooSoftware.sh to override global software."
@@ -17,8 +18,9 @@ if [ -e "$HOME/LocalDooSoftware.sh" ]; then
 fi
 
 echo "Using DooFit from: $DOOFITSYS"
+echo "Using DooCore from: $DOOCORESYS"
 
-export PATH=$PATH:$DOOFITSYS/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOFITSYS/lib
+export PATH=$PATH:$DOOCORESYS/bin:$DOOFITSYS/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOCORESYS/lib:$DOOFITSYS/lib
 
 
