@@ -33,6 +33,7 @@
 #include "RooEffProd.h"
 #include "RooSimultaneous.h"
 #include "RooSuperCategory.h"
+#include "RooLinkedListIter.h"
 
 // from Project
 #include "doofit/Config/CommonConfig.h"
