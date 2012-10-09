@@ -13,7 +13,16 @@ then
 fi
 
 function catch_errors {
-  echo "Could not complete build for DaVinci $dv_version"
+  make VERBOSE=""
+  echo 
+  echo 
+  echo 
+  echo 
+  echo "ERROR: Could not complete build for DaVinci $dv_version"
+  echo 
+  echo 
+  echo 
+  echo 
   rm -rf /tmp/$uuid
   exit 1
 }
