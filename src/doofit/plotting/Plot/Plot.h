@@ -88,11 +88,25 @@ namespace plotting {
     Plot(const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooArgList& pdfs=RooArgList(), const std::string& plot_name="", const std::string plot_dir="Plot/");
     
     /**
-     *  @brief Actually plot the plot
+     *  @brief Actually plot the plot in normal scale
      *
-     *  This function will perform the actual plotting.
+     *  This function will plot the data in linear scale.
      */
-    void PlotIt() const;
+    void PlotIt() const { PlotHandler(false); }
+
+    /**
+     *  @brief Actually plot the plot in log y scale
+     *
+     *  This function will plot the data in logarithmic scale on y axis.
+     */
+    void PlotItLogY() const { PlotHandler(true); }
+    
+    /**
+     *  @brief Actually plot the plot in normal and log y scale
+     *
+     *  This function will plot the data in linear and logarithmic y axis scale.
+     */
+    void PlotItLogNoLogY() const { PlotHandler(false); PlotHandler(true, "_log"); }
     
     /**
      *  @brief Destructor for Plot
@@ -100,6 +114,17 @@ namespace plotting {
     virtual ~Plot();
     
   protected:
+    /**
+     *  @brief Internal plotting handler
+     *
+     *  This function will perform the actual plotting and is called by public
+     *  functions.
+     *
+     *  @param logy use logarithmic y scale
+     *  @param suffix suffix to put after file names
+     */
+    void PlotHandler(bool logy, const std::string& suffix="") const;
+    
     /**
      *  @brief Dimension to plot in
      */

@@ -43,14 +43,19 @@ Plot::Plot(const RooAbsRealLValue& dimension, const RooAbsData& dataset, const R
     plot_name_ = dimension_.GetName();
   }
 }
+
+void Plot::PlotHandler(bool logy, const std::string& suffix) const {
+  std::stringstream plot_name_sstr;
+  plot_name_sstr << plot_name_ << suffix;
+  std::string plot_name = plot_name_sstr.str();
   
-void Plot::PlotIt() const {
-  sinfo << "Plotting " << dimension_.GetName() << " into " << plot_dir_ << plot_name_ << endmsg;
   std::stringstream pull_plot_sstr;
-  pull_plot_sstr << plot_name_ << "_pull";
+  pull_plot_sstr << plot_name << "_pull";
   std::string pull_plot_name = pull_plot_sstr.str(); 
+
+  sinfo << "Plotting " << dimension_.GetName() << " into " << plot_dir_ << plot_name << endmsg;
   
-  utils::setStyle();
+  utils::setStyle("LHCb");
   RooPlot* plot_frame = dimension_.frame();
   dataset_.plotOn(plot_frame);
   
@@ -62,13 +67,26 @@ void Plot::PlotIt() const {
     }
     RooPlot* plot_frame_pull = dimension_.frame();
     dataset_.plotOn(plot_frame_pull);
+    
+    for (int i=1; i<pdfs_.getSize(); ++i) {
+      const RooAbsPdf* sub_pdf = dynamic_cast<RooAbsPdf*>(pdfs_.at(i));
+      if (pdf == NULL) {
+        serr << "Plot::PlotIt(): Sub PDF number " << i <<  " not valid." << endmsg;
+        throw 1;
+      }
+      pdf->plotOn(plot_frame, Components(sub_pdf->GetName()), Name(sub_pdf->GetName()));
+      pdf->plotOn(plot_frame_pull, Components(sub_pdf->GetName()), Name(sub_pdf->GetName()));
+    }
+      
     pdf->plotOn(plot_frame);
     pdf->plotOn(plot_frame_pull);
-    utils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, plot_dir_, true);
+    plot_frame_pull->SetMinimum(0.5);
+    utils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, plot_dir_, true, logy);
     
     delete plot_frame_pull;
   }
-  utils::PlotSimple(plot_name_, plot_frame, &dimension_, plot_dir_);
+  plot_frame->SetMinimum(0.5);
+  utils::PlotSimple(plot_name, plot_frame, &dimension_, plot_dir_, logy);
   
   delete plot_frame;
 }
