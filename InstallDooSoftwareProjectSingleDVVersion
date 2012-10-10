@@ -32,7 +32,7 @@ trap catch_errors ERR
 echo "Installing software for DaVinci $dv_version"
 source $MYSITEROOT/tu-dortmund/LHCbSoftwareSetup.sh x86_64-slc5-gcc43-opt > /dev/null 2>&1
 source SetupProject.sh DaVinci $dv_version > /dev/null 2>&1
-dooSoftwareSetup
+source LoadDooSoftware
 mkdir /tmp/$uuid
 cd /tmp/$uuid
 echo "Starting build"
