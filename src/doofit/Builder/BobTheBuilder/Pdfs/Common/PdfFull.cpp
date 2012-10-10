@@ -11,12 +11,12 @@
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 namespace doofit {
 namespace Builder{ 

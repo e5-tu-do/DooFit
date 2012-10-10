@@ -8,9 +8,10 @@
 #include <boost/foreach.hpp>
 
 // from RooFit
+#include "RooAbsPdf.h"
 
 // from project
-#include "doofit/utils/MsgStream.h"
+#include "doocore/io/MsgStream.h"
 #include "doofit/Builder/numerobis/blueprint/elements/element.h"
 #include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
 #include "doofit/Builder/numerobis/blueprint/pdfs/pdf.h"
@@ -43,7 +44,7 @@ void Registrar::Declare(Pdf* pdf) {
 }
   
 void Registrar::Print() const {
-  namespace du = doofit::utils;
+  namespace du = doocore::io;
   du::sinfo.Ruler();
   du::sinfo << "Registrar contents:" << du::endmsg;
   du::sinfo.increment_indent(2);
@@ -60,7 +61,7 @@ bool Registrar::CheckReady(const std::string& pdf_name) {
   
   Pdf* pdf = it_pdf->second;
   
-  namespace du = doofit::utils;
+  namespace du = doocore::io;
   namespace el = doofit::builder::numerobis::blueprint::elements;
   //du::sdebug << "Checking ready for: " << pdf.id_abs() << du::endmsg;
   

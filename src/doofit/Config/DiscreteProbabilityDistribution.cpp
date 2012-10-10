@@ -3,13 +3,13 @@
 // from STL
 
 // from Project
-#include "doofit/utils/MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 using namespace std;
 
 namespace doofit {
 namespace Config {
-  using namespace doofit::utils;
+  using namespace doocore::lutils; using namespace doocore::io;
   
   void DiscreteProbabilityDistribution::Parse(string str) {
     vector<string> elements = DecomposeString(str);

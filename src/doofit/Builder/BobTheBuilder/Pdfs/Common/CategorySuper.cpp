@@ -13,7 +13,7 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 // from project Builder BobTheBuilder
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
@@ -22,7 +22,7 @@ namespace doofit {
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 namespace Builder{ 
 namespace BobTheBuilder{

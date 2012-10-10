@@ -14,11 +14,11 @@
 
 // from project
 #include "ConfigTest.h"
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 using namespace std;
 namespace po = boost::program_options;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 namespace doofit {
 namespace testwiese {

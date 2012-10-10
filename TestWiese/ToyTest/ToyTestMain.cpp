@@ -30,6 +30,9 @@
 #include "Roo1DTable.h"
 #include "RooFitResult.h"
 
+// from DooCore
+#include "doocore/io/MsgStream.h"
+
 // from Project
 #include "doofit/Config/CommonConfig.h"
 
@@ -47,12 +50,12 @@
 #include "doofit/Toy/ToyStudyStd/ToyStudyStd.h"
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
 
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 using namespace ROOT;
 using namespace RooFit;
 using namespace doofit;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 /// just a helper function to build a PDF
 RooWorkspace* BuildPDF() {
@@ -244,6 +247,7 @@ void TestToys(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
+  doocore::io::sinfo << "DooCore working" << doocore::io::endmsg;
   TestToys(argc, argv);
 }
 

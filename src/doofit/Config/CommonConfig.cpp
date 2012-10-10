@@ -11,14 +11,14 @@
 // RooFit
 
 // from project
-#include "doofit/utils/MsgStream.h"
+#include "doocore/io/MsgStream.h"
 #include "CommonConfig.h"
 
 namespace doofit {
 namespace Config {
 using namespace std;
 namespace po = boost::program_options;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 CommonConfig::CommonConfig() :
 Config::AbsConfig("empty_name")

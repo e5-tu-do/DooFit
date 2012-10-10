@@ -12,7 +12,7 @@
 #include <boost/property_tree/json_parser.hpp>
 
 // from project
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 // from Builder/BobTheBuilder subproject
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/Component.h"
@@ -27,7 +27,7 @@
 using namespace std;
 using namespace boost;
 namespace bpt = property_tree;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 namespace doofit {
 namespace Builder{ 

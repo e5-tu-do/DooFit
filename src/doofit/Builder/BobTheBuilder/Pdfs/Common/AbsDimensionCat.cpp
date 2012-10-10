@@ -15,13 +15,13 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 namespace doofit {
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 namespace Builder{ 
 namespace BobTheBuilder{

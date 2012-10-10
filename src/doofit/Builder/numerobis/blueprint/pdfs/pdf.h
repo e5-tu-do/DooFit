@@ -6,7 +6,7 @@
 #include <string>
 
 // from project
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 // forward declarations - RooFit
 class RooAbsArg;
@@ -161,15 +161,15 @@ class Pdf {
 } // namespace builder 
 } // namespace doofit
 
-namespace doofit {
-namespace utils {
+namespace doocore {
+namespace io {
 /**
  *  @brief Function to output Numerobis PDFs directly and nicely into 
  *         MsgStreams
  *
  *  This function just prints all information in a PDF nicely.
 **/
-inline MsgStream& operator<<(MsgStream& lhs, const doofit::builder::numerobis::blueprint::pdfs::Pdf& pdf) {
+inline doocore::io::MsgStream& operator<<(doocore::io::MsgStream& lhs, const doofit::builder::numerobis::blueprint::pdfs::Pdf& pdf) {
   lhs.stream() << "PDF: " << pdf.id_abs();
   
   if (pdf.initialized()) {

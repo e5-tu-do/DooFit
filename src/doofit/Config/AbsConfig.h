@@ -28,7 +28,8 @@
  * as set above. If not installing into a standard location like @c /usr/local
  * or similar, you also have to set @c $LD_LIBRARY_PATH (on Linux) or 
  * @c $DYLD_LIBRARY_PATH (on Mac OS) to include @c $DOOFITSYS/lib. Best practice
- * probably is to set these in your <tt>~/.bashrc</tt> or globally.
+ * probably is to set these in your <tt>~/.bashrc</tt> or globally (see remark 
+ * about DooSoftware below to skip these steps)..
  *
  * @code
  * export DOOFITSYS=/path/to/install/to

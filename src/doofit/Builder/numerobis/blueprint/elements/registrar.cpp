@@ -11,7 +11,7 @@
 #include "RooArgList.h"
 
 // from project
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 #include "doofit/Builder/numerobis/blueprint/elements/element.h"
 #include "doofit/Builder/numerobis/blueprint/elements/dimreal.h"
 #include "doofit/Builder/numerobis/blueprint/elements/parambasic.h"
@@ -61,7 +61,7 @@ void Registrar::DeclareElement(Element* element) {
 }
   
 void Registrar::Print() const {
-  namespace du = doofit::utils;
+  namespace du = doocore::io;
   du::sinfo.Ruler();
   du::sinfo << "Registrar contents:" << du::endmsg;
   du::sinfo.increment_indent(2);
@@ -78,7 +78,7 @@ bool Registrar::CheckReady(const std::string& element_name) {
   
   Element* element = it_element->second;
   
-  namespace du = doofit::utils;
+  namespace du = doocore::io;
   //du::sdebug << "Checking ready for: " << element.id_abs() << du::endmsg;
   
   // Check if element is ready, if not, check if dependants are ready.

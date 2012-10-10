@@ -2,7 +2,7 @@
 
 // from project
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/Parameter.h"
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 using namespace std;
 using namespace boost;
@@ -11,7 +11,7 @@ using namespace boost::property_tree;
 namespace doofit {
 namespace Builder{ 
 namespace BobTheBuilder{
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
   
 MassGaussianPdf::MassGaussianPdf() : 
    AbsPdf()

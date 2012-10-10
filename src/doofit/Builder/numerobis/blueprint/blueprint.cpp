@@ -19,14 +19,14 @@
 #include "doofit/Builder/numerobis/blueprint/component.h"
 #include "doofit/Builder/numerobis/blueprint/dimension.h"
 
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 namespace doofit {
 namespace builder {
 namespace numerobis {
 namespace blueprint {
 
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
   
 Blueprint::Blueprint() 
     : reg_elements_()

@@ -11,13 +11,13 @@
 #include <boost/tokenizer.hpp>
 
 // from Project
-#include "doofit/utils/MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 namespace doofit {
 namespace Config {
   using namespace std;
   namespace po = boost::program_options;
-  using namespace doofit::utils;
+  using namespace doocore::lutils; using namespace doocore::io;
   
   ConfigMap AbsConfig::config_container_;
   unsigned int AbsConfig::id_counter_ = 0;

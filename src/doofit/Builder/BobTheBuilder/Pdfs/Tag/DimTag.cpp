@@ -2,7 +2,7 @@
 
 
 // from project
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 // from project Pdf related classes
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"

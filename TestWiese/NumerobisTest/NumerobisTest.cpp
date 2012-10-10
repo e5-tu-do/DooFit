@@ -23,7 +23,7 @@
 
 #include "doofit/Builder/numerobis/blueprint/component.h"
 
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 using namespace std;
 
@@ -32,7 +32,7 @@ using namespace doofit::builder::numerobis;
 
 int run( int argc, char *argv[] ){
   namespace numi = doofit::builder::numerobis::blueprint;
-  using namespace doofit::utils;
+  using namespace doocore::lutils; using namespace doocore::io;
   
   //string filename = argv[1];
 

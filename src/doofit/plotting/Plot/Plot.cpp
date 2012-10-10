@@ -13,14 +13,15 @@
 #include "RooAbsRealLValue.h"
 #include "RooAbsData.h"
 #include "RooAbsPdf.h"
+#include "RooPlot.h"
 
 // from Project
-#include "doofit/utils/MsgStream.h"
-#include "doofit/utils/utils.h"
+#include "doocore/io/MsgStream.h"
+#include "doocore/lutils/lutils.h"
 
 using namespace ROOT;
 using namespace RooFit;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 namespace doofit {
 namespace plotting {
@@ -55,7 +56,7 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
 
   sinfo << "Plotting " << dimension_.GetName() << " into " << plot_dir_ << plot_name << endmsg;
   
-  utils::setStyle("LHCb");
+  doocore::lutils::setStyle("LHCb");
   RooPlot* plot_frame = dimension_.frame();
   dataset_.plotOn(plot_frame);
   
@@ -81,12 +82,12 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
     pdf->plotOn(plot_frame);
     pdf->plotOn(plot_frame_pull);
     plot_frame_pull->SetMinimum(0.5);
-    utils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, plot_dir_, true, logy);
+    doocore::lutils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, plot_dir_, true, logy);
     
     delete plot_frame_pull;
   }
   plot_frame->SetMinimum(0.5);
-  utils::PlotSimple(plot_name, plot_frame, &dimension_, plot_dir_, logy);
+  doocore::lutils::PlotSimple(plot_name, plot_frame, &dimension_, plot_dir_, logy);
   
   delete plot_frame;
 }

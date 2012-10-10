@@ -38,11 +38,11 @@
 // from Project
 #include "doofit/Config/CommonConfig.h"
 #include "doofit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
-#include "doofit/utils/MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 using namespace ROOT;
 using namespace RooFit;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 namespace doofit {
 namespace Toy {

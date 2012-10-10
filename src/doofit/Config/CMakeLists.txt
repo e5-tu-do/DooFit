@@ -10,7 +10,7 @@ install(TARGETS Config DESTINATION lib)
 install(FILES AbsConfig.h CommonConfig.h AbsTypeCommaSeparated.h DiscreteProbabilityDistribution.h ConfigCstStringVector.h CommaSeparatedPair.h DESTINATION include/doofit/Config)
 
 #add_library(CommonConfig CommonConfig.cpp CommonConfig.h)
-target_link_libraries(Config Utils ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(Config ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
 
 #root_generate_dictionaries(AbsTypeCommaSeparatedDict AbsTypeCommaSeparated.h)
 #root_generate_dictionaries(DiscreteProbabilityDistributionDict DiscreteProbabilityDistribution.h) 

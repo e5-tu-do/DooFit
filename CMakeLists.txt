@@ -35,11 +35,17 @@ cmake_minimum_required(VERSION 2.6)
 
 FIND_PACKAGE(Boost 1.48 COMPONENTS program_options filesystem regex thread system random REQUIRED)
 find_package(ROOT REQUIRED)
+find_package(DooCore REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIR})
 
 include_directories(${ROOT_INCLUDE_DIR})
+
+include_directories(${DooCore_INCLUDE_DIR})
+link_directories(${DooCore_LIBRARY_DIR})
+
+set(ALL_LIBRARIES ${DooCore_LIBRARIES} ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
 
 add_subdirectory(src)
 add_subdirectory(python)

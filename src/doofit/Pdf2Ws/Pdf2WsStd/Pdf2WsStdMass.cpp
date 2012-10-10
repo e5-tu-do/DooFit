@@ -20,12 +20,12 @@
 
 // from Project
 #include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 namespace doofit {
 using namespace std;
 using namespace Pdf2WsStd;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 RooGaussian* Pdf2WsStd::Mass::Gaussian(RooWorkspace* ws, 
                                const TString& pdf_name, const TString& pdf_desc,

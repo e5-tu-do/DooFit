@@ -6,7 +6,7 @@
 #include <vector>
 
 // from project
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 // forward declarations - RooFit
 class RooWorkspace;
@@ -161,14 +161,14 @@ class Element {
 } // namespace builder
 } // namespace doofit
 
-namespace doofit {
-namespace utils {
+namespace doocore {
+namespace io {
 /**
  *  @brief Function to output Numerobis elements directly and nicely into MsgStreams
  *
  *  This function just prints all information in a Element nicely.
 **/
-inline MsgStream& operator<<(MsgStream& lhs, const doofit::builder::numerobis::blueprint::elements::Element& element) {
+  inline doocore::io::MsgStream& operator<<(doocore::io::MsgStream& lhs, const doofit::builder::numerobis::blueprint::elements::Element& element) {
   lhs.stream() << "Element: " << element.id_abs();
   
   if (element.initialized()) {

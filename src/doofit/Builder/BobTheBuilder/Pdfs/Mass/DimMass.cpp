@@ -6,7 +6,7 @@
 // from boost
 
 // from project
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 // from project Pdf related classes
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
@@ -16,7 +16,7 @@
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 namespace doofit {
 namespace Builder{ 

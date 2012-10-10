@@ -5,7 +5,7 @@
 // from Boost
 
 // from Project
-#include "doofit/utils/MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 namespace doofit {
 using namespace std;

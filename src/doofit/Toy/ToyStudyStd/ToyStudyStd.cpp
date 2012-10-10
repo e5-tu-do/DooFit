@@ -21,6 +21,7 @@
 #include "TROOT.h"
 #include "TString.h"
 #include "TThread.h"
+#include "TCanvas.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -28,18 +29,19 @@
 #include "RooDataSet.h"
 #include "RooRealVar.h"
 #include "RooGaussian.h"
+#include "RooPlot.h"
 
 // from Project
 #include "doofit/Config/CommonConfig.h"
 #include "doofit/Config/CommaSeparatedPair.h"
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
-#include "doofit/utils/MsgStream.h"
-#include "doofit/utils/utils.h"
-#include "doofit/utils/FileLock.h"
+#include "doocore/io/MsgStream.h"
+#include "doocore/lutils/lutils.h"
+#include "doocore/system/FileLock.h"
 
 using namespace ROOT;
 using namespace RooFit;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 namespace doofit {
 namespace Toy {
@@ -190,16 +192,16 @@ namespace Toy {
     sinfo << "Plotting parameter distributions." << endmsg;
     
     gROOT->SetStyle("Plain");
-    utils::setStyle();
+    doocore::lutils::setStyle();
     TCanvas canvas("canvas_toystudy", "canvas", 800, 600);
-    utils::printPlotOpenStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
+    doocore::lutils::printPlotOpenStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     
     const RooArgSet* parameters = evaluated_values_->get();
     TIterator* parameter_iter   = parameters->createIterator();
     RooRealVar* parameter       = NULL;
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       std::string param_name = parameter->GetName();
-      std::pair<double,double> minmax = utils::MedianLimitsForTuple(*evaluated_values_, param_name);
+      std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
       sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
             
       RooRealVar* mean             = NULL;
@@ -254,8 +256,8 @@ namespace Toy {
       }
       frame->Draw();
       TString plot_name = parameter->GetName();
-      utils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory());
-      utils::printPlot(&canvas, "AllPlots", config_toystudy_.plot_directory());
+      doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory());
+      doocore::lutils::printPlot(&canvas, "AllPlots", config_toystudy_.plot_directory());
       
       delete frame;
       
@@ -267,7 +269,7 @@ namespace Toy {
       }
     }
     
-    utils::printPlotCloseStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
+    doocore::lutils::printPlotCloseStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     sinfo.Ruler();
   }
     
@@ -543,7 +545,7 @@ namespace Toy {
         sw_lock.Stop();
         boost::mutex::scoped_lock fitresult_save_worker_local_lock(fitresult_save_worker_mutex_);
         
-        utils::FileLock flock(filename);
+        doocore::system::FileLock flock(filename);
         boost::random::random_device rnd;
         
         sw_lock.Start(false);
@@ -662,7 +664,7 @@ namespace Toy {
       }
       boost::this_thread::yield();
       if (sleep) {
-        utils::Sleep(wait_time);
+        doocore::lutils::Sleep(wait_time);
       }
       
       

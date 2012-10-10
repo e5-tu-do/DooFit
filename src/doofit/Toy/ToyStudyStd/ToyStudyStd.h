@@ -14,8 +14,8 @@
 
 // from project
 #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
-#include "doofit/utils/utils.h"
-#include "doofit/utils/MsgStream.h"
+#include "doocore/lutils/lutils.h"
+#include "doocore/io/MsgStream.h"
 
 // forward declarations
 class RooFitResult;
@@ -358,7 +358,7 @@ namespace Toy {
     /**
      *  @brief Thread-safe queue for fit results to save
      */
-    doofit::utils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_save_queue_;
+    doocore::lutils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_save_queue_;
     ///@}
     
     /** @name Reader worker members
@@ -380,11 +380,11 @@ namespace Toy {
     /**
      *  @brief Thread-safe queue for fit results to read in
      */
-    doofit::utils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_read_queue_;
+    doocore::lutils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_read_queue_;
     /**
      *  @brief Thread-safe queue for fit results to delete
      */
-    doofit::utils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_release_queue_;
+    doocore::lutils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_release_queue_;
     ///@}
   };
   

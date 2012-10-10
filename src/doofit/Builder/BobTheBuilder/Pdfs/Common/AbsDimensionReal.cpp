@@ -1,6 +1,6 @@
 // from project
 #include "doofit/Builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
-#include "doofit/utils//MsgStream.h"
+#include "doocore/io/MsgStream.h"
 
 // from STL
 #include <iostream>
@@ -15,7 +15,7 @@ namespace doofit {
 using namespace std;
 using namespace boost::property_tree;
 using namespace RooFit;
-using namespace doofit::utils;
+using namespace doocore::lutils; using namespace doocore::io;
 
 namespace Builder{ 
 namespace BobTheBuilder{
