@@ -53,11 +53,7 @@ namespace plotting {
    * #include "RooArgList.h"
    *
    * int main(int argc, char *argv[]) {
-   *   using namespace doofit::plotting;
-   *
-   *   PlotConfig cfg_plot("cfg_plot");
-   *   cfg_plot.InitializeOptions(argc, argv);
-   *
+   *   // generate a PDF and a dataset here
    *   RooRealVar mass("mass","mass",5200,5400,"MeV/c^{2}");
    *   RooRealVar mean("mean","mean",5300);
    *   RooRealVar sigma("sigma","sigma",20);
@@ -70,6 +66,12 @@ namespace plotting {
    *   RooAddPdf p("p","p",g,e,f);
    *
    *   RooDataSet* data = p.generate(mass, 2000);
+   *
+   *   // DooFit's plotting usage actually starts here
+   *   using namespace doofit::plotting;
+   *
+   *   PlotConfig cfg_plot("cfg_plot");
+   *   cfg_plot.InitializeOptions(argc, argv);
    *
    *   Plot myplot(cfg_plot, mass, *data, RooArgList(p,g,e));
    *   myplot.PlotIt();
