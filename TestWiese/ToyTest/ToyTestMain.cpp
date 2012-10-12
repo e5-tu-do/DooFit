@@ -29,6 +29,7 @@
 #include "RooProdPdf.h"
 #include "Roo1DTable.h"
 #include "RooFitResult.h"
+#include "RooExponential.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -71,12 +72,18 @@ RooWorkspace* BuildPDF() {
   Pdf2WsStd::CommonFuncs::getVar(ws, "mean_time3", "mean_time3", 5400, 5350, 5450, "MeV/c^{2}");
   
   RooGaussian* pdf1 = Pdf2WsStd::Mass::Gaussian(ws, "test1", "Gaussian test pdf #1","mass","mean1", "abweichung");
-  RooGaussian* pdf2 = Pdf2WsStd::Mass::Gaussian(ws, "test2", "Gaussian test pdf #2","mass","mean2", "abweichung_bkg");
+  //RooGaussian* pdf2 = Pdf2WsStd::Mass::Gaussian(ws, "test2", "Gaussian test pdf #2","mass","mean2", "abweichung_bkg");
   RooGaussian* pdf3 = Pdf2WsStd::Mass::Gaussian(ws, "test3", "Gaussian test pdf #3","mass","mean3", "abweichung_bkg2");
   
   RooGaussian* time1 = Pdf2WsStd::Mass::Gaussian(ws, "time1", "Gaussian test pdf #1 (time)","time","mean_time1", "sigma_time1");
   RooGaussian* time2 = Pdf2WsStd::Mass::Gaussian(ws, "time2", "Gaussian test pdf #2 (time)","time","mean_time2", "sigma_time2");
   RooGaussian* time3 = Pdf2WsStd::Mass::Gaussian(ws, "time3", "Gaussian test pdf #3 (time)","time","mean_time3", "sigma_time3");
+  
+  RooRealVar c("c","c",0.01,0.00001,0.1);
+  ws->import(c);
+  RooExponential pdf2_s("test2","test2",*ws->var("mass"), *ws->var("c"));
+  ws->import(pdf2_s);
+  RooAbsPdf* pdf2 = ws->pdf("test2");
   
   RooProdPdf pdf_prod1("pdf_prod1", "pdf_prod1", RooArgList(*pdf1, *time1));
   RooProdPdf pdf_prod2("pdf_prod2", "pdf_prod2", RooArgList(*pdf2, *time2));
@@ -183,6 +190,10 @@ void TestToys(int argc, char *argv[]) {
   ToyStudyStdConfig cfg_tstudy("toystudy");
   cfg_tstudy.InitializeOptions(cfg_tfac);
   
+  using namespace doofit::plotting;
+  PlotConfig cfg_plot("cfg_plot");
+  cfg_plot.InitializeOptions(cfg_tstudy);
+  
   cfg_com.CheckHelpFlagAndPrintHelp();
     
   RooWorkspace* ws = BuildPDF();
@@ -214,11 +225,9 @@ void TestToys(int argc, char *argv[]) {
     
 //    pdf->getParameters(data)->readFromFile("generation.par");
 //    ws->pdf("pdf_constr_mean2")->getParameters(data)->readFromFile("generation.par");
-    pdf->getParameters(data)->find("mean2")->Print();
     RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Verbose(false),Timer(true), Minimizer("Minuit2"), ExternalConstraints(*ws->set("constraint_pdfs")));
     
-    using namespace doofit::plotting;
-    Plot myplot(*ws->var("mass"), *data, RooArgList(*pdf, *ws->pdf("time1")));
+    Plot myplot(cfg_plot, *ws->var("mass"), *data, RooArgList(*pdf, *ws->pdf("test1"), *ws->pdf("test2"), *ws->pdf("test3")));
     myplot.PlotItLogNoLogY();
     
 //    utils::setStyle();
@@ -247,9 +256,30 @@ void TestToys(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
-  doocore::io::sinfo << "DooCore working" << doocore::io::endmsg;
-  TestToys(argc, argv);
+//  TestToys(argc, argv);
+  
+  using namespace doofit::plotting;
+  
+  PlotConfig cfg_plot("cfg_plot");
+  cfg_plot.InitializeOptions(argc, argv);
+  
+  RooRealVar mass("mass","mass",5200,5400,"MeV/c^{2}");
+  RooRealVar mean("mean","mean",5300);
+  RooRealVar sigma("sigma","sigma",20);
+  RooGaussian g("g","g",mass,mean,sigma);
+  
+  RooRealVar c("c","c",0.01);
+  RooExponential e("e","e",mass,c);
+  
+  RooRealVar f("f","f",0.5);
+  RooAddPdf p("p","p",g,e,f);
+  
+  RooDataSet* data = p.generate(mass, 2000);
+  
+  Plot myplot(cfg_plot, mass, *data, RooArgList(p,g,e));
+  myplot.PlotIt();
+
 }
 
 
-    
+

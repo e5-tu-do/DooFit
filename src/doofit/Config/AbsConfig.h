@@ -479,7 +479,10 @@ namespace Config {
      *
      *  Virtual function that will load all program options for this config 
      *  object from the internal variables map into own member variables. It is 
-     *  automatically called by AbsConfig::InitializeOptions(). 
+     *  automatically called by AbsConfig::InitializeOptions().
+     * 
+     *  Only in case of non-standard options that cannot be directly transfered
+     *  via Boost's program_options, this function is actually needed.
      */
     virtual void LoadOptions() = 0;
     

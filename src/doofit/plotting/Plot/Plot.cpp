@@ -18,6 +18,7 @@
 // from Project
 #include "doocore/io/MsgStream.h"
 #include "doocore/lutils/lutils.h"
+#include "doofit/plotting/Plot/PlotConfig.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -25,12 +26,13 @@ using namespace doocore::lutils; using namespace doocore::io;
 
 namespace doofit {
 namespace plotting {
-Plot::Plot(const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooArgList& pdfs, const std::string& plot_name, const std::string plot_dir) 
-: dimension_(dimension),
+Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooArgList& pdfs, const std::string& plot_name)
+: config_plot_(cfg_plot),
+  dimension_(dimension),
   dataset_(dataset),
   pdfs_(pdfs),
   plot_name_(plot_name),
-  plot_dir_(plot_dir)
+  plot_dir_("Plot/")
 {
   if (&dimension_ == NULL) {
     serr << "Plot::Plot(): Dimension is invalid." << endmsg;
@@ -75,12 +77,12 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
         serr << "Plot::PlotIt(): Sub PDF number " << i <<  " not valid." << endmsg;
         throw 1;
       }
-      pdf->plotOn(plot_frame, Components(sub_pdf->GetName()), Name(sub_pdf->GetName()));
-      pdf->plotOn(plot_frame_pull, Components(sub_pdf->GetName()), Name(sub_pdf->GetName()));
+      pdf->plotOn(plot_frame, Components(sub_pdf->GetName()), Name(sub_pdf->GetName()), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)));
+      pdf->plotOn(plot_frame_pull, Components(sub_pdf->GetName()), Name(sub_pdf->GetName()), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)));
     }
       
-    pdf->plotOn(plot_frame);
-    pdf->plotOn(plot_frame_pull);
+    pdf->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)));
+    pdf->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)));
     plot_frame_pull->SetMinimum(0.5);
     doocore::lutils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, plot_dir_, true, logy);
     

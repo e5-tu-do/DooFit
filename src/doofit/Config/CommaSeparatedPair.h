@@ -15,7 +15,7 @@ namespace Config {
    *  @brief A simple comma separated pair of two strings.
    *
    *  This class is merely a container for Config objects to store a pair of two
-   *  strings, separated by a comme. As it's inheriting from 
+   *  strings, separated by a comma. As it's inheriting from
    *  AbsTypeCommaSeparated, parsing from command line or config file
    *  is possible. 
    *
