@@ -62,6 +62,15 @@ class PlotConfig : public Config::AbsConfig {
    */
   int GetPdfLineStyle(int index) const;
   
+  /** 
+   * @brief Getter for pdf_linecolor_map_
+   **/
+  const Config::CommaSeparatedList<int>& pdf_linecolor_map() const { return pdf_linecolor_map_; }
+  /** 
+   * @brief Setter for pdf_linecolor_map_
+   **/
+  void set_pdf_linecolor_map(const Config::CommaSeparatedList<int>& pdf_linecolor_map) { pdf_linecolor_map_ = pdf_linecolor_map; }
+  
  protected:
   /** @name Virtual functions
    *  Implementation of pure virtual functions.
