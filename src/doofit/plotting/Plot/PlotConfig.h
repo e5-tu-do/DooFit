@@ -62,14 +62,69 @@ class PlotConfig : public Config::AbsConfig {
    */
   int GetPdfLineStyle(int index) const;
   
-  /** 
+  /** @name Getter functions
+   *  Implementation of getter functions.
+   */
+  ///@{
+  /**
    * @brief Getter for pdf_linecolor_map_
+   * 
+   * @see set_pdf_linecolor_map()
    **/
   const Config::CommaSeparatedList<int>& pdf_linecolor_map() const { return pdf_linecolor_map_; }
-  /** 
-   * @brief Setter for pdf_linecolor_map_
+  /**
+   * @brief Getter for pdf_linestyle_map_
+   *
+   * @see set_pdf_linestyle_map()
    **/
-  void set_pdf_linecolor_map(const Config::CommaSeparatedList<int>& pdf_linecolor_map) { pdf_linecolor_map_ = pdf_linecolor_map; }
+  const Config::CommaSeparatedList<int>& pdf_linestyle_map() const { return pdf_linestyle_map_; }
+  ///@}
+
+  /** @name Setter functions
+   *  Implementation of setter functions.
+   */
+  ///@{
+  /**
+   * @brief Setter for pdf_linecolor_map_ with Config::CommaSeparatedList
+   *
+   * Set line colors for plotted PDFs as Config::CommaSeparatedList. This can 
+   * also be set via command line or config file.
+   * 
+   * @param pdf_linecolors colors to use in same order as PDFs are supplied
+   **/
+  void set_pdf_linecolor_map(const Config::CommaSeparatedList<int>& pdf_linecolors) { pdf_linecolor_map_ = pdf_linecolors; }
+  /**
+   * @brief Setter for pdf_linecolor_map_ with string
+   *
+   * Set line colors for plotted PDFs as comma-separated string, e.g. like 
+   * "1,4,2,3,5". This option can also be set via command line or config file.
+   *
+   * @param pdf_linecolors colors to use in same order as PDFs are supplied as comma-separated string (e.g. "1,4,2,3,5")
+   **/
+  void set_pdf_linecolor_map(const std::string& pdf_linecolors) {
+    pdf_linecolor_map_.Parse(pdf_linecolors);
+  }
+  /**
+   * @brief Setter for pdf_linestyle_map_ with Config::CommaSeparatedList
+   *
+   * Set line syles for plotted PDFs as Config::CommaSeparatedList. This can
+   * also be set via command line or config file.
+   *
+   * @param pdf_linestyles line styles to use in same order as PDFs are supplied
+   **/
+  void set_pdf_linestyle_map(const Config::CommaSeparatedList<int>& pdf_linestyles) { pdf_linestyle_map_ = pdf_linestyles; }
+  /**
+   * @brief Setter for pdf_linestyle_map_ with string
+   *
+   * Set line sytle for plotted PDFs as comma-separated string, e.g. like
+   * "1,4,2,3,5". This option can also be set via command line or config file.
+   *
+   * @param pdf_linestyles line styles to use in same order as PDFs are supplied as comma-separated string (e.g. "1,4,2,3,5")
+   **/
+  void set_pdf_linestyle_map(const std::string& pdf_linestyles) {
+    pdf_linestyle_map_.Parse(pdf_linestyles);
+  }
+  ///@}
   
  protected:
   /** @name Virtual functions
