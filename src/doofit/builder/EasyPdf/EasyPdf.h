@@ -20,6 +20,10 @@ class RooExtendPdf;
 class RooAbsReal;
 class RooAddPdf;
 
+/** @namespace doofit::builder
+ *  @brief DooFit PDF building namespace
+ */
+
 /** @class doofit::builder::EasyPdf
  *  @brief Easy PDF and variable building without the clutter
  *
