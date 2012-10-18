@@ -8,10 +8,13 @@
 // from Boost
 #include <boost/exception/all.hpp>
 
+// from RooFit
+#include "RooWorkspace.h"
+#include "RooGlobalFunc.h"
+
 // forward declarations
 class RooRealVar;
 class RooAbsPdf;
-class RooWorkspace;
 class RooGaussian;
 class RooExponential;
 class RooArgList;
@@ -188,6 +191,20 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooAddPdf& Add(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs);
+  
+  /**
+   *  @brief Add and access a given PDF
+   *
+   *  Templated function to add a given PDF pointer to the internal store (and
+   *  workspace if necessary) and return this PDF afterwards.
+   *  If PDF with same name already exists, an exception PdfExistsException is 
+   *  thrown.
+   *
+   *  @param pdf the PDF to add
+   *  @return the added PDF
+   */
+  template <class PdfType>
+  PdfType& AddPdfToStore(PdfType* pdf);
 
   /**
    *  @brief Access an existing PDF
@@ -219,7 +236,7 @@ class EasyPdf {
    */
   RooWorkspace* ws_;
 };
-  
+
 /** \struct PdfExistsException
  *  \brief Exception for PDF with same name already existing
  */
@@ -233,7 +250,24 @@ struct PdfExistsException: public virtual boost::exception, public virtual std::
 struct PdfNotExistingException: public virtual boost::exception, public virtual std::exception { 
   virtual const char* what() const throw() { return "PDF with supplied name not existing"; }
 };
-  
+
+template <class PdfType>
+PdfType& EasyPdf::AddPdfToStore(PdfType* pdf) {
+  std::string name = pdf->GetName();
+  if (pdfs_.count(name) == 1) {
+    throw PdfExistsException();
+  } else {
+    if (ws_ == NULL) {
+      pdfs_[name] = pdf;
+    } else {
+      ws_->import(*pdf, RooFit::Silence());
+      delete pdf;
+      pdfs_[name] = pdf = dynamic_cast<PdfType*>(ws_->pdf(name.c_str()));
+    }
+    return *pdf;
+  }
+}
+
 } // namespace builder
 } // namespace doofit
 

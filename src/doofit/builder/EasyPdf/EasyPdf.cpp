@@ -52,99 +52,27 @@ RooRealVar& doofit::builder::EasyPdf::Var(const std::string &name) {
 }
 
 RooGaussian& doofit::builder::EasyPdf::Gaussian(const std::string &name, RooRealVar& x, RooRealVar& mean, RooRealVar& sigma) {
-  if (pdfs_.count(name) == 1) {
-    throw PdfExistsException();
-  } else {
-    RooGaussian* temp_pdf = new RooGaussian(name.c_str(), name.c_str(), x, mean, sigma);
-    if (ws_ == NULL) {
-      pdfs_[name] = temp_pdf;
-    } else {
-      ws_->import(*temp_pdf, Silence());
-      delete temp_pdf;
-      pdfs_[name] = temp_pdf = dynamic_cast<RooGaussian*>(ws_->pdf(name.c_str()));
-    }
-    return *temp_pdf;
-  }
+  return AddPdfToStore<RooGaussian>(new RooGaussian(name.c_str(), name.c_str(), x, mean, sigma));
 }
 
 RooExponential& doofit::builder::EasyPdf::Exponential(const std::string &name, RooRealVar& x, RooRealVar& e) {
-  if (pdfs_.count(name) == 1) {
-    throw PdfExistsException();
-  } else {
-    RooExponential* temp_pdf = new RooExponential(name.c_str(), name.c_str(), x, e);
-    if (ws_ == NULL) {
-      pdfs_[name] = temp_pdf;
-    } else {
-      ws_->import(*temp_pdf, Silence());
-      delete temp_pdf;
-      pdfs_[name] = temp_pdf = dynamic_cast<RooExponential*>(ws_->pdf(name.c_str()));
-    }
-    return *temp_pdf;
-  }
+  return AddPdfToStore<RooExponential>(new RooExponential(name.c_str(), name.c_str(), x, e));
 }
 
 RooProdPdf& doofit::builder::EasyPdf::Product(const std::string& name, const RooArgList& pdfs) {
-  if (pdfs_.count(name) == 1) {
-    throw PdfExistsException();
-  } else {
-    RooProdPdf* temp_pdf = new RooProdPdf(name.c_str(), name.c_str(), pdfs);
-    if (ws_ == NULL) {
-      pdfs_[name] = temp_pdf;
-    } else {
-      ws_->import(*temp_pdf, Silence());
-      delete temp_pdf;
-      pdfs_[name] = temp_pdf = dynamic_cast<RooProdPdf*>(ws_->pdf(name.c_str()));
-    }
-    return *temp_pdf;
-  }
+  return AddPdfToStore<RooProdPdf>(new RooProdPdf(name.c_str(), name.c_str(), pdfs));
 }
 
 RooExtendPdf& doofit::builder::EasyPdf::Extend(const std::string& name, const RooAbsPdf& pdf, const RooAbsReal& yield) {
-  if (pdfs_.count(name) == 1) {
-    throw PdfExistsException();
-  } else {
-    RooExtendPdf* temp_pdf = new RooExtendPdf(name.c_str(), name.c_str(), pdf, yield);
-    if (ws_ == NULL) {
-      pdfs_[name] = temp_pdf;
-    } else {
-      ws_->import(*temp_pdf, Silence());
-      delete temp_pdf;
-      pdfs_[name] = temp_pdf = dynamic_cast<RooExtendPdf*>(ws_->pdf(name.c_str()));
-    }
-    return *temp_pdf;
-  }
+  return AddPdfToStore<RooExtendPdf>(new RooExtendPdf(name.c_str(), name.c_str(), pdf, yield));
 }
 
 RooAddPdf& doofit::builder::EasyPdf::Add(const std::string& name, const RooArgList& pdfs) {
-  if (pdfs_.count(name) == 1) {
-    throw PdfExistsException();
-  } else {
-    RooAddPdf* temp_pdf = new RooAddPdf(name.c_str(), name.c_str(), pdfs);
-    if (ws_ == NULL) {
-      pdfs_[name] = temp_pdf;
-    } else {
-      ws_->import(*temp_pdf, Silence());
-      delete temp_pdf;
-      pdfs_[name] = temp_pdf = dynamic_cast<RooAddPdf*>(ws_->pdf(name.c_str()));
-    }
-    return *temp_pdf;
-  }
+  return AddPdfToStore<RooAddPdf>(new RooAddPdf(name.c_str(), name.c_str(), pdfs));
 }
 
 RooAddPdf& doofit::builder::EasyPdf::Add(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs) {
-  if (pdfs_.count(name) == 1) {
-    throw PdfExistsException();
-  } else {
-    RooAddPdf* temp_pdf = new RooAddPdf(name.c_str(), name.c_str(), pdfs, coefs);
-    if (ws_ == NULL) {
-      pdfs_[name] = temp_pdf;
-    } else {
-      ws_->import(*temp_pdf, Silence());
-      delete temp_pdf;
-      pdfs_[name] = temp_pdf = dynamic_cast<RooAddPdf*>(ws_->pdf(name.c_str()));
-    }
-    return *temp_pdf;
-  }
+  return AddPdfToStore<RooAddPdf>(new RooAddPdf(name.c_str(), name.c_str(), pdfs, coefs));
 }
 
 RooAbsPdf& doofit::builder::EasyPdf::Pdf(const std::string &name) {
