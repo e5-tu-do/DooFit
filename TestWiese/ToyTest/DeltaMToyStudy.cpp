@@ -31,8 +31,8 @@
 // from Project
 #include "doofit/Config/CommonConfig.h"
 
-#include "doofit/Builder/BuilderStd/BuilderStd.h"
-#include "doofit/Builder/BuilderStd/BuilderStdConfig.h"
+#include "doofit/builder/BuilderStd/BuilderStd.h"
+#include "doofit/builder/BuilderStd/BuilderStdConfig.h"
 
 #include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 #include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
