@@ -68,9 +68,15 @@ RooAbsPdf* BuildPDF(EasyPdf& epdf, RooWorkspace* ws) {
   epdf.Var("time").setMin(5100);
   epdf.Var("time").setMax(5500);
   
+  epdf.Add("test1",
+          RooArgSet(epdf.Gaussian("test1_1", epdf.Var("mass"), epdf.Var("mean1"),
+                                  epdf.Var("abweichung_1")),
+                    epdf.Gaussian("test1_2", epdf.Var("mass"), epdf.Var("mean1"),
+                                  epdf.Var("abweichung_2"))),
+          RooArgSet(epdf.Var("dgauss_frac")));
+  
   epdf.Product("pdf_prod1",
-               RooArgList(epdf.Gaussian("test1", epdf.Var("mass"), epdf.Var("mean1"),
-                                        epdf.Var("abweichung")),
+               RooArgList(epdf.Pdf("test1"),
                           epdf.Gaussian("time1", epdf.Var("time"), epdf.Var("mean_time1"),
                                         epdf.Var("sigma_time1"))));
   epdf.Product("pdf_prod2",
