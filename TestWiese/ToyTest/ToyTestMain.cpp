@@ -58,7 +58,7 @@
 using namespace ROOT;
 using namespace RooFit;
 using namespace doofit;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 using namespace doofit::builder;
 
 /// just a helper function to build a PDF

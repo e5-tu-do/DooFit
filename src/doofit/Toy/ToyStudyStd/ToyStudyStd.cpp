@@ -41,7 +41,7 @@
 
 using namespace ROOT;
 using namespace RooFit;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 
 namespace doofit {
 namespace Toy {

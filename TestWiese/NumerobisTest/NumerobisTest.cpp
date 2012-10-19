@@ -32,7 +32,7 @@ using namespace doofit::builder::numerobis;
 
 int run( int argc, char *argv[] ){
   namespace numi = doofit::builder::numerobis::blueprint;
-  using namespace doocore::lutils; using namespace doocore::io;
+  using namespace doocore::io;
   
   //string filename = argv[1];
 

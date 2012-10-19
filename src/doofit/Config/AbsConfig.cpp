@@ -17,7 +17,7 @@ namespace doofit {
 namespace Config {
   using namespace std;
   namespace po = boost::program_options;
-  using namespace doocore::lutils; using namespace doocore::io;
+  using namespace doocore::io;
   
   ConfigMap AbsConfig::config_container_;
   unsigned int AbsConfig::id_counter_ = 0;

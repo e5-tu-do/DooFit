@@ -27,7 +27,7 @@
 using namespace std;
 using namespace boost;
 namespace bpt = property_tree;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 
 namespace doofit {
 namespace Builder{ 

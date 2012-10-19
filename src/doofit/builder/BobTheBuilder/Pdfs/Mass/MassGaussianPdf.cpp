@@ -11,7 +11,7 @@ using namespace boost::property_tree;
 namespace doofit {
 namespace Builder{ 
 namespace BobTheBuilder{
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
   
 MassGaussianPdf::MassGaussianPdf() : 
    AbsPdf()

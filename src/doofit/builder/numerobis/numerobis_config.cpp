@@ -9,7 +9,7 @@ namespace numerobis {
 
 using namespace std;
 namespace po = boost::program_options;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 
 NumerobisConfig::NumerobisConfig(const std::string& name) :
     Config::AbsConfig(name),

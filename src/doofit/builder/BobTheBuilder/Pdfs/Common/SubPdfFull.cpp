@@ -13,7 +13,7 @@ namespace doofit {
 using namespace std;
 using namespace boost;
 using namespace boost::property_tree;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
   
 namespace Builder{ 
 namespace BobTheBuilder{

@@ -25,7 +25,7 @@
 namespace doofit {
 using namespace std;
 using namespace Pdf2WsStd;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 
 RooGaussian* Pdf2WsStd::Mass::Gaussian(RooWorkspace* ws, 
                                const TString& pdf_name, const TString& pdf_desc,

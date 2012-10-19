@@ -22,7 +22,7 @@ namespace doofit {
 using namespace std;
 namespace po = boost::program_options;
 namespace pt = boost::property_tree;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 
 BuilderStdConfig::BuilderStdConfig(const std::string& name) :
 Config::AbsConfig(name)

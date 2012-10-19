@@ -16,6 +16,7 @@
 #include "TClass.h"
 #include "TStopwatch.h"
 #include "TFile.h"
+#include "TMath.h"
 
 // from RooFit
 #include "RooDataSet.h"
@@ -42,7 +43,7 @@
 
 using namespace ROOT;
 using namespace RooFit;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 
 namespace doofit {
 namespace Toy {

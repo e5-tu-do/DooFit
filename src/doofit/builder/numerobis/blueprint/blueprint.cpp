@@ -26,7 +26,7 @@ namespace builder {
 namespace numerobis {
 namespace blueprint {
 
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
   
 Blueprint::Blueprint() 
     : reg_elements_()

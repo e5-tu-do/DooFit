@@ -18,7 +18,7 @@ namespace doofit {
 namespace Config {
 using namespace std;
 namespace po = boost::program_options;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 
 CommonConfig::CommonConfig() :
 Config::AbsConfig("empty_name")
