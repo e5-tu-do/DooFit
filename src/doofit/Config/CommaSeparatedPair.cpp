@@ -9,7 +9,7 @@ using namespace std;
 
 namespace doofit {
 namespace Config {
-  using namespace doocore::lutils; using namespace doocore::io;
+  using namespace doocore::io;
   
   void CommaSeparatedPair::Parse(string str) {
     vector<string> elements = DecomposeString(str);

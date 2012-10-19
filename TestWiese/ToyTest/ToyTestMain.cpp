@@ -39,8 +39,8 @@
 
 #include "doofit/plotting/Plot/Plot.h"
 
-#include "doofit/Builder/BuilderStd/BuilderStd.h"
-#include "doofit/Builder/BuilderStd/BuilderStdConfig.h"
+#include "doofit/builder/BuilderStd/BuilderStd.h"
+#include "doofit/builder/BuilderStd/BuilderStdConfig.h"
 
 #include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 #include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
@@ -53,64 +53,58 @@
 
 #include "doocore/io/MsgStream.h"
 
+#include "doofit/builder/EasyPdf/EasyPdf.h"
+
 using namespace ROOT;
 using namespace RooFit;
 using namespace doofit;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
+using namespace doofit::builder;
 
 /// just a helper function to build a PDF
-RooWorkspace* BuildPDF() {
-  RooWorkspace* ws = new RooWorkspace("ws");
-  ws->Print();
+RooAbsPdf* BuildPDF(EasyPdf& epdf, RooWorkspace* ws) {
+  epdf.Var("mass").setMin(5100);
+  epdf.Var("mass").setMax(5500);
+  epdf.Var("time").setMin(5100);
+  epdf.Var("time").setMax(5500);
   
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean1", "mean1", 5200, 5150, 5250, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean2", "mean2", 5300, 5250, 5350, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean3", "mean3", 5400, 5350, 5450, "MeV/c^{2}");
+  epdf.Add("test1",
+          RooArgSet(epdf.Gaussian("test1_1", epdf.Var("mass"), epdf.Var("mean1"),
+                                  epdf.Var("abweichung_1")),
+                    epdf.Gaussian("test1_2", epdf.Var("mass"), epdf.Var("mean1"),
+                                  epdf.Var("abweichung_2"))),
+          RooArgSet(epdf.Var("dgauss_frac")));
   
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean_time1", "mean_time1", 5200, 5150, 5250, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean_time2", "mean_time2", 5300, 5250, 5350, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean_time3", "mean_time3", 5400, 5350, 5450, "MeV/c^{2}");
+  epdf.Product("pdf_prod1",
+               RooArgList(epdf.Pdf("test1"),
+                          epdf.Gaussian("time1", epdf.Var("time"), epdf.Var("mean_time1"),
+                                        epdf.Var("sigma_time1"))));
+  epdf.Product("pdf_prod2",
+               RooArgList(epdf.Exponential("test2", epdf.Var("mass"), epdf.Var("c")),
+                          epdf.Gaussian("time2", epdf.Var("time"), epdf.Var("mean_time2"),
+                                        epdf.Var("sigma_time2"))));
+  epdf.Product("pdf_prod3",
+               RooArgList(epdf.Gaussian("test3", epdf.Var("mass"), epdf.Var("mean3"),
+                                        epdf.Var("abweichung_bkg2")),
+                          epdf.Gaussian("time3", epdf.Var("time"), epdf.Var("mean_time3"),
+                                        epdf.Var("sigma_time3"))));
+   
+  epdf.Extend("pdf_extend1", epdf.Pdf("pdf_prod1"), epdf.Var("yield1"));
+  epdf.Extend("pdf_extend2", epdf.Pdf("pdf_prod2"), epdf.Var("yield2"));
+  epdf.Extend("pdf_extend3", epdf.Pdf("pdf_prod3"), epdf.Var("yield3"));
   
-  RooGaussian* pdf1 = Pdf2WsStd::Mass::Gaussian(ws, "test1", "Gaussian test pdf #1","mass","mean1", "abweichung");
-  //RooGaussian* pdf2 = Pdf2WsStd::Mass::Gaussian(ws, "test2", "Gaussian test pdf #2","mass","mean2", "abweichung_bkg");
-  RooGaussian* pdf3 = Pdf2WsStd::Mass::Gaussian(ws, "test3", "Gaussian test pdf #3","mass","mean3", "abweichung_bkg2");
-  
-  RooGaussian* time1 = Pdf2WsStd::Mass::Gaussian(ws, "time1", "Gaussian test pdf #1 (time)","time","mean_time1", "sigma_time1");
-  RooGaussian* time2 = Pdf2WsStd::Mass::Gaussian(ws, "time2", "Gaussian test pdf #2 (time)","time","mean_time2", "sigma_time2");
-  RooGaussian* time3 = Pdf2WsStd::Mass::Gaussian(ws, "time3", "Gaussian test pdf #3 (time)","time","mean_time3", "sigma_time3");
-  
-  RooRealVar c("c","c",0.01,0.00001,0.1);
-  ws->import(c);
-  RooExponential pdf2_s("test2","test2",*ws->var("mass"), *ws->var("c"));
-  ws->import(pdf2_s);
-  RooAbsPdf* pdf2 = ws->pdf("test2");
-  
-  RooProdPdf pdf_prod1("pdf_prod1", "pdf_prod1", RooArgList(*pdf1, *time1));
-  RooProdPdf pdf_prod2("pdf_prod2", "pdf_prod2", RooArgList(*pdf2, *time2));
-  RooProdPdf pdf_prod3("pdf_prod3", "pdf_prod3", RooArgList(*pdf3, *time3));
-  
-  RooRealVar yield1("yield1", "pdf yield", 10000, 0, 1000000);
-  RooExtendPdf pdf_extend1("pdf_extend1", "extended pdf #1", pdf_prod1, yield1);
-  
-  RooRealVar yield2("yield2", "pdf yield", 50000, 0, 1000000);
-  RooExtendPdf pdf_extend2("pdf_extend2", "extended pdf #2", pdf_prod2, yield2);
-  
-  RooRealVar yield3("yield3", "pdf yield", 5000, 0, 1000000);
-  RooExtendPdf pdf_extend3("pdf_extend3", "extended pdf #3", pdf_prod3, yield3);
-  
-  RooRealVar coeff1("coeff1", "coeff1", 0.1, 0.0, 1.0);
-  RooRealVar coeff2("coeff2", "coeff2", 0.1, 0.0, 1.0);
-  RooAddPdf pdf_add("pdf_add", "added pdf", RooArgSet(pdf_extend1, pdf_extend2, pdf_extend3));
-  //RooAddPdf pdf_add("pdf_add", "added pdf", RooArgList(*pdf1, *pdf2, *pdf3), RooArgList(coeff1, coeff2));
-  //RooAddPdf pdf_add("pdf_add", "added pdf", *pdf1, *pdf2, coeff1);
-  
-  ws->import(pdf_add);
+  epdf.Add("pdf_add", RooArgSet(epdf.Pdf("pdf_extend1"), epdf.Pdf("pdf_extend2"), epdf.Pdf("pdf_extend3")));
+    
+  epdf.Var("tag2").setMin(-10);
+  epdf.Var("tag2").setMax(+10);
   
   RooArgSet argset_obs("argset_obs");
-  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
-  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "")));
-  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "tag2", "tag of B meson", 0, -10, 10, "")));
-  RooRealVar* tag2 = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "tag2", "", 0, 0, 0, "");
+  argset_obs.add(epdf.Var("mass"));
+  argset_obs.add(epdf.Var("time"));
+  argset_obs.add(epdf.Var("tag2"));
+
+  ws->import(epdf.Pdf("pdf_add"));
+  ws->import(epdf.Var("tag2"));
   
   RooCategory* tag = new RooCategory("tag", "tag");
   tag->defineType("b0", 1);
@@ -123,17 +117,10 @@ RooWorkspace* BuildPDF() {
   ws->defineSet("argset_obs",argset_obs);  
   
   // adding external constraints
-  RooGaussian* pdf_constr_mean2 = Pdf2WsStd::Mass::Gaussian(ws, "pdf_constr_mean2", "Gaussian constraint pdf for mean2", "mean2", "mean2_mu", "mean2_sigma");
+  //RooGaussian* pdf_constr_mean2 = Pdf2WsStd::Mass::Gaussian(ws, "pdf_constr_mean2", "Gaussian constraint pdf for mean2", "mean2", "mean2_mu", "mean2_sigma");
+  //ws->defineSet("constraint_pdfs", "pdf_constr_mean2");
   
-  ws->defineSet("constraint_pdfs", "pdf_constr_mean2");  
-  
-  ws->Print("t");
-  
-  TFile wsfile("ws.root", "recreate");
-  ws->Write("ws");
-  wsfile.Close();
-  
-  return ws;
+  return ws->pdf("pdf_add");
 }
 
 /// just a helper function to plot a single fit
@@ -195,14 +182,13 @@ void TestToys(int argc, char *argv[]) {
   cfg_plot.InitializeOptions(cfg_tstudy);
   
   cfg_com.CheckHelpFlagAndPrintHelp();
-    
-  RooWorkspace* ws = BuildPDF();
+  
+  RooWorkspace* ws = new RooWorkspace("ws");
+  EasyPdf epdf;
+  RooAbsPdf* pdf = BuildPDF(epdf, ws);
 //  TFile ws_file("ws.root", "read");
 //  RooWorkspace* ws = (RooWorkspace*)ws_file.Get("ws");
-  
-  RooAbsPdf* pdf = ws->pdf("pdf_add");
-  ws->Print();
-  
+    
   cfg_tfac.set_workspace(ws);
   //cfg_tfac.set_generation_pdf_workspace("pdfFull");
   //cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
@@ -216,7 +202,7 @@ void TestToys(int argc, char *argv[]) {
   RooDataSet* data = NULL;
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
 
-  for (int i=0; i<100; ++i) {
+  for (int i=0; i<20; ++i) {
     data = tfac.Generate();
     //    delete data;
     //    gObjectTable->Print(); 
@@ -256,29 +242,7 @@ void TestToys(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
-//  TestToys(argc, argv);
-  
-  using namespace doofit::plotting;
-  
-  PlotConfig cfg_plot("cfg_plot");
-  cfg_plot.InitializeOptions(argc, argv);
-  
-  RooRealVar mass("mass","mass",5200,5400,"MeV/c^{2}");
-  RooRealVar mean("mean","mean",5300);
-  RooRealVar sigma("sigma","sigma",20);
-  RooGaussian g("g","g",mass,mean,sigma);
-  
-  RooRealVar c("c","c",0.01);
-  RooExponential e("e","e",mass,c);
-  
-  RooRealVar f("f","f",0.5);
-  RooAddPdf p("p","p",g,e,f);
-  
-  RooDataSet* data = p.generate(mass, 2000);
-  
-  Plot myplot(cfg_plot, mass, *data, RooArgList(p,g,e));
-  myplot.PlotIt();
-
+  TestToys(argc, argv);
 }
 
 

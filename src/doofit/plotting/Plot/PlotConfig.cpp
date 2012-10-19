@@ -14,7 +14,7 @@
 
 using namespace std;
 namespace po = boost::program_options;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 using namespace boost::assign; // bring 'operator+=()' into scope
 
 namespace doofit {

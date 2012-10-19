@@ -41,7 +41,7 @@
 
 using namespace ROOT;
 using namespace RooFit;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 
 namespace doofit {
 namespace Toy {
@@ -201,6 +201,7 @@ namespace Toy {
     RooRealVar* parameter       = NULL;
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       std::string param_name = parameter->GetName();
+            
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
       sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
             
@@ -229,8 +230,9 @@ namespace Toy {
       }
 
       // for all pulls fit a gaussian
-      if (param_name.substr(param_name.length()-5).compare("_pull") == 0 || 
-          param_name.substr(param_name.length()-4).compare("_res") == 0) {
+      if (param_name.length() > 5 &&
+          (param_name.substr(param_name.length()-5).compare("_pull") == 0 ||
+          param_name.substr(param_name.length()-4).compare("_res") == 0)) {
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
         sigma = new RooRealVar("s", "sigma of pull", (minmax.second-minmax.first)/10.0,0,minmax.second-minmax.first);
         gauss = new RooGaussian("pdf_pull", "Gaussian PDF of pull", *parameter, *mean, *sigma);

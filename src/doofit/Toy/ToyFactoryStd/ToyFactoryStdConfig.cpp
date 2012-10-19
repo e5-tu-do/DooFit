@@ -14,6 +14,7 @@
 #include "TIterator.h"
 #include "TMath.h"
 #include "TFile.h"
+#include "TClass.h"
 
 // RooFit
 #include "RooAbsPdf.h"
@@ -25,7 +26,7 @@
 
 using namespace std;
 namespace po = boost::program_options;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 
 namespace doofit {
 namespace Toy {

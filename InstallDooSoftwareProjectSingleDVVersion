@@ -40,6 +40,8 @@ echo
 
 cmake -DCMAKE_INSTALL_PREFIX=/doosoft/$module/ROOT_v$ROOTVERS $base_dir
 make VERBOSE="" -j 8
+sudo rm -rf /doosoft/$module/ROOT_v$ROOTVERS
+sudo mkdir -p /doosoft/$module/ROOT_v$ROOTVERS
 sudo make install
 cd /
 rm -rf /tmp/$uuid

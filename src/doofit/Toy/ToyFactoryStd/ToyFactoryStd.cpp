@@ -16,6 +16,7 @@
 #include "TClass.h"
 #include "TStopwatch.h"
 #include "TFile.h"
+#include "TMath.h"
 
 // from RooFit
 #include "RooDataSet.h"
@@ -42,7 +43,7 @@
 
 using namespace ROOT;
 using namespace RooFit;
-using namespace doocore::lutils; using namespace doocore::io;
+using namespace doocore::io;
 
 namespace doofit {
 namespace Toy {
@@ -408,12 +409,22 @@ namespace Toy {
       if (proto_set != NULL) {
         obs_argset->remove(*proto_set->get(),true,true);
       }
-            
+               
 #if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
       data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
 #else
       data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
 #endif
+      
+      // bugfix for a RooFit bug: if no events are to be generated, the empty
+      // dataset will *not* contain the proto variables. Although an empty
+      // dataset seems useless anyway, the need for an empty dataset can happen
+      // and in order to merge and append sub-datasets it needs to contain all
+      // necessary variables
+      if (data->numEntries() == 0 && proto_set != NULL && !data->get()->overlaps(*proto_set->get())) {
+        data->merge(proto_set);
+      }
+            
       delete obs_argset;
       if (proto_set != NULL) {
         delete proto_set;

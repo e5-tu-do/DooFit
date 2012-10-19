@@ -9,19 +9,19 @@
 
 // from Project
 #include "doofit/Config/CommonConfig.h"
-#include "doofit/Builder/numerobis/numerobis.h"
-#include "doofit/Builder/numerobis/numerobis_config.h"
+#include "doofit/builder/numerobis/numerobis.h"
+#include "doofit/builder/numerobis/numerobis_config.h"
 
-#include "doofit/Builder/numerobis/blueprint/blueprint.h"
+#include "doofit/builder/numerobis/blueprint/blueprint.h"
 
-#include "doofit/Builder/numerobis/blueprint/elements/registrar.h"
-#include "doofit/Builder/numerobis/blueprint/elements/factory.h"
+#include "doofit/builder/numerobis/blueprint/elements/registrar.h"
+#include "doofit/builder/numerobis/blueprint/elements/factory.h"
 
-#include "doofit/Builder/numerobis/blueprint/pdfs/gausspdf.h"
-#include "doofit/Builder/numerobis/blueprint/pdfs/registrar.h"
-#include "doofit/Builder/numerobis/blueprint/pdfs/factory.h"
+#include "doofit/builder/numerobis/blueprint/pdfs/gausspdf.h"
+#include "doofit/builder/numerobis/blueprint/pdfs/registrar.h"
+#include "doofit/builder/numerobis/blueprint/pdfs/factory.h"
 
-#include "doofit/Builder/numerobis/blueprint/component.h"
+#include "doofit/builder/numerobis/blueprint/component.h"
 
 #include "doocore/io/MsgStream.h"
 
@@ -32,7 +32,7 @@ using namespace doofit::builder::numerobis;
 
 int run( int argc, char *argv[] ){
   namespace numi = doofit::builder::numerobis::blueprint;
-  using namespace doocore::lutils; using namespace doocore::io;
+  using namespace doocore::io;
   
   //string filename = argv[1];
 

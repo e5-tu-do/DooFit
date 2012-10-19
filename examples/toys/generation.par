@@ -1,4 +1,6 @@
-abweichung =  15.000 L(1 - 40) // [MeV/c^{2}]
+abweichung_1 =  5.000 L(1 - 40) // [MeV/c^{2}]
+abweichung_2 =  15.000 L(1 - 40) // [MeV/c^{2}]
+dgauss_frac = 1.0 C L(0 - 1)
 abweichung_bkg =  15.000 L(1 - 40) // [MeV/c^{2}]
 abweichung_bkg2 =  15.000 L(1 - 40) // [MeV/c^{2}]
 mean1 =  5200.0 L(5100 - 5250) // [MeV/c^{2}]
@@ -15,5 +17,5 @@ yield2 =  1000 L(0 - 1000000)
 yield3 =  1000 L(0 - 1000000)
 mean2_mu = 5300 C L(-INF - INF)
 mean2_sigma = 0.1 C L(-INF - INF)
-
+c = 0.01 L(0.00001 - 0.1)
 
