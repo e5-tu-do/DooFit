@@ -1,22 +1,11 @@
 #!/bin/bash
 
-module=$1
-base_dir=$2
-expected_args=2
+packages="DooCore DooFit"
 
-for DIR in $DOOSOFTROOT/repos/*/; do
-  sudo svn up $DIR
-  echo $DIR
-
+for p in $packages; do
+  dir=$DOOSOFTROOT/repos/$p
+  sudo svn up $dir
+  base=$dir/`cat $dir/install_version`
+  InstallDooSoftwareProject $p $base
 done
 
-
-
-exit 0
-
-source /lhcbsoft/tu-dortmund/LHCbSoftwareSetup.sh x86_64-slc5-gcc43-opt > /dev/null 2>&1
-
-for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
-do
-  bash InstallDooSoftwareProjectSingleDVVersion $module $ver $base_dir
-done
