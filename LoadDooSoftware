@@ -4,7 +4,7 @@
 
 if [ -z $ROOTVERS ]; then
   echo "ROOT version not set. Cannot load DooSoftware."
-  exit 2
+  return
 fi
 
 echo "Loading DooSoftware for ROOT $ROOTVERS"
@@ -12,9 +12,11 @@ echo "Loading DooSoftware for ROOT $ROOTVERS"
 export DOOFITSYS=/doosoft/DooFit/ROOT_v$ROOTVERS
 export DOOCORESYS=/doosoft/DooCore/ROOT_v$ROOTVERS
 
-if [ -e "$HOME/LocalDooSoftware.sh" ]; then
-  echo "Using local LocalDooSoftware.sh to override global software."
-  source ~/LocalDooSoftware.sh
+if [ "$1" != "--ignore-local" ]; then
+  if [ -e "$HOME/LocalDooSoftware.sh" ]; then
+    echo "Using local LocalDooSoftware.sh to override global software."
+    source ~/LocalDooSoftware.sh
+  fi
 fi
 
 echo "Using DooFit from: $DOOFITSYS"
