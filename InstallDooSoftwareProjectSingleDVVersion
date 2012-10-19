@@ -38,10 +38,10 @@ cd /tmp/$uuid
 echo "Starting build"
 echo
 
-cmake -DCMAKE_INSTALL_PREFIX=/doosoft/$module/ROOT_v$ROOTVERS $base_dir
+cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir
 make VERBOSE="" -j 8
-sudo rm -rf /doosoft/$module/ROOT_v$ROOTVERS
-sudo mkdir -p /doosoft/$module/ROOT_v$ROOTVERS
+sudo rm -rf $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
+sudo mkdir -p $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
 sudo make install
 cd /
 rm -rf /tmp/$uuid
