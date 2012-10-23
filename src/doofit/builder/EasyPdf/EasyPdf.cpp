@@ -14,8 +14,15 @@
 #include "RooExtendPdf.h"
 #include "RooAddPdf.h"
 
+// from DooCore
+#include "doocore/io/MsgStream.h"
+
+// from project
+#include "doofit/Config/CommaSeparatedList.h"
+
 using namespace ROOT;
 using namespace RooFit;
+using namespace doocore::io;
 
 doofit::builder::EasyPdf::EasyPdf(RooWorkspace* ws)
 : ws_(ws)
@@ -49,6 +56,17 @@ RooRealVar& doofit::builder::EasyPdf::Var(const std::string &name) {
     }
     return *temp_var;
   }
+}
+
+RooArgSet doofit::builder::EasyPdf::Vars(const std::string &name) {
+  Config::CommaSeparatedList<std::string> variables;
+  variables.Parse(name);
+  
+  RooArgSet argset;
+  for (int i=0; i<variables.size(); ++i) {
+    argset.add(Var(variables[i]));
+  }
+  return argset;
 }
 
 RooGaussian& doofit::builder::EasyPdf::Gaussian(const std::string &name, RooRealVar& x, RooRealVar& mean, RooRealVar& sigma) {
