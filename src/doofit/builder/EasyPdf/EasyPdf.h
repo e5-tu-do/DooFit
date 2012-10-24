@@ -11,6 +11,7 @@
 // from RooFit
 #include "RooWorkspace.h"
 #include "RooGlobalFunc.h"
+#include "RooArgSet.h"
 
 // forward declarations
 class RooRealVar;
@@ -108,6 +109,19 @@ class EasyPdf {
    *  @return the appropriate RooRealVar
    */
   RooRealVar& Var(const std::string& name);
+  
+  /**
+   *  @brief Add and/or access RooRealVars as RooArgSet
+   *
+   *  Request a set of RooRealVars as a comma-separated list of specified names.
+   *  If the variables do not yet exist in this EasyPdf pool of variables, they
+   *  are created and returned. Otherwise they will be returned from the pool. 
+   *  This check is performed individually for each variable
+   *
+   *  @param names names of the RooRealVar as comma separated string
+   *  @return the appropriate RooRealVars as RooArgSet
+   */
+  RooArgSet Vars(const std::string& names);
   
   /**
    *  @brief Add and access a Gaussian PDF

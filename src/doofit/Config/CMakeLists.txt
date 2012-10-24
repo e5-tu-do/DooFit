@@ -16,7 +16,7 @@ DiscreteProbabilityDistribution.h ConfigCstStringVector.h CommaSeparatedPair.h
 CommaSeparatedList.h DESTINATION include/doofit/Config)
 
 #add_library(CommonConfig CommonConfig.cpp CommonConfig.h)
-target_link_libraries(Config ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(Config ${ALL_LIBRARIES})
 
 #root_generate_dictionaries(AbsTypeCommaSeparatedDict AbsTypeCommaSeparated.h)
 #root_generate_dictionaries(DiscreteProbabilityDistributionDict DiscreteProbabilityDistribution.h) 

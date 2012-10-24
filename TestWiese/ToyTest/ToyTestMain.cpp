@@ -63,6 +63,8 @@ using namespace doofit::builder;
 
 /// just a helper function to build a PDF
 RooAbsPdf* BuildPDF(EasyPdf& epdf, RooWorkspace* ws) {
+  epdf.Vars("mass,time").Print();
+  
   epdf.Var("mass").setMin(5100);
   epdf.Var("mass").setMax(5500);
   epdf.Var("time").setMin(5100);
