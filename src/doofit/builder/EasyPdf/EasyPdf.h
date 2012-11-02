@@ -23,6 +23,7 @@ class RooProdPdf;
 class RooExtendPdf;
 class RooAbsReal;
 class RooAddPdf;
+class RooFormulaVar;
 
 /** @namespace doofit::builder
  *  @brief DooFit PDF building namespace
@@ -111,11 +112,41 @@ class EasyPdf {
   RooRealVar& Var(const std::string& name);
   
   /**
+   *  @brief Add and access RooFormulaVar
+   *
+   *  Request a RooFormulaVar by a specified name. If the formula does not yet
+   *  exist in this EasyPdf pool of formulas, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the RooFormulaVar
+   *  @param formula the formula to use when creating a new formula
+   *  @param dependents the dependents in the formula
+   *  @return the appropriate RooFormulaVar
+   */
+  RooFormulaVar& Formula(const std::string& name, const std::string& formula,
+                         const RooArgList& dependents);
+  
+  /**
+   *  @brief Access RooFormulaVar
+   *
+   *  Request a RooFormulaVar by a specified name. If the formula does exist in 
+   *  this EasyPdf pool of formulas, it is returned.
+   *  Otherwise an exception ObjectNotExistingException is thrown.
+   *
+   *  @param name name of the RooFormulaVar
+   *  @return the appropriate RooFormulaVar
+   */
+  RooFormulaVar& Formula(const std::string& name);
+  
+  /**
    *  @brief Add and/or access RooRealVars as RooArgSet
    *
-   *  Request a set of RooRealVars as a comma-separated list of specified names.
-   *  If the variables do not yet exist in this EasyPdf pool of variables, they
-   *  are created and returned. Otherwise they will be returned from the pool. 
+   *  Request a set of RooRealVars or RooFormulaVars as a comma-separated list 
+   *  of specified names.
+   *  If the variables or formulas do not yet exist in this EasyPdf pool of 
+   *  variables, they are created and returned. Otherwise they will be returned
+   *  from the pool. If a variable and formula both exist under the supplied 
+   *  name, the variable will be returned.
    *  This check is performed individually for each variable
    *
    *  @param names names of the RooRealVar as comma separated string
@@ -128,7 +159,7 @@ class EasyPdf {
    *
    *  Request a RooGaussian by a specified name. If the PDF does not yet
    *  exist in this EasyPdf pool of PDFs, it is created and returned.
-   *  Otherwise an exception PdfExistsException is thrown.
+   *  Otherwise an exception ObjectExistsException is thrown.
    *
    *  @param name name of the PDF
    *  @param x x variable
@@ -136,28 +167,28 @@ class EasyPdf {
    *  @param sigma sigma variable
    *  @return the appropriate PDF
    */
-  RooGaussian& Gaussian(const std::string& name, RooRealVar& x, RooRealVar& mean, RooRealVar& sigma);
+  RooGaussian& Gaussian(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma);
   
   /**
    *  @brief Add and access an Exponential PDF
    *
    *  Request a RooExponential by a specified name. If the PDF does not yet
    *  exist in this EasyPdf pool of PDFs, it is created and returned.
-   *  Otherwise an exception PdfExistsException is thrown.
+   *  Otherwise an exception ObjectExistsException is thrown.
    *
    *  @param name name of the PDF
    *  @param x x variable
    *  @param e exponent variable
    *  @return the appropriate PDF
    */
-  RooExponential& Exponential(const std::string& name, RooRealVar& x, RooRealVar& e);
+  RooExponential& Exponential(const std::string& name, RooAbsReal& x, RooAbsReal& e);
   
   /**
    *  @brief Add and access an product PDF
    *
    *  Request a RooProdPdf by a specified name. If the PDF does not yet
    *  exist in this EasyPdf pool of PDFs, it is created and returned.
-   *  Otherwise an exception PdfExistsException is thrown.
+   *  Otherwise an exception ObjectExistsException is thrown.
    *
    *  @param name name of the PDF
    *  @param pdfs RooArgList of factor PDFs
@@ -170,7 +201,7 @@ class EasyPdf {
    *
    *  Request a RooExtendPdf by a specified name. If the PDF does not yet
    *  exist in this EasyPdf pool of PDFs, it is created and returned.
-   *  Otherwise an exception PdfExistsException is thrown.
+   *  Otherwise an exception ObjectExistsException is thrown.
    *
    *  @param name name of the PDF
    *  @param pdf PDF to make extended
@@ -184,7 +215,7 @@ class EasyPdf {
    *
    *  Request a RooAddPdf by a specified name. If the PDF does not yet
    *  exist in this EasyPdf pool of PDFs, it is created and returned.
-   *  Otherwise an exception PdfExistsException is thrown.
+   *  Otherwise an exception ObjectExistsException is thrown.
    *
    *  @param name name of the PDF
    *  @param pdfs RooArgList of extended PDFs to add
@@ -197,7 +228,7 @@ class EasyPdf {
    *
    *  Request a RooAddPdf by a specified name. If the PDF does not yet
    *  exist in this EasyPdf pool of PDFs, it is created and returned.
-   *  Otherwise an exception PdfExistsException is thrown.
+   *  Otherwise an exception ObjectExistsException is thrown.
    *
    *  @param name name of the PDF
    *  @param pdfs RooArgList of extended PDFs to add
@@ -211,7 +242,7 @@ class EasyPdf {
    *
    *  Templated function to add a given PDF pointer to the internal store (and
    *  workspace if necessary) and return this PDF afterwards.
-   *  If PDF with same name already exists, an exception PdfExistsException is 
+   *  If PDF with same name already exists, an exception ObjectExistsException is 
    *  thrown.
    *
    *  @param pdf the PDF to add
@@ -225,7 +256,7 @@ class EasyPdf {
    *
    *  Request a RooAbsPdf by a specified name. If the PDF does exist in this 
    *  EasyPdf pool of PDFs, it is returned.
-   *  Otherwise an exception PdfNotExistingException is thrown.
+   *  Otherwise an exception ObjectNotExistingException is thrown.
    *
    *  @param name name of the PDF
    *  @return the appropriate PDF
@@ -241,6 +272,11 @@ class EasyPdf {
   std::map<std::string,RooRealVar*> vars_;
   
   /**
+   *  @brief Container for all generated RooFormulaVars
+   */
+  std::map<std::string,RooFormulaVar*> formulas_;
+  
+  /**
    *  @brief Container for all generated RooAbsPdfs
    */
   std::map<std::string,RooAbsPdf*> pdfs_;
@@ -251,17 +287,17 @@ class EasyPdf {
   RooWorkspace* ws_;
 };
 
-/** \struct PdfExistsException
- *  \brief Exception for PDF with same name already existing
+/** \struct ObjectExistsException
+ *  \brief Exception for objects with same name already existing
  */
-struct PdfExistsException: public virtual boost::exception, public virtual std::exception { 
+struct ObjectExistsException: public virtual boost::exception, public virtual std::exception { 
   virtual const char* what() const throw() { return "PDF with same name already existing"; }
 };
 
-/** \struct PdfNotExistingException
+/** \struct ObjectNotExistingException
  *  \brief Exception for PDF with given name not existing
  */
-struct PdfNotExistingException: public virtual boost::exception, public virtual std::exception { 
+struct ObjectNotExistingException: public virtual boost::exception, public virtual std::exception { 
   virtual const char* what() const throw() { return "PDF with supplied name not existing"; }
 };
 
@@ -269,7 +305,7 @@ template <class PdfType>
 PdfType& EasyPdf::AddPdfToStore(PdfType* pdf) {
   std::string name = pdf->GetName();
   if (pdfs_.count(name) == 1) {
-    throw PdfExistsException();
+    throw ObjectExistsException();
   } else {
     if (ws_ == NULL) {
       pdfs_[name] = pdf;

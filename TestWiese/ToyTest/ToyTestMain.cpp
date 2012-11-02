@@ -70,8 +70,12 @@ RooAbsPdf* BuildPDF(EasyPdf& epdf, RooWorkspace* ws) {
   epdf.Var("time").setMin(5100);
   epdf.Var("time").setMax(5500);
   
+  epdf.Formula("massShift", "@0-100", RooArgList(epdf.Var("mass")));
+  
+  epdf.Vars("mass,time,massShift").Print();
+  
   epdf.Add("test1",
-          RooArgSet(epdf.Gaussian("test1_1", epdf.Var("mass"), epdf.Var("mean1"),
+          RooArgSet(epdf.Gaussian("test1_1", epdf.Formula("massShift"), epdf.Var("mean1"),
                                   epdf.Var("abweichung_1")),
                     epdf.Gaussian("test1_2", epdf.Var("mass"), epdf.Var("mean1"),
                                   epdf.Var("abweichung_2"))),

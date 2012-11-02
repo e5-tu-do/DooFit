@@ -13,6 +13,7 @@
 #include "RooWorkspace.h"
 #include "RooExtendPdf.h"
 #include "RooAddPdf.h"
+#include "RooFormulaVar.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -58,22 +59,54 @@ RooRealVar& doofit::builder::EasyPdf::Var(const std::string &name) {
   }
 }
 
+RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name, const std::string& formula,
+                                                 const RooArgList& dependents) {
+  if (formulas_.count(name) == 1) {
+    throw ObjectExistsException();
+  } else {
+    RooFormulaVar* temp_formula = new RooFormulaVar(name.c_str(), name.c_str(),
+                                                    formula.c_str(), dependents);
+    if (ws_ == NULL) {
+      formulas_[name] = temp_formula;
+    } else {
+      ws_->import(*temp_formula, Silence());
+      delete temp_formula;
+      formulas_[name] = temp_formula = dynamic_cast<RooFormulaVar*>(ws_->function(name.c_str()));
+    }
+    return *temp_formula;
+  }
+}
+
+RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name) {
+  if (formulas_.count(name) == 1) {
+    return *formulas_[name];
+  } else {
+    throw ObjectNotExistingException();
+  }
+}
+
 RooArgSet doofit::builder::EasyPdf::Vars(const std::string &name) {
   Config::CommaSeparatedList<std::string> variables;
   variables.Parse(name);
   
   RooArgSet argset;
   for (int i=0; i<variables.size(); ++i) {
-    argset.add(Var(variables[i]));
+    if (vars_.count(name) == 1) {
+      argset.add(Var(variables[i]));
+    } else if (formulas_.count(name) == 1) {
+      argset.add(Formula(variables[i]));
+    } else {
+      argset.add(Var(variables[i]));
+    }
   }
   return argset;
 }
 
-RooGaussian& doofit::builder::EasyPdf::Gaussian(const std::string &name, RooRealVar& x, RooRealVar& mean, RooRealVar& sigma) {
+RooGaussian& doofit::builder::EasyPdf::Gaussian(const std::string &name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma) {
   return AddPdfToStore<RooGaussian>(new RooGaussian(name.c_str(), name.c_str(), x, mean, sigma));
 }
 
-RooExponential& doofit::builder::EasyPdf::Exponential(const std::string &name, RooRealVar& x, RooRealVar& e) {
+RooExponential& doofit::builder::EasyPdf::Exponential(const std::string &name, RooAbsReal& x, RooAbsReal& e) {
   return AddPdfToStore<RooExponential>(new RooExponential(name.c_str(), name.c_str(), x, e));
 }
 
@@ -97,6 +130,6 @@ RooAbsPdf& doofit::builder::EasyPdf::Pdf(const std::string &name) {
   if (pdfs_.count(name) == 1) {
     return *pdfs_[name];
   } else {
-    throw PdfNotExistingException();
+    throw ObjectNotExistingException();
   }
 }
