@@ -24,6 +24,7 @@ class RooExtendPdf;
 class RooAbsReal;
 class RooAddPdf;
 class RooFormulaVar;
+class RooCategory;
 
 /** @namespace doofit::builder
  *  @brief DooFit PDF building namespace
@@ -112,6 +113,18 @@ class EasyPdf {
   RooRealVar& Var(const std::string& name);
   
   /**
+   *  @brief Add or access RooCategory
+   *
+   *  Request a RooCategory by a specified name. If the category does not yet
+   *  exist in this EasyPdf pool of categories, it is created and returned.
+   *  Otherwise it will be returned from the pool.
+   *
+   *  @param name name of the RooCategory
+   *  @return the appropriate RooCategory
+   */
+  RooCategory& Cat(const std::string& name);
+  
+  /**
    *  @brief Add and access RooFormulaVar
    *
    *  Request a RooFormulaVar by a specified name. If the formula does not yet
@@ -139,20 +152,29 @@ class EasyPdf {
   RooFormulaVar& Formula(const std::string& name);
   
   /**
-   *  @brief Add and/or access RooRealVars as RooArgSet
+   *  @brief Add and/or access RooRealVars, RooCategories and RooFormulaVars as RooArgSet
    *
-   *  Request a set of RooRealVars or RooFormulaVars as a comma-separated list 
-   *  of specified names.
-   *  If the variables or formulas do not yet exist in this EasyPdf pool of 
-   *  variables, they are created and returned. Otherwise they will be returned
-   *  from the pool. If a variable and formula both exist under the supplied 
-   *  name, the variable will be returned.
+   *  Request a set of RooRealVars, RooCategories or RooFormulaVars as a 
+   *  comma-separated list of specified names.
+   *  If the variables, categories or formulas do not yet exist in this EasyPdf 
+   *  pool of variables, they are created and returned. Otherwise they will be 
+   *  returned from the pool. If a variable, category or formula exist
+   *  under the supplied name, the variable will be returned.
    *  This check is performed individually for each variable
    *
-   *  @param names names of the RooRealVar as comma separated string
+   *  @param names names of the variables as comma separated string
    *  @return the appropriate RooRealVars as RooArgSet
    */
   RooArgSet Vars(const std::string& names);
+  
+  /**
+   *  @brief Access all RooRealVars and RooFormulaVars as RooArgSet
+   *
+   *  Request a set of all RooRealVars and RooFormulaVars.
+   *
+   *  @return the appropriate RooRealVars as RooArgSet
+   */
+  RooArgSet AllVars();
   
   /**
    *  @brief Add and access a Gaussian PDF
@@ -270,6 +292,11 @@ class EasyPdf {
    *  @brief Container for all generated RooRealVars
    */
   std::map<std::string,RooRealVar*> vars_;
+  
+  /**
+   *  @brief Container for all generated RooCategories
+   */
+  std::map<std::string,RooCategory*> cats_;
   
   /**
    *  @brief Container for all generated RooFormulaVars

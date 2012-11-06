@@ -59,7 +59,17 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
   sinfo << "Plotting " << dimension_.GetName() << " into " << plot_dir_ << plot_name << endmsg;
   
   doocore::lutils::setStyle("LHCb");
-  RooPlot* plot_frame = dimension_.frame();
+  
+  RooCmdArg range_arg;
+  if (!dimension_.hasMin() && !dimension_.hasMax()) {
+    double min, max;
+    RooRealVar* dimension_non_const = const_cast<RooRealVar*>(dynamic_cast<const RooRealVar*>(&dimension_));
+    dataset_.getRange(*dimension_non_const, min, max);
+    
+    range_arg = Range(min, max);
+  }
+  RooPlot* plot_frame = dimension_.frame(range_arg);
+  
   dataset_.plotOn(plot_frame);
   
   if (pdfs_.getSize() > 0) {
@@ -68,7 +78,7 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
       serr << "Plot::PlotIt(): PDF not valid." << endmsg;
       throw 1;
     }
-    RooPlot* plot_frame_pull = dimension_.frame();
+    RooPlot* plot_frame_pull = dimension_.frame(range_arg);
     dataset_.plotOn(plot_frame_pull);
     
     for (int i=1; i<pdfs_.getSize(); ++i) {

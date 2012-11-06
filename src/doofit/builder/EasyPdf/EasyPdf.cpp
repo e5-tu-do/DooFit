@@ -14,6 +14,7 @@
 #include "RooExtendPdf.h"
 #include "RooAddPdf.h"
 #include "RooFormulaVar.h"
+#include "RooCategory.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -59,6 +60,22 @@ RooRealVar& doofit::builder::EasyPdf::Var(const std::string &name) {
   }
 }
 
+RooCategory& doofit::builder::EasyPdf::Cat(const std::string &name) {
+  if (cats_.count(name) == 1) {
+    return *cats_[name];
+  } else {
+    RooCategory* temp_cat = new RooCategory(name.c_str(), name.c_str());
+    if (ws_ == NULL) {
+      cats_[name] = temp_cat;
+    } else {
+      ws_->import(*temp_cat, Silence());
+      delete temp_cat;
+      cats_[name] = temp_cat = ws_->cat(name.c_str());
+    }
+    return *temp_cat;
+  }
+}
+
 RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name, const std::string& formula,
                                                  const RooArgList& dependents) {
   if (formulas_.count(name) == 1) {
@@ -91,9 +108,11 @@ RooArgSet doofit::builder::EasyPdf::Vars(const std::string &name) {
   
   RooArgSet argset;
   for (int i=0; i<variables.size(); ++i) {
-    if (vars_.count(name) == 1) {
+    if (vars_.count(variables[i]) == 1) {
       argset.add(Var(variables[i]));
-    } else if (formulas_.count(name) == 1) {
+    } else if (cats_.count(variables[i]) == 1) {
+      argset.add(Cat(variables[i]));
+    } else if (formulas_.count(variables[i]) == 1) {
       argset.add(Formula(variables[i]));
     } else {
       argset.add(Var(variables[i]));
@@ -101,6 +120,25 @@ RooArgSet doofit::builder::EasyPdf::Vars(const std::string &name) {
   }
   return argset;
 }
+
+RooArgSet doofit::builder::EasyPdf::AllVars() {
+  RooArgSet argset;
+  
+  for (std::map<std::string,RooRealVar*>::const_iterator it = vars_.begin();
+       it != vars_.end(); ++it) {
+    argset.add(*(it->second));
+  }
+  for (std::map<std::string,RooCategory*>::const_iterator it = cats_.begin();
+       it != cats_.end(); ++it) {
+    argset.add(*(it->second));
+  }
+  for (std::map<std::string,RooFormulaVar*>::const_iterator it = formulas_.begin();
+       it != formulas_.end(); ++it) {
+    argset.add(*(it->second));
+  }
+  return argset;
+}
+
 
 RooGaussian& doofit::builder::EasyPdf::Gaussian(const std::string &name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma) {
   return AddPdfToStore<RooGaussian>(new RooGaussian(name.c_str(), name.c_str(), x, mean, sigma));
