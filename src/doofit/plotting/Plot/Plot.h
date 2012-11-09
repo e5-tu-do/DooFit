@@ -3,6 +3,7 @@
 
 // STL
 #include <string>
+#include <vector>
 
 // BOOST
 
@@ -108,6 +109,20 @@ namespace plotting {
     Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooArgList& pdfs=RooArgList(), const std::string& plot_name="");
     
     /**
+     *  @brief Constructor for Plot
+     *
+     *  This will initialise the Plot which can then be plotted via
+     *  Plot::PlotIt()
+     *
+     *  @param cfg_plot PlotConfig holding plotting configuration
+     *  @param dimension the dimension to plot (e.g. a RooRealVar)
+     *  @param datasets the datasets to plot (e.g. vector of RooDataSets)
+     *  @param pdfs (optional) a RooArgList of PDFs to plot; the first PDF must be the overall PDF, further PDFs must be components of this PDF
+     *  @param plot_name (optional) a name for this plot (i.e. the output files; will be the variable name if empty)
+     */
+    Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const std::vector<const RooAbsData*>& datasets, const RooArgList& pdfs=RooArgList(), const std::string& plot_name="");
+    
+    /**
      *  @brief Actually plot the plot in normal scale
      *
      *  This function will plot the data in linear scale.
@@ -158,7 +173,7 @@ namespace plotting {
     /**
      *  @brief Dataset to plot
      */
-    const RooAbsData& dataset_;
+    std::vector<const RooAbsData*> datasets_;
     
     /**
      *  @brief PDF and sub components to plot

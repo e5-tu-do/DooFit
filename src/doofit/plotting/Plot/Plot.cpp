@@ -3,6 +3,7 @@
 // STL
 #include <string>
 #include <sstream>
+#include <vector>
 
 // boost
 
@@ -29,16 +30,18 @@ namespace plotting {
 Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooArgList& pdfs, const std::string& plot_name)
 : config_plot_(cfg_plot),
   dimension_(dimension),
-  dataset_(dataset),
+  datasets_(),
   pdfs_(pdfs),
   plot_name_(plot_name),
   plot_dir_("Plot/")
 {
+  datasets_.push_back(&dataset);
+  
   if (&dimension_ == NULL) {
     serr << "Plot::Plot(): Dimension is invalid." << endmsg;
     throw 1;
   }
-  if (&dataset_ == NULL) {
+  if (datasets_.front() == NULL) {
     serr << "Plot::Plot(): Dataset is invalid." << endmsg;
     throw 1;
   }
@@ -47,6 +50,28 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
   }
 }
 
+Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const std::vector<const RooAbsData*>& datasets, const RooArgList& pdfs, const std::string& plot_name)
+: config_plot_(cfg_plot),
+  dimension_(dimension),
+  datasets_(datasets),
+  pdfs_(pdfs),
+  plot_name_(plot_name),
+  plot_dir_("Plot/")
+{
+  if (&dimension_ == NULL) {
+    serr << "Plot::Plot(): Dimension is invalid." << endmsg;
+    throw 1;
+  }
+  if (datasets_.front() == NULL) {
+    serr << "Plot::Plot(): Dataset is invalid." << endmsg;
+    throw 1;
+  }
+  if (plot_name_ == "") {
+    plot_name_ = dimension_.GetName();
+  }
+}
+
+  
 void Plot::PlotHandler(bool logy, const std::string& suffix) const {
   std::stringstream plot_name_sstr;
   plot_name_sstr << plot_name_ << suffix;
@@ -63,14 +88,27 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
   RooCmdArg range_arg;
   if (!dimension_.hasMin() && !dimension_.hasMax()) {
     double min, max;
+    
+    // ugly const_cast because RooFit is stupid (RooDataSet::getRange needs non-const RooRealVar)
     RooRealVar* dimension_non_const = const_cast<RooRealVar*>(dynamic_cast<const RooRealVar*>(&dimension_));
-    dataset_.getRange(*dimension_non_const, min, max);
+    datasets_.front()->getRange(*dimension_non_const, min, max);
+    
+    double min_t, max_t;
+    for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin()+1;
+         it != datasets_.end(); ++it) {
+      (*it)->getRange(*dimension_non_const, min_t, max_t);
+      if (min_t < min) min = min_t;
+      if (max_t > max) max = max_t;
+    }
     
     range_arg = Range(min, max);
   }
   RooPlot* plot_frame = dimension_.frame(range_arg);
   
-  dataset_.plotOn(plot_frame);
+  for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
+       it != datasets_.end(); ++it) {
+    (*it)->plotOn(plot_frame/*, Rescale(1.0/(*it)->sumEntries())*/);
+  }
   
   if (pdfs_.getSize() > 0) {
     const RooAbsPdf* pdf = dynamic_cast<RooAbsPdf*>(pdfs_.first());
@@ -79,7 +117,10 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
       throw 1;
     }
     RooPlot* plot_frame_pull = dimension_.frame(range_arg);
-    dataset_.plotOn(plot_frame_pull);
+    for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
+         it != datasets_.end(); ++it) {
+      (*it)->plotOn(plot_frame_pull);
+    }
     
     for (int i=1; i<pdfs_.getSize(); ++i) {
       const RooAbsPdf* sub_pdf = dynamic_cast<RooAbsPdf*>(pdfs_.at(i));

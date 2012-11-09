@@ -51,7 +51,9 @@ namespace Toy {
   config_common_(cfg_com),
   config_toyfactory_(cfg_tfac)
   {
-	RooRandom::randomGenerator()->SetSeed(cfg_tfac.random_seed());
+    if (cfg_tfac.random_seed()>=0) {
+    	RooRandom::randomGenerator()->SetSeed(cfg_tfac.random_seed());
+    }
   }
   
   ToyFactoryStd::~ToyFactoryStd(){
@@ -783,7 +785,7 @@ namespace Toy {
     cfg_tfac_proto.set_argset_generation_observables(&argset_generation_observables);
     cfg_tfac_proto.set_expected_yield(yield);
     cfg_tfac_proto.set_dataset_size_fixed(true);
-    cfg_tfac_proto.set_random_seed(config_toyfactory_.random_seed());
+    cfg_tfac_proto.set_random_seed(-1);
 
     ToyFactoryStd tfac_proto(config_common_, cfg_tfac_proto);
     
