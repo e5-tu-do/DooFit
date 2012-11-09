@@ -1,0 +1,5 @@
+add_library(extraroopdfs SHARED RooBMixAsymDecay.cpp RooBMixAsymDecay.h)
+root_generate_dictionaries(extraroopdfsDict RooBMixAsymDecay.h)
+target_link_libraries(extraroopdfs extraroopdfsDict ${ALL_LIBRARIES})
+install(TARGETS extraroopdfs DESTINATION lib)
+install(FILES RooBMixAsymDecay.h DESTINATION include/doofit/extraroopdfs)
