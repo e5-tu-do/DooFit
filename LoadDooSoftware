@@ -11,6 +11,7 @@ echo "Loading DooSoftware for ROOT $ROOTVERS"
 
 export DOOFITSYS=/doosoft/DooFit/ROOT_v$ROOTVERS
 export DOOCORESYS=/doosoft/DooCore/ROOT_v$ROOTVERS
+export DOOSELECTIONSYS=/doosoft/DooSelection/ROOT_v$ROOTVERS
 
 if [ "$1" != "--ignore-local" ]; then
   if [ -e "$HOME/LocalDooSoftware.sh" ]; then
@@ -21,8 +22,9 @@ fi
 
 echo "Using DooFit from: $DOOFITSYS"
 echo "Using DooCore from: $DOOCORESYS"
+echo "Using DooSelection from: $DOOSELECTIONSYS"
 
-export PATH=$PATH:$DOOCORESYS/bin:$DOOFITSYS/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOCORESYS/lib:$DOOFITSYS/lib
+export PATH=$PATH:$DOOCORESYS/bin:$DOOFITSYS/bin:$DOOSELECTIONSYS/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOCORESYS/lib:$DOOFITSYS/lib:$DOOSELECTIONSYS/lib
 
 
