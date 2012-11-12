@@ -21,9 +21,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 #ADD_DEFINITIONS("-std=c++0x")
 
-install(FILES external/FindDooFit.cmake DESTINATION cmake/Modules)
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{DOOCORESYS}/cmake/Modules/")
 
 set(BASEPATH "${CMAKE_SOURCE_DIR}/src")
 include_directories(${BASEPATH})
@@ -34,6 +33,8 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 # Project Definition
 project(DooFit)
 cmake_minimum_required(VERSION 2.6)
+
+install(FILES external/FindDooFit.cmake DESTINATION cmake/Modules)
 
 FIND_PACKAGE(Boost 1.48 COMPONENTS program_options filesystem regex thread system random REQUIRED)
 find_package(ROOT REQUIRED)
