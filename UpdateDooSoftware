@@ -1,6 +1,6 @@
 #!/bin/bash
 
-packages="DooCore DooFit"
+packages="DooCore DooFit DooSelection"
 
 for p in $packages; do
   dir=$DOOSOFTROOT/repos/$p
