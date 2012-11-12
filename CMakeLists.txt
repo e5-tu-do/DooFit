@@ -21,6 +21,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 #ADD_DEFINITIONS("-std=c++0x")
 
+install(FILES external/FindDooFit.cmake DESTINATION cmake/Modules)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(BASEPATH "${CMAKE_SOURCE_DIR}/src")
