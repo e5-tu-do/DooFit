@@ -333,7 +333,7 @@ macro (root_generate_dictionaries_local)
     SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/${_OUTDICT} PROPERTIES GENERATED 1)
     SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/${_OUTCOMP} PROPERTIES GENERATED 1)
     SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/${_OUTDICT_HEADER} PROPERTIES GENERATED 1)
-    #add_dependencies(${_FINALDICT} ${_OUTTARGET}) # As no libraty is built, this needed to be commented out. Transfer to your local CMakeLists.txt
+    #add_dependencies(${_FINALDICT} ${_OUTTARGET}) # As no library is built, this needed to be commented out. Transfer to your local CMakeLists.txt
   endforeach ()
 
   set(${_FINALDICT} "${_ROOT_DICTS}")
