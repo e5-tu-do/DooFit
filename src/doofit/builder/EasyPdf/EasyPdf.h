@@ -27,6 +27,8 @@ class RooFormulaVar;
 class RooCategory;
 class RooGaussModel;
 class RooAddModel;
+class RooDecay;
+class RooResolutionModel;
 
 /** @namespace doofit::builder
  *  @brief DooFit PDF building namespace
@@ -192,6 +194,10 @@ class EasyPdf {
    */
   RooArgSet AllVars();
   
+  /** @name Basic PDFs
+   *  PDF definitions of trivial PDFs
+   */
+  ///@{
   /**
    *  @brief Add and access a Gaussian PDF
    *
@@ -221,6 +227,26 @@ class EasyPdf {
    */
   RooExponential& Exponential(const std::string& name, RooAbsReal& x, RooAbsReal& e);
   
+  /**
+   *  @brief Add and access an decay PDF
+   *
+   *  Request a RooDecay by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param t t variable
+   *  @param tau lifetime of decay
+   *  @param model the resolution model to use
+   *  @return the appropriate PDF
+   */
+  RooDecay& Decay(const std::string& name, RooRealVar& t, RooAbsReal& tau, const RooResolutionModel& model);
+  ///@}
+  
+  /** @name PDF combinations/modifications
+   *  Definitions of PDFs using and/or modifying other PDFs
+   */
+  ///@{
   /**
    *  @brief Add and access an product PDF
    *
@@ -274,7 +300,8 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooAddPdf& Add(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs);
- 
+  ///@}
+
   /** @name Resolution PDFs
    *  PDF definitions of resolution models
    */
@@ -409,6 +436,10 @@ class EasyPdf {
   template <class PdfType>
   PdfType& AddPdfToStore(PdfType* pdf);
 
+  /** @name PDF access
+   *  Access to already defined PDFs
+   */
+  ///@{
   /**
    *  @brief Access an existing PDF
    *
@@ -420,6 +451,19 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooAbsPdf& Pdf(const std::string& name);
+  
+  /**
+   *  @brief Access an existing model PDF
+   *
+   *  Request a RooResolutionModel by a specified name. If the PDF does exist in this
+   *  EasyPdf pool of PDFs, it is returned.
+   *  Otherwise an exception ObjectNotExistingException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @return the appropriate PDF
+   */
+  RooResolutionModel& Model(const std::string& name);
+  ///@}
   
  protected:
   

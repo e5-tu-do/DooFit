@@ -17,6 +17,8 @@
 #include "RooCategory.h"
 #include "RooGaussModel.h"
 #include "RooAddModel.h"
+#include "RooDecay.h"
+#include "RooResolutionModel.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -160,6 +162,11 @@ RooExponential& doofit::builder::EasyPdf::Exponential(const std::string &name, R
   return AddPdfToStore<RooExponential>(new RooExponential(name.c_str(), name.c_str(), x, e));
 }
 
+RooDecay& doofit::builder::EasyPdf::Decay(const std::string& name, RooRealVar& t, RooAbsReal& tau, const RooResolutionModel& model) {
+  return AddPdfToStore<RooDecay>(new RooDecay(name.c_str(), name.c_str(), t, tau, model, RooDecay::SingleSided));
+}
+
+
 RooProdPdf& doofit::builder::EasyPdf::Product(const std::string& name, const RooArgList& pdfs) {
   return AddPdfToStore<RooProdPdf>(new RooProdPdf(name.c_str(), name.c_str(), pdfs));
 }
@@ -218,6 +225,19 @@ RooAddPdf& doofit::builder::EasyPdf::DoubleGaussianScaled(const std::string& nam
 RooAbsPdf& doofit::builder::EasyPdf::Pdf(const std::string &name) {
   if (pdfs_.count(name) == 1) {
     return *pdfs_[name];
+  } else {
+    throw ObjectNotExistingException();
+  }
+}
+
+RooResolutionModel& doofit::builder::EasyPdf::Model(const std::string &name) {
+  if (pdfs_.count(name) == 1) {
+    RooResolutionModel* model = dynamic_cast<RooResolutionModel*>(pdfs_[name]);
+    if (model != NULL) {
+      return *model;
+    } else {
+      throw ObjectNotExistingException();
+    }
   } else {
     throw ObjectNotExistingException();
   }
