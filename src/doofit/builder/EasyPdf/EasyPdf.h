@@ -12,6 +12,7 @@
 #include "RooWorkspace.h"
 #include "RooGlobalFunc.h"
 #include "RooArgSet.h"
+#include "RooArgList.h"
 
 // forward declarations
 class RooRealVar;
@@ -29,6 +30,7 @@ class RooGaussModel;
 class RooAddModel;
 class RooDecay;
 class RooResolutionModel;
+class RooEffProd;
 
 /** @namespace doofit::builder
  *  @brief DooFit PDF building namespace
@@ -186,6 +188,22 @@ class EasyPdf {
   RooArgSet Vars(const std::string& names);
   
   /**
+   *  @brief Add and/or access RooRealVars, RooCategories and RooFormulaVars as RooArgList
+   *
+   *  Request a set of RooRealVars, RooCategories or RooFormulaVars as a
+   *  comma-separated list of specified names.
+   *  If the variables, categories or formulas do not yet exist in this EasyPdf
+   *  pool of variables, they are created and returned. Otherwise they will be
+   *  returned from the pool. If a variable, category or formula exist
+   *  under the supplied name, the variable will be returned.
+   *  This check is performed individually for each variable
+   *
+   *  @param names names of the variables as comma separated string
+   *  @return the appropriate RooRealVars as RooArgList
+   */
+  RooArgList VarList(const std::string& names);
+  
+  /**
    *  @brief Access all RooRealVars and RooFormulaVars as RooArgSet
    *
    *  Request a set of all RooRealVars and RooFormulaVars.
@@ -300,6 +318,20 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooAddPdf& Add(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs);
+  
+  /**
+   *  @brief Combine PDF and efficiency to a RooEffProd
+   *
+   *  Request a RooEffProd by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param pdf PDF to combine into efficiency product
+   *  @param efficiency efficiency function
+   *  @return the appropriate PDF
+   */
+  RooEffProd& EffProd(const std::string& name, RooAbsPdf& pdf, RooAbsReal& efficiency);
   ///@}
 
   /** @name Resolution PDFs

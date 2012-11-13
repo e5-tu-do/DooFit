@@ -19,6 +19,7 @@
 #include "RooAddModel.h"
 #include "RooDecay.h"
 #include "RooResolutionModel.h"
+#include "RooEffProd.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -135,6 +136,25 @@ RooArgSet doofit::builder::EasyPdf::Vars(const std::string &name) {
   return argset;
 }
 
+RooArgList doofit::builder::EasyPdf::VarList(const std::string &name) {
+  Config::CommaSeparatedList<std::string> variables;
+  variables.Parse(name);
+  
+  RooArgList arglist;
+  for (int i=0; i<variables.size(); ++i) {
+    if (vars_.count(variables[i]) == 1) {
+      arglist.add(Var(variables[i]));
+    } else if (cats_.count(variables[i]) == 1) {
+      arglist.add(Cat(variables[i]));
+    } else if (formulas_.count(variables[i]) == 1) {
+      arglist.add(Formula(variables[i]));
+    } else {
+      arglist.add(Var(variables[i]));
+    }
+  }
+  return arglist;
+}
+
 RooArgSet doofit::builder::EasyPdf::AllVars() {
   RooArgSet argset;
   
@@ -181,6 +201,10 @@ RooAddPdf& doofit::builder::EasyPdf::Add(const std::string& name, const RooArgLi
 
 RooAddPdf& doofit::builder::EasyPdf::Add(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs) {
   return AddPdfToStore<RooAddPdf>(new RooAddPdf(name.c_str(), name.c_str(), pdfs, coefs));
+}
+
+RooEffProd& doofit::builder::EasyPdf::EffProd(const std::string& name, RooAbsPdf& pdf, RooAbsReal& efficiency) {
+  return AddPdfToStore<RooEffProd>(new RooEffProd(name.c_str(), name.c_str(), pdf, efficiency));
 }
 
 RooGaussModel& doofit::builder::EasyPdf::GaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma) {
