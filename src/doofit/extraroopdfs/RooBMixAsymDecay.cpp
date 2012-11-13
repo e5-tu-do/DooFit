@@ -38,12 +38,12 @@
 //From Project
 #include "RooBMixAsymDecay.h"
 
-
+ClassImp(doofit::extraroopdfs::RooBMixAsymDecay);
 
 namespace doofit {
 namespace extraroopdfs {
     
-//ClassImp(doofit::extraroopdfs::RooBMixAsymDecay);
+//
 
 //_____________________________________________________________________________
 RooBMixAsymDecay::RooBMixAsymDecay(const char *name, const char *title, 
