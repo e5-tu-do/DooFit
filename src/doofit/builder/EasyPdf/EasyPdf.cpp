@@ -222,6 +222,12 @@ RooAddPdf& doofit::builder::EasyPdf::DoubleGaussianScaled(const std::string& nam
              RooArgList(fraction));
 }
 
+RooAddPdf& doofit::builder::EasyPdf::DoubleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& fraction, const RooResolutionModel& model) {
+  return Add(name, RooArgList(Decay("p1_"+name, t, tau1, model),
+                              Decay("p2_"+name, t, tau2, model)),
+             RooArgList(fraction));
+}
+
 RooAbsPdf& doofit::builder::EasyPdf::Pdf(const std::string &name) {
   if (pdfs_.count(name) == 1) {
     return *pdfs_[name];

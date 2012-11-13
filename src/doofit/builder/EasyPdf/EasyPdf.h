@@ -416,10 +416,35 @@ class EasyPdf {
    *  @param mean mean variable
    *  @param sigma sigma variable
    *  @param scale variable for scale between sigma and sigma2
+   *  @param fraction fraction between two Gaussians
    *  @param sigma2_name name of sigma2 formula
    *  @return the appropriate PDF
    */
   RooAddPdf& DoubleGaussianScaled(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale, RooAbsReal& fraction, std::string sigma2_name="");
+  
+  /**
+   *  @brief Add and access a double Decay PDF
+   *
+   *  Request a double Decay as RooAddPdf by a specified name. If the PDF
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The PDF is modelled as
+   *
+   *  P(x) = fraction * Decay(t,tau1) + (1-fraction) * Decay(t,tau2)
+   *
+   *  with sigma2 = scale*sigma as automatically generated formula. If the name
+   *  of sigma2 is not supplied, it will be generated automatically.
+   *
+   *  @param name name of the PDF
+   *  @param t t variable
+   *  @param tau1 lifetime 1
+   *  @param tau2 lifetime 2
+   *  @param fraction fraction between two Decays
+   *  @param model the resolution model to use
+   *  @return the appropriate PDF
+   */
+  RooAddPdf& DoubleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& fraction, const RooResolutionModel& model);
   ///@}
   
   /**
