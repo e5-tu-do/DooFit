@@ -43,7 +43,7 @@ ClassImp(doofit::extraroopdfs::RooBMixAsymDecay);
 namespace doofit {
 namespace extraroopdfs {
     
-//
+//ClassImp(RooBMixAsymDecay);
 
 //_____________________________________________________________________________
 RooBMixAsymDecay::RooBMixAsymDecay(const char *name, const char *title, 
