@@ -25,6 +25,8 @@ class RooAbsReal;
 class RooAddPdf;
 class RooFormulaVar;
 class RooCategory;
+class RooGaussModel;
+class RooAddModel;
 
 /** @namespace doofit::builder
  *  @brief DooFit PDF building namespace
@@ -99,6 +101,20 @@ class EasyPdf {
    *  @brief Destructor for EasyPdf
    */
   ~EasyPdf();
+  
+  /**
+   *  @brief Add or access real based variable (RooRealVar or RooFormulaVar)
+   *
+   *  Request a RooAbsReal by a specified name. If the variable/formula does not 
+   *  yet exist in this EasyPdf pool of variables or formulas, it is created as 
+   *  a RooRealVar and returned.
+   *  Otherwise it will be returned from the pool. Variables take preference 
+   *  over formulas in case of duplicate entries.
+   *
+   *  @param name name of the RooAbsReal
+   *  @return the appropriate RooAbsReal
+   */
+  RooAbsReal& Real(const std::string& name);
   
   /**
    *  @brief Add or access RooRealVar
@@ -253,11 +269,131 @@ class EasyPdf {
    *  Otherwise an exception ObjectExistsException is thrown.
    *
    *  @param name name of the PDF
-   *  @param pdfs RooArgList of extended PDFs to add
+   *  @param pdfs RooArgList of PDFs to add
    *  @param coefs RooArgList of coefficients/yields to use
    *  @return the appropriate PDF
    */
   RooAddPdf& Add(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs);
+ 
+  /** @name Resolution PDFs
+   *  PDF definitions of resolution models
+   */
+  ///@{
+  /**
+   *  @brief Add and access a RooGaussModel
+   *
+   *  Request a RooGaussModel by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param mean mean or bias of resolution
+   *  @param sigma width of resolution
+   *  @return the appropriate PDF
+   */
+  RooGaussModel& GaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma);
+  
+  /**
+   *  @brief Add and access a double RooGaussModel
+   *
+   *  Request a double RooGaussModel by a specified name. If the PDF does not 
+   *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param mean mean or bias of resolution
+   *  @param sigma1 width of first Gaussian
+   *  @param sigma2 width of second Gaussian
+   *  @param fraction fraction between Gaussians
+   *  @return the appropriate PDF
+   */
+  RooAddModel& DoubleGaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& fraction);
+  
+  /**
+   *  @brief Add and access a triple RooGaussModel
+   *
+   *  Request a triple RooGaussModel by a specified name. If the PDF does not
+   *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param mean mean or bias of resolution
+   *  @param sigma1 width of first Gaussian
+   *  @param sigma2 width of second Gaussian
+   *  @param sigma3 width of third Gaussian
+   *  @param fraction1 fraction between first and second Gaussian
+   *  @param fraction2 fraction between second and third Gaussian
+   *  @return the appropriate PDF
+   */
+  RooAddModel& TripleGaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& sigma3, RooAbsReal& fraction1, RooAbsReal& fraction2);
+  
+  /**
+   *  @brief Add and access a quadruple RooGaussModel
+   *
+   *  Request a quadruple RooGaussModel by a specified name. If the PDF does not
+   *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param mean mean or bias of resolution
+   *  @param sigma1 width of first Gaussian
+   *  @param sigma2 width of second Gaussian
+   *  @param sigma3 width of third Gaussian
+   *  @param sigma4 width of fourth Gaussian
+   *  @param fraction1 fraction between first and second Gaussian
+   *  @param fraction2 fraction between second and third Gaussian
+   *  @param fraction3 fraction between third and fourth Gaussian
+   *  @return the appropriate PDF
+   */
+  RooAddModel& QuadGaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& sigma3, RooAbsReal& sigma4, RooAbsReal& fraction1, RooAbsReal& fraction2, RooAbsReal& fraction3);
+  
+  /**
+   *  @brief Add and access an added resolution PDF with supplied coefficients
+   *
+   *  Request a RooAddModel by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param pdfs RooArgList of PDFs to add
+   *  @param coefs RooArgList of coefficients to use
+   *  @return the appropriate PDF
+   */
+  RooAddModel& AddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs);
+  ///@}
+  
+  /** @name Higher level PDFs
+   *  PDF definitions of non-trivial PDFs
+   */
+  ///@{
+  /**
+   *  @brief Add and access a double Gaussian PDF with scaled second width
+   *
+   *  Request a double Gaussian as RooAddPdf by a specified name. If the PDF 
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and 
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The PDF is modelled as
+   *
+   *  P(x) = fraction * Gaussian(x,mean,sigma) + (1-fraction) * Gaussian(x,mean,sigma2)
+   *
+   *  with sigma2 = scale*sigma as automatically generated formula. If the name 
+   *  of sigma2 is not supplied, it will be generated automatically.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param mean mean variable
+   *  @param sigma sigma variable
+   *  @param scale variable for scale between sigma and sigma2
+   *  @param sigma2_name name of sigma2 formula
+   *  @return the appropriate PDF
+   */
+  RooAddPdf& DoubleGaussianScaled(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale, RooAbsReal& fraction, std::string sigma2_name="");
+  ///@}
   
   /**
    *  @brief Add and access a given PDF

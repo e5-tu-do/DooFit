@@ -15,6 +15,8 @@
 #include "RooAddPdf.h"
 #include "RooFormulaVar.h"
 #include "RooCategory.h"
+#include "RooGaussModel.h"
+#include "RooAddModel.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -41,6 +43,16 @@ doofit::builder::EasyPdf::~EasyPdf() {
          it != vars_.end(); ++it) {
       delete it->second;
     }
+  }
+}
+
+RooAbsReal& doofit::builder::EasyPdf::Real(const std::string &name) {
+  if (vars_.count(name) == 1) {
+    return *vars_[name];
+  } else if (formulas_.count(name) == 1) {
+    return *formulas_[name];
+  } else {
+    return Var(name);
   }
 }
 
@@ -162,6 +174,45 @@ RooAddPdf& doofit::builder::EasyPdf::Add(const std::string& name, const RooArgLi
 
 RooAddPdf& doofit::builder::EasyPdf::Add(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs) {
   return AddPdfToStore<RooAddPdf>(new RooAddPdf(name.c_str(), name.c_str(), pdfs, coefs));
+}
+
+RooGaussModel& doofit::builder::EasyPdf::GaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma) {
+  return AddPdfToStore<RooGaussModel>(new RooGaussModel(name.c_str(), name.c_str(), x, mean, sigma));
+}
+
+RooAddModel& doofit::builder::EasyPdf::DoubleGaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& fraction) {
+  return AddModel(name, RooArgList(GaussModel("p1_"+name,x,mean,sigma1),
+                                   GaussModel("p2_"+name,x,mean,sigma2)),
+                  RooArgList(fraction));
+}
+
+RooAddModel& doofit::builder::EasyPdf::TripleGaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& sigma3, RooAbsReal& fraction1, RooAbsReal& fraction2) {
+  return AddModel(name, RooArgList(GaussModel("p1_"+name,x,mean,sigma1),
+                                   GaussModel("p2_"+name,x,mean,sigma2),
+                                   GaussModel("p3_"+name,x,mean,sigma3)),
+                  RooArgList(fraction1, fraction2));
+}
+
+RooAddModel& doofit::builder::EasyPdf::QuadGaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& sigma3, RooAbsReal& sigma4, RooAbsReal& fraction1, RooAbsReal& fraction2, RooAbsReal& fraction3) {
+  return AddModel(name, RooArgList(GaussModel("p1_"+name,x,mean,sigma1),
+                                   GaussModel("p2_"+name,x,mean,sigma2),
+                                   GaussModel("p3_"+name,x,mean,sigma3),
+                                   GaussModel("p4_"+name,x,mean,sigma4)),
+                  RooArgList(fraction1, fraction2, fraction3));
+}
+
+RooAddModel& doofit::builder::EasyPdf::AddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs) {
+  return AddPdfToStore<RooAddModel>(new RooAddModel(name.c_str(), name.c_str(), pdfs, coefs));
+}
+
+RooAddPdf& doofit::builder::EasyPdf::DoubleGaussianScaled(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale, RooAbsReal& fraction, std::string sigma2_name) {
+  if (sigma2_name.length() == 0) {
+    sigma2_name = name+"_sigma2";
+  }
+  
+  return Add(name, RooArgList(Gaussian("p1_"+name,x,mean,sigma),
+                              Gaussian("p2_"+name,x,mean,Formula(sigma2_name, "@0*@1", RooArgList(sigma,scale)))),
+             RooArgList(fraction));
 }
 
 RooAbsPdf& doofit::builder::EasyPdf::Pdf(const std::string &name) {
