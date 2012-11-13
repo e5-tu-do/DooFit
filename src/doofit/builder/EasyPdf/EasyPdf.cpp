@@ -20,6 +20,7 @@
 #include "RooDecay.h"
 #include "RooResolutionModel.h"
 #include "RooEffProd.h"
+#include "RooBDecay.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -250,6 +251,12 @@ RooAddPdf& doofit::builder::EasyPdf::DoubleDecay(const std::string& name, RooRea
   return Add(name, RooArgList(Decay("p1_"+name, t, tau1, model),
                               Decay("p2_"+name, t, tau2, model)),
              RooArgList(fraction));
+}
+
+RooBDecay& doofit::builder::EasyPdf::BDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau, RooAbsReal& dgamma, RooAbsReal& coef_cosh, RooAbsReal& coef_sinh, RooAbsReal& coef_cos, RooAbsReal& coef_sin, RooAbsReal& dm, const RooResolutionModel& model) {
+  return AddPdfToStore<RooBDecay>(new RooBDecay(name.c_str(), name.c_str(), t, tau, dgamma,
+                                                coef_cosh, coef_sinh, coef_cos, coef_sin, dm, model,
+                                                RooBDecay::SingleSided));
 }
 
 RooAbsPdf& doofit::builder::EasyPdf::Pdf(const std::string &name) {
