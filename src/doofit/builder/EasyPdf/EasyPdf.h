@@ -107,6 +107,10 @@ class EasyPdf {
    */
   ~EasyPdf();
   
+  /** @name Variable access and creation
+   *  Functions to access and/or create variables (real, formula, categories)
+   */
+  ///@{
   /**
    *  @brief Add or access real based variable (RooRealVar or RooFormulaVar)
    *
@@ -160,7 +164,7 @@ class EasyPdf {
   RooFormulaVar& Formula(const std::string& name, const std::string& formula,
                          const RooArgList& dependents);
   
-  /**
+    /**
    *  @brief Access RooFormulaVar
    *
    *  Request a RooFormulaVar by a specified name. If the formula does exist in 
@@ -171,7 +175,12 @@ class EasyPdf {
    *  @return the appropriate RooFormulaVar
    */
   RooFormulaVar& Formula(const std::string& name);
-  
+  ///@}
+
+  /** @name Variable collection access
+   *  Functions to access and/or create collections of variables (real, formula, categories)
+   */
+  ///@{
   /**
    *  @brief Add and/or access RooRealVars, RooCategories and RooFormulaVars as RooArgSet
    *
@@ -212,6 +221,24 @@ class EasyPdf {
    *  @return the appropriate RooRealVars as RooArgSet
    */
   RooArgSet AllVars();
+  ///@}
+  
+  /** @name Variable existency check
+   *  Functions to test existence of variables
+   */
+  ///@{
+  /**
+   *  @brief Check if real based variable exists (RooRealVar or RooFormulaVar)
+   *
+   *  Check if a RooAbsReal exists by a specified name. If the variable/formula 
+   *  does exist in this EasyPdf pool of variables or formulas, true is returned,
+   *  otherwise false.
+   *
+   *  @param name name of the RooAbsReal
+   *  @return whether the variable already exists
+   */
+  bool RealExists(const std::string& name);
+  ///@}
   
   /** @name Basic PDFs
    *  PDF definitions of trivial PDFs

@@ -172,6 +172,11 @@ namespace plotting {
      */
     virtual ~Plot();
     
+    /**
+     *  @brief Friend class PlotSimultaneous
+     */
+    friend class PlotSimultaneous;
+    
   protected:
     /**
      *  \brief PlotConfig instance to use
@@ -187,7 +192,7 @@ namespace plotting {
      *  @param logy use logarithmic y scale
      *  @param suffix suffix to put after file names
      */
-    void PlotHandler(bool logy, const std::string& suffix="") const;
+    virtual void PlotHandler(bool logy, const std::string& suffix="") const;
     
     /**
      *  @brief Dimension to plot in
