@@ -35,7 +35,7 @@ namespace plotting {
    *
    *  @section usage Usage
    *
-   *  Usage is similar to Plot. Regard Plot documentation for examples.
+   *  Usage is similar to Plot. Regard to Plot documentation for examples.
    *
    */
   

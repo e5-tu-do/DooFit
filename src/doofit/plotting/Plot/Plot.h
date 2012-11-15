@@ -36,9 +36,6 @@ namespace plotting {
    *  This class is built to produce a basic plot. It is not intended to suit 
    *  every plotting need someone might ever have. Derived classes are intended
    *  for more specific support. Main focus is convenience and ease of use.
-   * 
-   *  As of now only very basic plotting support is available. More will be 
-   *  added later.
    *
    *  You can supply datasets and PDFs to plot. To plot components, you can 
    *  either directly specify sub PDFs to plot as well as supply regular 
@@ -60,18 +57,22 @@ namespace plotting {
    * #include "RooDataSet.h"
    * #include "RooArgList.h"
    *
+   * // for cool vector assignment
+   * #include <boost/assign/std/vector.hpp>
+   * using namespace boost::assign;
+   *
    * int main(int argc, char *argv[]) {
    *   // generate a PDF and a dataset here
    *   RooRealVar mass("mass","mass",5200,5400,"MeV/c^{2}");
    *   RooRealVar mean("mean","mean",5300);
    *   RooRealVar sigma("sigma","sigma",20);
-   *   RooGaussian g("g","g",mass,mean,sigma);
+   *   RooGaussian g("pdf_sig_gaussian","g",mass,mean,sigma);
    *
    *   RooRealVar c("c","c",0.01);
-   *   RooExponential e("e","e",mass,c);
+   *   RooExponential e("pdf_bkg_exponential","e",mass,c);
    *
    *   RooRealVar f("f","f",0.5);
-   *   RooAddPdf p("p","p",g,e,f);
+   *   RooAddPdf p("pdf_all","p",g,e,f);
    *
    *   RooDataSet* data = p.generate(mass, 2000);
    *
@@ -81,8 +82,15 @@ namespace plotting {
    *   PlotConfig cfg_plot("cfg_plot");
    *   cfg_plot.InitializeOptions(argc, argv);
    *
+   *   // plot PDF and directly specify components
    *   Plot myplot(cfg_plot, mass, *data, RooArgList(p,g,e));
    *   myplot.PlotIt();
+   *
+   *   // plot PDF and specify components via regular expressions
+   *   std::vector<std::string> components;
+   *   components += "pdf_sig_.*", "pdf_bkg_.*";
+   *   Plot myplot2(cfg_plot, mass, *data, p, components, "mass2");
+   *   myplot2.PlotIt();
    * }
    * @endcode
    *

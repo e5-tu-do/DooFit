@@ -6,6 +6,7 @@
 // Boost
 #include <boost/thread.hpp>
 #include <boost/date_time.hpp>
+#include <boost/assign/std/vector.hpp>
 
 // ROOT
 #include "TCanvas.h"
@@ -60,6 +61,7 @@ using namespace RooFit;
 using namespace doofit;
 using namespace doocore::io;
 using namespace doofit::builder;
+using namespace boost::assign;
 
 /// just a helper function to build a PDF
 RooAbsPdf* BuildPDF(EasyPdf& epdf, RooWorkspace* ws) {
