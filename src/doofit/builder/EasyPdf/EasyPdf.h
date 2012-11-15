@@ -31,6 +31,7 @@ class RooAddModel;
 class RooDecay;
 class RooResolutionModel;
 class RooEffProd;
+class RooBDecay;
 
 /** @namespace doofit::builder
  *  @brief DooFit PDF building namespace
@@ -477,6 +478,27 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooAddPdf& DoubleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& fraction, const RooResolutionModel& model);
+  
+  /**
+   *  @brief Add and access a RooBDecay PDF
+   *
+   *  Request a RooBDecay by a specified name. If the PDF does not yet exist in 
+   *  this EasyPdf pool of PDFs, it is created and returned. Otherwise an 
+   *  exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param t t variable
+   *  @param tau lifetime
+   *  @param dgamma delta gamma
+   *  @param coef_cosh coefficient of cosh term
+   *  @param coef_sinh coefficient of sinh term
+   *  @param coef_cos coefficient of cos term
+   *  @param coef_sin coefficient of sin term
+   *  @param dm delta m
+   *  @param model the resolution model to use
+   *  @return the appropriate PDF
+   */
+  RooBDecay& BDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau, RooAbsReal& dgamma, RooAbsReal& coef_cosh, RooAbsReal& coef_sinh, RooAbsReal& coef_cos, RooAbsReal& coef_sin, RooAbsReal& dm, const RooResolutionModel& model);
   ///@}
   
   /**
