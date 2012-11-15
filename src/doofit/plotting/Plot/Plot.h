@@ -18,6 +18,7 @@
 // forward declarations
 class RooAbsRealLValue;
 class RooAbsData;
+class RooAbsPdf;
 
 namespace doofit {
 /** @namespace doofit::plotting
@@ -38,6 +39,12 @@ namespace plotting {
    * 
    *  As of now only very basic plotting support is available. More will be 
    *  added later.
+   *
+   *  You can supply datasets and PDFs to plot. To plot components, you can 
+   *  either directly specify sub PDFs to plot as well as supply regular 
+   *  expressions of component PDF names. Any PDF matching the patterns will be
+   *  plotted as well. This is especially useful for plotting of simultaneous 
+   *  PDFs.
    *
    *  @section usage Usage
    *
@@ -121,6 +128,23 @@ namespace plotting {
      *  @param plot_name (optional) a name for this plot (i.e. the output files; will be the variable name if empty)
      */
     Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const std::vector<const RooAbsData*>& datasets, const RooArgList& pdfs=RooArgList(), const std::string& plot_name="");
+    
+    /**
+     *  @brief Constructor for Plot with regular expressions for plotted components
+     *
+     *  This will initialise the Plot which can then be plotted via
+     *  Plot::PlotIt(). A vector of regular expressions with component patterns
+     *  can be supplied. Each sub PDF of pdf will be matched against this 
+     *  pattern and plotted as a component if matching.
+     *
+     *  @param cfg_plot PlotConfig holding plotting configuration
+     *  @param dimension the dimension to plot (e.g. a RooRealVar)
+     *  @param dataset the dataset to plot (e.g. a RooDataSet)
+     *  @param pdf main PDF to plot
+     *  @param components vector of components to plot as regular expression strings
+     *  @param plot_name (optional) a name for this plot (i.e. the output files; will be the variable name if empty)
+     */
+    Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooAbsPdf& pdf, const std::vector<std::string>& components, const std::string& plot_name="");
     
     /**
      *  @brief Actually plot the plot in normal scale

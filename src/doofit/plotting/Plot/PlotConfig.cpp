@@ -22,7 +22,7 @@ namespace plotting {
 PlotConfig::PlotConfig(const std::string& name)
 : Config::AbsConfig(name)
 {
-  pdf_linecolor_map_.Parse("1,4,2,3,6,8,5");
+  pdf_linecolor_map_.Parse("1,214,210,226,222,206,217,94");
   pdf_linestyle_map_.Parse("1,2,3,4,5,6,7");
 }
   
