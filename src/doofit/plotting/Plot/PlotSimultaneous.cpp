@@ -31,17 +31,18 @@ namespace plotting {
 
 PlotSimultaneous::PlotSimultaneous(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooSimultaneous& pdf, const std::vector<std::string>& components, const std::string& plot_name)
 : Plot(cfg_plot, dimension, dataset, pdf, components, plot_name),
-  components_(components)
+  components_regexps_(components)
 {
   
 }
 
 void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
-  const RooSimultaneous& pdf = *dynamic_cast<const RooSimultaneous*>(pdfs_.first());
+  const RooSimultaneous& pdf = *dynamic_cast<const RooSimultaneous*>(pdf_);
   const RooAbsData& data     = *datasets_.front();
   
   const RooAbsCategoryLValue& sim_cat = pdf.indexCat();
   TList* data_split = data.split(sim_cat);
+  std::string plot_name;
   
   RooCatType* sim_cat_type = NULL;
   TIterator* sim_cat_type_iter = sim_cat.typeIterator();
@@ -50,13 +51,16 @@ void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
     if (&sub_pdf != NULL) {
       RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
       
-      std::string plot_name;
-      
       plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
-      Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_, plot_name);
+      Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
       plot.PlotHandler(logy, suffix);
     }
   }
+  
+  plot_name = std::string(dimension_.GetName()) + "_summed";
+  Plot plot(config_plot_, dimension_, data, *pdf_, components_regexps_, plot_name);
+  plot.AddPlotArg(ProjWData(sim_cat,data));
+  plot.PlotHandler(logy, suffix);
   
   TIter next(data_split);
   TObject *obj = NULL;

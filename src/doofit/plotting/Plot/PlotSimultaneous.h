@@ -78,9 +78,9 @@ class PlotSimultaneous : public Plot {
   
  private:
   /**
-   *  @brief Components to plot
+   *  @brief Components to plot as regular expressions
    */
-  const std::vector<std::string> components_;
+  const std::vector<std::string> components_regexps_;
 };
 } // namespace plotting
 } // namespace doofit

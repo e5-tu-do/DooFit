@@ -122,21 +122,7 @@ namespace plotting {
      *  @param plot_name (optional) a name for this plot (i.e. the output files; will be the variable name if empty)
      */
     Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooArgList& pdfs=RooArgList(), const std::string& plot_name="");
-    
-    /**
-     *  @brief Constructor for Plot
-     *
-     *  This will initialise the Plot which can then be plotted via
-     *  Plot::PlotIt()
-     *
-     *  @param cfg_plot PlotConfig holding plotting configuration
-     *  @param dimension the dimension to plot (e.g. a RooRealVar)
-     *  @param datasets the datasets to plot (e.g. vector of RooDataSets)
-     *  @param pdfs (optional) a RooArgList of PDFs to plot; the first PDF must be the overall PDF, further PDFs must be components of this PDF
-     *  @param plot_name (optional) a name for this plot (i.e. the output files; will be the variable name if empty)
-     */
-    Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const std::vector<const RooAbsData*>& datasets, const RooArgList& pdfs=RooArgList(), const std::string& plot_name="");
-    
+        
     /**
      *  @brief Constructor for Plot with regular expressions for plotted components
      *
@@ -181,6 +167,13 @@ namespace plotting {
     virtual ~Plot();
     
     /**
+     *  @brief Add additional RooCmdArgs for plotting
+     *
+     *  @param arg RooCmdArg to use for plotting
+     */
+    void AddPlotArg(RooCmdArg arg) {plot_args_.push_back(arg);}
+    
+    /**
      *  @brief Friend class PlotSimultaneous
      */
     friend class PlotSimultaneous;
@@ -213,9 +206,14 @@ namespace plotting {
     std::vector<const RooAbsData*> datasets_;
     
     /**
-     *  @brief PDF and sub components to plot
+     *  @brief Main PDF to plot
      */
-    RooArgList pdfs_;
+    const RooAbsPdf* pdf_;
+    
+    /**
+     *  @brief Sub components to plot, one RooArgSet per component
+     */
+    std::vector<RooArgSet> components_;
     
     /**
      *  @brief Plot name
@@ -226,6 +224,11 @@ namespace plotting {
      *  @brief Plot directory
      */
     std::string plot_dir_;
+    
+    /**
+     *  @brief Vector containing additional RooCmdArgs for plotting
+     */
+    std::vector<RooCmdArg> plot_args_;
     
   private:
   };  
