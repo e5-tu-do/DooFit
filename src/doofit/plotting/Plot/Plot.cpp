@@ -173,13 +173,6 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
     int i=1;
     for (std::vector<RooArgSet>::const_iterator it = components_.begin();
          it != components_.end(); ++it) {
-//      RooAbsArg* sub_arg = pdfs_.at(i);
-//      const RooAbsPdf* sub_pdf = dynamic_cast<RooAbsPdf*>(sub_arg);
-//      if (sub_pdf == NULL) {
-//        serr << "Plot::PlotIt(): Sub PDF number " << i <<  " not valid." << endmsg;
-//        throw 1;
-//      }
-      
       pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
       pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
       ++i;
