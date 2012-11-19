@@ -28,6 +28,8 @@ namespace doofit {
  *  accompanying Config objects Toy::ToyFactoryStdConfig and 
  *  Toy::ToyStudyStdConfig.
  *
+ *  Take the following usage example:
+ *
  * @code
  * #include "doofit/Config/CommonConfig.h"
  * #include "doofit/Toy/ToyFactoryStd/ToyFactoryStd.h"
