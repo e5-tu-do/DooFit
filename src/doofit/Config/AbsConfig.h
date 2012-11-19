@@ -110,7 +110,7 @@
  *   // Parsing a config file will be handled automatically and can be 
  *   // configured via -c or --config-file command line option.
  *   // See examples/toys directory for config file examples.
- *   doofit::CommonConfig cfg_com("common");
+ *   doofit::Config::CommonConfig cfg_com("common");
  *   cfg_com.InitializeOptions(argc, argv);
  *   doofit::Toy::ToyFactoryStdConfig cfg_tfac("toyfac");
  *   cfg_tfac.InitializeOptions(cfg_com);
