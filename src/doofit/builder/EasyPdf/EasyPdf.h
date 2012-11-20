@@ -33,9 +33,6 @@ class RooResolutionModel;
 class RooEffProd;
 class RooBDecay;
 
-/** @namespace doofit::builder
- *  @brief DooFit PDF building namespace
- */
 
 /** @class doofit::builder::EasyPdf
  *  @brief Easy PDF and variable building without the clutter

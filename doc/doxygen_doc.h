@@ -140,3 +140,20 @@
  * @endcode
  *
  */
+
+// Global namespace documentation
+
+/** @namespace doofit
+ *
+ *  @brief Global DooFit namespace
+ *
+ *  This namespace by definition contains all DooFit namespaces, classes and
+ *  functions to ensure that DooFit can be used without naming conflicts inside
+ *  other projects.
+ *
+ */
+
+/** @namespace doofit::builder
+ *  @brief Everything that creates and combines PDFs
+ */
+
