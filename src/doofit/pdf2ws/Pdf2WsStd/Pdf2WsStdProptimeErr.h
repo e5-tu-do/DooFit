@@ -2,7 +2,7 @@
 #define PDF2WSSTDPROPTIMEERR_h
 
 namespace doofit {
-namespace pdf2wsstd{
+namespace Pdf2WsStd{
   namespace ProptimeErr{
     
   }

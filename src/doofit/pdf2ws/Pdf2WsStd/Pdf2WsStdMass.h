@@ -1,6 +1,6 @@
-/** @namespace doofit::pdf2wsstd::Mass
+/** @namespace doofit::Pdf2WsStd::Mass
  *
- *  @brief DooFit pdf2wsstd::Mass namespace for mass pdf adders.
+ *  @brief DooFit Pdf2WsStd::Mass namespace for mass pdf adders.
  *
  */
 #ifndef PDF2WSSTDMASS_h
@@ -16,7 +16,7 @@ class RooGaussian;
 
 namespace doofit {
 
-namespace pdf2wsstd{ namespace Mass{
+namespace Pdf2WsStd{ namespace Mass{
   /**
    *  @brief Function to add a single Gaussian mass pdf to the workspace.
    *

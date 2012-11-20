@@ -1,4 +1,4 @@
-#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdCommonFuncs.h"
+#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
 
 // STL
 #include <iostream>
@@ -24,7 +24,7 @@ using namespace doocore::io;
 
 namespace doofit {
 
-RooAbsReal* pdf2wsstd::CommonFuncs::getVar(RooWorkspace* ws,
+RooAbsReal* Pdf2WsStd::CommonFuncs::getVar(RooWorkspace* ws,
                                            const TString& var_name, const TString& var_title, 
                                            Double_t init_value, Double_t min_value, Double_t max_value, 
                                            const TString& unit){
@@ -50,7 +50,7 @@ RooAbsReal* pdf2wsstd::CommonFuncs::getVar(RooWorkspace* ws,
   return var_temp;
 }  
 
-bool pdf2wsstd::CommonFuncs::import(RooWorkspace* ws, const RooAbsArg& arg) {
+bool Pdf2WsStd::CommonFuncs::import(RooWorkspace* ws, const RooAbsArg& arg) {
   // Silence for testing purposes for now. Later to be exchanged by some Config foo.
   return ws->import(arg, Silence());
 }

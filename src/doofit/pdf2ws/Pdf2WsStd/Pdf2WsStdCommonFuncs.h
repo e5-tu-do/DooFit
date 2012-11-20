@@ -7,19 +7,19 @@
  *  rely on the rest of the DooFit framework.
  *
  *  The namespace is subdivided into several other namespaces, e.g the 
- *  pdf2wsstd::CommonFuncs namespace contains functions used by other Pdf2WsStd 
+ *  Pdf2WsStd::CommonFuncs namespace contains functions used by other Pdf2WsStd 
  *  functions. Each physical dimension of the data to be described by pdfs has 
  *  its own namespace with specific pdf functions.
- *  @see pdf2wsstd::CommonFuncs
- *  @see pdf2wsstd::Mass
- *  @see pdf2wsstd::Proptime
- *  @see pdf2wsstd::ProptimeErr
+ *  @see Pdf2WsStd::CommonFuncs
+ *  @see Pdf2WsStd::Mass
+ *  @see Pdf2WsStd::Proptime
+ *  @see Pdf2WsStd::ProptimeErr
  *  
  */
-/** @namespace doofit::pdf2wsstd::CommonFuncs
- *  @brief DooFit pdf2wsstd::CommonFuncs namespace with helper functions.
+/** @namespace doofit::Pdf2WsStd::CommonFuncs
+ *  @brief DooFit Pdf2WsStd::CommonFuncs namespace with helper functions.
  *
- *  The pdf2wsstd::CommonFuncs namespace contains functions used by other 
+ *  The Pdf2WsStd::CommonFuncs namespace contains functions used by other 
  *  Pdf2WsStd functions. Most functions are basic helper functions to reduce
  *  the amount of recurring code in the other pdf creator functions.
  */
@@ -37,7 +37,7 @@ class RooAbsArg;
 
 namespace doofit {
 
-namespace pdf2wsstd{ namespace CommonFuncs{
+namespace Pdf2WsStd{ namespace CommonFuncs{
   /**
    *  @brief Get variable with name @a var_name from workspace @a ws.
    *
