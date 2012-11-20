@@ -1,7 +1,7 @@
-#include "doofit/builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Parameter/StandardParameter.h"
 
 // from project
-#include "doofit/builder/FitModelBrewery/Recipe/Recipe.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Recipe.h"
 
 namespace doofit {
 namespace builder {

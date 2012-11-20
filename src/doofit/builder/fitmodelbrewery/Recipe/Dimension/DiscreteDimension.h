@@ -9,7 +9,7 @@
 #include <boost/exception/all.hpp>
 
 // from project
-#include "doofit/builder/FitModelBrewery/Recipe/Dimension/AbsDimension.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Dimension/AbsDimension.h"
 
 namespace doofit {
 namespace builder {

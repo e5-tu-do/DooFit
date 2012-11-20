@@ -1,4 +1,4 @@
-#include "doofit/builder/FitModelBrewery/Brewery.h"
+#include "doofit/builder/fitmodelbrewery/Brewery.h"
 
 
 using namespace std;

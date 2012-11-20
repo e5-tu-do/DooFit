@@ -23,15 +23,15 @@
 #include <boost/exception/all.hpp>
 
 /// from Builder/FitModelBrewery
-#include "doofit/builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
-#include "doofit/builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Dimension/DiscreteDimension.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Dimension/RealDimension.h"
 
-#include "doofit/builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
-#include "doofit/builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Category/BasicCategory.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Category/SuperCategory.h"
 
-#include "doofit/builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
-#include "doofit/builder/FitModelBrewery/Recipe/Parameter/UnblindUniformParameter.h"
-#include "doofit/builder/FitModelBrewery/Recipe/Parameter/FormulaParameter.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Parameter/StandardParameter.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Parameter/UnblindUniformParameter.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Parameter/FormulaParameter.h"
 
 namespace doofit {
 namespace builder {

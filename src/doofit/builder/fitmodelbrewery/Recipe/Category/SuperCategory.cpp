@@ -1,7 +1,7 @@
-#include "doofit/builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Category/SuperCategory.h"
 
 // from project
-#include "doofit/builder/FitModelBrewery/Recipe/Recipe.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Recipe.h"
 
 using namespace std;
 using namespace boost;

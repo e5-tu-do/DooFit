@@ -8,7 +8,7 @@
 
 // from project
 #include "doofit/config/CommonConfig.h"
-#include "doofit/builder/FitModelBrewery/BreweryConfig.h"
+#include "doofit/builder/fitmodelbrewery/BreweryConfig.h"
 
 
 namespace doofit {
