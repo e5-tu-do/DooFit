@@ -1,6 +1,6 @@
-/** @namespace doofit::builder::BobTheBuilder
+/** @namespace doofit::builder::bobthebuilder
  *
- *  @brief DooFit builder::BobTheBuilder namespace for all classes related to the Builder
+ *  @brief DooFit builder::bobthebuilder namespace for all classes related to the Builder
  *  BobTheBuilder implementation.
  *  @see builder::BobThebuilder::Bob
  *

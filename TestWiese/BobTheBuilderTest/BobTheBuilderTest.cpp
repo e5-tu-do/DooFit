@@ -13,7 +13,7 @@ using namespace std;
 using namespace doofit;
 namespace bpt = boost::property_tree;
 
-using namespace builder::BobTheBuilder;
+using namespace builder::bobthebuilder;
 
 int main( int argc, char *argv[] ){
   
