@@ -9,8 +9,8 @@
 
 #include "ConfigTest.h"
 #include "doofit/config/CommonConfig.h"
-#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
-#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
+#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdCommonFuncs.h"
+#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdMass.h"
 
 #include "RooWorkspace.h"
 #include "RooRealVar.h"

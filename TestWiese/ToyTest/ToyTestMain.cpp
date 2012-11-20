@@ -43,8 +43,8 @@
 #include "doofit/builder/BuilderStd/BuilderStd.h"
 #include "doofit/builder/BuilderStd/BuilderStdConfig.h"
 
-#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
-#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
+#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdMass.h"
+#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdCommonFuncs.h"
 
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStd.h"
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
@@ -125,7 +125,7 @@ RooAbsPdf* BuildPDF(EasyPdf& epdf, RooWorkspace* ws) {
   ws->defineSet("argset_obs",argset_obs);  
   
   // adding external constraints
-  //RooGaussian* pdf_constr_mean2 = Pdf2WsStd::Mass::Gaussian(ws, "pdf_constr_mean2", "Gaussian constraint pdf for mean2", "mean2", "mean2_mu", "mean2_sigma");
+  //RooGaussian* pdf_constr_mean2 = pdf2wsstd::Mass::Gaussian(ws, "pdf_constr_mean2", "Gaussian constraint pdf for mean2", "mean2", "mean2_mu", "mean2_sigma");
   //ws->defineSet("constraint_pdfs", "pdf_constr_mean2");
   
   return ws->pdf("pdf_add");
@@ -136,8 +136,8 @@ void PlotToyFit(RooWorkspace* ws, const RooAbsPdf* pdf) {
   TFile f("data.root","read");
   RooDataSet* data = (RooDataSet*)f.Get("dataset");
   
-  RooRealVar* mass = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "");
-  RooRealVar* time = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "");
+  RooRealVar* mass = (RooRealVar*)pdf2wsstd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "");
+  RooRealVar* time = (RooRealVar*)pdf2wsstd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "");
   
   RooPlot* mass_frame = mass->frame();
   RooPlot* time_frame = time->frame();

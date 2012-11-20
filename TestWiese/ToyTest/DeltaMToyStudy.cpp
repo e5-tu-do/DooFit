@@ -34,8 +34,8 @@
 #include "doofit/builder/BuilderStd/BuilderStd.h"
 #include "doofit/builder/BuilderStd/BuilderStdConfig.h"
 
-#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
-#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
+#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdMass.h"
+#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdCommonFuncs.h"
 
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStd.h"
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
@@ -53,21 +53,21 @@ RooWorkspace* BuildPDF() {
   RooWorkspace* ws = new RooWorkspace("ws");
   ws->Print();
   
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean1", "mean1", 5200, 5150, 5250, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean2", "mean2", 5300, 5250, 5350, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean3", "mean3", 5400, 5350, 5450, "MeV/c^{2}");
+  pdf2wsstd::CommonFuncs::getVar(ws, "mean1", "mean1", 5200, 5150, 5250, "MeV/c^{2}");
+  pdf2wsstd::CommonFuncs::getVar(ws, "mean2", "mean2", 5300, 5250, 5350, "MeV/c^{2}");
+  pdf2wsstd::CommonFuncs::getVar(ws, "mean3", "mean3", 5400, 5350, 5450, "MeV/c^{2}");
   
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean_time1", "mean_time1", 5200, 5150, 5250, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean_time2", "mean_time2", 5300, 5250, 5350, "MeV/c^{2}");
-  Pdf2WsStd::CommonFuncs::getVar(ws, "mean_time3", "mean_time3", 5400, 5350, 5450, "MeV/c^{2}");
+  pdf2wsstd::CommonFuncs::getVar(ws, "mean_time1", "mean_time1", 5200, 5150, 5250, "MeV/c^{2}");
+  pdf2wsstd::CommonFuncs::getVar(ws, "mean_time2", "mean_time2", 5300, 5250, 5350, "MeV/c^{2}");
+  pdf2wsstd::CommonFuncs::getVar(ws, "mean_time3", "mean_time3", 5400, 5350, 5450, "MeV/c^{2}");
   
-  RooGaussian* pdf1 = Pdf2WsStd::Mass::Gaussian(ws, "test1", "Gaussian test pdf #1","mass","mean1", "abweichung");
-  RooGaussian* pdf2 = Pdf2WsStd::Mass::Gaussian(ws, "test2", "Gaussian test pdf #2","mass","mean2", "abweichung_bkg");
-  RooGaussian* pdf3 = Pdf2WsStd::Mass::Gaussian(ws, "test3", "Gaussian test pdf #3","mass","mean3", "abweichung_bkg2");
+  RooGaussian* pdf1 = pdf2wsstd::Mass::Gaussian(ws, "test1", "Gaussian test pdf #1","mass","mean1", "abweichung");
+  RooGaussian* pdf2 = pdf2wsstd::Mass::Gaussian(ws, "test2", "Gaussian test pdf #2","mass","mean2", "abweichung_bkg");
+  RooGaussian* pdf3 = pdf2wsstd::Mass::Gaussian(ws, "test3", "Gaussian test pdf #3","mass","mean3", "abweichung_bkg2");
   
-  RooGaussian* time1 = Pdf2WsStd::Mass::Gaussian(ws, "time1", "Gaussian test pdf #1 (time)","time","mean_time1", "sigma_time1");
-  RooGaussian* time2 = Pdf2WsStd::Mass::Gaussian(ws, "time2", "Gaussian test pdf #2 (time)","time","mean_time2", "sigma_time2");
-  RooGaussian* time3 = Pdf2WsStd::Mass::Gaussian(ws, "time3", "Gaussian test pdf #3 (time)","time","mean_time3", "sigma_time3");
+  RooGaussian* time1 = pdf2wsstd::Mass::Gaussian(ws, "time1", "Gaussian test pdf #1 (time)","time","mean_time1", "sigma_time1");
+  RooGaussian* time2 = pdf2wsstd::Mass::Gaussian(ws, "time2", "Gaussian test pdf #2 (time)","time","mean_time2", "sigma_time2");
+  RooGaussian* time3 = pdf2wsstd::Mass::Gaussian(ws, "time3", "Gaussian test pdf #3 (time)","time","mean_time3", "sigma_time3");
   
   RooProdPdf pdf_prod1("pdf_prod1", "pdf_prod1", RooArgList(*pdf1, *time1));
   RooProdPdf pdf_prod2("pdf_prod2", "pdf_prod2", RooArgList(*pdf2, *time2));
@@ -91,10 +91,10 @@ RooWorkspace* BuildPDF() {
   ws->import(pdf_add);
   
   RooArgSet argset_obs("argset_obs");
-  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
-  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "")));
-  argset_obs.add(*(Pdf2WsStd::CommonFuncs::getVar(ws, "tag2", "tag of B meson", 0, -10, 10, "")));
-  RooRealVar* tag2 = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "tag2", "", 0, 0, 0, "");
+  argset_obs.add(*(pdf2wsstd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "")));
+  argset_obs.add(*(pdf2wsstd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "")));
+  argset_obs.add(*(pdf2wsstd::CommonFuncs::getVar(ws, "tag2", "tag of B meson", 0, -10, 10, "")));
+  RooRealVar* tag2 = (RooRealVar*)pdf2wsstd::CommonFuncs::getVar(ws, "tag2", "", 0, 0, 0, "");
   
   RooCategory* tag = new RooCategory("tag", "tag");
   tag->defineType("b0", 1);
@@ -119,8 +119,8 @@ void PlotToyFit(RooWorkspace* ws) {
   TFile f("data.root","read");
   RooDataSet* data = (RooDataSet*)f.Get("dataset");
   
-  RooRealVar* mass = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "");
-  RooRealVar* time = (RooRealVar*)Pdf2WsStd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "");
+  RooRealVar* mass = (RooRealVar*)pdf2wsstd::CommonFuncs::getVar(ws, "mass", "", 0, 0, 0, "");
+  RooRealVar* time = (RooRealVar*)pdf2wsstd::CommonFuncs::getVar(ws, "time", "", 0, 0, 0, "");
   
   RooPlot* mass_frame = mass->frame();
   RooPlot* time_frame = time->frame();

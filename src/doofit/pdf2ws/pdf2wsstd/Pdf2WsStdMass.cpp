@@ -1,4 +1,4 @@
-#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
+#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdMass.h"
 
 // from STL
 #include <iostream>
@@ -19,21 +19,21 @@
 // RooFit PDFs from Project 
 
 // from Project
-#include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
+#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdCommonFuncs.h"
 #include "doocore/io/MsgStream.h"
 
 namespace doofit {
 using namespace std;
-using namespace Pdf2WsStd;
+using namespace pdf2wsstd;
 using namespace doocore::io;
 
-RooGaussian* Pdf2WsStd::Mass::Gaussian(RooWorkspace* ws, 
+RooGaussian* pdf2wsstd::Mass::Gaussian(RooWorkspace* ws, 
                                const TString& pdf_name, const TString& pdf_desc,
                                const TString& var_mass_name, 
                                const TString& par_mean_name, const TString& par_sigma_name){
   // Check if object with name already exists on workspace. If so, stop and exit!
   if (ws->obj(pdf_name) != NULL){
-    serr << "Pdf2WsStd::Mass::Gaussian found an object with name " << pdf_name
+    serr << "pdf2wsstd::Mass::Gaussian found an object with name " << pdf_name
     << " on the workspace. Thus, creation of pdf with same name impossible!" << endmsg;
     throw;
   }
