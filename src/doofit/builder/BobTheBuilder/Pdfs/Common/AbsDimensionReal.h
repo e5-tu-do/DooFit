@@ -7,7 +7,7 @@
 
 // forward declarations
 namespace doofit {
-namespace Builder { namespace BobTheBuilder {
+namespace builder { namespace BobTheBuilder {
 
 class AbsDimensionReal : public AbsDimension{
  public:

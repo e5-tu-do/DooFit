@@ -11,7 +11,7 @@
 // from project
 #include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
 namespace doofit {
-namespace Builder { namespace BobTheBuilder {
+namespace builder { namespace BobTheBuilder {
 
 class AbsDimensionCat : public AbsDimension{
  public:

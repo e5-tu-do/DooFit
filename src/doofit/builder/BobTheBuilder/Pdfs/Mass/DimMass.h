@@ -5,7 +5,7 @@
 #include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
 
 namespace doofit {
-namespace Builder { namespace BobTheBuilder {
+namespace builder { namespace BobTheBuilder {
 
 class DimMass : public AbsDimensionReal{
  public:

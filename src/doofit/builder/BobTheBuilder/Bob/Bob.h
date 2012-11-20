@@ -27,7 +27,7 @@
 class RooWorkspace;
 
 namespace doofit {
-namespace Builder { namespace BobTheBuilder {
+namespace builder { namespace BobTheBuilder {
 // forward declarations inside project
 class AbsDimension;
 class CategoryBasic;

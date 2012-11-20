@@ -30,7 +30,7 @@ namespace bpt = property_tree;
 using namespace doocore::io;
 
 namespace doofit {
-namespace Builder{ 
+namespace builder{ 
 namespace BobTheBuilder{
 Bob::Bob() :
    tree_main_()

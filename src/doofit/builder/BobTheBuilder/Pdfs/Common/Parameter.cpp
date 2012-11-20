@@ -19,7 +19,7 @@ namespace doofit {
 using namespace std;
 using namespace boost;
 
-namespace Builder{ 
+namespace builder{ 
 namespace BobTheBuilder{
 
 Parameter::Parameter() :

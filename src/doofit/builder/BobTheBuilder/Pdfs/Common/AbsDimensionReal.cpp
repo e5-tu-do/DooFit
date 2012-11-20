@@ -17,7 +17,7 @@ using namespace boost::property_tree;
 using namespace RooFit;
 using namespace doocore::io;
 
-namespace Builder{ 
+namespace builder{ 
 namespace BobTheBuilder{
   
 AbsDimensionReal::AbsDimensionReal() :

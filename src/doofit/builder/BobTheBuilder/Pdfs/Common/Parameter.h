@@ -9,7 +9,7 @@
 class RooWorkspace;
 
 namespace doofit {
-namespace Builder{ namespace BobTheBuilder{
+namespace builder{ namespace BobTheBuilder{
   
 class Parameter{
  public:

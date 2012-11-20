@@ -1,5 +1,5 @@
 add_subdirectory(config)
-add_subdirectory(Fitter)
+add_subdirectory(fitter)
 add_subdirectory(builder)
 add_subdirectory(Pdf2Ws)
 add_subdirectory(data)

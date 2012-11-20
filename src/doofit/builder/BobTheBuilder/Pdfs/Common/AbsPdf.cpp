@@ -6,7 +6,7 @@
 namespace doofit {
 using namespace std;
 
-namespace Builder{ 
+namespace builder{ 
 namespace BobTheBuilder{
 
 AbsPdf::AbsPdf() :

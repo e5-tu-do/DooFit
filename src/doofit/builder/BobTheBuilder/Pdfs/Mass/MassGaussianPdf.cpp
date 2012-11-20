@@ -9,7 +9,7 @@ using namespace boost;
 using namespace boost::property_tree;
 
 namespace doofit {
-namespace Builder{ 
+namespace builder{ 
 namespace BobTheBuilder{
 using namespace doocore::io;
   

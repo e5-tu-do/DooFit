@@ -24,7 +24,7 @@ using namespace boost;
 using namespace boost::property_tree;
 using namespace doocore::io;
 
-namespace Builder{ 
+namespace builder{ 
 namespace BobTheBuilder{
 
 CategorySuper::CategorySuper() :

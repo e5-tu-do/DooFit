@@ -25,7 +25,7 @@ using namespace boost::property_tree;
 using namespace std;
 using namespace doocore::io;
   
-namespace Builder{ 
+namespace builder{ 
 namespace BobTheBuilder{
 
 CategoryBasic::CategoryBasic() :

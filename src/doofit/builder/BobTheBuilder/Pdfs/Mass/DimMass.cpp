@@ -19,7 +19,7 @@ using namespace boost::property_tree;
 using namespace doocore::io;
 
 namespace doofit {
-namespace Builder{ 
+namespace builder{ 
 namespace BobTheBuilder{
 
 DimMass::DimMass() :

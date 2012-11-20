@@ -9,7 +9,7 @@
 
 
 namespace doofit {
-namespace Builder{ 
+namespace builder{ 
 namespace BobTheBuilder{
 
 DimTag::DimTag() :
