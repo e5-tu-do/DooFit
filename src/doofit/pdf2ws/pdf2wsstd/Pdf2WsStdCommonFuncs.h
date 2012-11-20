@@ -12,8 +12,8 @@
  *  its own namespace with specific pdf functions.
  *  @see pdf2wsstd::commonfuncs
  *  @see pdf2wsstd::mass
- *  @see pdf2wsstd::Proptime
- *  @see pdf2wsstd::ProptimeErr
+ *  @see pdf2wsstd::proptime
+ *  @see pdf2wsstd::proptimeerr
  *  
  */
 /** @namespace doofit::pdf2wsstd::commonfuncs

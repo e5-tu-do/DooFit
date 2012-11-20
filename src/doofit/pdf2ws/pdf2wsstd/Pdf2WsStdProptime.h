@@ -3,7 +3,7 @@
 
 namespace doofit {
 namespace pdf2wsstd{
-  namespace Proptime{
+  namespace proptime{
     
   }
 }
