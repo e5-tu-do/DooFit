@@ -190,7 +190,7 @@ namespace Toy {
      */
     ///@{
     /**
-     *  @brief Empty stored vector of fit results.
+     *  @brief Empty stored vector of fit results (deprecated?).
      *
      *  Too prevent mistakes and misuse, the ToyStudyStd will not read in new 
      *  fit results if fit results are already read in. This function will empty

@@ -84,6 +84,9 @@ namespace doofit {
  *   tstudy.FinishFitResultSaving();
  *
  *   // do the complete automated analysis of toy fits
+ *   tstudy.ReadFitResults();
+ *   tstudy.EvaluateFitResults();
+ *   tstudy.PlotEvaluatedParameters();
  * }
  * @endcode
  *
@@ -95,8 +98,10 @@ namespace doofit {
  *  be configured via the command line or config file (except setting of 
  *  internal objects like RooWorkspaces etc.).
  *
- *  The interface of ToyFactoryStd is very minimal. It only offers to generate a
- *  dataset.
+ *  The interface of doofit::Toy::ToyFactoryStd is very minimal. It only offers 
+ *  to generate a dataset.
+ *
+ *  doofit::Toy::ToyStudyStd 
  */
 
 namespace Config {
