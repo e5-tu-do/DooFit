@@ -153,7 +153,13 @@ RooArgSet doofit::builder::EasyPdf::Vars(const std::string &names, const std::st
 }
 
 RooArgSet doofit::builder::EasyPdf::Set(const std::string &set_name) {
+  std::map<std::string,std::string>::const_iterator it = variable_sets_.find(set_name);
   
+  if (it != variable_sets_.end()) {
+    return Vars(it->second);
+  } else {
+    throw ObjectNotExistingException();
+  }
 }
 
 RooArgList doofit::builder::EasyPdf::VarList(const std::string &name) {

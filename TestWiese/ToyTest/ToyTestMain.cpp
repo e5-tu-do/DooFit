@@ -65,8 +65,6 @@ using namespace boost::assign;
 
 /// just a helper function to build a PDF
 RooAbsPdf* BuildPDF(EasyPdf& epdf, RooWorkspace* ws) {
-  epdf.Vars("mass,time").Print();
-  
   epdf.Var("mass").setMin(5100);
   epdf.Var("mass").setMax(5500);
   epdf.Var("time").setMin(5100);
@@ -74,7 +72,8 @@ RooAbsPdf* BuildPDF(EasyPdf& epdf, RooWorkspace* ws) {
   
   epdf.Formula("massShift", "@0-100", RooArgList(epdf.Var("mass")));
   
-  epdf.Vars("mass,time,massShift").Print();
+  epdf.Vars("mass,time", "observables");
+  epdf.Set("observables").Print();
   
   epdf.Add("test1",
           RooArgSet(epdf.Gaussian("test1_1", epdf.Formula("massShift"), epdf.Var("mean1"),
@@ -110,9 +109,6 @@ RooAbsPdf* BuildPDF(EasyPdf& epdf, RooWorkspace* ws) {
   argset_obs.add(epdf.Var("mass"));
   argset_obs.add(epdf.Var("time"));
   argset_obs.add(epdf.Var("tag2"));
-
-  ws->import(epdf.Pdf("pdf_add"));
-  ws->import(epdf.Var("tag2"));
   
   RooCategory* tag = new RooCategory("tag", "tag");
   tag->defineType("b0", 1);
@@ -192,7 +188,7 @@ void TestToys(int argc, char *argv[]) {
   cfg_com.CheckHelpFlagAndPrintHelp();
   
   RooWorkspace* ws = new RooWorkspace("ws");
-  EasyPdf epdf;
+  EasyPdf epdf(ws);
   RooAbsPdf* pdf = BuildPDF(epdf, ws);
 //  TFile ws_file("ws.root", "read");
 //  RooWorkspace* ws = (RooWorkspace*)ws_file.Get("ws");
