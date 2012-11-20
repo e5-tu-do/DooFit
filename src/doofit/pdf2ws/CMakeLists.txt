@@ -1,1 +1,1 @@
-add_subdirectory(pdf2wsstd)
+add_subdirectory(Pdf2WsStd)
