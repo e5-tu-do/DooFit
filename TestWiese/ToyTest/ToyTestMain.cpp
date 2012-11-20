@@ -31,28 +31,19 @@
 #include "Roo1DTable.h"
 #include "RooFitResult.h"
 #include "RooExponential.h"
+#include "RooDecay.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
 
 // from Project
 #include "doofit/config/CommonConfig.h"
-
-#include "doofit/plotting/Plot/Plot.h"
-
-#include "doofit/builder/BuilderStd/BuilderStd.h"
-#include "doofit/builder/BuilderStd/BuilderStdConfig.h"
-
-#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdMass.h"
-#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdCommonFuncs.h"
-
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStd.h"
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
-
 #include "doofit/toy/ToyStudyStd/ToyStudyStd.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
 
-#include "doocore/io/MsgStream.h"
+#include "doofit/plotting/Plot/Plot.h"
 
 #include "doofit/builder/EasyPdf/EasyPdf.h"
 
@@ -61,117 +52,108 @@ using namespace RooFit;
 using namespace doofit;
 using namespace doocore::io;
 using namespace doofit::builder;
+using namespace doofit::toy;
+using namespace doofit::plotting;
 using namespace boost::assign;
 
-/// just a helper function to build a PDF
-RooAbsPdf* BuildPDF(EasyPdf& epdf, RooWorkspace* ws) {
+/**
+ *  @brief EasyPdf demo function
+ *
+ *  This function demonstrates PDF building via EasyPdf
+ *
+ *  @param epdf an EasyPdf builder to create PDFs inside
+ *  @return the built complete PDF
+ */
+RooAbsPdf& BuildPDF(EasyPdf& epdf) {
   epdf.Var("mass").setMin(5100);
   epdf.Var("mass").setMax(5500);
-  epdf.Var("time").setMin(5100);
-  epdf.Var("time").setMax(5500);
+  epdf.Var("time").setMin(0);
+  epdf.Var("time").setMax(20);
   
   epdf.Formula("massShift", "@0-100", RooArgList(epdf.Var("mass")));
   
   epdf.Vars("mass,time", "observables");
   epdf.Set("observables").Print();
   
-  epdf.Add("test1",
-          RooArgSet(epdf.Gaussian("test1_1", epdf.Formula("massShift"), epdf.Var("mean1"),
-                                  epdf.Var("abweichung_1")),
-                    epdf.Gaussian("test1_2", epdf.Var("mass"), epdf.Var("mean1"),
-                                  epdf.Var("abweichung_2"))),
-          RooArgSet(epdf.Var("dgauss_frac")));
+  epdf.DoubleGaussianScaled("pdf_sig_mass", epdf.Formula("massShift"), epdf.Var("par_sig_mass_mean"),
+                            epdf.Var("par_sig_mass_sigma"), epdf.Var("par_sig_mass_sigma_scale"),
+                            epdf.Var("par_sig_mass_frac"));
+                              
+  // Gaussian model for time
+  epdf.GaussModel("pdf_model_time", epdf.Var("time"), epdf.Var("par_model_bias"), epdf.Var("par_model_sigma"));
   
-  epdf.Product("pdf_prod1",
-               RooArgList(epdf.Pdf("test1"),
-                          epdf.Gaussian("time1", epdf.Var("time"), epdf.Var("mean_time1"),
-                                        epdf.Var("sigma_time1"))));
-  epdf.Product("pdf_prod2",
-               RooArgList(epdf.Exponential("test2", epdf.Var("mass"), epdf.Var("c")),
-                          epdf.Gaussian("time2", epdf.Var("time"), epdf.Var("mean_time2"),
-                                        epdf.Var("sigma_time2"))));
-  epdf.Product("pdf_prod3",
-               RooArgList(epdf.Gaussian("test3", epdf.Var("mass"), epdf.Var("mean3"),
-                                        epdf.Var("abweichung_bkg2")),
-                          epdf.Gaussian("time3", epdf.Var("time"), epdf.Var("mean_time3"),
-                                        epdf.Var("sigma_time3"))));
+  epdf.Product("pdf_sig_nonext",
+               RooArgList(epdf.Pdf("pdf_sig_mass"),
+                          epdf.Decay("pdf_sig_time", epdf.Var("time"), epdf.Var("par_sig_time_tau"),
+                                     epdf.Model("pdf_model_time"))));
+  epdf.Product("pdf_bkg_nonext",
+               RooArgList(epdf.Exponential("pdf_bkg_mass", epdf.Var("mass"), epdf.Var("par_bkg_mass_exp")),
+                          epdf.Decay("pdf_bkg_time", epdf.Var("time"), epdf.Var("par_bkg_time_tau"),
+                                     epdf.Model("pdf_model_time"))));
+  epdf.Product("pdf_pbkg_nonext",
+               RooArgList(epdf.Gaussian("pdf_pbkg_mass", epdf.Var("mass"), epdf.Var("par_pbkg_mass_mean"),
+                                        epdf.Var("par_pbkg_mass_sigma")),
+                          epdf.Decay("pdf_pbkg_time", epdf.Var("time"), epdf.Var("par_pbkg_time_tau"),
+                                     epdf.Model("pdf_model_time"))));
    
-  epdf.Extend("pdf_extend1", epdf.Pdf("pdf_prod1"), epdf.Var("yield1"));
-  epdf.Extend("pdf_extend2", epdf.Pdf("pdf_prod2"), epdf.Var("yield2"));
-  epdf.Extend("pdf_extend3", epdf.Pdf("pdf_prod3"), epdf.Var("yield3"));
+  epdf.Extend("pdf_sig", epdf.Pdf("pdf_sig_nonext"), epdf.Var("par_sig_yield"));
+  epdf.Extend("pdf_bkg", epdf.Pdf("pdf_bkg_nonext"), epdf.Var("par_bkg_yield"));
+  epdf.Extend("pdf_pbkg", epdf.Pdf("pdf_pbkg_nonext"), epdf.Var("par_pbkg_yield"));
   
-  epdf.Add("pdf_add", RooArgSet(epdf.Pdf("pdf_extend1"), epdf.Pdf("pdf_extend2"), epdf.Pdf("pdf_extend3")));
+  epdf.Add("pdf", RooArgSet(epdf.Pdf("pdf_sig"), epdf.Pdf("pdf_bkg"), epdf.Pdf("pdf_pbkg")));
     
   epdf.Var("tag2").setMin(-10);
   epdf.Var("tag2").setMax(+10);
   
-  RooArgSet argset_obs("argset_obs");
-  argset_obs.add(epdf.Var("mass"));
-  argset_obs.add(epdf.Var("time"));
-  argset_obs.add(epdf.Var("tag2"));
+  epdf.Cat("tag").defineType("b0",     +1);
+  epdf.Cat("tag").defineType("b0_bar", -1);
   
-  RooCategory* tag = new RooCategory("tag", "tag");
-  tag->defineType("b0", 1);
-  tag->defineType("b0_bar", -1);
-  ws->import(*tag);
-  delete tag;
-  tag = ws->cat("tag");
+  // set parameters and limits from file
+  epdf.AllVars().writeToFile("parameters.new");
+  epdf.AllVars().readFromFile("parameters.txt");
   
-  argset_obs.add(*tag);
-  ws->defineSet("argset_obs",argset_obs);  
-  
-  // adding external constraints
-  //RooGaussian* pdf_constr_mean2 = pdf2wsstd::mass::Gaussian(ws, "pdf_constr_mean2", "Gaussian constraint pdf for mean2", "mean2", "mean2_mu", "mean2_sigma");
-  //ws->defineSet("constraint_pdfs", "pdf_constr_mean2");
-  
-  return ws->pdf("pdf_add");
+  return epdf.Pdf("pdf");
 }
 
-/// just a helper function to plot a single fit
-void PlotToyFit(RooWorkspace* ws, const RooAbsPdf* pdf) {
-  TFile f("data.root","read");
-  RooDataSet* data = (RooDataSet*)f.Get("dataset");
+/**
+ *  @brief doofit::plotting demo function
+ *
+ *  This function demonstrates plotting via doofit::plotting
+ *
+ *  @param pdf PDF to plot
+ *  @param data dataset to plot
+ *  @param cfg_plot PlotConfig with plotting configuration
+ */
+void PlotResults(const RooAbsPdf& pdf, const RooAbsData& data, const doofit::plotting::PlotConfig& cfg_plot) {
+  RooArgSet* obs = pdf.getObservables(data);
   
-  RooRealVar* mass = (RooRealVar*)pdf2wsstd::commonfuncs::getVar(ws, "mass", "", 0, 0, 0, "");
-  RooRealVar* time = (RooRealVar*)pdf2wsstd::commonfuncs::getVar(ws, "time", "", 0, 0, 0, "");
+  std::vector<std::string> components;
+  components += "pdf_sig", "pdf_bkg", "pdf_pbkg";
   
-  RooPlot* mass_frame = mass->frame();
-  RooPlot* time_frame = time->frame();
-  RooPlot* tag2_frame = ws->var("tag2")->frame();
-  
-  data->plotOn(mass_frame);
-  pdf->plotOn(mass_frame);
-  
-  data->plotOn(time_frame);
-  pdf->plotOn(time_frame);
-  
-  data->plotOn(tag2_frame);
-  
-  TCanvas c1("c1", "c1", 800, 600);
-  mass_frame->Draw();
-  c1.SaveAs("mass.pdf");
-  
-  time_frame->Draw();
-  c1.SaveAs("time.pdf");
-  
-  tag2_frame->Draw();
-  c1.SaveAs("c2.pdf");
-  
-  Roo1DTable* table = data->table(RooArgSet(*ws->cat("tag")));
-  table->Print();
-  delete table;
-  
-  delete mass_frame;
-  delete tag2_frame;
-  
-  delete data;
+  // iterate over all observables for automated plotting
+  TIterator* iter = obs->createIterator();
+  RooAbsArg* arg  = NULL;
+  while ((arg = dynamic_cast<RooAbsArg*>(iter->Next()))) {
+    RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
+    if (var != NULL) {
+      Plot myplot(cfg_plot, *var, data, pdf, components);
+      myplot.PlotItLogNoLogY();
+    }
+  }
 }
 
-/// using Doofit's toy mechanisms
+/**
+ *  @brief doofit::toy demo function
+ *
+ *  This function demonstrates toy generation and evaluation
+ *
+ *  @param argc number of command line arguments
+ *  @param argv command line arguments
+ */
 void TestToys(int argc, char *argv[]) {
-  using namespace toy;
   using namespace RooFit;
   
+  // initalize all needed Config objects
   config::CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
   
@@ -181,68 +163,44 @@ void TestToys(int argc, char *argv[]) {
   ToyStudyStdConfig cfg_tstudy("toystudy");
   cfg_tstudy.InitializeOptions(cfg_tfac);
   
-  using namespace doofit::plotting;
   PlotConfig cfg_plot("cfg_plot");
   cfg_plot.InitializeOptions(cfg_tstudy);
   
   cfg_com.CheckHelpFlagAndPrintHelp();
   
+  // build the PDF and set everything necessary
   RooWorkspace* ws = new RooWorkspace("ws");
   EasyPdf epdf(ws);
-  RooAbsPdf* pdf = BuildPDF(epdf, ws);
-//  TFile ws_file("ws.root", "read");
-//  RooWorkspace* ws = (RooWorkspace*)ws_file.Get("ws");
-    
+  RooAbsPdf& pdf = BuildPDF(epdf);
+  ws->defineSet("argset_obs", epdf.Vars("mass,time,tag2,tag"));
   cfg_tfac.set_workspace(ws);
-  //cfg_tfac.set_generation_pdf_workspace("pdfFull");
-  //cfg_tfac.set_argset_generation_observables_workspace("argset_obs");
-  
-  //cfg_tfac.set_argset_constraining_pdfs(ws->set("constraint_pdfs"));
-  
-  ToyFactoryStd tfac(cfg_com, cfg_tfac);
 
+  // print configuration
   cfg_com.PrintAll();
   
+  // toy sample generation
+  ToyFactoryStd tfac(cfg_com, cfg_tfac);
   RooDataSet* data = NULL;
   ToyStudyStd tstudy(cfg_com, cfg_tstudy);
 
-  for (int i=0; i<20; ++i) {
+  // generate 10 toy samples, fit and store results
+  for (int i=0; i<10; ++i) {
     data = tfac.Generate();
-    //    delete data;
-    //    gObjectTable->Print(); 
-    //    utils::sdebug << i << utils::endmsg;
-    //  }
+    RooFitResult* fit_result = pdf.fitTo(*data, NumCPU(2), Extended(true), Save(true), Verbose(false),Timer(true), Minimizer("Minuit2"));
     
-//    pdf->getParameters(data)->readFromFile("generation.par");
-//    ws->pdf("pdf_constr_mean2")->getParameters(data)->readFromFile("generation.par");
-    RooFitResult* fit_result = pdf->fitTo(*data, NumCPU(2), Extended(true), Save(true), Verbose(false),Timer(true), Minimizer("Minuit2"), ExternalConstraints(*ws->set("constraint_pdfs")));
+    PlotResults(pdf, *data, cfg_plot);
     
-    Plot myplot(cfg_plot, *ws->var("mass"), *data, RooArgList(*pdf, *ws->pdf("test1"), *ws->pdf("test2"), *ws->pdf("test3")));
-    myplot.PlotItLogNoLogY();
-    
-//    utils::setStyle();
-//    RooPlot* plot_frame = ws->var("mass")->frame();
-//    data->plotOn(plot_frame);
-//    ws->pdf("pdf_add")->plotOn(plot_frame);
-//    utils::PlotResiduals("mass", plot_frame, ws->var("mass"), ws->pdf("pdf_add"),"Plot/", true);
-    
-    //PlotToyFit(ws, pdf);
-
-    sinfo << "fit no " << i << endmsg;
     tstudy.StoreFitResult(fit_result);
     delete data;
-
   }
   tstudy.FinishFitResultSaving();
-    
+  
+  // evaluate previously generated samples
   tstudy.ReadFitResults();
   tstudy.EvaluateFitResults();
   tstudy.PlotEvaluatedParameters();
   
-  //PlotToyFit(ws, pdf);
   delete ws;
-  
-  //while (true) {}
 }
 
 int main(int argc, char *argv[]) {
