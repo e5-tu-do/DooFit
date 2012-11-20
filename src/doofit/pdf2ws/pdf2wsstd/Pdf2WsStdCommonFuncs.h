@@ -1,4 +1,4 @@
-/** @namespace doofit::pdf2wsStd
+/** @namespace doofit::pdf2wsstd
  *  @brief DooFit Pdf2WsStd namespace.
  *
  *  The Pdf2WsStd namespace contains the basic helper functions to allow
