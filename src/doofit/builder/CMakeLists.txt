@@ -1,5 +1,5 @@
 add_subdirectory(BuilderStd)
-add_subdirectory(BobTheBuilder)
+add_subdirectory(bobthebuilder)
 add_subdirectory(FitModelBrewery)
 #add_subdirectory(Sin2bSPBBuilder)
 add_subdirectory(numerobis)
