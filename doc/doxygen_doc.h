@@ -8,7 +8,9 @@
  *
  * @section mp_topics What DooFit can be used for
  *
- * @link doofit::Toy Toy studies @endlink
+ * Here is an overview of the DooFit functionality:
+ *
+ * @li @link doofit::Toy Automated toy sample generation, toy study assistance and analysis @endlink
  *
  * @section mp_simplesetup Simple setup via global DooSoftware installation
  *

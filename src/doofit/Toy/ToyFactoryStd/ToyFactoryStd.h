@@ -23,8 +23,6 @@ namespace doofit {
  *
  *  @brief DooFit Toy subsystem.
  *
- *  @author Florian Kruse
- *
  *  This namespace is responsible for toy sample creation and toy studies. Main
  *  objects of interest are Toy::ToyFactoryStd and Toy::ToyStudyStd and their 
  *  accompanying Config objects Toy::ToyFactoryStdConfig and 
@@ -113,8 +111,12 @@ namespace doofit {
  *
  *  In the analysis afterwards, doofit::Toy::ToyStudyStd can automatically read 
  *  and analyse toy fits and produce plots of distributions of interest 
- *  (pulls, residuals, ...) for all used parameters. Accessing individual fit 
+ *  (pulls, residuals, ...) for all used parameters. Accessing individual fit
  *  results is also possible.
+ *
+ *  For submitting toy jobs via PBS see PBSJobBuilder.
+ *
+ *  @author Florian Kruse
  */
 
 namespace Config {
