@@ -101,7 +101,18 @@ namespace doofit {
  *  The interface of doofit::Toy::ToyFactoryStd is very minimal. It only offers 
  *  to generate a dataset.
  *
- *  doofit::Toy::ToyStudyStd 
+ *  doofit::Toy::ToyStudyStd is the interface for storing fit results of toy 
+ *  fits and also for the analysis of fit results after all toy fits are 
+ *  completed. Storing is automatic and collision-safe even in case of several
+ *  instances writing into the same file (e.g. on a network filesystem). Notice
+ *  that some cluster filesystems like FhGFS might not be able to handle the 
+ *  load of several processes trying to access one file, a moderate NFS server
+ *  seems to be able to perfectly handle the load.
+ *
+ *  In the analysis afterwards, doofit::Toy::ToyStudyStd can automatically read 
+ *  and analyse toy fits and produce plots of distributions of interest 
+ *  (pulls, residuals, ...) for all used parameters. Accessing individual fit 
+ *  results is also possible.
  */
 
 namespace Config {
