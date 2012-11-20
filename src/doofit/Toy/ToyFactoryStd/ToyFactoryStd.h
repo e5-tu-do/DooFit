@@ -23,6 +23,8 @@ namespace doofit {
  *
  *  @brief DooFit Toy subsystem.
  *
+ *  @author Florian Kruse
+ *
  *  This namespace is responsible for toy sample creation and toy studies. Main
  *  objects of interest are Toy::ToyFactoryStd and Toy::ToyStudyStd and their 
  *  accompanying Config objects Toy::ToyFactoryStdConfig and 
