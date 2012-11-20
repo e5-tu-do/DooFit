@@ -155,5 +155,13 @@
 
 /** @namespace doofit::builder
  *  @brief Everything that creates and combines PDFs
+ *
+ *  This namespace contains all PDF building utilities of DooFit.
+ *
+ *  @section mp_topics Which DooFit builders are available?
+ *
+ *  Here is an overview of the working DooFit builders:
+ *
+ *  @li @link doofit::builder::EasyPdf doofit::builder::EasyPdf: Simple and efficient on-demand PDF building @endlink
  */
 
