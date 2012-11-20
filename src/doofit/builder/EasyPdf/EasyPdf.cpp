@@ -128,9 +128,9 @@ RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name) {
   }
 }
 
-RooArgSet doofit::builder::EasyPdf::Vars(const std::string &name) {
+RooArgSet doofit::builder::EasyPdf::Vars(const std::string &names, const std::string define_set_name) {
   config::CommaSeparatedList<std::string> variables;
-  variables.Parse(name);
+  variables.Parse(names);
   
   RooArgSet argset;
   for (int i=0; i<variables.size(); ++i) {
@@ -144,7 +144,16 @@ RooArgSet doofit::builder::EasyPdf::Vars(const std::string &name) {
       argset.add(Var(variables[i]));
     }
   }
+  
+  if (define_set_name.length() > 0) {
+    variable_sets_[define_set_name] = names;
+  }
+  
   return argset;
+}
+
+RooArgSet doofit::builder::EasyPdf::Set(const std::string &set_name) {
+  
 }
 
 RooArgList doofit::builder::EasyPdf::VarList(const std::string &name) {

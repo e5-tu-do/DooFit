@@ -190,9 +190,22 @@ class EasyPdf {
    *  This check is performed individually for each variable
    *
    *  @param names names of the variables as comma separated string
+   *  @param define_set_name (optional) define an internal set with the given name
    *  @return the appropriate RooRealVars as RooArgSet
    */
-  RooArgSet Vars(const std::string& names);
+  RooArgSet Vars(const std::string& names, const std::string define_set_name="");
+  
+  /**
+   *  @brief Access previously defined set as RooArgSet
+   *
+   *  Request a set of RooRealVars, RooCategories or RooFormulaVars that was 
+   *  previously defined via Vars() via its name. If the set was not defined, 
+   *  an ObjectNotExistingException is thrown.
+   *
+   *  @param set_name name of the previously defined set
+   *  @return the appropriate RooRealVars as RooArgSet
+   */
+  RooArgSet Set(const std::string& set_name);
   
   /**
    *  @brief Add and/or access RooRealVars, RooCategories and RooFormulaVars as RooArgList
@@ -597,9 +610,9 @@ class EasyPdf {
   RooWorkspace* ws_;
   
   /**
-   *  @brief Brief description
+   *  @brief Defined named sets
    */
-  ;
+  std::map<std::string,std::string> variable_sets_;
 };
 
 /** \struct ObjectExistsException
