@@ -2,15 +2,15 @@
 #include <iostream>
 
 // from project
-#include "doofit/builder/FitModelBrewery/Recipe/Recipe.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Recipe.h"
 
-#include "doofit/builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
-#include "doofit/builder/FitModelBrewery/Recipe/Dimension/DiscreteDimension.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Dimension/RealDimension.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Dimension/DiscreteDimension.h"
 
-#include "doofit/builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
-#include "doofit/builder/FitModelBrewery/Recipe/Category/SuperCategory.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Category/BasicCategory.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Category/SuperCategory.h"
 
-#include "doofit/builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Parameter/StandardParameter.h"
 
 using namespace std;
 using namespace doofit::builder::fitmodelbrewery;

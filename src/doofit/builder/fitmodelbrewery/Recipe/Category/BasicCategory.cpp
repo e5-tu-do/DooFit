@@ -1,10 +1,10 @@
-#include "doofit/builder/FitModelBrewery/Recipe/Category/BasicCategory.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Category/BasicCategory.h"
 
 // from boost
 #include <boost/foreach.hpp>
 
 // from project
-#include "doofit/builder/FitModelBrewery/Recipe/Recipe.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Recipe.h"
 
 using namespace std;
 using namespace boost;

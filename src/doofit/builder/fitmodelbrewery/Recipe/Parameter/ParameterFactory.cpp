@@ -1,9 +1,9 @@
-#include "doofit/builder/FitModelBrewery/Recipe/Parameter/ParameterFactory.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Parameter/ParameterFactory.h"
 
 // from project
-#include "doofit/builder/FitModelBrewery/Recipe/Recipe.h"
-#include "doofit/builder/FitModelBrewery/Recipe/Parameter/AbsParameter.h"
-#include "doofit/builder/FitModelBrewery/Recipe/Parameter/StandardParameter.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Recipe.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Parameter/AbsParameter.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Parameter/StandardParameter.h"
 
 namespace doofit {
 namespace builder {

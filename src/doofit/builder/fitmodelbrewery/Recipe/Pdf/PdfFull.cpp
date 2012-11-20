@@ -1,4 +1,4 @@
-#include "doofit/builder/FitModelBrewery/Recipe/Pdf/PdfFull.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Pdf/PdfFull.h"
 
 namespace doofit {
 namespace builder {

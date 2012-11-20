@@ -1,4 +1,4 @@
-#include "doofit/builder/FitModelBrewery/Recipe/Recipe.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Recipe.h"
 
 // from STL
 #include <utility>

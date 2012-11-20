@@ -1,4 +1,4 @@
-#include "doofit/builder/FitModelBrewery/Recipe/Parameter/AbsParameter.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Parameter/AbsParameter.h"
 
 
 namespace doofit {

@@ -1,7 +1,7 @@
-#include "doofit/builder/FitModelBrewery/Recipe/Dimension/RealDimension.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Dimension/RealDimension.h"
 
 // from project
-#include "doofit/builder/FitModelBrewery/Recipe/Recipe.h"
+#include "doofit/builder/fitmodelbrewery/Recipe/Recipe.h"
 
 
 namespace doofit {
