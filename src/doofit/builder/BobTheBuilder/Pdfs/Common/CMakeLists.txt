@@ -1,1 +1,0 @@
-add_library(Builder_BobTheBuilder_PdfsCommon AbsDimension.cpp AbsDimension.h AbsDimensionReal.cpp AbsDimensionReal.h AbsDimensionCat.cpp AbsDimensionCat.h CategoryBasic.cpp CategoryBasic.h CategorySuper.cpp CategorySuper.h Parameter.cpp Parameter.h AbsPdf.cpp AbsPdf.h SubPdfFull.cpp SubPdfFull.h Component.cpp Component.h PdfFull.h PdfFull.cpp)
