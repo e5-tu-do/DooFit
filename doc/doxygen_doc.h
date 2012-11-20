@@ -10,7 +10,7 @@
  *
  * Here is an overview of the DooFit functionality:
  *
- * @li @link doofit::Toy Automated toy sample generation, toy study assistance and analysis @endlink
+ * @li @link doofit::Toy doofit::Toy Automated toy sample generation, toy study assistance and analysis @endlink
  *
  * @section mp_simplesetup Simple setup via global DooSoftware installation
  *

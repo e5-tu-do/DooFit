@@ -114,7 +114,7 @@ namespace doofit {
  *  (pulls, residuals, ...) for all used parameters. Accessing individual fit
  *  results is also possible.
  *
- *  For submitting toy jobs via PBS see PBSJobBuilder.
+ *  For submitting toy jobs via PBS, see PBSJobBuilder.
  *
  *  @author Florian Kruse
  */
