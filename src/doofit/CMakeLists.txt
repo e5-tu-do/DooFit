@@ -1,11 +1,11 @@
-add_subdirectory(Config)
+add_subdirectory(config)
 add_subdirectory(Fitter)
 add_subdirectory(builder)
 add_subdirectory(Pdf2Ws)
 add_subdirectory(Data)
 add_subdirectory(Plotter)
 add_subdirectory(plotting)
-add_subdirectory(Toy)
+add_subdirectory(toy)
 add_subdirectory(extraroopdfs)
 
 #add_subdirectory(utils)

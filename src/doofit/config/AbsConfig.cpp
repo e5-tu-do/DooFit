@@ -1,4 +1,4 @@
-#include "doofit/Config/AbsConfig.h"
+#include "doofit/config/AbsConfig.h"
 
 // from STL
 #include <string>
@@ -14,7 +14,7 @@
 #include "doocore/io/MsgStream.h"
 
 namespace doofit {
-namespace Config {
+namespace config {
   using namespace std;
   namespace po = boost::program_options;
   using namespace doocore::io;

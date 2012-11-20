@@ -18,13 +18,13 @@
 #include <string>
 
 // from project
-#include "doofit/Config/AbsConfig.h"
+#include "doofit/config/AbsConfig.h"
 
 namespace doofit {
 namespace builder {
 namespace numerobis {
 
-class NumerobisConfig : public Config::AbsConfig {
+class NumerobisConfig : public config::AbsConfig {
  public:
   NumerobisConfig(const std::string& name);
   virtual ~NumerobisConfig();
@@ -44,7 +44,7 @@ class NumerobisConfig : public Config::AbsConfig {
    *
    *  This function will define all options for the derived CommonConfig class.
    * 
-   *  @see Config::AbsConfig::DefineOptions()
+   *  @see config::AbsConfig::DefineOptions()
   **/
   void DefineOptions();
   
@@ -54,7 +54,7 @@ class NumerobisConfig : public Config::AbsConfig {
    *  This function will store all options from the variable map into own 
    *  members.
    *  
-   *  @see Config::AbsConfig::LoadOptions()
+   *  @see config::AbsConfig::LoadOptions()
   **/
   void LoadOptions();
   

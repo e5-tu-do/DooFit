@@ -15,18 +15,18 @@
 #include "CommonConfig.h"
 
 namespace doofit {
-namespace Config {
+namespace config {
 using namespace std;
 namespace po = boost::program_options;
 using namespace doocore::io;
 
 CommonConfig::CommonConfig() :
-Config::AbsConfig("empty_name")
+config::AbsConfig("empty_name")
 {
 }
 
 CommonConfig::CommonConfig(const std::string& name) :
-Config::AbsConfig(name)
+config::AbsConfig(name)
 {
 }
 
@@ -49,5 +49,5 @@ void CommonConfig::DefineOptions() {
 void CommonConfig::LoadOptions() {
   if (var_map_.count("help")) help_flag_ = true;
 }
-} // namespace Config
+} // namespace config
 } // namespace doofit

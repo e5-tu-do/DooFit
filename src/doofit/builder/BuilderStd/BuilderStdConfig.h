@@ -20,12 +20,12 @@
 // RooFit
 
 // from project
-#include "doofit/Config/AbsConfig.h"
+#include "doofit/config/AbsConfig.h"
 
 // forward declarations
 
 namespace doofit {
-class BuilderStdConfig : public Config::AbsConfig {
+class BuilderStdConfig : public config::AbsConfig {
  public:
   /**
    *  \brief Standard constructor.

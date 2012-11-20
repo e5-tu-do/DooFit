@@ -4,13 +4,13 @@
 // from STL
 
 // from project
-#include "doofit/Config/AbsConfig.h"
+#include "doofit/config/AbsConfig.h"
 
 namespace doofit {
 namespace builder { 
 namespace fitmodelbrewery {
 
-class BreweryConfig : public Config::AbsConfig {
+class BreweryConfig : public config::AbsConfig {
  public:    
   BreweryConfig();
   BreweryConfig(const std::string& name);
@@ -27,7 +27,7 @@ class BreweryConfig : public Config::AbsConfig {
    *
    *  This function will define all options for the derived BreweryConfig class.
    * 
-   *  @see Config::AbsConfig::DefineOptions()
+   *  @see config::AbsConfig::DefineOptions()
    */
   void DefineOptions();
   
@@ -37,7 +37,7 @@ class BreweryConfig : public Config::AbsConfig {
    *  This function will store all options from the variable map into own 
    *  members.
    *  
-   *  @see Config::AbsConfig::LoadOptions()
+   *  @see config::AbsConfig::LoadOptions()
    */
   void LoadOptions();
    

@@ -1,4 +1,4 @@
-#include "doofit/Toy/ToyFactoryStd/ToyFactoryStd.h"
+#include "doofit/toy/ToyFactoryStd/ToyFactoryStd.h"
 
 // STL
 #include <cstring>
@@ -37,8 +37,8 @@
 #include "RooLinkedListIter.h"
 
 // from Project
-#include "doofit/Config/CommonConfig.h"
-#include "doofit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "doofit/config/CommonConfig.h"
+#include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 #include "doocore/io/MsgStream.h"
 
 using namespace ROOT;
@@ -46,8 +46,8 @@ using namespace RooFit;
 using namespace doocore::io;
 
 namespace doofit {
-namespace Toy {
-  ToyFactoryStd::ToyFactoryStd(const Config::CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac) :
+namespace toy {
+  ToyFactoryStd::ToyFactoryStd(const config::CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac) :
   config_common_(cfg_com),
   config_toyfactory_(cfg_tfac)
   {
@@ -80,7 +80,7 @@ namespace Toy {
       }
     }
       
-    const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities = config_toyfactory_.discrete_probabilities();
+    const std::vector<config::DiscreteProbabilityDistribution>& discrete_probabilities = config_toyfactory_.discrete_probabilities();
     
     if (discrete_probabilities.size() > 0) {
       // determine yield and already generated argset for discrete dataset
@@ -309,11 +309,11 @@ namespace Toy {
     return new_dataset;
   }
   
-  std::vector<Config::CommaSeparatedPair> ToyFactoryStd::GetPdfProtoSections(const std::string& pdf_name) const {
-    const std::vector<Config::CommaSeparatedPair>& proto_sections = config_toyfactory_.proto_sections();
-    std::vector<Config::CommaSeparatedPair> matched_sections;
+  std::vector<config::CommaSeparatedPair> ToyFactoryStd::GetPdfProtoSections(const std::string& pdf_name) const {
+    const std::vector<config::CommaSeparatedPair>& proto_sections = config_toyfactory_.proto_sections();
+    std::vector<config::CommaSeparatedPair> matched_sections;
     
-    for (std::vector<Config::CommaSeparatedPair>::const_iterator it=proto_sections.begin(); it != proto_sections.end(); ++it) {
+    for (std::vector<config::CommaSeparatedPair>::const_iterator it=proto_sections.begin(); it != proto_sections.end(); ++it) {
       if (pdf_name.compare((*it).first()) == 0) {
         matched_sections.push_back(*it);
       }
@@ -325,7 +325,7 @@ namespace Toy {
     RooDataSet* data = NULL;
     bool have_to_delete_proto_data = false;
     
-    const std::vector<Config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
+    const std::vector<config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
     if (matched_proto_sections.size() > 0) {
       // @todo If PDF ist extended AND no yield is set, we need to get yield from
       //       PDF itself for proto.
@@ -345,7 +345,7 @@ namespace Toy {
       // proto data already coming along from higher PDFs).
       RooDataSet* proto_data_this_pdf = NULL;
       
-      for (std::vector<Config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
+      for (std::vector<config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
         RooDataSet* temp_data = GenerateProtoSample(pdf, *it, argset_generation_observables, config_toyfactory_.workspace(), proto_size);
         
         // merge proto sets if necessary
@@ -646,7 +646,7 @@ namespace Toy {
     return data;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield) const {
+  RooDataSet* ToyFactoryStd::GenerateDiscreteSample(const std::vector<config::DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield) const {
     // Vector containing necessary information for discrete variable generation.
     // Tuple contents:
     //  1. The variable as RooAbsArg* itself
@@ -663,7 +663,7 @@ namespace Toy {
     //  - add to relevant arg sets
     RooArgSet disc_argset;
     RooArgSet disc_cat_argset;
-    for (std::vector<Config::DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities.begin(); it != discrete_probabilities.end(); ++it) {
+    for (std::vector<config::DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities.begin(); it != discrete_probabilities.end(); ++it) {
       RooAbsArg* disc_var = config_toyfactory_.argset_generation_observables()->find((*it).var_name().c_str());
       
       if (disc_var == NULL) {
@@ -773,7 +773,7 @@ namespace Toy {
     return data_discrete;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateProtoSample(const RooAbsPdf& pdf, const Config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, RooWorkspace* workspace, int yield) const {
+  RooDataSet* ToyFactoryStd::GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, RooWorkspace* workspace, int yield) const {
     
     assert(yield>0);
     sinfo << "Generating proto data for PDF " << pdf.GetName() << " using config section " << proto_section.second() << endmsg;
@@ -791,6 +791,6 @@ namespace Toy {
     
     return tfac_proto.Generate();
   }
-} // namespace Toy
+} // namespace toy
 } // namespace doofit
 

@@ -1,5 +1,5 @@
 
-/** @namespace doofit::Config
+/** @namespace doofit::config
  *
  *  @brief Config subsystem namespace.
  *
@@ -45,8 +45,8 @@ namespace doofit {
    *
    */
   
-namespace Config {
-  /** \class doofit::Config::AbsConfig
+namespace config {
+  /** \class doofit::config::AbsConfig
    *  \brief DooFit abstract Config base class.
    *
    *  This is the abstract base class for all DooFit config objects. It offers
@@ -77,8 +77,8 @@ namespace Config {
    *  recommended to group options into sections defined by the config object's
    *  name.
    *
-   *  @see Config::AbsConfig::desc_visible_
-   *  @see Config::AbsConfig::desc_hidden_
+   *  @see config::AbsConfig::desc_visible_
+   *  @see config::AbsConfig::desc_hidden_
    *
    *  Usage example:
    *
@@ -97,9 +97,9 @@ namespace Config {
    *
    *  @section parsing Parsing command line and config file
    *
-   *  Parsing command line and an optional config file (see Config::AbsConfig::config_file_)
-   *  is very simple through Config::AbsConfig::InitializeOptions(const AbsConfig&) and 
-   *  Config::AbsConfig::InitializeOptions(int, char* []). 
+   *  Parsing command line and an optional config file (see config::AbsConfig::config_file_)
+   *  is very simple through config::AbsConfig::InitializeOptions(const AbsConfig&) and 
+   *  config::AbsConfig::InitializeOptions(int, char* []). 
    *
    *  Usage example:
    *
@@ -114,7 +114,7 @@ namespace Config {
    *  MyConfig2 config2("MyConfig2");
    *  
    *  // Initialize config object via previously initialized config object.
-   *  // See Config::AbsConfig::InitializeOptions() why you should avoid initializing via 
+   *  // See config::AbsConfig::InitializeOptions() why you should avoid initializing via 
    *  // argc and argv again.
    *  config2.InitializeOptions(config);
    *
@@ -122,7 +122,7 @@ namespace Config {
    *  MyConfig3 config3("MyConfig3");
    *  
    *  // Initialize config object via previously initialized config object.
-   *  // See Config::AbsConfig::InitializeOptions() why you should avoid initializing via 
+   *  // See config::AbsConfig::InitializeOptions() why you should avoid initializing via 
    *  // argc and argv again.
    *  config3.InitializeOptions(config2);  
    *  
@@ -131,13 +131,13 @@ namespace Config {
    *  config1.CheckHelpFlagAndPrintHelp();
    *  
    *  // Print all set options for the user (optional).
-   *  Config::AbsConfig::PrintAll();
+   *  config::AbsConfig::PrintAll();
    *  @endcode
    *
    *  @section loading Loading parsed options
    *
    *  Parsed options can be loaded into specific member variables via 
-   *  Config::AbsConfig::LoadOptions(). Again, see boost documentation on how to get the 
+   *  config::AbsConfig::LoadOptions(). Again, see boost documentation on how to get the 
    *  parsed options.
    *
    *  Usage example:
@@ -177,13 +177,13 @@ namespace Config {
    *  
    *  // from project
    *  #ifndef __CINT__
-   *  #include "doofit/Config/AbsConfig.h"
+   *  #include "doofit/config/AbsConfig.h"
    *  #else
    *  // ROOT Cint hacks...
    *  #include "../../Config/AbsConfig.h"
    *  #endif // __CINT __
    *  
-   *  class MyConfig : public Config::AbsConfig {
+   *  class MyConfig : public config::AbsConfig {
    *  ...
    *    ClassDef(MyConfig, 42);
    *  };

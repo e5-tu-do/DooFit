@@ -1,4 +1,4 @@
-#include "doofit/Config/CommaSeparatedPair.h"
+#include "doofit/config/CommaSeparatedPair.h"
 
 // from STL
 
@@ -8,7 +8,7 @@
 using namespace std;
 
 namespace doofit {
-namespace Config {
+namespace config {
   using namespace doocore::io;
   
   void CommaSeparatedPair::Parse(string str) {

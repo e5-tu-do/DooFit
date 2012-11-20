@@ -25,7 +25,7 @@ namespace pt = boost::property_tree;
 using namespace doocore::io;
 
 BuilderStdConfig::BuilderStdConfig(const std::string& name) :
-Config::AbsConfig(name)
+config::AbsConfig(name)
 {
 }
 

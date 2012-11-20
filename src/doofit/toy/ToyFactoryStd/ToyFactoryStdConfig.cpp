@@ -1,4 +1,4 @@
-#include "doofit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
 // STL
 #include <string>
@@ -29,9 +29,9 @@ namespace po = boost::program_options;
 using namespace doocore::io;
 
 namespace doofit {
-namespace Toy {
+namespace toy {
   ToyFactoryStdConfig::ToyFactoryStdConfig() : 
-  Config::AbsConfig("empty_name"),
+  config::AbsConfig("empty_name"),
   generation_pdf_(NULL),
   expected_yield_(0),
   argset_generation_observables_(NULL),
@@ -46,7 +46,7 @@ namespace Toy {
   }
   
   ToyFactoryStdConfig::ToyFactoryStdConfig(const std::string& name) :
-  Config::AbsConfig(name),
+  config::AbsConfig(name),
   generation_pdf_(NULL),
   expected_yield_(0),
   argset_generation_observables_(NULL),
@@ -193,10 +193,10 @@ namespace Toy {
     
     scfg << "Fixed size dataset:        " << dataset_size_fixed_ << endmsg;
     
-    for (vector<Config::DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities_.begin(); it != discrete_probabilities_.end(); ++it) {
+    for (vector<config::DiscreteProbabilityDistribution>::const_iterator it = discrete_probabilities_.begin(); it != discrete_probabilities_.end(); ++it) {
       scfg << "Discrete probability:      " << *it << endmsg;
     }
-    for (vector<Config::CommaSeparatedPair>::const_iterator it = proto_sections_.begin(); it != proto_sections_.end(); ++it) {
+    for (vector<config::CommaSeparatedPair>::const_iterator it = proto_sections_.begin(); it != proto_sections_.end(); ++it) {
       scfg << "Proto dataset section:     " << *it << endmsg;
     }
     
@@ -259,11 +259,11 @@ namespace Toy {
      "Name of variables argset to generate for on linked workspace")
     (GetOptionString("argset_constraining_name_ws").c_str(), po::value<string>(&argset_constraining_pdfs_workspace_),
      "Name of constraining PDFs argset to use on linked workspace")
-    (GetOptionString("discrete_probabilities").c_str(), po::value<vector<Config::DiscreteProbabilityDistribution> >(&discrete_probabilities_)->composing(), "Discrete probability distribution for variables (can be multiply defined). The string representation is var_name,value1,prob1,value2,prob2,...,valueN,probN")
-    (GetOptionString("proto_section").c_str(), po::value<vector<Config::CommaSeparatedPair> >(&proto_sections_)->composing(), "Proto dataset generation section. Specify sub PDF name and config section to use for proto data for this PDF. String representation is pdf_name,section")
+    (GetOptionString("discrete_probabilities").c_str(), po::value<vector<config::DiscreteProbabilityDistribution> >(&discrete_probabilities_)->composing(), "Discrete probability distribution for variables (can be multiply defined). The string representation is var_name,value1,prob1,value2,prob2,...,valueN,probN")
+    (GetOptionString("proto_section").c_str(), po::value<vector<config::CommaSeparatedPair> >(&proto_sections_)->composing(), "Proto dataset generation section. Specify sub PDF name and config section to use for proto data for this PDF. String representation is pdf_name,section")
     (GetOptionString("dataset_size_fixed").c_str(), po::value<bool>(&dataset_size_fixed_)->default_value(false),"Set to true to generate a fixed size dataset (instead of poisson distributed size which is default)")
-    (GetOptionString("workspace_filename_name").c_str(), po::value<Config::CommaSeparatedPair>(&workspace_filename_name_),"Filename to load workspace from (if not set directly) and name of workspace in file (set as filename,workspace_name)")
-    (GetOptionString("dataset_filename_name").c_str(), po::value<Config::CommaSeparatedPair>(&dataset_filename_name_),"Filename to save generated dataset to and name of dataset in file (set as filename,dataset_name)")
+    (GetOptionString("workspace_filename_name").c_str(), po::value<config::CommaSeparatedPair>(&workspace_filename_name_),"Filename to load workspace from (if not set directly) and name of workspace in file (set as filename,workspace_name)")
+    (GetOptionString("dataset_filename_name").c_str(), po::value<config::CommaSeparatedPair>(&dataset_filename_name_),"Filename to save generated dataset to and name of dataset in file (set as filename,dataset_name)")
     (GetOptionString("parameter_read_file").c_str(), po::value<string>(&parameter_read_file_),"Filename to read parameters from before generation")
     (GetOptionString("parameter_save_file").c_str(), po::value<string>(&parameter_save_file_),"Filename to save parameters to after generation");
     
@@ -272,6 +272,6 @@ namespace Toy {
   
   void ToyFactoryStdConfig::LoadOptions() {
   }
-} // namespace Toy
+} // namespace toy
 } // namespace doofit
 

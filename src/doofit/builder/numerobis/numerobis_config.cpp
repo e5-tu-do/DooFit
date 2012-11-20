@@ -12,7 +12,7 @@ namespace po = boost::program_options;
 using namespace doocore::io;
 
 NumerobisConfig::NumerobisConfig(const std::string& name) :
-    Config::AbsConfig(name),
+    config::AbsConfig(name),
     pdf_config_file_("")
 {
 }

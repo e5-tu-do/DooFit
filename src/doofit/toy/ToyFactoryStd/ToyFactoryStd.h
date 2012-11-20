@@ -11,7 +11,7 @@
 #include "RooAbsPdf.h"
 
 // from project
-#include "doofit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
 // forward declarations
 class RooDataSet;
@@ -19,7 +19,7 @@ class RooArgSet;
 class TFile;
 
 namespace doofit {
-/** @namespace doofit::Toy
+/** @namespace doofit::toy
  *
  *  @brief DooFit Toy subsystem.
  *
@@ -31,11 +31,11 @@ namespace doofit {
  *  Take the following usage example:
  *
  * @code
- * #include "doofit/Config/CommonConfig.h"
- * #include "doofit/Toy/ToyFactoryStd/ToyFactoryStd.h"
- * #include "doofit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
- * #include "doofit/Toy/ToyStudyStd/ToyStudyStd.h"
- * #include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
+ * #include "doofit/config/CommonConfig.h"
+ * #include "doofit/toy/ToyFactoryStd/ToyFactoryStd.h"
+ * #include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+ * #include "doofit/toy/ToyStudyStd/ToyStudyStd.h"
+ * #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
  *
  * int main(int argc, char* argv[]) {
  *   // Initialize config objects (mandatory).
@@ -45,9 +45,9 @@ namespace doofit {
  *   // Parsing a config file will be handled automatically and can be
  *   // configured via -c or --config-file command line option.
  *   // See examples/toys directory for config file examples.
- *   doofit::Config::CommonConfig cfg_com("common");
+ *   doofit::config::CommonConfig cfg_com("common");
  *   cfg_com.InitializeOptions(argc, argv);
- *   doofit::Toy::ToyFactoryStdConfig cfg_tfac("toyfac");
+ *   doofit::toy::ToyFactoryStdConfig cfg_tfac("toyfac");
  *   cfg_tfac.InitializeOptions(cfg_com);
  *   ToyStudyStdConfig cfg_tstudy("toystudy");
  *   cfg_tstudy.InitializeOptions(cfg_tfac);
@@ -68,14 +68,14 @@ namespace doofit {
  *
  *   // Initialize the toy factory module with the config objects and start
  *   // generating toy samples.
- *   doofit::Toy::ToyFactoryStd tfac(cfg_com, cfg_tfac);
+ *   doofit::toy::ToyFactoryStd tfac(cfg_com, cfg_tfac);
  *   RooDataSet* data = tfac.Generate();
  *   
  *   // fitting on the generated dataset is your responsibility
  *   RooFitResult* fit_result = my_workspace->pdf("mypdf")->fitTo(*data);
  *
  *   // Store the fit result of the toy fit
- *   doofit::Toy::ToyStudyStd tstudy(cfg_com, cfg_tstudy);
+ *   doofit::toy::ToyStudyStd tstudy(cfg_com, cfg_tstudy);
  *   tstudy.StoreFitResult(fit_result);
  *
  *   // assume, we're in another program now, analyzing toy fits
@@ -90,7 +90,7 @@ namespace doofit {
  * }
  * @endcode
  *
- *  Notice the mandatory doofit::Config objects being created before usage. They
+ *  Notice the mandatory doofit::config objects being created before usage. They
  *  are initialized via the command line arguments argc and argv. These also 
  *  give the possibility to pass a config file for easy configuration. Calling
  *  your program with the "--help" parameter will print available options. All 
@@ -98,10 +98,10 @@ namespace doofit {
  *  be configured via the command line or config file (except setting of 
  *  internal objects like RooWorkspaces etc.).
  *
- *  The interface of doofit::Toy::ToyFactoryStd is very minimal. It only offers 
+ *  The interface of doofit::toy::ToyFactoryStd is very minimal. It only offers 
  *  to generate a dataset.
  *
- *  doofit::Toy::ToyStudyStd is the interface for storing fit results of toy 
+ *  doofit::toy::ToyStudyStd is the interface for storing fit results of toy 
  *  fits and also for the analysis of fit results after all toy fits are 
  *  completed. Storing is automatic and collision-safe even in case of several
  *  instances writing into the same file (e.g. on a network filesystem). Notice
@@ -109,21 +109,21 @@ namespace doofit {
  *  load of several processes trying to access one file, a moderate NFS server
  *  seems to be able to perfectly handle the load.
  *
- *  In the analysis afterwards, doofit::Toy::ToyStudyStd can automatically read 
+ *  In the analysis afterwards, doofit::toy::ToyStudyStd can automatically read 
  *  and analyse toy fits and produce plots of distributions of interest 
  *  (pulls, residuals, ...) for all used parameters. Accessing individual fit
  *  results is also possible.
  *
- *  For submitting toy jobs via PBS, see PBSJobBuilder.
+ *  For submitting toy jobs via PBS, see PBSJobBuilder and PBSJobScheduler.
  *
  *  @author Florian Kruse
  */
 
-namespace Config {
+namespace config {
   class CommonConfig; 
 }
   
-namespace Toy {
+namespace toy {
   /** \class ToyFactoryStd
    *  \brief Standard toy factory for DooFit generating toy samples
    *
@@ -161,8 +161,8 @@ namespace Toy {
    *  section. The generated proto data will then be used for the specified 
    *  sub PDF.
    *
-   *  @see Toy::ToyFactoryStdConfig::set_proto_sections(const std::vector<Config::CommaSeparatedPair>&)
-   *  @see Toy::ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
+   *  @see Toy::ToyFactoryStdConfig::set_proto_sections(const std::vector<config::CommaSeparatedPair>&)
+   *  @see Toy::ToyFactoryStdConfig::AddProtoSections(const config::CommaSeparatedPair&)
    *
    *  @todo Proto sets need to be split for sub PDFs.
    *  @todo Test proto generation without externally set yield.
@@ -186,7 +186,7 @@ namespace Toy {
      *  @param cfg_com CommonConfig for the general configuration.
      *  @param cfg_tfac ToyFactoryStdConfig for this specific toy factory.
      */
-    ToyFactoryStd(const Config::CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac);
+    ToyFactoryStd(const config::CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac);
     
     /**
      *  \brief Destructor for ToyFactoryStd
@@ -367,7 +367,7 @@ namespace Toy {
      *  @param pdf_name The PDF name to be tested
      *  @return the sub vector of sections for this PDF name
      */
-    std::vector<Config::CommaSeparatedPair> GetPdfProtoSections(const std::string& pdf_name) const;
+    std::vector<config::CommaSeparatedPair> GetPdfProtoSections(const std::string& pdf_name) const;
     ///@}
     
     /** @name Generator functions
@@ -473,13 +473,13 @@ namespace Toy {
      *          must take care of proper deletion afterwards.
      *  @todo check for PDF arguments to be uncorrelated
      */
-    RooDataSet* GenerateDiscreteSample(const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield) const;
+    RooDataSet* GenerateDiscreteSample(const std::vector<config::DiscreteProbabilityDistribution>& discrete_probabilities, const RooArgSet& argset_generation_observables, const RooArgSet& argset_already_generated, int yield) const;
     
     /**
      *  @brief Generate a proto sample for a given proto section
      *
      *  Helper function to be used by ToyFactoryStd::GenerateForPdf(). For a 
-     *  given proto section as Config::CommaSeparatedPair it will create a new
+     *  given proto section as config::CommaSeparatedPair it will create a new
      *  ToyFactoryStd that will generate the proto set itself. The proto_section
      *  is a section in the config file that configures this proto set. 
      *  Workspace and observables argset are taken from this toy factory. Yield 
@@ -496,13 +496,13 @@ namespace Toy {
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const Config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, RooWorkspace* workspace, int yield) const;
+    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, RooWorkspace* workspace, int yield) const;
     ///@}
     
     /**
      *  \brief CommonConfig instance to use
      */
-    const Config::CommonConfig& config_common_;
+    const config::CommonConfig& config_common_;
     /**
      *  \brief ToyFactoryStdConfig instance to use
      */
@@ -536,7 +536,7 @@ namespace Toy {
   struct DatasetsNotAppendableException: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Trying to merge non-appendable datasets"; }
   };
-} // namespace Toy
+} // namespace toy
 } // namespace doofit
 
 #endif // TOYFACTORYSTD_h

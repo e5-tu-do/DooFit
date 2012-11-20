@@ -2,7 +2,7 @@
 
 
 // from Project
-#include "doofit/Config/CommonConfig.h"
+#include "doofit/config/CommonConfig.h"
 #include "doofit/builder/BuilderStd/BuilderStdConfig.h"
 
 namespace doofit {

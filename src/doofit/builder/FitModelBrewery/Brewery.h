@@ -7,7 +7,7 @@
 #ifndef BUILDER_FITMODELBREWERY_BREWERY_H_
 
 // from project
-#include "doofit/Config/CommonConfig.h"
+#include "doofit/config/CommonConfig.h"
 #include "doofit/builder/FitModelBrewery/BreweryConfig.h"
 
 
@@ -31,7 +31,7 @@ namespace fitmodelbrewery {
 class Brewery {
  public:
   Brewery();
-  Brewery(const Config::CommonConfig& cfg_com, const BreweryConfig& cfg_brw);
+  Brewery(const config::CommonConfig& cfg_com, const BreweryConfig& cfg_brw);
   ~Brewery();
  
  protected:

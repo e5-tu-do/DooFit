@@ -11,8 +11,8 @@
 // from RooFit
 
 // from project
-#include "doofit/Config/AbsConfig.h"
-#include "doofit/Config/CommaSeparatedList.h"
+#include "doofit/config/AbsConfig.h"
+#include "doofit/config/CommaSeparatedList.h"
 
 // forward declarations
 
@@ -24,7 +24,7 @@ namespace plotting {
  *  This class is responsible for all Plot related configuration options
  *  which are not covered by CommonConfig.
  */
-class PlotConfig : public Config::AbsConfig {
+class PlotConfig : public config::AbsConfig {
  public:  
   /**
    *  @brief Standard constructor for PlotConfig
@@ -71,13 +71,13 @@ class PlotConfig : public Config::AbsConfig {
    * 
    * @see set_pdf_linecolor_map()
    **/
-  const Config::CommaSeparatedList<int>& pdf_linecolor_map() const { return pdf_linecolor_map_; }
+  const config::CommaSeparatedList<int>& pdf_linecolor_map() const { return pdf_linecolor_map_; }
   /**
    * @brief Getter for pdf_linestyle_map_
    *
    * @see set_pdf_linestyle_map()
    **/
-  const Config::CommaSeparatedList<int>& pdf_linestyle_map() const { return pdf_linestyle_map_; }
+  const config::CommaSeparatedList<int>& pdf_linestyle_map() const { return pdf_linestyle_map_; }
   ///@}
 
   /** @name Setter functions
@@ -85,14 +85,14 @@ class PlotConfig : public Config::AbsConfig {
    */
   ///@{
   /**
-   * @brief Setter for pdf_linecolor_map_ with Config::CommaSeparatedList
+   * @brief Setter for pdf_linecolor_map_ with config::CommaSeparatedList
    *
-   * Set line colors for plotted PDFs as Config::CommaSeparatedList. This can 
+   * Set line colors for plotted PDFs as config::CommaSeparatedList. This can 
    * also be set via command line or config file.
    * 
    * @param pdf_linecolors colors to use in same order as PDFs are supplied
    **/
-  void set_pdf_linecolor_map(const Config::CommaSeparatedList<int>& pdf_linecolors) { pdf_linecolor_map_ = pdf_linecolors; }
+  void set_pdf_linecolor_map(const config::CommaSeparatedList<int>& pdf_linecolors) { pdf_linecolor_map_ = pdf_linecolors; }
   /**
    * @brief Setter for pdf_linecolor_map_ with string
    *
@@ -105,14 +105,14 @@ class PlotConfig : public Config::AbsConfig {
     pdf_linecolor_map_.Parse(pdf_linecolors);
   }
   /**
-   * @brief Setter for pdf_linestyle_map_ with Config::CommaSeparatedList
+   * @brief Setter for pdf_linestyle_map_ with config::CommaSeparatedList
    *
-   * Set line syles for plotted PDFs as Config::CommaSeparatedList. This can
+   * Set line syles for plotted PDFs as config::CommaSeparatedList. This can
    * also be set via command line or config file.
    *
    * @param pdf_linestyles line styles to use in same order as PDFs are supplied
    **/
-  void set_pdf_linestyle_map(const Config::CommaSeparatedList<int>& pdf_linestyles) { pdf_linestyle_map_ = pdf_linestyles; }
+  void set_pdf_linestyle_map(const config::CommaSeparatedList<int>& pdf_linestyles) { pdf_linestyle_map_ = pdf_linestyles; }
   /**
    * @brief Setter for pdf_linestyle_map_ with string
    *
@@ -136,7 +136,7 @@ class PlotConfig : public Config::AbsConfig {
    *
    *  This function will define all options for the derived CommonConfig class.
    *
-   *  @see Config::AbsConfig::DefineOptions()
+   *  @see config::AbsConfig::DefineOptions()
    */
   void DefineOptions();
   
@@ -146,7 +146,7 @@ class PlotConfig : public Config::AbsConfig {
    *  This function will store all options from the variable map into own
    *  members.
    *
-   *  @see Config::AbsConfig::LoadOptions()
+   *  @see config::AbsConfig::LoadOptions()
    */
   void LoadOptions();
   
@@ -162,11 +162,11 @@ class PlotConfig : public Config::AbsConfig {
   /**
    *  @brief Color map for PDF lines
    */
-  Config::CommaSeparatedList<int> pdf_linecolor_map_;
+  config::CommaSeparatedList<int> pdf_linecolor_map_;
   /**
    *  @brief Line style map for PDF lines
    */
-  Config::CommaSeparatedList<int> pdf_linestyle_map_;
+  config::CommaSeparatedList<int> pdf_linestyle_map_;
 };
 
 } // namespace plotting

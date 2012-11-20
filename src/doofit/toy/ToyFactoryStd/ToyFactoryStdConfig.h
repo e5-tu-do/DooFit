@@ -19,9 +19,9 @@
 
 // from project
 #ifndef __CINT__
-#include "doofit/Config/AbsConfig.h"
-#include "doofit/Config/DiscreteProbabilityDistribution.h"
-#include "doofit/Config/CommaSeparatedPair.h"
+#include "doofit/config/AbsConfig.h"
+#include "doofit/config/DiscreteProbabilityDistribution.h"
+#include "doofit/config/CommaSeparatedPair.h"
 #else
 // ROOT Cint hacks...
 #include "../../Config/AbsConfig.h"
@@ -33,7 +33,7 @@
 class TFile;
 
 namespace doofit {
-namespace Toy {
+namespace toy {
   /** \class ToyFactoryStdConfig
    *  \brief DooFit Config class for the ToyFactoryStd class
    *
@@ -43,7 +43,7 @@ namespace Toy {
    *  @author Florian Kruse
    */
   
-  class ToyFactoryStdConfig : public Config::AbsConfig {
+  class ToyFactoryStdConfig : public config::AbsConfig {
   public:
     /**
      *  @brief Default constructor for ToyFactoryStdConfig
@@ -100,21 +100,21 @@ namespace Toy {
      *  @brief Getter for discrete probability distributions
      *
      *  @see discrete_probabilities_
-     *  @see Config::DiscreteProbabilityDistribution
-     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<Config::DiscreteProbabilityDistribution>&)
-     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const Config::DiscreteProbabilityDistribution&)
+     *  @see config::DiscreteProbabilityDistribution
+     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<config::DiscreteProbabilityDistribution>&)
+     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const config::DiscreteProbabilityDistribution&)
      */
-    const std::vector<Config::DiscreteProbabilityDistribution>& discrete_probabilities() const {return discrete_probabilities_;}
+    const std::vector<config::DiscreteProbabilityDistribution>& discrete_probabilities() const {return discrete_probabilities_;}
     /**
      *  @brief Getter for proto dataset sections
      *
      *  @see @ref proto-sets
      *  @see proto_sections_
-     *  @see Config::CommaSeparatedPair
-     *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<Config::CommaSeparatedPair>&)
-     *  @see ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
+     *  @see config::CommaSeparatedPair
+     *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<config::CommaSeparatedPair>&)
+     *  @see ToyFactoryStdConfig::AddProtoSections(const config::CommaSeparatedPair&)
      */
-    const std::vector<Config::CommaSeparatedPair>& proto_sections() const {return proto_sections_;}
+    const std::vector<config::CommaSeparatedPair>& proto_sections() const {return proto_sections_;}
     /**
      *  \brief Getter for RooArgSet* with all constraining PDFs to draw from
      */
@@ -129,17 +129,17 @@ namespace Toy {
     /**
      *  @brief Getter for for file to load workspace from (and name of workspace in file)
      *
-     *  @see ToyFactoryStd::set_workspace_filename_name(Config::CommaSeparatedPair)
+     *  @see ToyFactoryStd::set_workspace_filename_name(config::CommaSeparatedPair)
      *  @return current value of workspace_filename_name_
      */
-    const Config::CommaSeparatedPair& workspace_filename_name() const {return workspace_filename_name_;}
+    const config::CommaSeparatedPair& workspace_filename_name() const {return workspace_filename_name_;}
     /**
      *  @brief Getter for file name to save dataset to (and name of dataset on file)
      *
-     *  @see ToyFactoryStd::set_dataset_filename_name(Config::CommaSeparatedPair)
+     *  @see ToyFactoryStd::set_dataset_filename_name(config::CommaSeparatedPair)
      *  @return current value of dataset_filename_name_
      */
-    const Config::CommaSeparatedPair& dataset_filename_name() const {return dataset_filename_name_;}
+    const config::CommaSeparatedPair& dataset_filename_name() const {return dataset_filename_name_;}
     /**
      *  @brief Getter for file to read parameters from before generation
      *
@@ -262,12 +262,12 @@ namespace Toy {
      *  entry for which the variable is also in the argument set to generate a 
      *  discrete distribution data set will be generated.
      *
-     *  @see Config::DiscreteProbabilityDistribution
-     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const Config::DiscreteProbabilityDistribution&)
+     *  @see config::DiscreteProbabilityDistribution
+     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const config::DiscreteProbabilityDistribution&)
      *
-     *  @param prop_dists vector of Config::DiscreteProbabilityDistribution to use
+     *  @param prop_dists vector of config::DiscreteProbabilityDistribution to use
      */
-    void set_discrete_probabilities(const std::vector<Config::DiscreteProbabilityDistribution>& prop_dists) {discrete_probabilities_ = prop_dists;}
+    void set_discrete_probabilities(const std::vector<config::DiscreteProbabilityDistribution>& prop_dists) {discrete_probabilities_ = prop_dists;}
     /**
      *  \brief Setter for proto dataset sections
      *
@@ -276,12 +276,12 @@ namespace Toy {
      *  corresponding section name in the config file.
      *
      *  @see @ref proto-sets
-     *  @see Config::CommaSeparatedPair
-     *  @see ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
+     *  @see config::CommaSeparatedPair
+     *  @see ToyFactoryStdConfig::AddProtoSections(const config::CommaSeparatedPair&)
      *
-     *  @param proto_sections vector of Config::CommaSeparatedPair to use
+     *  @param proto_sections vector of config::CommaSeparatedPair to use
      */
-    void set_proto_sections(const std::vector<Config::CommaSeparatedPair>& proto_sections) {proto_sections_ = proto_sections;}
+    void set_proto_sections(const std::vector<config::CommaSeparatedPair>& proto_sections) {proto_sections_ = proto_sections;}
     /**
      *  \brief Setter for RooArgSet* with all constraining PDFs to draw from
      */
@@ -304,26 +304,26 @@ namespace Toy {
      *
      *  To load an external workspace from a ROOT file, one can specify the 
      *  filename and name of workspace in the file here (as 
-     *  Config::CommaSeparatedPair in the order filename,workspacename). The 
+     *  config::CommaSeparatedPair in the order filename,workspacename). The 
      *  workspace will be loaded on demand, but only if no workspace is set 
      *  directly.
      *
      *  @param ws_filename_name ROOT file containing workspace and workspace 
-     *                          name in this file as Config::CommaSeparatedPair
+     *                          name in this file as config::CommaSeparatedPair
      */
-    void set_workspace_filename_name(Config::CommaSeparatedPair ws_filename_name) {workspace_filename_name_ = ws_filename_name;} 
+    void set_workspace_filename_name(config::CommaSeparatedPair ws_filename_name) {workspace_filename_name_ = ws_filename_name;} 
     /**
      *  @brief Setter for file name to save dataset to (and name of dataset on file)
      *
      *  To save the dataset after generation, one can specify the filename and 
-     *  name of dataset in this file (as Config::CommaSeparatedPair in the order 
+     *  name of dataset in this file (as config::CommaSeparatedPair in the order 
      *  filename,datasetname).
      *
      *  @param dataset_filename_name ROOT file to save dataset to and dataset 
      *                               name in this file as 
-     *                               Config::CommaSeparatedPair
+     *                               config::CommaSeparatedPair
      */
-    void set_dataset_filename_name(Config::CommaSeparatedPair dataset_filename_name) {dataset_filename_name_ = dataset_filename_name;}
+    void set_dataset_filename_name(config::CommaSeparatedPair dataset_filename_name) {dataset_filename_name_ = dataset_filename_name;}
     /**
      *  @brief Setter for file to read parameters from before generation
      *
@@ -345,12 +345,12 @@ namespace Toy {
      *  argument set to generate a discrete distribution data set will be 
      *  generated.
      *
-     *  @see Config::DiscreteProbabilityDistribution
-     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<Config::DiscreteProbabilityDistribution>&)
+     *  @see config::DiscreteProbabilityDistribution
+     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<config::DiscreteProbabilityDistribution>&)
      *
-     *  @param prop_dist Config::DiscreteProbabilityDistribution to add
+     *  @param prop_dist config::DiscreteProbabilityDistribution to add
      */
-    void AddDiscreteProbability(const Config::DiscreteProbabilityDistribution& prop_dist) {discrete_probabilities_.push_back(prop_dist);}
+    void AddDiscreteProbability(const config::DiscreteProbabilityDistribution& prop_dist) {discrete_probabilities_.push_back(prop_dist);}
     /**
      *  \brief Add a proto dataset section
      *
@@ -359,12 +359,12 @@ namespace Toy {
      *  corresponding section name in the config file.
      *
      *  @see @ref proto-sets
-     *  @see Config::CommaSeparatedPair
-     *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<Config::CommaSeparatedPair>&)
+     *  @see config::CommaSeparatedPair
+     *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<config::CommaSeparatedPair>&)
      *
-     *  @param proto_section Config::CommaSeparatedPair to add
+     *  @param proto_section config::CommaSeparatedPair to add
      */
-    void AddProtoSections(const Config::CommaSeparatedPair& proto_section) {proto_sections_.push_back(proto_section);}
+    void AddProtoSections(const config::CommaSeparatedPair& proto_section) {proto_sections_.push_back(proto_section);}
     ///@}
     
   protected:
@@ -377,7 +377,7 @@ namespace Toy {
      *
      *  This function will define all options for the derived CommonConfig class.
      * 
-     *  @see Config::AbsConfig::DefineOptions()
+     *  @see config::AbsConfig::DefineOptions()
      */
     void DefineOptions();
     
@@ -387,7 +387,7 @@ namespace Toy {
      *  This function will store all options from the variable map into own 
      *  members.
      *  
-     *  @see Config::AbsConfig::LoadOptions()
+     *  @see config::AbsConfig::LoadOptions()
      */
     void LoadOptions();
     
@@ -457,11 +457,11 @@ namespace Toy {
     /**
      *  @brief Vector of discrete probability distributions
      *
-     *  @see Config::DiscreteProbabilityDistribution
-     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<Config::DiscreteProbabilityDistribution>&)
-     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const Config::DiscreteProbabilityDistribution&)
+     *  @see config::DiscreteProbabilityDistribution
+     *  @see ToyFactoryStdConfig::set_discrete_probabilities(const std::vector<config::DiscreteProbabilityDistribution>&)
+     *  @see ToyFactoryStdConfig::AddDiscreteProbability(const config::DiscreteProbabilityDistribution&)
      */
-    std::vector<Config::DiscreteProbabilityDistribution> discrete_probabilities_;
+    std::vector<config::DiscreteProbabilityDistribution> discrete_probabilities_;
     /**
      *  @brief Vector of section names for proto datasets.
      *
@@ -469,11 +469,11 @@ namespace Toy {
      *  PDF name, second the section to use.
      *
      *  @see @ref proto-sets
-     *  @see Config::CommaSeparatedPair
-     *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<Config::CommaSeparatedPair>&)
-     *  @see ToyFactoryStdConfig::AddProtoSections(const Config::CommaSeparatedPair&)
+     *  @see config::CommaSeparatedPair
+     *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<config::CommaSeparatedPair>&)
+     *  @see ToyFactoryStdConfig::AddProtoSections(const config::CommaSeparatedPair&)
      */
-    std::vector<Config::CommaSeparatedPair> proto_sections_;
+    std::vector<config::CommaSeparatedPair> proto_sections_;
     /**
      *  @brief RooArgSet with all constraining PDFs to generate constrained parameters from
      *
@@ -493,11 +493,11 @@ namespace Toy {
     /**
      *  @brief File name to get workspace from (and name of workspace on file)
      */
-    Config::CommaSeparatedPair workspace_filename_name_;
+    config::CommaSeparatedPair workspace_filename_name_;
     /**
      *  @brief File name to save dataset to (and name of dataset on file)
      */
-    Config::CommaSeparatedPair dataset_filename_name_;
+    config::CommaSeparatedPair dataset_filename_name_;
     /**
      *  @brief File to read parameters from before generation
      */
@@ -557,7 +557,7 @@ namespace Toy {
     virtual const char* what() const throw() { return "Argument set not set"; }
   };
 #endif /* __CINT __ */
-} // namespace Toy
+} // namespace toy
 } // namespace doofit
 
 #endif // TOYFACTORYSTDCONFIG_h

@@ -8,7 +8,7 @@
    */
 
 #include "ConfigTest.h"
-#include "doofit/Config/CommonConfig.h"
+#include "doofit/config/CommonConfig.h"
 #include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
 #include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     config.CheckHelpFlagAndPrintHelp();
     
     // Print all set options for the user (optional).
-    Config::AbsConfig::PrintAll();
+    config::AbsConfig::PrintAll();
     
   } catch (std::exception& e) {
     // in case of parsing problems give an error message and throw exception further

@@ -8,7 +8,7 @@
 #include "RooWorkspace.h"
 
 // from Project
-#include "doofit/Config/CommonConfig.h"
+#include "doofit/config/CommonConfig.h"
 #include "doofit/builder/numerobis/numerobis.h"
 #include "doofit/builder/numerobis/numerobis_config.h"
 
@@ -36,7 +36,7 @@ int run( int argc, char *argv[] ){
   
   //string filename = argv[1];
 
-  Config::CommonConfig cfg_com("common");
+  config::CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
   
   NumerobisConfig cfg_bld("numerobis");

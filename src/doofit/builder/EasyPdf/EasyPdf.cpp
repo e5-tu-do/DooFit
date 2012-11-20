@@ -26,7 +26,7 @@
 #include "doocore/io/MsgStream.h"
 
 // from project
-#include "doofit/Config/CommaSeparatedList.h"
+#include "doofit/config/CommaSeparatedList.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -129,7 +129,7 @@ RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name) {
 }
 
 RooArgSet doofit::builder::EasyPdf::Vars(const std::string &name) {
-  Config::CommaSeparatedList<std::string> variables;
+  config::CommaSeparatedList<std::string> variables;
   variables.Parse(name);
   
   RooArgSet argset;
@@ -148,7 +148,7 @@ RooArgSet doofit::builder::EasyPdf::Vars(const std::string &name) {
 }
 
 RooArgList doofit::builder::EasyPdf::VarList(const std::string &name) {
-  Config::CommaSeparatedList<std::string> variables;
+  config::CommaSeparatedList<std::string> variables;
   variables.Parse(name);
   
   RooArgList arglist;

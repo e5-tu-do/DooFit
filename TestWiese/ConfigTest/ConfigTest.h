@@ -39,8 +39,8 @@ namespace boost { namespace program_options {
 
 // from project
 #ifndef __CINT__
-#include "doofit/Config/AbsConfig.h"
-#include "doofit/Config/AbsTypeCommaSeparated.h"
+#include "doofit/config/AbsConfig.h"
+#include "doofit/config/AbsTypeCommaSeparated.h"
 #else
 // ROOT Cint hacks...
 #include "../../src/Config/AbsConfig.h"
@@ -61,7 +61,7 @@ namespace testwiese {
 // forward declarations
 class ConfigTestAbstractType;
 
-class ConfigTest : public Config::AbsConfig {
+class ConfigTest : public config::AbsConfig {
  public:
   /**
    *  \brief Standard constructor.
@@ -170,7 +170,7 @@ class ConfigTest : public Config::AbsConfig {
  *  @see std::ostream& operator<<(std::ostream&, const ConfigTestAbstractType&)
  *  @see ConfigTestSecond
  */
-class ConfigTestAbstractType : public Config::AbsTypeCommaSeparated {
+class ConfigTestAbstractType : public config::AbsTypeCommaSeparated {
 public:
   /**
    *  @brief Default constructor for ConfigTestAbstractType
@@ -244,7 +244,7 @@ private:
   //ClassDef(ConfigTestAbstractType,1);
 };
 
-class ConfigTestSecond : public Config::AbsConfig {
+class ConfigTestSecond : public config::AbsConfig {
 public:
   /**
    *  \brief Standard constructor.

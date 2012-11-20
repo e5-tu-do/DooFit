@@ -1,4 +1,4 @@
-#include "doofit/Config/DiscreteProbabilityDistribution.h"
+#include "doofit/config/DiscreteProbabilityDistribution.h"
 
 // from STL
 
@@ -8,7 +8,7 @@
 using namespace std;
 
 namespace doofit {
-namespace Config {
+namespace config {
   using namespace doocore::io;
   
   void DiscreteProbabilityDistribution::Parse(string str) {

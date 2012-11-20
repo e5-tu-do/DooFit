@@ -1,4 +1,4 @@
-/** @class doofit::Config::AbsTypeCommaSeparated
+/** @class doofit::config::AbsTypeCommaSeparated
  *  @brief Abstract base class for complex Config members with comma-separated
  *         string representation
  *
@@ -19,7 +19,7 @@
 #include "TObject.h"
 
 namespace doofit {
-namespace Config {
+namespace config {
   class AbsTypeCommaSeparated : public TObject {
   public:
     /**
@@ -83,7 +83,7 @@ namespace Config {
  *             its members accordingly
  *  @return the rest of the input stream to pass along
  */
-std::istream& operator>>(std::istream& is, doofit::Config::AbsTypeCommaSeparated& arg);
+std::istream& operator>>(std::istream& is, doofit::config::AbsTypeCommaSeparated& arg);
 
 /**
  *  @brief Output stream operator for AbsTypeCommaSeparated
@@ -95,7 +95,7 @@ std::istream& operator>>(std::istream& is, doofit::Config::AbsTypeCommaSeparated
  *  @param arg the AbsTypeCommaSeparated to print
  *  @return the rest of the output stream to pass along
  */
-std::ostream& operator<<(std::ostream& os, const doofit::Config::AbsTypeCommaSeparated& arg);
+std::ostream& operator<<(std::ostream& os, const doofit::config::AbsTypeCommaSeparated& arg);
 
 
 #endif // CONFIGABSTRACTTYPECOMMASEPARATED_h

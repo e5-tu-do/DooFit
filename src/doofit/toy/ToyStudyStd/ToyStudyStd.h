@@ -13,7 +13,7 @@
 #include "RooFitResult.h"
 
 // from project
-#include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
 #include "doocore/lutils/lutils.h"
 #include "doocore/io/MsgStream.h"
 
@@ -23,11 +23,11 @@ class RooDataSet;
 class RooRealVar;
 
 namespace doofit {
-  namespace Config {
+  namespace config {
     class CommonConfig; 
   }
   
-namespace Toy {
+namespace toy {
   /** @class ToyStudyStd
    *  @brief Standard toy study for DooFit to help conduct and evaluate mass toy fits
    *
@@ -50,7 +50,7 @@ namespace Toy {
      *  @param cfg_com CommonConfig for the general configuration.
      *  @param cfg_tstudy ToyStudyStdConfig for this specific toy study.
      */
-    ToyStudyStd(const Config::CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy);
+    ToyStudyStd(const config::CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy);
     
     /**
      *  @brief Destructor for ToyStudyStd
@@ -97,12 +97,12 @@ namespace Toy {
      *  NOTE: Calling of ToyStudyStd::FinishFitResultSaving() might be 
      *        necessary to finish writing of fit results.
      *
-     *  @see const Config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename
+     *  @see const config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename
      *  @see ToyStudyStdConfig
      *  @see ToyStudyStdConfig::set_store_result_filename_treename()
      *  @see ToyStudyStdConfig::set_fit_result1_branch_name()
      *
-     *  @warning See warnings for doofit::Toy::ToyStudyStdConfig::set_store_result_filename_treename(const Config::CommaSeparatedPair&)
+     *  @warning See warnings for doofit::toy::ToyStudyStdConfig::set_store_result_filename_treename(const config::CommaSeparatedPair&)
      *
      *  @todo Implement fit saving to alternative file after no lock possible
      *
@@ -297,7 +297,7 @@ namespace Toy {
     /**
      *  \brief CommonConfig instance to use
      */
-    const Config::CommonConfig& config_common_;
+    const config::CommonConfig& config_common_;
     /**
      *  \brief ToyFactoryStdConfig instance to use
      */
@@ -412,7 +412,7 @@ namespace Toy {
   struct ExceptionCannotEvaluateFitResults: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Cannot evaluate fit results."; }
   };
-} // namespace Toy
+} // namespace toy
 } // namespace doofit
 
 

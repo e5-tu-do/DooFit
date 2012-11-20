@@ -28,7 +28,7 @@ class RooWorkspace;
 
 namespace doofit {
 // forward declarations in doofit namespace
-namespace Config {
+namespace config {
 // forward declarations in doofit::config namespace
 class CommonConfig;
 } // namespace config 
@@ -42,7 +42,7 @@ class NumerobisConfig;
 
 class Numerobis {
  public:
-  Numerobis(const Config::CommonConfig& cfg_com, const NumerobisConfig& cfg_num);
+  Numerobis(const config::CommonConfig& cfg_com, const NumerobisConfig& cfg_num);
   virtual ~Numerobis();
   
   void Configure();
@@ -58,7 +58,7 @@ class Numerobis {
   
   
   
-  const Config::CommonConfig& cfg_com_;
+  const config::CommonConfig& cfg_com_;
   const NumerobisConfig& cfg_num_;
   
   

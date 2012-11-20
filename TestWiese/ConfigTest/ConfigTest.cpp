@@ -23,7 +23,7 @@ using namespace doocore::io;
 namespace doofit {
 namespace testwiese {
 ConfigTest::ConfigTest(const std::string& name) :
-Config::AbsConfig(name),
+config::AbsConfig(name),
 my_test_switch_(false),
 my_test_int_(0)
 {
@@ -57,7 +57,7 @@ void ConfigTest::LoadOptions() {
 }
 
 ConfigTestSecond::ConfigTestSecond(const std::string& name) :
-Config::AbsConfig(name),
+config::AbsConfig(name),
 my_test_switch_(false),
 my_test_int_(0)
 {

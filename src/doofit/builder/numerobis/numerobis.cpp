@@ -1,7 +1,7 @@
 #include "doofit/builder/numerobis/numerobis.h"
 
 // from project
-#include "doofit/Config/CommonConfig.h"
+#include "doofit/config/CommonConfig.h"
 #include "doofit/builder/numerobis/numerobis_config.h"
 #include "doofit/builder/numerobis/blueprint/blueprint.h"
 
@@ -61,7 +61,7 @@ namespace numerobis {
 using namespace std;
 using namespace RooFit;
 
-using doofit::Config::CommonConfig;
+using doofit::config::CommonConfig;
 
 Numerobis::Numerobis(const CommonConfig& cfg_com, const NumerobisConfig& cfg_num) 
   : cfg_com_(cfg_com),

@@ -8,7 +8,7 @@
 #include "RooWorkspace.h"
 
 // from Project
-#include "doofit/Config/CommonConfig.h"
+#include "doofit/config/CommonConfig.h"
 
 using namespace doofit;
 

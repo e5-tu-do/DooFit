@@ -1,4 +1,4 @@
-#include "doofit/Config/ConfigCstStringVector.h"
+#include "doofit/config/ConfigCstStringVector.h"
 
 // from STL
 
@@ -9,7 +9,7 @@
 
 namespace doofit {
 using namespace std;
-using namespace Config;
+using namespace config;
 
 void ConfigCstStringVector::Parse(string str) {
   vector<string> elements = DecomposeString(str);

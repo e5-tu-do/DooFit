@@ -7,8 +7,8 @@
 
 // from project
 #ifndef __CINT__
-#include "doofit/Config/AbsConfig.h"
-#include "doofit/Config/CommaSeparatedPair.h"
+#include "doofit/config/AbsConfig.h"
+#include "doofit/config/CommaSeparatedPair.h"
 #else
 // ROOT Cint hacks...
 #include "../../Config/AbsConfig.h"
@@ -18,7 +18,7 @@
 // forward declarations
 
 namespace doofit {
-namespace Toy {
+namespace toy {
   /** @class ToyStudyStdConfig
    *  @brief DooFit Config class for the ToyStudyStd class
    *
@@ -28,7 +28,7 @@ namespace Toy {
    *  @author Florian Kruse
    */
 
-  class ToyStudyStdConfig : public Config::AbsConfig {
+  class ToyStudyStdConfig : public config::AbsConfig {
    public:
     /**
      *  @brief Default constructor for ToyStudyStdConfig
@@ -61,7 +61,7 @@ namespace Toy {
      *
      *  @return current value of store_result_filename_treename_
      */
-    const Config::CommaSeparatedPair& store_result_filename_treename() const {return store_result_filename_treename_;}
+    const config::CommaSeparatedPair& store_result_filename_treename() const {return store_result_filename_treename_;}
     /**
      *  @brief Getter for fit result 1 branch name
      *
@@ -79,7 +79,7 @@ namespace Toy {
      *
      *  @return current value of read_results_filename_treename_
      */
-    const std::vector<Config::CommaSeparatedPair>& read_results_filename_treename() const {return read_results_filename_treename_;}
+    const std::vector<config::CommaSeparatedPair>& read_results_filename_treename() const {return read_results_filename_treename_;}
     /**
      *  @brief Getter for plot directory for evaluation of fit results
      *
@@ -139,7 +139,7 @@ namespace Toy {
      *
      *  @param result_file_tree new value for store_result_filename_treename_
      */
-    void set_store_result_filename_treename(const Config::CommaSeparatedPair& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
+    void set_store_result_filename_treename(const config::CommaSeparatedPair& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
     /**
      *  @brief Setter for fit result 1 branch name
      *
@@ -157,13 +157,13 @@ namespace Toy {
      *
      *  @param result_file_tree new value for store_result_filename_treename_
      */
-    void set_read_results_filename_treename_pattern(const Config::CommaSeparatedPair& read_results_filename_treename_pattern) {read_results_filename_treename_pattern_ = read_results_filename_treename_pattern;}
+    void set_read_results_filename_treename_pattern(const config::CommaSeparatedPair& read_results_filename_treename_pattern) {read_results_filename_treename_pattern_ = read_results_filename_treename_pattern;}
     /**
      *  @brief Setter for file names and tree names to read fit result from
      *
      *  @param result_file_tree new value for read_results_filename_treename_
      */
-    void set_read_results_filename_treename(const std::vector<Config::CommaSeparatedPair>& results_file_tree) {read_results_filename_treename_ = results_file_tree;}
+    void set_read_results_filename_treename(const std::vector<config::CommaSeparatedPair>& results_file_tree) {read_results_filename_treename_ = results_file_tree;}
     /**
      *  @brief Setter for plot directory for evaluation of fit results
      *
@@ -219,7 +219,7 @@ namespace Toy {
      *
      *  @param result_file_tree new file and tree name to add to read_results_filename_treename_
      */
-    void AddReadResultsFilenameTreename(const Config::CommaSeparatedPair& result_file_tree) {read_results_filename_treename_.push_back(result_file_tree);}
+    void AddReadResultsFilenameTreename(const config::CommaSeparatedPair& result_file_tree) {read_results_filename_treename_.push_back(result_file_tree);}
     ///@}
     
    protected:
@@ -232,7 +232,7 @@ namespace Toy {
      *
      *  This function will define all options for the derived CommonConfig class.
      * 
-     *  @see Config::AbsConfig::DefineOptions()
+     *  @see config::AbsConfig::DefineOptions()
      */
     void DefineOptions();
     
@@ -242,7 +242,7 @@ namespace Toy {
      *  This function will store all options from the variable map into own 
      *  members.
      *  
-     *  @see Config::AbsConfig::LoadOptions()
+     *  @see config::AbsConfig::LoadOptions()
      */
     void LoadOptions();
     
@@ -272,7 +272,7 @@ namespace Toy {
      *
      *  @see ToyStudyStdConfig::set_store_result_filename_treename()
      */
-    Config::CommaSeparatedPair store_result_filename_treename_;
+    config::CommaSeparatedPair store_result_filename_treename_;
     /**
      *  @brief Fit result 1 branch name
      *
@@ -288,7 +288,7 @@ namespace Toy {
     /**
      *  @brief File names and tree names to read fit result from
      */
-    std::vector<Config::CommaSeparatedPair> read_results_filename_treename_;
+    std::vector<config::CommaSeparatedPair> read_results_filename_treename_;
     /**
      *  @brief File name pattern and tree name to read fit result from
      *
@@ -297,7 +297,7 @@ namespace Toy {
      *
      *  @see ToyStudyStdConfig::set_read_results_filename_treename_pattern()
      */
-    Config::CommaSeparatedPair read_results_filename_treename_pattern_;
+    config::CommaSeparatedPair read_results_filename_treename_pattern_;
     /**
      *  @brief Plot directory for evaluation of fit results
      */
@@ -324,7 +324,7 @@ namespace Toy {
     std::string parameter_genvalue_read_file_;
     ///@}
   };
-} // namespace Toy
+} // namespace toy
 } // namespace doofit
 
 #endif // TOYSTUDYSTDCONFIG_h

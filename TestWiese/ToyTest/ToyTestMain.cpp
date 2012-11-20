@@ -36,7 +36,7 @@
 #include "doocore/io/MsgStream.h"
 
 // from Project
-#include "doofit/Config/CommonConfig.h"
+#include "doofit/config/CommonConfig.h"
 
 #include "doofit/plotting/Plot/Plot.h"
 
@@ -46,11 +46,11 @@
 #include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdMass.h"
 #include "doofit/Pdf2Ws/Pdf2WsStd/Pdf2WsStdCommonFuncs.h"
 
-#include "doofit/Toy/ToyFactoryStd/ToyFactoryStd.h"
-#include "doofit/Toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+#include "doofit/toy/ToyFactoryStd/ToyFactoryStd.h"
+#include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 
-#include "doofit/Toy/ToyStudyStd/ToyStudyStd.h"
-#include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include "doofit/toy/ToyStudyStd/ToyStudyStd.h"
+#include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
 
 #include "doocore/io/MsgStream.h"
 
@@ -173,10 +173,10 @@ void PlotToyFit(RooWorkspace* ws, const RooAbsPdf* pdf) {
 
 /// using Doofit's toy mechanisms
 void TestToys(int argc, char *argv[]) {
-  using namespace Toy;
+  using namespace toy;
   using namespace RooFit;
   
-  Config::CommonConfig cfg_com("common");
+  config::CommonConfig cfg_com("common");
   cfg_com.InitializeOptions(argc, argv);
   
   ToyFactoryStdConfig cfg_tfac("toyfac");

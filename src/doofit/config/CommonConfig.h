@@ -1,10 +1,10 @@
-/** \class doofit::Config::CommonConfig
+/** \class doofit::config::CommonConfig
  *  \brief DooFit common and general Config class for all applications.
  *
  *  This common Config object is responsible for all options common to all 
  *  DooFit applications.
  *
- *  \see Config::AbsConfig
+ *  \see config::AbsConfig
  */
 
 
@@ -21,7 +21,7 @@
 
 // from project
 #ifndef __CINT__
-#include "doofit/Config/AbsConfig.h"
+#include "doofit/config/AbsConfig.h"
 #else
 // ROOT Cint hacks...
 #include "AbsConfig.h"
@@ -30,8 +30,8 @@
 // forward declarations
 
 namespace doofit {
-namespace Config {
-class CommonConfig : public Config::AbsConfig {
+namespace config {
+class CommonConfig : public config::AbsConfig {
  public:
   /**
    *  @brief Default constructor for CommonConfig
@@ -99,7 +99,7 @@ class CommonConfig : public Config::AbsConfig {
    */
   //ClassDef(CommonConfig,1);
 };
-} // namespace Config
+} // namespace config
 } // namespace doofit
 
 #endif //COMMONCONFIG_h

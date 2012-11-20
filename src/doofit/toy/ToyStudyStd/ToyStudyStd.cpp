@@ -1,4 +1,4 @@
-#include "doofit/Toy/ToyStudyStd/ToyStudyStd.h"
+#include "doofit/toy/ToyStudyStd/ToyStudyStd.h"
 
 // STL
 #include <string>
@@ -32,9 +32,9 @@
 #include "RooPlot.h"
 
 // from Project
-#include "doofit/Config/CommonConfig.h"
-#include "doofit/Config/CommaSeparatedPair.h"
-#include "doofit/Toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include "doofit/config/CommonConfig.h"
+#include "doofit/config/CommaSeparatedPair.h"
+#include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
 #include "doocore/io/MsgStream.h"
 #include "doocore/lutils/lutils.h"
 #include "doocore/system/FileLock.h"
@@ -44,11 +44,11 @@ using namespace RooFit;
 using namespace doocore::io;
 
 namespace doofit {
-namespace Toy {
+namespace toy {
   namespace fs = boost::filesystem;
   bool ToyStudyStd::abort_save_ = false;
   
-  ToyStudyStd::ToyStudyStd(const Config::CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy) :
+  ToyStudyStd::ToyStudyStd(const config::CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy) :
   config_common_(cfg_com),
   config_toystudy_(cfg_tstudy),
   fit_results_(),
@@ -403,7 +403,7 @@ namespace Toy {
   void ToyStudyStd::ReadFitResultWorker() {
     TThread this_tthread;
     
-    const std::vector<doofit::Config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
+    const std::vector<doofit::config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
     
     sinfo.Ruler();
     
@@ -420,7 +420,7 @@ namespace Toy {
     int results_stored = 0;
     int results_neglected = 0;
     
-    for (std::vector<doofit::Config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
+    for (std::vector<doofit::config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
       sinfo << "Loading fit results from " << (*it_files).first() 
       << " from branch " << config_toystudy_.fit_result1_branch_name() << endmsg;
       TFile file((*it_files).first().c_str(), "read");
@@ -674,5 +674,5 @@ namespace Toy {
       signal(SIGTERM, SIG_DFL);
     }
   }
-} // namespace Toy
+} // namespace toy
 } // namespace doofit

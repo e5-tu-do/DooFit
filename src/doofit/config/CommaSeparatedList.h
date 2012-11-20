@@ -10,14 +10,14 @@
 
 // from project
 #ifndef __CINT__
-#include "doofit/Config/AbsTypeCommaSeparated.h"
+#include "doofit/config/AbsTypeCommaSeparated.h"
 #else
 // ROOT Cint hacks...
 #include "../Config/AbsTypeCommaSeparated.h"
 #endif /* __CINT __ */
 
 namespace doofit {
-namespace Config {
+namespace config {
   /** @class CommaSeparatedList
    *  @brief A simple comma separated pair of two strings.
    *
