@@ -595,6 +595,11 @@ class EasyPdf {
    *  @brief RooWorkspace for all objects
    */
   RooWorkspace* ws_;
+  
+  /**
+   *  @brief Brief description
+   */
+  ;
 };
 
 /** \struct ObjectExistsException

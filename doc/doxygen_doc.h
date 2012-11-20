@@ -165,3 +165,103 @@
  *  @li @link doofit::builder::EasyPdf doofit::builder::EasyPdf: Simple and efficient on-demand PDF building @endlink
  */
 
+/** @namespace doofit::toy
+ *
+ *  @brief DooFit Toy subsystem.
+ *
+ *  This namespace is responsible for toy sample creation and toy studies. Main
+ *  objects of interest are Toy::ToyFactoryStd and Toy::ToyStudyStd and their
+ *  accompanying Config objects Toy::ToyFactoryStdConfig and
+ *  Toy::ToyStudyStdConfig.
+ *
+ *  Take the following usage example:
+ *
+ * @code
+ * #include "doofit/config/CommonConfig.h"
+ * #include "doofit/toy/ToyFactoryStd/ToyFactoryStd.h"
+ * #include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
+ * #include "doofit/toy/ToyStudyStd/ToyStudyStd.h"
+ * #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
+ *
+ * int main(int argc, char* argv[]) {
+ *   // Initialize config objects (mandatory).
+ *   // Notice how the first object gets initialized via argc/argv from command
+ *   // line. All following config objects get the former config object passed
+ *   // on to take over all previously unrecognized options.
+ *   // Parsing a config file will be handled automatically and can be
+ *   // configured via -c or --config-file command line option.
+ *   // See examples/toys directory for config file examples.
+ *   doofit::config::CommonConfig cfg_com("common");
+ *   cfg_com.InitializeOptions(argc, argv);
+ *   doofit::toy::ToyFactoryStdConfig cfg_tfac("toyfac");
+ *   cfg_tfac.InitializeOptions(cfg_com);
+ *   ToyStudyStdConfig cfg_tstudy("toystudy");
+ *   cfg_tstudy.InitializeOptions(cfg_tfac);
+ *
+ *   // set a previously defined workspace to get PDF from (not mandatory, but convenient)
+ *   cfg_tfac.set_workspace(my_workspace);
+ *
+ *   // Check for a set --help flag and if so, print help and exit gracefully
+ *   // (recommended).
+ *   cfg_com.CheckHelpFlagAndPrintHelp();
+ *
+ *   // More custom code, e.g. to set options internally.
+ *   // Not required as configuration via command line/config file is enough.
+ *   ...
+ *
+ *   // Print overview of all options (optional)
+ *   cfg_com.PrintAll();
+ *
+ *   // Initialize the toy factory module with the config objects and start
+ *   // generating toy samples.
+ *   doofit::toy::ToyFactoryStd tfac(cfg_com, cfg_tfac);
+ *   RooDataSet* data = tfac.Generate();
+ *
+ *   // fitting on the generated dataset is your responsibility
+ *   RooFitResult* fit_result = my_workspace->pdf("mypdf")->fitTo(*data);
+ *
+ *   // Store the fit result of the toy fit
+ *   doofit::toy::ToyStudyStd tstudy(cfg_com, cfg_tstudy);
+ *   tstudy.StoreFitResult(fit_result);
+ *
+ *   // assume, we're in another program now, analyzing toy fits
+ *   // the next line is only necessary if storing and reading fit results in
+ *   // one program
+ *   tstudy.FinishFitResultSaving();
+ *
+ *   // do the complete automated analysis of toy fits
+ *   tstudy.ReadFitResults();
+ *   tstudy.EvaluateFitResults();
+ *   tstudy.PlotEvaluatedParameters();
+ * }
+ * @endcode
+ *
+ *  Notice the mandatory doofit::config objects being created before usage. They
+ *  are initialized via the command line arguments argc and argv. These also
+ *  give the possibility to pass a config file for easy configuration. Calling
+ *  your program with the "--help" parameter will print available options. All
+ *  configuration is handled via these Config objects and nearly everything can
+ *  be configured via the command line or config file (except setting of
+ *  internal objects like RooWorkspaces etc.).
+ *
+ *  The interface of doofit::toy::ToyFactoryStd is very minimal. It only offers
+ *  to generate a dataset.
+ *
+ *  doofit::toy::ToyStudyStd is the interface for storing fit results of toy
+ *  fits and also for the analysis of fit results after all toy fits are
+ *  completed. Storing is automatic and collision-safe even in case of several
+ *  instances writing into the same file (e.g. on a network filesystem). Notice
+ *  that some cluster filesystems like FhGFS might not be able to handle the
+ *  load of several processes trying to access one file, a moderate NFS server
+ *  seems to be able to perfectly handle the load.
+ *
+ *  In the analysis afterwards, doofit::toy::ToyStudyStd can automatically read
+ *  and analyse toy fits and produce plots of distributions of interest
+ *  (pulls, residuals, ...) for all used parameters. Accessing individual fit
+ *  results is also possible.
+ *
+ *  For submitting toy jobs via PBS, see PBSJobBuilder and PBSJobScheduler.
+ *
+ *  @author Florian Kruse
+ */
+
