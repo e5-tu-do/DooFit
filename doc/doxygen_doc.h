@@ -10,7 +10,9 @@
  *
  * Here is an overview of the DooFit functionality:
  *
- * @li @link doofit::Toy doofit::Toy Automated toy sample generation, toy study assistance and analysis @endlink
+ * @li @link doofit::Toy doofit::Toy: Automated toy sample generation, toy study assistance and analysis @endlink
+ * @li @link doofit::plotting doofit::plotting: Easy plotting without all the fuss @endlink
+ * @li @link doofit::builder::EasyPdf doofit::builder::EasyPdf: Simple and efficient on-demand PDF building @endlink
  *
  * @section mp_simplesetup Simple setup via global DooSoftware installation
  *
