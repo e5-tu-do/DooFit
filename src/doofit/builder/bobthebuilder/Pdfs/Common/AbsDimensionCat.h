@@ -9,7 +9,7 @@
 
 
 // from project
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsDimension.h"
 namespace doofit {
 namespace builder { namespace bobthebuilder {
 

@@ -1,7 +1,7 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Mass/MassGaussianPdf.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Mass/MassGaussianPdf.h"
 
 // from project
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/Parameter.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/Parameter.h"
 #include "doocore/io/MsgStream.h"
 
 using namespace std;

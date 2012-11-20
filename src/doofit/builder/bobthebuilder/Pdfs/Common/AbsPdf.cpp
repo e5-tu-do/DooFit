@@ -1,4 +1,4 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsPdf.h"
 
 // from boost
 #include <boost/algorithm/string.hpp>

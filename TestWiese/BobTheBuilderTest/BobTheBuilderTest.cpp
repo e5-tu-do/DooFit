@@ -7,7 +7,7 @@
 #include "RooWorkspace.h"
 
 // from Project
-#include "doofit/builder/BobTheBuilder/Bob/Bob.h"
+#include "doofit/builder/bobthebuilder/Bob/Bob.h"
 
 using namespace std;
 using namespace doofit;

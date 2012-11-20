@@ -1,4 +1,4 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/CategoryBasic.h"
 
 // from STL
 #include <iostream>

@@ -1,4 +1,4 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/CategorySuper.h"
 
 // from STL
 
@@ -16,7 +16,7 @@
 #include "doocore/io/MsgStream.h"
 
 // from project Builder BobTheBuilder
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/CategoryBasic.h"
 
 namespace doofit {
 using namespace std;

@@ -2,7 +2,7 @@
 #define BUILDER_BOBTHEBUILDER_MASSGAUSSIANPDF_H
 
 // from project
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsPdf.h"
 
 namespace doofit {
 namespace builder{ namespace bobthebuilder{

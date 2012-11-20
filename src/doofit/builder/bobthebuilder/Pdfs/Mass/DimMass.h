@@ -2,7 +2,7 @@
 #define BUILDER_BOBTHEBUILDER_DIMMASS_H
 
 // from Project
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsDimensionReal.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsDimensionReal.h"
 
 namespace doofit {
 namespace builder { namespace bobthebuilder {

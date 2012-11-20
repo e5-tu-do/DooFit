@@ -1,11 +1,11 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Tag/DimTag.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Tag/DimTag.h"
 
 
 // from project
 #include "doocore/io/MsgStream.h"
 
 // from project Pdf related classes
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsPdf.h"
 
 
 namespace doofit {

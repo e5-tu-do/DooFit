@@ -2,7 +2,7 @@
 #define BUILDER_BOBTHEBUILDER_DIMTAG_H
 
 // from project
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsDimensionCat.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsDimensionCat.h"
 
 namespace doofit {
 namespace builder { namespace bobthebuilder {

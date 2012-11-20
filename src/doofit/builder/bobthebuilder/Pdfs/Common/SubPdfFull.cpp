@@ -1,12 +1,12 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/SubPdfFull.h"
 
 // from boost
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 
 // from project
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/Component.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsDimension.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/Component.h"
 #include "doocore/io/MsgStream.h"
 
 namespace doofit {

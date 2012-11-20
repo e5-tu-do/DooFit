@@ -1,4 +1,4 @@
-#include "doofit/builder/BobTheBuilder/Bob/Bob.h"
+#include "doofit/builder/bobthebuilder/Bob/Bob.h"
 
 // from STL
 #include <exception>
@@ -15,12 +15,12 @@
 #include "doocore/io/MsgStream.h"
 
 // from Builder/BobTheBuilder subproject
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/Component.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Mass/DimMass.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Tag/DimTag.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/Component.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/CategoryBasic.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/CategorySuper.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/SubPdfFull.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Mass/DimMass.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Tag/DimTag.h"
 
 
 

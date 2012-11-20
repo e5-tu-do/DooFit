@@ -1,4 +1,4 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Mass/DimMass.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Mass/DimMass.h"
 
 // from STL
 #include <iostream>
@@ -9,8 +9,8 @@
 #include "doocore/io/MsgStream.h"
 
 // from project Pdf related classes
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Mass/MassGaussianPdf.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsPdf.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Mass/MassGaussianPdf.h"
 
 
 using namespace std;

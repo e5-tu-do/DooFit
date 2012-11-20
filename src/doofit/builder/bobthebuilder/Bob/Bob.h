@@ -19,7 +19,7 @@
 #include <boost/shared_ptr.hpp>
 
 // from project
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/PdfFull.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/PdfFull.h"
 
 // from RooFit
 

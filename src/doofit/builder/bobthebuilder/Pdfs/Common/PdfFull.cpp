@@ -1,4 +1,4 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/PdfFull.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/PdfFull.h"
 
 // from STL
 #include <iostream>
@@ -7,10 +7,10 @@
 #include <boost/foreach.hpp>
 
 // from project
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/CategoryBasic.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/CategorySuper.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/SubPdfFull.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsDimension.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/CategoryBasic.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/CategorySuper.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/SubPdfFull.h"
 #include "doocore/io/MsgStream.h"
 
 using namespace std;

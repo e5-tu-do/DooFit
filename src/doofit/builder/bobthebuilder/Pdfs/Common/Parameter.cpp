@@ -1,4 +1,4 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/Parameter.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/Parameter.h"
 
 // from STL
 

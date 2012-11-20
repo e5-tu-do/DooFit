@@ -1,4 +1,4 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/Component.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/Component.h"
 
 // from STL
 #include <iostream>
@@ -12,8 +12,8 @@
 #include "RooWorkspace.h"
 
 // from project
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsDimension.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsPdf.h"
 #include "doocore/io/MsgStream.h"
 
 namespace doofit {

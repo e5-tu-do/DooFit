@@ -1,4 +1,4 @@
-#include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsDimension.h"
+#include "doofit/builder/bobthebuilder/Pdfs/Common/AbsDimension.h"
 
 // from STL
 #include <iostream>
