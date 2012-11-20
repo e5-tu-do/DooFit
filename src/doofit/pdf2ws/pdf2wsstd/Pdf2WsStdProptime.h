@@ -2,7 +2,7 @@
 #define PDF2WSSTDPROPTIME_h
 
 namespace doofit {
-namespace Pdf2WsStd{
+namespace pdf2wsstd{
   namespace Proptime{
     
   }
