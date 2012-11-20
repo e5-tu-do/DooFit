@@ -36,6 +36,7 @@ namespace Toy {
    *  generation or actual fit itself. Other modules like ToyFactoryStd and the 
    *  fitter module ... are well suited for that.
    * 
+   *  @author Florian Kruse
    */
 
   class ToyStudyStd {

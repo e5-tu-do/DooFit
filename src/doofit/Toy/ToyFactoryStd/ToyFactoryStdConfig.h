@@ -39,6 +39,8 @@ namespace Toy {
    *
    *  This class is responsible for all ToyFactoryStd related configuration options
    *  which are not covered by CommonConfig.
+   *
+   *  @author Florian Kruse
    */
   
   class ToyFactoryStdConfig : public Config::AbsConfig {

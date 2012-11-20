@@ -24,6 +24,8 @@ namespace Toy {
    *
    *  This class is responsible for all ToyStudyStd related configuration options
    *  which are not covered by CommonConfig.
+   *
+   *  @author Florian Kruse
    */
 
   class ToyStudyStdConfig : public Config::AbsConfig {

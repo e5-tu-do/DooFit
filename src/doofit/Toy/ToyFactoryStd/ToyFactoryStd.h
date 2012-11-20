@@ -169,6 +169,8 @@ namespace Toy {
    *       generated correctly according to this number. However, the pulls will 
    *       all be wrong as the internal PDF yield will be used to calculate the
    *       pull.
+   *
+   *  @author Florian Kruse
    */
   
   class ToyFactoryStd {
