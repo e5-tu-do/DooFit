@@ -113,6 +113,9 @@ namespace Toy {
     
     /**
      *  @brief End the save fit result worker thread and wait for it to save everything
+     *  
+     *  This function is mandatory when storing @a and reading fit results in 
+     *  one ToyStudyStd instance. It can safely be ignored otherwise.
      */
     void FinishFitResultSaving() {
       if (accepting_fit_results_) {

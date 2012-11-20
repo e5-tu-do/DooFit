@@ -49,6 +49,11 @@ namespace doofit {
  *   cfg_com.InitializeOptions(argc, argv);
  *   doofit::Toy::ToyFactoryStdConfig cfg_tfac("toyfac");
  *   cfg_tfac.InitializeOptions(cfg_com);
+ *   ToyStudyStdConfig cfg_tstudy("toystudy");
+ *   cfg_tstudy.InitializeOptions(cfg_tfac);
+ *
+ *   // set a previously defined workspace to get PDF from (not mandatory, but convenient)
+ *   cfg_tfac.set_workspace(my_workspace);
  *
  *   // Check for a set --help flag and if so, print help and exit gracefully
  *   // (recommended).
@@ -65,8 +70,33 @@ namespace doofit {
  *   // generating toy samples.
  *   doofit::Toy::ToyFactoryStd tfac(cfg_com, cfg_tfac);
  *   RooDataSet* data = tfac.Generate();
+ *   
+ *   // fitting on the generated dataset is your responsibility
+ *   RooFitResult* fit_result = my_workspace->pdf("mypdf")->fitTo(*data);
+ *
+ *   // Store the fit result of the toy fit
+ *   doofit::Toy::ToyStudyStd tstudy(cfg_com, cfg_tstudy);
+ *   tstudy.StoreFitResult(fit_result);
+ *
+ *   // assume, we're in another program now, analyzing toy fits
+ *   // the next line is only necessary if storing and reading fit results in 
+ *   // one program
+ *   tstudy.FinishFitResultSaving();
+ *
+ *   // do the complete automated analysis of toy fits
  * }
  * @endcode
+ *
+ *  Notice the mandatory doofit::Config objects being created before usage. They
+ *  are initialized via the command line arguments argc and argv. These also 
+ *  give the possibility to pass a config file for easy configuration. Calling
+ *  your program with the "--help" parameter will print available options. All 
+ *  configuration is handled via these Config objects and nearly everything can
+ *  be configured via the command line or config file (except setting of 
+ *  internal objects like RooWorkspaces etc.).
+ *
+ *  The interface of ToyFactoryStd is very minimal. It only offers to generate a
+ *  dataset.
  */
 
 namespace Config {
