@@ -14,7 +14,7 @@ class RooAbsPdf;
 class RooWorkspace;
 
 namespace doofit {
-namespace builder { namespace BobTheBuilder {
+namespace builder { namespace bobthebuilder {
 // forward declaration in namespace
 class Parameter;
   

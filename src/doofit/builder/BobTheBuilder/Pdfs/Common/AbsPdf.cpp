@@ -7,7 +7,7 @@ namespace doofit {
 using namespace std;
 
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
 
 AbsPdf::AbsPdf() :
     name_("pdfDummyName")

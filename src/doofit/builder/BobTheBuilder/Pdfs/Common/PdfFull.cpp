@@ -20,7 +20,7 @@ using namespace doocore::io;
 
 namespace doofit {
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
 
 PdfFull::PdfFull() :
    name_("DummyPdfFullName")

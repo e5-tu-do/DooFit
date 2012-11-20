@@ -5,7 +5,7 @@
 #include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsDimensionCat.h"
 
 namespace doofit {
-namespace builder { namespace BobTheBuilder {
+namespace builder { namespace bobthebuilder {
 
 class DimTag : public AbsDimensionCat{
  public:

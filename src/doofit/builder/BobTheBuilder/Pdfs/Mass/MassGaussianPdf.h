@@ -5,7 +5,7 @@
 #include "doofit/builder/BobTheBuilder/Pdfs/Common/AbsPdf.h"
 
 namespace doofit {
-namespace builder{ namespace BobTheBuilder{
+namespace builder{ namespace bobthebuilder{
   
   // forward declarations from project
   

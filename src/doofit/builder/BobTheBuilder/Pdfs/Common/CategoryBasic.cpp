@@ -26,7 +26,7 @@ using namespace std;
 using namespace doocore::io;
   
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
 
 CategoryBasic::CategoryBasic() :
    name_("DummyName")

@@ -13,7 +13,7 @@
 class RooWorkspace;
 
 namespace doofit {
-namespace builder { namespace BobTheBuilder {
+namespace builder { namespace bobthebuilder {
 
 class CategoryBasic{
  public:

@@ -20,7 +20,7 @@ using namespace std;
 using namespace boost;
 
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
 
 Parameter::Parameter() :
    name_("parDummyName")

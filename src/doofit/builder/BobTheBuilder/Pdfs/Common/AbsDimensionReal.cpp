@@ -18,7 +18,7 @@ using namespace RooFit;
 using namespace doocore::io;
 
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
   
 AbsDimensionReal::AbsDimensionReal() :
    AbsDimension()

@@ -23,7 +23,7 @@ using namespace boost::property_tree;
 using namespace doocore::io;
   
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
 
 Component::Component() :
     comp_id_("DummyCompId")

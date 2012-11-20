@@ -16,7 +16,7 @@ using namespace boost::property_tree;
 using namespace doocore::io;
   
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
   
 SubPdfFull::SubPdfFull() :
    subpdffull_id_("")

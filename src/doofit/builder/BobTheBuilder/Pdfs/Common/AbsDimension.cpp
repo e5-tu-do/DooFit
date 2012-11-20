@@ -8,7 +8,7 @@ using namespace boost::property_tree;
 
 namespace doofit {
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
   
 AbsDimension::AbsDimension() :
     dim_id_("DummyDimID")

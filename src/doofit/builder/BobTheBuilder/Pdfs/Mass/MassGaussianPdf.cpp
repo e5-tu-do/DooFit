@@ -10,7 +10,7 @@ using namespace boost::property_tree;
 
 namespace doofit {
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
 using namespace doocore::io;
   
 MassGaussianPdf::MassGaussianPdf() : 

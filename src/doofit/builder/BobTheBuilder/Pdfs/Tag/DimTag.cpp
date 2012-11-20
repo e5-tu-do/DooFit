@@ -10,7 +10,7 @@
 
 namespace doofit {
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
 
 DimTag::DimTag() :
    AbsDimensionCat()

@@ -25,7 +25,7 @@ using namespace boost::property_tree;
 using namespace doocore::io;
 
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
 
 CategorySuper::CategorySuper() :
    name_("DummyNameCategorySuper")

@@ -31,7 +31,7 @@ using namespace doocore::io;
 
 namespace doofit {
 namespace builder{ 
-namespace BobTheBuilder{
+namespace bobthebuilder{
 Bob::Bob() :
    tree_main_()
  , map_dimensions_()
