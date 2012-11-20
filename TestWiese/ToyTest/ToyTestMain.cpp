@@ -69,13 +69,11 @@ RooAbsPdf& BuildPDF(EasyPdf& epdf) {
   epdf.Var("mass").setMax(5500);
   epdf.Var("time").setMin(0);
   epdf.Var("time").setMax(20);
-  
-  epdf.Formula("massShift", "@0-100", RooArgList(epdf.Var("mass")));
-  
+    
   epdf.Vars("mass,time", "observables");
   epdf.Set("observables").Print();
   
-  epdf.DoubleGaussianScaled("pdf_sig_mass", epdf.Formula("massShift"), epdf.Var("par_sig_mass_mean"),
+  epdf.DoubleGaussianScaled("pdf_sig_mass", epdf.Var("mass"), epdf.Var("par_sig_mass_mean"),
                             epdf.Var("par_sig_mass_sigma"), epdf.Var("par_sig_mass_sigma_scale"),
                             epdf.Var("par_sig_mass_frac"));
                               
@@ -178,6 +176,8 @@ void TestToys(int argc, char *argv[]) {
   // print configuration
   cfg_com.PrintAll();
   
+  ws->Print("v");
+  
   // toy sample generation
   ToyFactoryStd tfac(cfg_com, cfg_tfac);
   RooDataSet* data = NULL;
@@ -186,7 +186,9 @@ void TestToys(int argc, char *argv[]) {
   // generate 10 toy samples, fit and store results
   for (int i=0; i<10; ++i) {
     data = tfac.Generate();
-    RooFitResult* fit_result = pdf.fitTo(*data, NumCPU(2), Extended(true), Save(true), Verbose(false),Timer(true), Minimizer("Minuit2"));
+    RooFitResult* fit_result = pdf.fitTo(*data, NumCPU(8), Extended(true), Save(true), Verbose(false), Timer(true), Minimizer("Minuit2"));
+    
+    fit_result->Print("v");
     
     PlotResults(pdf, *data, cfg_plot);
     
