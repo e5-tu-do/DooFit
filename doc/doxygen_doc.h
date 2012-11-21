@@ -1,5 +1,7 @@
 /** @mainpage DooFit fitting framework
  *
+ * @tableofcontents
+ *
  * @section mp_introduction Introduction
  *
  * DooFit is a RooFit-based fitting framework intended to assist in fitting with
@@ -13,6 +15,10 @@
  * @li @link doofit::Toy doofit::Toy: Automated toy sample generation, toy study assistance and analysis @endlink
  * @li @link doofit::plotting doofit::plotting: Easy plotting without all the fuss @endlink
  * @li @link doofit::builder::EasyPdf doofit::builder::EasyPdf: Simple and efficient on-demand PDF building @endlink
+ *
+ * @section mp_demo Demonstration and examples
+ *
+ * Usage examples and demonstration can be found on the @ref demo page.
  *
  * @section mp_simplesetup Simple setup via global DooSoftware installation
  *
@@ -143,6 +149,10 @@
 
 /**
  *  @page demo DooFit demonstration
+ *
+ *  @tableofcontents
+ *
+ *  @section demo_example1 Example 1: Toy studies, EasyPdf building, Plotting
  *
  *  @verbinclude ToyTestMain.cpp
  */
