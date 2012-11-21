@@ -141,6 +141,10 @@
  *
  */
 
+/**
+ *  @page demo DooFit demonstration
+ */
+
 // Global namespace documentation
 
 /** @namespace doofit
