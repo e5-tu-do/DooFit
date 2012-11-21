@@ -27,7 +27,7 @@
 // from DooCore
 #include "doocore/io/MsgStream.h"
 
-// from Project
+// from DooFit
 #include "doofit/config/CommonConfig.h"
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStd.h"
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"

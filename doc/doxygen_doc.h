@@ -169,8 +169,7 @@
  * @verbinclude parameters.txt
  *
  * The following file (e.g. @c config.cfg) can be used to configure the toy 
- * factory and study. It can be supplied to the binary via 
- * @verbatim -c config.cfg @endverbatim.
+ * factory and study. It can be supplied to the binary via @c -c @c config.cfg.
  *
  * @verbinclude config.cfg
  */
