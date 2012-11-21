@@ -159,8 +159,19 @@
  * doofit::builder::EasyPdf for PDF building, doofit::plotting for plots and
  * doofit::toy for toy generation and fit result storage as well as evaluation.
  *
+ * The following program shows the functionality in three functions.
+ *
  * @verbinclude ToyTestMain.cpp
+ *
+ * To run, you might also need the following parameter file as @c parameters.txt
+ * which initializes parameters to sane values.
+ *
  * @verbinclude parameters.txt
+ *
+ * The following file (e.g. @c config.cfg) can be used to configure the toy 
+ * factory and study. It can be supplied to the binary via 
+ * @verbatim -c config.cfg @endverbatim.
+ *
  * @verbinclude config.cfg
  */
 
