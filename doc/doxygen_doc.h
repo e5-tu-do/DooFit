@@ -157,9 +157,11 @@
  *
  * This complete program demonstrates a sceanario for toy studies, utilizing 
  * doofit::builder::EasyPdf for PDF building, doofit::plotting for plots and
- * 
+ * doofit::toy for toy generation and fit result storage as well as evaluation.
  *
  * @verbinclude ToyTestMain.cpp
+ * @verbinclude parameters.txt
+ * @verbinclude config.cfg
  */
 
 // Global namespace documentation
