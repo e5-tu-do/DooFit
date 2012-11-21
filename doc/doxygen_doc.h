@@ -149,13 +149,17 @@
 
 
 /**
- *  @page demo DooFit demonstration
+ * @page demo DooFit demonstration
  *
- *  \tableofcontents
+ * \tableofcontents
  *
- *  @section demo_example1 Example 1: Toy studies, EasyPdf building, Plotting
+ * @section demo_example1 Example 1: Toy studies, EasyPdf building, Plotting
  *
- *  @verbinclude ToyTestMain.cpp
+ * This complete program demonstrates a sceanario for toy studies, utilizing 
+ * doofit::builder::EasyPdf for PDF building, doofit::plotting for plots and
+ * 
+ *
+ * @verbinclude ToyTestMain.cpp
  */
 
 // Global namespace documentation
