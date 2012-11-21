@@ -8,7 +8,7 @@
  *
  * @section mp_topics What DooFit can be used for
  *
- * Here is an overview of the DooFit functionality:
+ * Here is an overview of the current DooFit functionality:
  *
  * @li @link doofit::Toy doofit::Toy: Automated toy sample generation, toy study assistance and analysis @endlink
  * @li @link doofit::plotting doofit::plotting: Easy plotting without all the fuss @endlink
