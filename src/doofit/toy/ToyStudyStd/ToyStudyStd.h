@@ -35,6 +35,15 @@ namespace toy {
    *  evaluating results from these fits. It's design is not to conduct the 
    *  generation or actual fit itself. Other modules like ToyFactoryStd and
    *  fitter modules are well suited for that.
+   *
+   *  @warning In some cases, programs using ToyStudyStd might crash at the end, 
+   *  just before or while saving the last fit result. This happens often when 
+   *  the according PDF is on a RooWorkspace and the RooWorkspace can die 
+   *  @a before the ToyStudyStd. The reason is a RooFit bug where the 
+   *  RooFitResult becomes invalid if the RooWorkspace is deleted. Don't know 
+   *  why this happens, does not make much sense to me. Solution: Use 
+   *  @link FinishFitResultSaving() to enforce storing of all queued fit results
+   *  near the end of your program.
    * 
    *  @author Florian Kruse
    */
@@ -94,15 +103,17 @@ namespace toy {
      *        over will be deleted afterwards and are not guaranteed to live 
      *        on afterwards.
      *
+     *
      *  @warning Calling of FinishFitResultSaving() might be 
      *        necessary to finish writing of fit results.
+     *
+     *
+     *  @warning See warnings for doofit::toy::ToyStudyStdConfig::set_store_result_filename_treename(const config::CommaSeparatedPair&)
      *
      *  @see const config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename
      *  @see ToyStudyStdConfig
      *  @see ToyStudyStdConfig::set_store_result_filename_treename()
      *  @see ToyStudyStdConfig::set_fit_result1_branch_name()
-     *
-     *  @warning See warnings for doofit::toy::ToyStudyStdConfig::set_store_result_filename_treename(const config::CommaSeparatedPair&)
      *
      *  @todo Implement fit saving to alternative file after no lock possible
      *
