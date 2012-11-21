@@ -1,6 +1,6 @@
 /** @mainpage DooFit fitting framework
  *
- * @tableofcontents
+ * \tableofcontents
  *
  * @section mp_introduction Introduction
  *
@@ -151,7 +151,7 @@
 /**
  *  @page demo DooFit demonstration
  *
- *  @tableofcontents
+ *  \tableofcontents
  *
  *  @section demo_example1 Example 1: Toy studies, EasyPdf building, Plotting
  *
