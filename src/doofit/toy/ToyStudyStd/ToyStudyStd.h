@@ -33,8 +33,8 @@ namespace toy {
    *
    *  This class is designed to assist in both conducting mass toy fits as well 
    *  evaluating results from these fits. It's design is not to conduct the 
-   *  generation or actual fit itself. Other modules like ToyFactoryStd and the 
-   *  fitter module ... are well suited for that.
+   *  generation or actual fit itself. Other modules like ToyFactoryStd and
+   *  fitter modules are well suited for that.
    * 
    *  @author Florian Kruse
    */
@@ -88,13 +88,13 @@ namespace toy {
      *  
      *  Branch name(s) are specified via ToyStudyStdConfig.
      *
-     *  NOTE: Passing pointers to this function, it is assumed that this 
+     *  @warning Passing pointers to this function, it is assumed that this 
      *        ToyStudyStd instance does take over ownership of the fit 
      *        result(s) (in contrast to previous versions). FitResults passed
      *        over will be deleted afterwards and are not guaranteed to live 
      *        on afterwards.
      *
-     *  NOTE: Calling of ToyStudyStd::FinishFitResultSaving() might be 
+     *  @warning Calling of FinishFitResultSaving() might be 
      *        necessary to finish writing of fit results.
      *
      *  @see const config::CommaSeparatedPair& ToyStudyStdConfig::store_result_filename_treename

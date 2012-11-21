@@ -191,7 +191,7 @@ class EasyPdf {
    *  under the supplied name, the variable will be returned.
    *  This check is performed individually for each variable.
    *
-   *  A name for the set can be defined via @par define_set_name for usage of 
+   *  A name for the set can be defined via define_set_name for usage of 
    *  Set(const std::string&) afterwards. In workspace mode it will also define
    *  a corresponding set on the RooWorkspace.
    *
