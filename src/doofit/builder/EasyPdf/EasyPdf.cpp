@@ -47,6 +47,14 @@ doofit::builder::EasyPdf::~EasyPdf() {
          it != vars_.end(); ++it) {
       delete it->second;
     }
+    for (std::map<std::string,RooCategory*>::iterator it = cats_.begin();
+         it != cats_.end(); ++it) {
+      delete it->second;
+    }
+    for (std::map<std::string,RooFormulaVar*>::iterator it = formulas_.begin();
+         it != formulas_.end(); ++it) {
+      delete it->second;
+    }
   }
 }
 
@@ -147,6 +155,10 @@ RooArgSet doofit::builder::EasyPdf::Vars(const std::string &names, const std::st
   
   if (define_set_name.length() > 0) {
     variable_sets_[define_set_name] = names;
+    
+    if (ws_ != NULL) {
+      ws_->defineSet(define_set_name.c_str(), argset);
+    }
   }
   
   return argset;

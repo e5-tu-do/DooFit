@@ -97,6 +97,9 @@ RooAbsPdf& BuildPDF(EasyPdf& epdf) {
   epdf.Cat("tag").defineType("b0",     +1);
   epdf.Cat("tag").defineType("b0_bar", -1);
   
+  // define set of observables
+  epdf.Vars("mass,time,tag2,tag", "argset_obs");
+  
   // set parameters and limits from file
   epdf.AllVars().writeToFile("parameters.new");
   epdf.AllVars().readFromFile("parameters.txt");
@@ -161,7 +164,6 @@ void TestToys(int argc, char *argv[]) {
   RooWorkspace* ws = new RooWorkspace("ws");
   EasyPdf epdf(ws);
   RooAbsPdf& pdf = BuildPDF(epdf);
-  ws->defineSet("argset_obs", epdf.Vars("mass,time,tag2,tag"));
   cfg_tfac.set_workspace(ws);
 
   // print configuration
@@ -199,6 +201,3 @@ void TestToys(int argc, char *argv[]) {
 int main(int argc, char *argv[]) {
   TestToys(argc, argv);
 }
-
-
-

@@ -83,6 +83,8 @@ class RooBDecay;
  *  The main goal of EasyPdf is to keep PDF/variable construction as sinmple as 
  *  possible. Therefore, variable and PDF generation and access are mostly 
  *  indistinguishable. Objects are created as needed and stored via their name.
+ *
+ * @author Florian Kruse
  */
 
 namespace doofit {
@@ -187,7 +189,11 @@ class EasyPdf {
    *  pool of variables, they are created and returned. Otherwise they will be 
    *  returned from the pool. If a variable, category or formula exist
    *  under the supplied name, the variable will be returned.
-   *  This check is performed individually for each variable
+   *  This check is performed individually for each variable.
+   *
+   *  A name for the set can be defined via @par define_set_name for usage of 
+   *  Set(const std::string&) afterwards. In workspace mode it will also define
+   *  a corresponding set on the RooWorkspace.
    *
    *  @param names names of the variables as comma separated string
    *  @param define_set_name (optional) define an internal set with the given name
