@@ -144,7 +144,7 @@
 /**
  *  @page demo DooFit demonstration
  *
- *  @verbinclude CMakeLists.txt
+ *  @verbinclude ToyTestMain.cpp
  */
 
 // Global namespace documentation
