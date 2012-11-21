@@ -144,7 +144,7 @@
 /**
  *  @page demo DooFit demonstration
  *
- *  @verbinclude ../TestWiese/ToyTest/ToyTestMain.cpp 
+ *  @verbinclude TestWiese/ToyTest/ToyTestMain.cpp 
  */
 
 // Global namespace documentation
