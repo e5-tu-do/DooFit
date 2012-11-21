@@ -9,13 +9,6 @@
 #include <boost/assign/std/vector.hpp>
 
 // ROOT
-#include "TCanvas.h"
-#include "TFile.h"
-#include "TStopwatch.h"
-#include "TDirectory.h"
-#include "TROOT.h"
-#include "TObjectTable.h"
-#include "TStopwatch.h"
 
 // RooFit
 #include "RooWorkspace.h"
@@ -23,12 +16,10 @@
 #include "RooArgSet.h"
 #include "RooRealVar.h"
 #include "RooCategory.h"
-#include "RooPlot.h"
 #include "RooGaussian.h"
 #include "RooExtendPdf.h"
 #include "RooAddPdf.h" 
 #include "RooProdPdf.h"
-#include "Roo1DTable.h"
 #include "RooFitResult.h"
 #include "RooExponential.h"
 #include "RooDecay.h"
@@ -47,14 +38,14 @@
 
 #include "doofit/builder/EasyPdf/EasyPdf.h"
 
+using namespace boost::assign;
 using namespace ROOT;
 using namespace RooFit;
-using namespace doofit;
 using namespace doocore::io;
+using namespace doofit;
 using namespace doofit::builder;
 using namespace doofit::toy;
 using namespace doofit::plotting;
-using namespace boost::assign;
 
 /**
  *  @brief EasyPdf demo function
