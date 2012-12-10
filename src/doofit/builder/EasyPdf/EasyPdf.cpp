@@ -21,6 +21,7 @@
 #include "RooResolutionModel.h"
 #include "RooEffProd.h"
 #include "RooBDecay.h"
+#include "RooSimultaneous.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -224,6 +225,13 @@ RooDecay& doofit::builder::EasyPdf::Decay(const std::string& name, RooRealVar& t
   return AddPdfToStore<RooDecay>(new RooDecay(name.c_str(), name.c_str(), t, tau, model, RooDecay::SingleSided));
 }
 
+RooSimultaneous& doofit::builder::EasyPdf::Simultaneous(const std::string& name, RooAbsCategoryLValue& category) {
+  return AddPdfToStore<RooSimultaneous>(new RooSimultaneous(name.c_str(), name.c_str(), category));
+}
+
+RooSimultaneous& doofit::builder::EasyPdf::Simultaneous(const std::string& name, std::map<std::string,RooAbsPdf*> pdfs, RooAbsCategoryLValue& category) {
+  return AddPdfToStore<RooSimultaneous>(new RooSimultaneous(name.c_str(), name.c_str(), pdfs, category));
+}
 
 RooProdPdf& doofit::builder::EasyPdf::Product(const std::string& name, const RooArgList& pdfs) {
   return AddPdfToStore<RooProdPdf>(new RooProdPdf(name.c_str(), name.c_str(), pdfs));

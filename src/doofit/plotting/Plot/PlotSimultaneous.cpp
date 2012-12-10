@@ -51,14 +51,23 @@ void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
     if (&sub_pdf != NULL) {
       RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
       
+      double min,max;
+      RooRealVar var(dynamic_cast<const RooRealVar&>(dimension_));
+      sub_data.getRange(var, min,max);
+      sdebug << "Range: " << min << "," << max << endmsg;
+      
       plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
       Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
+      plot.plot_args_ = this->plot_args_;
+      plot.AddPlotArg(Range(min,max));
+
       plot.PlotHandler(logy, suffix);
     }
   }
   
   plot_name = std::string(dimension_.GetName()) + "_summed";
   Plot plot(config_plot_, dimension_, data, *pdf_, components_regexps_, plot_name);
+  plot.plot_args_ = this->plot_args_;
   plot.AddPlotArg(ProjWData(sim_cat,data));
   plot.PlotHandler(logy, suffix);
   

@@ -16,6 +16,7 @@
 
 // forward declarations
 class RooRealVar;
+class RooAbsCategoryLValue;
 class RooAbsPdf;
 class RooGaussian;
 class RooExponential;
@@ -32,6 +33,7 @@ class RooDecay;
 class RooResolutionModel;
 class RooEffProd;
 class RooBDecay;
+class RooSimultaneous;
 
 
 /** @class doofit::builder::EasyPdf
@@ -303,6 +305,33 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooDecay& Decay(const std::string& name, RooRealVar& t, RooAbsReal& tau, const RooResolutionModel& model);
+  
+  /**
+   *  @brief Add and access a simultaneous PDF
+   *
+   *  Request a RooSimultaneous by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param category index category for the simultaneous PDF
+   *  @return the appropriate PDF
+   */
+  RooSimultaneous& Simultaneous(const std::string& name, RooAbsCategoryLValue& category);
+  
+  /**
+   *  @brief Add and access a simultaneous PDF
+   *
+   *  Request a RooSimultaneous by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param pdfs full list of client PDFs, each with the associated index label
+   *  @param category index category for the simultaneous PDF
+   *  @return the appropriate PDF
+   */
+  RooSimultaneous& Simultaneous(const std::string& name, std::map<std::string,RooAbsPdf*> pdfs, RooAbsCategoryLValue& category);
   ///@}
   
   /** @name PDF combinations/modifications
