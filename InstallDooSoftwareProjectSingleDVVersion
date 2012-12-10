@@ -5,6 +5,7 @@ module=$1
 dv_version=$2
 base_dir=$3
 expected_args=3
+num_cpu=$((`cat /proc/cpuinfo | grep processor | wc -l` / 2))
 
 if [ $# -ne $expected_args ]
 then
@@ -39,7 +40,7 @@ echo "Starting build"
 echo
 
 cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir
-make VERBOSE="" -j 8
+make VERBOSE="" -j $num_cpu
 sudo rm -rf $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
 sudo mkdir -p $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
 sudo make install
