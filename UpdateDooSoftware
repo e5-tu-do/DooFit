@@ -2,10 +2,27 @@
 
 packages="DooCore DooFit DooSelection"
 
+source /lhcbsoft/tu-dortmund/LHCbSoftwareSetup.sh x86_64-slc5-gcc43-opt > /dev/null 2>&1
+
+echo "Probing ROOT versions"
+rvers=""
+dvvers=""
+echo -n "Installing for following DaVinci versions: "
+for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
+do
+  rver=`bash PrintRootVersionForDVVersion $ver`
+  if [[ ! $rvers =~ $rver ]]; then
+    rvers="$rvers $rver"
+    dvvers="$dvvers $ver"
+    echo -n " $ver"
+  fi
+done
+echo ""
+
 for p in $packages; do
   dir=$DOOSOFTROOT/repos/$p
   sudo svn up $dir
   base=$dir/`cat $dir/install_version`
-  InstallDooSoftwareProject $p $base
+  InstallDooSoftwareProject $p $base "$dvvers"
 done
 
