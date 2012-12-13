@@ -33,6 +33,7 @@
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStd.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include "doofit/config/CommaSeparatedPair.h"
 
 #include "doofit/plotting/Plot/Plot.h"
 
@@ -43,6 +44,7 @@ using namespace ROOT;
 using namespace RooFit;
 using namespace doocore::io;
 using namespace doofit;
+using namespace doofit::config;
 using namespace doofit::builder;
 using namespace doofit::toy;
 using namespace doofit::plotting;

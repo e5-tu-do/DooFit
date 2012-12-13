@@ -11,12 +11,12 @@ namespace doofit {
 namespace config {
   using namespace doocore::io;
   
-  void CommaSeparatedPair::Parse(string str) {
+  void CommaSeparatedPair::Parse(const std::string& str) {
     vector<string> elements = DecomposeString(str);
     
     // number of elements must be two
     if (elements.size() != 2) {
-      serr << "ERROR in CommaSeparatedPair::Parse(std::string): String '" << str << "' does not contain exactly two comma-separated strings." << endmsg;
+      serr << "ERROR in CommaSeparatedPair::Parse(const std::string&): String '" << str << "' does not contain exactly two comma-separated strings." << endmsg;
       throw;
     }
     

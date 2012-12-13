@@ -36,7 +36,7 @@ namespace config {
      *
      *  @param str string to parse
      */
-    virtual void Parse(std::string str) = 0;
+    virtual void Parse(const std::string& str) = 0;
     
     /**
      *  @brief Print this object to an std::ostream
@@ -49,6 +49,16 @@ namespace config {
      *  @param os ostream to print to
      */
     virtual void Print(std::ostream& os) const = 0;
+    
+    /**
+     *  @brief Assignment operator for string
+     *
+     *  Assign a string that will be parsed to this AbsTypeCommaSeparated.
+     *
+     *  @param str comma-separated string to be parsed
+     *  @return reference to this
+     */
+    virtual AbsTypeCommaSeparated& operator=(const std::string& str) { Parse(str); return *this; }
     
   protected:  
     /**

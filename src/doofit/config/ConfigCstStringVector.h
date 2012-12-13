@@ -49,7 +49,7 @@ namespace config {
      *
      *  @param str string to parse
      */
-    void Parse(std::string str);
+    void Parse(const std::string& str);
     
     /**
      *  @brief Print this object to an std::ostream

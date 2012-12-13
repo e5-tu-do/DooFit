@@ -54,7 +54,7 @@ namespace config {
      *
      *  @param str string to parse
      */
-    void Parse(std::string str);
+    void Parse(const std::string& str);
     
     /**
      *  @brief Print this object to an std::ostream
@@ -95,7 +95,7 @@ namespace config {
      *  supposed to be filled via a string. The pair contains the value and 
      *  corresponding cumulative probability.
      *
-     *  @see DiscreteProbabilityDistribution::Parse(std::string)
+     *  @see DiscreteProbabilityDistribution::Parse(const std::string&)
      */
     std::vector<std::pair<double,double> > probabilities_;
     

@@ -11,12 +11,12 @@ namespace doofit {
 namespace config {
   using namespace doocore::io;
   
-  void DiscreteProbabilityDistribution::Parse(string str) {
+  void DiscreteProbabilityDistribution::Parse(const std::string& str) {
     vector<string> elements = DecomposeString(str);
     
     // number of elements must be odd (one simple and several pairs)
     if (elements.size()%2 != 1) {
-      serr << "ERROR in DiscreteProbabilityDistribution::Parse(std::string): String '" << str << "' ends prematurely." << endmsg;
+      serr << "ERROR in DiscreteProbabilityDistribution::Parse(const std::string&): String '" << str << "' ends prematurely." << endmsg;
       throw;
     }
     

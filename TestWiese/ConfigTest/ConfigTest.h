@@ -191,7 +191,7 @@ public:
    *
    *  @param str string to parse
    */
-  void Parse(std::string str);
+  void Parse(const std::string& str);
   
   /**
    *  @brief Print this object to an std::ostream
@@ -224,7 +224,7 @@ private:
    * 
    *  Just a simple string, like a name or something.
    *
-   *  @see ConfigTestAbstractType::Parse(std::string)
+   *  @see ConfigTestAbstractType::Parse(const std::string&)
    */
   std::string simple_;
   
@@ -234,7 +234,7 @@ private:
    *  This map contains string key value pairs which are supposed to be filled
    *  via a string.
    *
-   *  @see ConfigTestAbstractType::Parse(std::string)
+   *  @see ConfigTestAbstractType::Parse(const std::string&)
    */
   std::map<std::string,std::string> map_;
   

@@ -60,7 +60,7 @@ namespace config {
      *
      *  @param str string to parse
      */
-    void Parse(std::string str) {
+    void Parse(const std::string& str) {
       std::vector<std::string> elements = DecomposeString(str);
       
       for (std::vector<std::string>::const_iterator it=elements.begin();

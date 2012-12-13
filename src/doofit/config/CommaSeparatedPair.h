@@ -53,7 +53,7 @@ namespace config {
      *
      *  @param str string to parse
      */
-    void Parse(std::string str);
+    void Parse(const std::string& str);
     
     /**
      *  @brief Print this object to an std::ostream
@@ -75,6 +75,26 @@ namespace config {
      *  @brief Getter for second string
      */
     const std::string& second() const {return second_;}
+    
+    /**
+     *  @brief Setter for first string
+     */
+    void set_first(const std::string& str) { first_ = str; }
+    
+    /**
+     *  @brief Setter for second string
+     */
+    void set_second(const std::string& str) { second_ = str; }
+    
+    /**
+     *  @brief Assignment operator for string
+     *
+     *  Assign a string that will be parsed to this CommaSeparatedPair.
+     *
+     *  @param str comma-separated string to be parsed
+     *  @return reference to this
+     */
+    virtual CommaSeparatedPair& operator=(const std::string& str) { AbsTypeCommaSeparated::operator=(str); return *this; }
     
   protected:
     

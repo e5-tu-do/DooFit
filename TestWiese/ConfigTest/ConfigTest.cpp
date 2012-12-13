@@ -97,12 +97,12 @@ void ConfigTestSecond::LoadOptions() {
   set_my_test_int(var_map_[GetOptionString("my-second-test-int")].as<int>());
 }
 
-void ConfigTestAbstractType::Parse(string str) {
+void ConfigTestAbstractType::Parse(const std::string& str) {
   vector<string> elements = DecomposeString(str);
   
   // number of elements must be odd (one simple and several pairs)
   if (elements.size()%2 != 1) {
-    serr << "ERROR in ConfigTestAbstractType::Parse(std::string): String '" << str << "' ends prematurely." << endmsg;
+    serr << "ERROR in ConfigTestAbstractType::Parse(const std::string&): String '" << str << "' ends prematurely." << endmsg;
     throw;
   }
   
