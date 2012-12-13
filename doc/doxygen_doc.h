@@ -12,7 +12,7 @@
  *
  * Here is an overview of the current DooFit functionality:
  *
- * @li @link doofit::Toy doofit::Toy: Automated toy sample generation, toy study assistance and analysis @endlink
+ * @li @link doofit::toy doofit::toy: Automated toy sample generation, toy study assistance and analysis @endlink
  * @li @link doofit::plotting doofit::plotting: Easy plotting without all the fuss @endlink
  * @li @link doofit::builder::EasyPdf doofit::builder::EasyPdf: Simple and efficient on-demand PDF building @endlink
  *
