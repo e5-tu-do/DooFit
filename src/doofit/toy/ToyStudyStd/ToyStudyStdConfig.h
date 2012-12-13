@@ -155,15 +155,39 @@ namespace toy {
     /**
      *  @brief Setter for file name pattern and tree name to read fit result from
      *
-     *  @param result_file_tree new value for store_result_filename_treename_
+     *  Instead of specifying each file to read in separately, a pattern for 
+     *  file names can be specified. Each file matching this regular expression
+     *  pattern will be included to the file list. The regular expression engine
+     *  used is boost::regex.
+     *
+     *  @see set_read_results_filename_treename()
+     *
+     *  @param result_file_tree new value for store_result_filename_treename_ as comma-separated string "pattern,treename"
      */
     void set_read_results_filename_treename_pattern(const config::CommaSeparatedPair& read_results_filename_treename_pattern) {read_results_filename_treename_pattern_ = read_results_filename_treename_pattern;}
     /**
      *  @brief Setter for file names and tree names to read fit result from
      *
+     *  Set the file names and tree names (inside these files) which are supposed
+     *  to be read in for automated or manual analysis. Each file name, tree 
+     *  name combination needs to be specified as a config::CommaSeparatedPair.
+     *
      *  @param result_file_tree new value for read_results_filename_treename_
      */
     void set_read_results_filename_treename(const std::vector<config::CommaSeparatedPair>& results_file_tree) {read_results_filename_treename_ = results_file_tree;}
+    /**
+     *  @brief Setter for one file and tree to read fit result from
+     *
+     *  Set just one file name and tree name (inside this file) which is supposed
+     *  to be read in for automated or manual analysis. The file name, tree
+     *  name combination needs to be specified as a config::CommaSeparatedPair.
+     *
+     *  @param result_file_tree file and tree name to read
+     */
+    void set_read_results_filename_treename(config::CommaSeparatedPair results_file_tree) {
+      read_results_filename_treename_ = std::vector<config::CommaSeparatedPair>();
+      read_results_filename_treename_.push_back(results_file_tree);
+    }
     /**
      *  @brief Setter for plot directory for evaluation of fit results
      *

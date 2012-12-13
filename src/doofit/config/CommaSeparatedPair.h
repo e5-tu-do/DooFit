@@ -66,6 +66,11 @@ namespace config {
      */
     virtual void Print(std::ostream& os) const;
     
+    
+    /** @name getter Getter
+     *  Getter functions
+     */
+    ///@{
     /**
      *  @brief Getter for first string
      */
@@ -75,7 +80,12 @@ namespace config {
      *  @brief Getter for second string
      */
     const std::string& second() const {return second_;}
+    ///@}
     
+    /** @name setter Setter
+     *  Setter functions
+     */
+    ///@{
     /**
      *  @brief Setter for first string
      */
@@ -85,11 +95,18 @@ namespace config {
      *  @brief Setter for second string
      */
     void set_second(const std::string& str) { second_ = str; }
+    ///@}
     
     /**
      *  @brief Assignment operator for string
      *
      *  Assign a string that will be parsed to this CommaSeparatedPair.
+     *
+     *  Example:
+     * 
+     *  @code
+     *  comma_separated_pair = "first,second"
+     *  @endcode
      *
      *  @param str comma-separated string to be parsed
      *  @return reference to this
