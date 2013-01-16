@@ -73,12 +73,12 @@ class RooSimultaneous;
  *   epdf.Exponential("pdf_expo", epdf.Var("time"), epdf.Var("c"));
  *   
  *   // multiply the PDFs
- *   epdf.Product("pdf_prod", epdf.Pdf("pdf_gauss"), epdf.Pdf("pdf_expo"));
+ *   epdf.Product("pdf_prod", RooArgList(epdf.Pdf("pdf_gauss"), epdf.Pdf("pdf_expo")));
  *   
  *   // most of the above could also be written like this in practically one line
  *   epdf.Product("pdf_prod2",
- *                epdf.Gaussian("pdf_gauss2", epdf.Var("mass"), epdf.Var("mean"), epdf.Var("sigma")),
- *                epdf.Exponential("pdf_expo2", epdf.Var("time"), epdf.Var("c")));
+ *                RooArgList(epdf.Gaussian("pdf_gauss2", epdf.Var("mass"), epdf.Var("mean"), epdf.Var("sigma")),
+ *                epdf.Exponential("pdf_expo2", epdf.Var("time"), epdf.Var("c"))));
  * }
  * @endcode
  *
