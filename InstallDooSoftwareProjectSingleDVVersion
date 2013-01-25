@@ -13,6 +13,10 @@ then
   exit 2
 fi
 
+shift
+shift
+shift
+
 function catch_errors {
   make VERBOSE=""
   echo 
