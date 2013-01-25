@@ -11,7 +11,7 @@ then
   exit 2
 fi
 
-source /lhcbsoft/tu-dortmund/LHCbSoftwareSetup.sh x86_64-slc5-gcc43-opt > /dev/null 2>&1
+source /lhcbsoft/tu-dortmund/LHCbSoftwareSetup.sh > /dev/null 2>&1
 
 for ver in $dv_versions
 do
