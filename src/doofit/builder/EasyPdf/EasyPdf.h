@@ -624,6 +624,9 @@ class EasyPdf {
    *
    *  Unless fixed, no copy of EasyPdf shall ever be made.
    *
+   *  Copying EasyPdf containers is highly non-trivial and therefore not 
+   *  supported by now.
+   *
    *  @param other EasyPdf object to copy
    */
   EasyPdf(const EasyPdf& other) {}
