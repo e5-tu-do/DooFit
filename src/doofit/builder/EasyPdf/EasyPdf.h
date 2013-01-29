@@ -620,6 +620,15 @@ class EasyPdf {
   
  private:
   /**
+   *  @brief Private copy constructor
+   *
+   *  Unless fixed, no copy of EasyPdf shall ever be made.
+   *
+   *  @param other EasyPdf object to copy
+   */
+  EasyPdf(const EasyPdf& other) {}
+  
+  /**
    *  @brief Container for all generated RooRealVars
    */
   std::map<std::string,RooRealVar*> vars_;
