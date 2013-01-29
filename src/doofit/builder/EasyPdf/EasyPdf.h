@@ -86,6 +86,11 @@ class RooSimultaneous;
  *  possible. Therefore, variable and PDF generation and access are mostly 
  *  indistinguishable. Objects are created as needed and stored via their name.
  *
+ *  @note About const-correctness: You may notice that nearly all functions are
+ *        non-const. This is due to the reason that RooFit breaks 
+ *        const-correctness all the time. For example, you cannot fit on a const
+ *        RooAbsPdf&. 
+ *
  * @author Florian Kruse
  */
 
