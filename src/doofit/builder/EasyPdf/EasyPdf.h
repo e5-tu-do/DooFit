@@ -89,7 +89,7 @@ class RooSimultaneous;
  *  @note About const-correctness: You may notice that nearly all functions are
  *        non-const. This is due to the reason that RooFit breaks 
  *        const-correctness all the time. For example, you cannot fit on a const
- *        RooAbsPdf&. 
+ *        RooAbsPdf&.
  *
  * @author Florian Kruse
  */
