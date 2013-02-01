@@ -73,18 +73,23 @@ class RooSimultaneous;
  *   epdf.Exponential("pdf_expo", epdf.Var("time"), epdf.Var("c"));
  *   
  *   // multiply the PDFs
- *   epdf.Product("pdf_prod", epdf.Pdf("pdf_gauss"), epdf.Pdf("pdf_expo"));
+ *   epdf.Product("pdf_prod", RooArgList(epdf.Pdf("pdf_gauss"), epdf.Pdf("pdf_expo")));
  *   
  *   // most of the above could also be written like this in practically one line
  *   epdf.Product("pdf_prod2",
- *                epdf.Gaussian("pdf_gauss2", epdf.Var("mass"), epdf.Var("mean"), epdf.Var("sigma")),
- *                epdf.Exponential("pdf_expo2", epdf.Var("time"), epdf.Var("c")));
+ *                RooArgList(epdf.Gaussian("pdf_gauss2", epdf.Var("mass"), epdf.Var("mean"), epdf.Var("sigma")),
+ *                epdf.Exponential("pdf_expo2", epdf.Var("time"), epdf.Var("c"))));
  * }
  * @endcode
  *
  *  The main goal of EasyPdf is to keep PDF/variable construction as sinmple as 
  *  possible. Therefore, variable and PDF generation and access are mostly 
  *  indistinguishable. Objects are created as needed and stored via their name.
+ *
+ *  @note About const-correctness: You may notice that nearly all functions are
+ *        non-const. This is due to the reason that RooFit breaks 
+ *        const-correctness all the time. For example, you cannot fit on a const
+ *        RooAbsPdf&.
  *
  * @author Florian Kruse
  */
@@ -619,6 +624,18 @@ class EasyPdf {
  protected:
   
  private:
+  /**
+   *  @brief Private copy constructor
+   *
+   *  Unless fixed, no copy of EasyPdf shall ever be made.
+   *
+   *  Copying EasyPdf containers is highly non-trivial and therefore not 
+   *  supported by now.
+   *
+   *  @param other EasyPdf object to copy
+   */
+  EasyPdf(const EasyPdf& other) {}
+  
   /**
    *  @brief Container for all generated RooRealVars
    */

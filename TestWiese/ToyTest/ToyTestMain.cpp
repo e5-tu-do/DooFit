@@ -26,6 +26,7 @@
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
+#include "doocore/io/EasyTuple.h"
 
 // from DooFit
 #include "doofit/config/CommonConfig.h"
@@ -174,6 +175,16 @@ void TestToys(int argc, char *argv[]) {
   
   // print configuration
   cfg_com.PrintAll();
+  
+  EasyTuple* et2 = NULL;
+  
+  {
+    EasyTuple et("/fhgfs/groups/e5/lhcb/NTuples/B2JpsiX/B2JpsiX_data_Stripping20_DVv33r1_FTfromDV_v3_20130107_fkruse_combined_tupleA.root", "Bd2JpsiKSDetached/DecayTree", RooArgSet(epdf.Var("B0_MM")));
+    et.ConvertToDataSet().Print();
+    et2 = new EasyTuple(et);
+  }
+  
+  et2->dataset().Print();
   
   ws->Print("v");
   
