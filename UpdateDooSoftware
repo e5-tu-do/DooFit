@@ -2,7 +2,7 @@
 
 packages="DooCore DooFit DooSelection"
 
-source /lhcbsoft/tu-dortmund/LHCbSoftwareSetup.sh > /dev/null 2>&1
+source /lhcbsoft/tu-dortmund/LHCbSoftwareSetup.sh #> /dev/null 2>&1
 
 echo "Probing ROOT versions"
 rvers=""
@@ -21,6 +21,7 @@ echo ""
 
 for p in $packages; do
   dir=$DOOSOFTROOT/repos/$p
+  echo $dir
   sudo svn up $dir
   base=$dir/`cat $dir/install_version`
   InstallDooSoftwareProject $p $base "$dvvers"
