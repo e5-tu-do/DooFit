@@ -2,7 +2,7 @@
 
 packages="DooCore DooFit DooSelection"
 
-source /lhcbsoft/tu-dortmund/LHCbSoftwareSetup.sh #> /dev/null 2>&1
+source /lhcb/software/tu-dortmund/LHCbSoftwareSetup.sh #> /dev/null 2>&1
 
 echo "Probing ROOT versions"
 rvers=""
