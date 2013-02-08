@@ -19,6 +19,7 @@ class RooRealVar;
 class RooAbsCategoryLValue;
 class RooAbsPdf;
 class RooGaussian;
+class RooCBShape;
 class RooExponential;
 class RooArgList;
 class RooProdPdf;
@@ -170,7 +171,7 @@ class EasyPdf {
   RooFormulaVar& Formula(const std::string& name, const std::string& formula,
                          const RooArgList& dependents);
   
-    /**
+  /**
    *  @brief Access RooFormulaVar
    *
    *  Request a RooFormulaVar by a specified name. If the formula does exist in 
@@ -281,6 +282,23 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooGaussian& Gaussian(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma);
+  
+  /**
+   *  @brief Add and access a Crystal Ball Shape PDF
+   *
+   *  Request a RooCBShape by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param mean mean variable
+   *  @param sigma sigma variable
+   *  @param alpha alpha variable
+   *  @param n n variable
+   *  @return the appropriate PDF
+   */
+  RooCBShape& CBShape(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& alpha, RooAbsReal& n);
   
   /**
    *  @brief Add and access an Exponential PDF

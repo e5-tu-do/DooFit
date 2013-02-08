@@ -15,6 +15,7 @@
 #include "doofit/config/CommaSeparatedList.h"
 
 // forward declarations
+class TCanvas;
 
 namespace doofit {
 namespace plotting {
@@ -78,6 +79,13 @@ class PlotConfig : public config::AbsConfig {
    * @see set_pdf_linestyle_map()
    **/
   const config::CommaSeparatedList<int>& pdf_linestyle_map() const { return pdf_linestyle_map_; }
+  
+  /**
+   * @brief Getter for plot_directory_
+   *
+   * @see set_plot_directory()
+   **/
+  std::string plot_directory() const { return plot_directory_; }
   ///@}
 
   /** @name Setter functions
@@ -113,6 +121,7 @@ class PlotConfig : public config::AbsConfig {
    * @param pdf_linestyles line styles to use in same order as PDFs are supplied
    **/
   void set_pdf_linestyle_map(const config::CommaSeparatedList<int>& pdf_linestyles) { pdf_linestyle_map_ = pdf_linestyles; }
+
   /**
    * @brief Setter for pdf_linestyle_map_ with string
    *
@@ -124,6 +133,31 @@ class PlotConfig : public config::AbsConfig {
   void set_pdf_linestyle_map(const std::string& pdf_linestyles) {
     pdf_linestyle_map_.Parse(pdf_linestyles);
   }
+  
+  /**
+   * @brief Setter for plot_directory_
+   *
+   * Set plot output directory.
+   *
+   * @param plot_directory the plot output directory to use
+   **/
+  void set_plot_directory(const std::string& plot_directory) {
+    plot_directory_ = plot_directory;
+  }
+  ///@}
+  
+  /** @name Stacked plotting support functions
+   *  Functions to support stacked plotting into one file
+   */
+  ///@{
+  /**
+   *  @brief Open plot stack on demand
+   *
+   *  This helper function will be called by Plot objects before plotting. If
+   *  not openend already, it will open a ROOT plot stack called AllPlots.pdf in
+   *  which all be put.
+   */
+  void OnDemandOpenPlotStack() const;
   ///@}
   
  protected:
@@ -167,6 +201,25 @@ class PlotConfig : public config::AbsConfig {
    *  @brief Line style map for PDF lines
    */
   config::CommaSeparatedList<int> pdf_linestyle_map_;
+  /**
+   *  @brief Plot output directory
+   */
+  std::string plot_directory_;
+  
+  /** @name Stacked plotting support members
+   *  Members to support stacked plotting into one file.
+   */
+  ///@{
+  /**
+   *  @brief Stack already opened
+   */
+  mutable bool plot_stack_open_;
+  
+  /**
+   *  @brief Dummy canvas to create plot stack
+   */
+  mutable TCanvas* plot_stack_canvas_;
+  ///@}
 };
 
 } // namespace plotting

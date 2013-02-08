@@ -22,6 +22,7 @@
 #include "RooEffProd.h"
 #include "RooBDecay.h"
 #include "RooSimultaneous.h"
+#include "RooCBShape.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -215,6 +216,10 @@ RooArgSet doofit::builder::EasyPdf::AllVars() {
 
 RooGaussian& doofit::builder::EasyPdf::Gaussian(const std::string &name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma) {
   return AddPdfToStore<RooGaussian>(new RooGaussian(name.c_str(), name.c_str(), x, mean, sigma));
+}
+
+RooCBShape& doofit::builder::EasyPdf::CBShape(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& alpha, RooAbsReal& n) {
+  return AddPdfToStore<RooCBShape>(new RooCBShape(name.c_str(), name.c_str(), x, mean, sigma, alpha, n));
 }
 
 RooExponential& doofit::builder::EasyPdf::Exponential(const std::string &name, RooAbsReal& x, RooAbsReal& e) {
