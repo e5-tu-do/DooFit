@@ -3,6 +3,7 @@
 
 // from STL
 #include <map>
+#include <vector>
 #include <utility>
 
 // from ROOT
@@ -35,8 +36,49 @@ namespace splot {
 
 class SPlotFit2{
  public:
+  /**
+   *  @brief Constructor based on a given PDF and dataset
+   *
+   *  Based on a given PDF which needs to be extended, yields and a dataset, the 
+   *  SPlotFit2 is initialized to use this PDF as discriminating PDF and all 
+   *  components to generate individual sweights.
+   *
+   *  @param pdf the PDF to use for discrimination
+   *  @param data the dataset to fit on
+   *  @param yields yields for extended components to generate sweights for
+   */
+  SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields);
+  
+  /**
+   *  @brief Constructor based on a set of PDFs and dataset
+   *
+   *  Based on a given vector of PDFs and a dataset, the SPlotFit2 is 
+   *  initialized. It will generate a RooAddPdf based on the supplied PDFs and 
+   *  use this added PDF to discriminate and to generate individual sweights.
+   *
+   *  @param pdfs the PDFs to use for discrimination
+   *  @param data the dataset to fit on
+   */
+  SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data);
+  
   SPlotFit2();
   ~SPlotFit2();
+  
+  /**
+   *  @brief Fit on the PDF and extract sweights
+   *
+   *  Fit the pdf to the data and extract sweighted datasets afterwards.
+   *
+   *  @param ext_fit_args (optional) external arguments to use while fitting
+   */
+  void Fit(RooLinkedList* ext_fit_args=NULL);
+  
+  /**
+   *  @brief Get full discriminating PDF
+   *
+   *  @return the discriminating PDF
+   */
+  RooAbsPdf& pdf() { return *pdf_; }
   
   void Run(RooLinkedList* ext_fit_args=NULL);
   std::pair<RooHistPdf*,RooDataHist*> GetHistPdf(const TString& pdf_name, const RooArgSet& vars_set, const TString& comp_name, const TString& binningName = "");
@@ -67,8 +109,22 @@ class SPlotFit2{
   bool use_minos()  const {return use_minos_;}
   
  private:
+  /**
+   *  @brief Full discriminating PDF
+   */
+  RooAbsPdf* pdf_;
+  
+  /**
+   *  @brief Flag whether pdf_ is owned or not
+   */
+  bool pdf_owned_;
+  
+  /**
+   *  @brief Argset of yields for discrimination
+   */
+  RooArgList yields_;
+  
   unsigned int num_cpu_;
-   
   RooDataSet* input_data_;   //< input data
   
   RooAbsPdf* pdf_disc_full_; //< full discriminating pdf

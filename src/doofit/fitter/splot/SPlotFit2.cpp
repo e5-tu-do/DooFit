@@ -14,6 +14,7 @@
 #include "RooLinkedListIter.h"
 #include "RooRealVar.h"
 #include "RooLinkedListIter.h"
+#include "RooArgList.h"
 
 // from RooFit PDFs
 #include "RooAbsPdf.h"
@@ -26,6 +27,9 @@
 // from RooStats
 #include "RooStats/SPlot.h"
 
+// from DooCore
+#include <doocore/io/MsgStream.h>
+
 // from Project
 
 using std::cout;
@@ -35,11 +39,15 @@ using std::pair;
 
 using namespace RooFit;
 
+using namespace doocore::io;
+
 namespace doofit {
 namespace fitter {
 namespace splot {
   
 SPlotFit2::SPlotFit2() :
+  pdf_(NULL),
+  pdf_owned_(false),
   num_cpu_(4),
   input_data_(),
   pdf_disc_full_(NULL),
@@ -54,11 +62,122 @@ SPlotFit2::SPlotFit2() :
 {
   
 }
-
-SPlotFit2::~SPlotFit2(){
   
+SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
+  pdf_(&pdf),
+  pdf_owned_(false),
+  yields_(yields),
+  num_cpu_(4),
+  input_data_(&data),
+  pdf_disc_full_(NULL),
+  disc_vars_(),
+  cont_vars_(),
+  disc_pdfs_(),
+  cont_pdfs_(),
+  disc_pdfs_extend_(),
+  sweighted_data_(),
+  sweighted_hist_(),
+  use_minos_(true)
+{
+  pdf_->Print("v");
+  yields_.Print();
+  input_data_->Print();
 }
 
+SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data) :
+  pdf_(NULL),
+  pdf_owned_(true),
+  yields_(),
+  num_cpu_(4),
+  input_data_(&data),
+  pdf_disc_full_(NULL),
+  disc_vars_(),
+  cont_vars_(),
+  disc_pdfs_(),
+  cont_pdfs_(),
+  disc_pdfs_extend_(),
+  sweighted_data_(),
+  sweighted_hist_(),
+  use_minos_(true)
+{
+  RooArgList pdfs_list;
+  for (std::vector<RooAbsPdf*>::const_iterator it = pdfs.begin();
+       it != pdfs.end(); ++it) {
+    pdfs_list.add(**it);
+    RooRealVar* var = new RooRealVar(TString()+(*it)->GetName()+"_yield",
+                                     TString()+(*it)->GetName()+"_yield",
+                                     input_data_->sumEntries()/pdfs.size(), 0.0,
+                                     input_data_->sumEntries()*10);
+    yields_.addOwned(*var);
+  }
+  pdf_ = new RooAddPdf("pdf_splotfit2", "pdf_splotfit2", pdfs_list, yields_);
+}
+
+  
+SPlotFit2::~SPlotFit2(){
+  if (pdf_owned_ && pdf_ != NULL) delete pdf_;
+}
+
+void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
+  //=========================================================================
+  // merge our and external fitting arguments
+  RooLinkedList fitting_args;
+  fitting_args.Add((TObject*)(new RooCmdArg(NumCPU(num_cpu_))));
+  fitting_args.Add((TObject*)(new RooCmdArg(Extended())));
+  fitting_args.Add((TObject*)(new RooCmdArg(Minos(use_minos_))));
+  fitting_args.Add((TObject*)(new RooCmdArg(Strategy(2))));
+  fitting_args.Add((TObject*)(new RooCmdArg(Save(true))));
+  fitting_args.Add((TObject*)(new RooCmdArg(Verbose(false))));
+  fitting_args.Add((TObject*)(new RooCmdArg(Timer(true))));
+  if (ext_fit_args != NULL) {
+    RooLinkedListIter it = ext_fit_args->iterator();
+    TObject* arg = NULL;
+    
+    while ((arg = it.Next())) {
+      arg->Print();
+      fitting_args.Add(arg);
+    }
+  }
+
+  //=========================================================================
+  // fit discriminating pdf
+  pdf_->fitTo(*input_data_, fitting_args);
+  
+  //=========================================================================
+  // create sPlot
+  // get all parameters
+  RooArgSet* par_disc_set = pdf_->getParameters(*input_data_);
+  
+  // remove yields from parameter set
+  par_disc_set->remove(yields_);
+  
+  // Helper pointers
+  RooRealVar* var_iter1 = NULL;
+  
+  // iterate over left over parameters of full disc pdf and set constant
+  RooLinkedListIter* par_disc_set_iterator = (RooLinkedListIter*)par_disc_set->createIterator();
+  while (var_iter1=(RooRealVar*)par_disc_set_iterator->Next()) {
+    var_iter1->setConstant();
+  }
+  delete par_disc_set_iterator;
+  
+  // create datasets
+  RooStats::SPlot *sData = new RooStats::SPlot("sData","SPlot",*input_data_,pdf_,yields_);
+
+  //=========================================================================
+  // create sweighted datasets
+  
+  // iterate over yields
+  RooLinkedListIter* yield_iterator = (RooLinkedListIter*)yields_.createIterator();
+  while (var_iter1=(RooRealVar*)yield_iterator->Next()) {
+    TString comp_name = var_iter1->GetName();
+    
+    sinfo << "Adding sweighted dataset with name " << comp_name << endmsg;
+    sweighted_data_[comp_name] = new RooDataSet(input_data_->GetName(),input_data_->GetTitle(),input_data_,*input_data_->get(),0,TString("")+var_iter1->GetName()+"_sw");
+  }
+  delete yield_iterator;
+}
+  
 void SPlotFit2::Run(RooLinkedList* ext_fit_args){
 
   // merge our and external fitting arguments
