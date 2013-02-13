@@ -105,6 +105,12 @@ namespace plotting {
    *  architecture. Refer to PlotConfig for possible options.
    *
    *  doocore::lutils methods are used for plotting assuring nice and shiny plots.
+   *
+   *  @section stacked_plots Stacked plots feature
+   *
+   *  Stacked plots are created automatically for all Plot objects associated 
+   *  with one PlotConfig object. Every plot being created will be appended to 
+   *  a file called AllPlots.pdf in the plot output directory.
    */
   
   class Plot {
@@ -219,12 +225,7 @@ namespace plotting {
      *  @brief Plot name
      */
     std::string plot_name_;
-    
-    /**
-     *  @brief Plot directory
-     */
-    std::string plot_dir_;
-    
+        
     /**
      *  @brief Vector containing additional RooCmdArgs for plotting
      */

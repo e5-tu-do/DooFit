@@ -34,8 +34,7 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
 : config_plot_(cfg_plot),
   dimension_(dimension),
   datasets_(),
-  plot_name_(plot_name),
-  plot_dir_("Plot/")
+  plot_name_(plot_name)
 {
   datasets_.push_back(&dataset);
   pdf_ = dynamic_cast<RooAbsPdf*>(pdfs.first());
@@ -66,8 +65,7 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
 : config_plot_(cfg_plot),
   dimension_(dimension),
   datasets_(),
-  plot_name_(plot_name),
-  plot_dir_("Plot/")
+  plot_name_(plot_name)
 {
   datasets_.push_back(&dataset);
   pdf_ = &pdf;
@@ -124,7 +122,7 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
   pull_plot_sstr << plot_name << "_pull";
   std::string pull_plot_name = pull_plot_sstr.str(); 
 
-  sinfo << "Plotting " << dimension_.GetName() << " into " << plot_dir_ << plot_name << endmsg;
+  sinfo << "Plotting " << dimension_.GetName() << " into " << config_plot_.plot_directory() << plot_name << endmsg;
   
   doocore::lutils::setStyle("LHCb");
   
@@ -153,6 +151,7 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
     (*it)->plotOn(plot_frame/*, Rescale(1.0/(*it)->sumEntries())*/);
   }
   
+  config_plot_.OnDemandOpenPlotStack();
   if (pdf_ != NULL) {
     RooPlot* plot_frame_pull = dimension_.frame(range_arg);
     for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
@@ -181,12 +180,14 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
     pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     plot_frame_pull->SetMinimum(0.5);
-    doocore::lutils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, plot_dir_, true, logy);
+    doocore::lutils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, logy);
+    doocore::lutils::PlotResiduals("AllPlots", plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, logy);
     
     delete plot_frame_pull;
   }
   plot_frame->SetMinimum(0.5);
-  doocore::lutils::PlotSimple(plot_name, plot_frame, &dimension_, plot_dir_, logy);
+  doocore::lutils::PlotSimple(plot_name, plot_frame, &dimension_, config_plot_.plot_directory(), logy);
+  doocore::lutils::PlotSimple("AllPlots", plot_frame, &dimension_, config_plot_.plot_directory(), logy);
   
   delete plot_frame;
 }
