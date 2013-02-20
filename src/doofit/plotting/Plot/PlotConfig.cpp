@@ -29,8 +29,8 @@ PlotConfig::PlotConfig(const std::string& name)
   plot_stack_open_(false),
   plot_stack_canvas_(NULL)
 {
-  pdf_linecolor_map_.Parse("1,214,210,226,222,206,217,94");
-  pdf_linestyle_map_.Parse("1,2,3,4,5,6,7");
+  pdf_linecolor_map_.Parse("1,214,210,226,222,206,217,94,138,220");
+  pdf_linestyle_map_.Parse("1,2,3,4,5,6,7,8,9,10");
 }
   
 PlotConfig::~PlotConfig() {
