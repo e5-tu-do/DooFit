@@ -12,6 +12,7 @@
 #define COMMONCONFIG_h
 
 // STL
+#include <string>
 
 // Boost
 
@@ -55,6 +56,15 @@ class CommonConfig : public config::AbsConfig {
    */
   ~CommonConfig();
   
+  /**
+   *  @brief EasyConfig config file name
+   *
+   *  Get filename of optional additional EasyConfig file.
+   *
+   *  @return EasyConfig file name
+   */
+  std::string easyconfig_file() const { return easyconfig_file_; }
+  
  protected:
   /** @name Virtual functions
    *  Implementation of pure virtual functions.
@@ -92,6 +102,10 @@ class CommonConfig : public config::AbsConfig {
    *  The actual options members.
    */
   ///@{
+  /**
+   *  @brief EasyConfig file name
+   */
+  std::string easyconfig_file_;
   ///@}
   
   /**

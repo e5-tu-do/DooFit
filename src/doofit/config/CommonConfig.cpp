@@ -41,7 +41,9 @@ void CommonConfig::DefineOptions() {
   generic->add_options()
   ("help", "produce help message")
   ("config-file,c", po::value<string>(&config_file_)->default_value(""),
-   "config file to parse");
+   "config file to parse")
+  ("easyconfig-file,e", po::value<string>(&easyconfig_file_)->default_value(""),
+   "EasyConfig file to parse");
   
   descs_visible_.push_back(generic);
 }

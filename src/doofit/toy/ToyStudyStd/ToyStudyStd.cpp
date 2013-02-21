@@ -66,7 +66,7 @@ namespace toy {
   ToyStudyStd::~ToyStudyStd() {
     FinishFitResultSaving();
     reading_fit_results_ = false;
-    fitresult_reader_worker_.join();
+    if (fitresult_reader_worker_.joinable()) fitresult_reader_worker_.join();
     
     if (evaluated_values_ != NULL) delete evaluated_values_;
     for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
