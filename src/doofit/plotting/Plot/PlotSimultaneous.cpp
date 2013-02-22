@@ -56,7 +56,8 @@ void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
       sub_data.getRange(var, min,max);
       sdebug << "Range: " << min << "," << max << endmsg;
       
-      plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
+      //plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
+      plot_name = plot_name_ + "_" + sim_cat_type->GetName();
       Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
       plot.plot_args_ = this->plot_args_;
       plot.AddPlotArg(Range(min,max));
@@ -65,7 +66,8 @@ void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
     }
   }
   
-  plot_name = std::string(dimension_.GetName()) + "_summed";
+//  plot_name = std::string(dimension_.GetName()) + "_summed";
+  plot_name = plot_name_ + "_summed";
   Plot plot(config_plot_, dimension_, data, *pdf_, components_regexps_, plot_name);
   plot.plot_args_ = this->plot_args_;
   plot.AddPlotArg(ProjWData(sim_cat,data));
