@@ -23,6 +23,7 @@
 #include "RooBDecay.h"
 #include "RooSimultaneous.h"
 #include "RooCBShape.h"
+#include "RooSuperCategory.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -112,6 +113,22 @@ RooCategory& doofit::builder::EasyPdf::Cat(const std::string &name) {
   }
 }
 
+RooSuperCategory& doofit::builder::EasyPdf::SuperCat(const std::string& name, const RooArgSet& input_categories) {
+  if (supercats_.count(name) == 1) {
+    throw ObjectExistsException();
+  } else {
+    RooSuperCategory* temp_cat = new RooSuperCategory(name.c_str(), name.c_str(), input_categories);
+    if (ws_ == NULL) {
+      supercats_[name] = temp_cat;
+    } else {
+      ws_->import(*temp_cat, Silence());
+      delete temp_cat;
+      supercats_[name] = temp_cat = dynamic_cast<RooSuperCategory*>(ws_->cat(name.c_str()));
+    }
+    return *temp_cat;
+  }
+}
+
 RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name, const std::string& formula,
                                                  const RooArgList& dependents) {
   if (formulas_.count(name) == 1) {
@@ -133,6 +150,14 @@ RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name, const 
 RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name) {
   if (formulas_.count(name) == 1) {
     return *formulas_[name];
+  } else {
+    throw ObjectNotExistingException();
+  }
+}
+
+RooSuperCategory& doofit::builder::EasyPdf::SuperCat(const std::string &name) {
+  if (supercats_.count(name) == 1) {
+    return *supercats_[name];
   } else {
     throw ObjectNotExistingException();
   }

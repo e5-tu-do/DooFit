@@ -35,7 +35,7 @@ class RooResolutionModel;
 class RooEffProd;
 class RooBDecay;
 class RooSimultaneous;
-
+class RooSuperCategory;
 
 /** @class doofit::builder::EasyPdf
  *  @brief Easy PDF and variable building without the clutter
@@ -172,6 +172,20 @@ class EasyPdf {
                          const RooArgList& dependents);
   
   /**
+   *  @brief Add and access RooSuperCategory
+   *
+   *  Request a RooSuperCategory by a specified name. If the category does not 
+   *  yet exist in this EasyPdf pool of suoper categories, it is created and 
+   *  returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the RooSuperCategory
+   *  @param input_categories argset of categories to combine into super category
+   *  @return the appropriate RooSuperCategory
+   */
+  RooSuperCategory& SuperCat(const std::string& name, const RooArgSet& input_categories);
+  
+  /**
    *  @brief Access RooFormulaVar
    *
    *  Request a RooFormulaVar by a specified name. If the formula does exist in 
@@ -182,6 +196,18 @@ class EasyPdf {
    *  @return the appropriate RooFormulaVar
    */
   RooFormulaVar& Formula(const std::string& name);
+  
+  /**
+   *  @brief Add or access RooSuperCategory
+   *
+   *  Request a RooSuperCategory by a specified name. If the category does exist
+   *  in this EasyPdf pool of suoper categories, it is returned.
+   *  Otherwise an exception ObjectNotExistingException is thrown.
+   *
+   *  @param name name of the RooSuperCategory
+   *  @return the appropriate RooSuperCategory
+   */
+  RooSuperCategory& SuperCat(const std::string& name);
   ///@}
 
   /** @name Variable collection access
@@ -663,6 +689,11 @@ class EasyPdf {
    *  @brief Container for all generated RooCategories
    */
   std::map<std::string,RooCategory*> cats_;
+
+  /**
+   *  @brief Container for all generated RooSuperCategories
+   */
+  std::map<std::string,RooSuperCategory*> supercats_;
   
   /**
    *  @brief Container for all generated RooFormulaVars
