@@ -123,7 +123,7 @@ RooSuperCategory& doofit::builder::EasyPdf::SuperCat(const std::string& name, co
     } else {
       ws_->import(*temp_cat, Silence());
       delete temp_cat;
-      supercats_[name] = temp_cat = dynamic_cast<RooSuperCategory*>(ws_->cat(name.c_str()));
+      supercats_[name] = temp_cat = dynamic_cast<RooSuperCategory*>(ws_->obj(name.c_str()));
     }
     return *temp_cat;
   }

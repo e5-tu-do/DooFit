@@ -9,6 +9,8 @@
 // ROOT
 #include "TList.h"
 #include "TIterator.h"
+#include "TCanvas.h"
+#include "TPaveText.h"
 
 // from RooFit
 #include "RooSimultaneous.h"
@@ -19,6 +21,7 @@
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
+#include "doocore/lutils/lutils.h"
 
 // from Project
 
@@ -39,10 +42,14 @@ PlotSimultaneous::PlotSimultaneous(const PlotConfig& cfg_plot, const RooAbsRealL
 void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
   const RooSimultaneous& pdf = *dynamic_cast<const RooSimultaneous*>(pdf_);
   const RooAbsData& data     = *datasets_.front();
-  
-  const RooAbsCategoryLValue& sim_cat = pdf.indexCat();
+    const RooAbsCategoryLValue& sim_cat = pdf.indexCat();
   TList* data_split = data.split(sim_cat);
   std::string plot_name;
+  
+//  TCanvas c1("c1","c1",900,900);
+//  TLatex label(0.5, 0.5, "Bla");
+//  label.Draw();
+//  c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots.pdf").c_str());
   
   RooCatType* sim_cat_type = NULL;
   TIterator* sim_cat_type_iter = sim_cat.typeIterator();
@@ -62,9 +69,37 @@ void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
       plot.plot_args_ = this->plot_args_;
       plot.AddPlotArg(Range(min,max));
 
+      doocore::lutils::setStyle("LHCb");
+      config_plot_.OnDemandOpenPlotStack();
+      TCanvas c1("c1","c1",900,900);
+      std::string label_text1 = std::string("Next plots: dimension ") + dimension_.GetName() + ", category " + sim_cat_type->GetName();
+      std::string label_text2 = std::string(" (") + plot_name + ")";
+      TPaveText label(0.1, 0.25, 0.9, 0.75);
+      label.SetTextSize(0.03);
+      label.AddText(label_text1.c_str());
+      label.AddText(label_text2.c_str());
+      label.SetLineWidth(0.0);
+      label.SetTextAlign(13);
+      label.SetFillColor(0);
+      label.Draw();
+      c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots.pdf").c_str());
+      
       plot.PlotHandler(logy, suffix);
     }
   }
+  
+  TCanvas c1("c1","c1",900,900);
+  std::string label_text1 = std::string("Next plots: dimension ") + dimension_.GetName() + ", summed all categories ";
+  std::string label_text2 = std::string(" (") + plot_name + ")";
+  TPaveText label(0.1, 0.25, 0.9, 0.75);
+  label.SetTextSize(0.03);
+  label.AddText(label_text1.c_str());
+  label.AddText(label_text2.c_str());
+  label.SetLineWidth(0.0);
+  label.SetTextAlign(13);
+  label.SetFillColor(0);
+  label.Draw();
+  c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots.pdf").c_str());
   
 //  plot_name = std::string(dimension_.GetName()) + "_summed";
   plot_name = plot_name_ + "_summed";
