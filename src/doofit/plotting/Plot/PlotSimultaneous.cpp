@@ -57,34 +57,37 @@ void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
     RooAbsPdf& sub_pdf = *(pdf.getPdf(sim_cat_type->GetName()));
     if (&sub_pdf != NULL) {
       RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
-      
-      double min,max;
-      RooRealVar var(dynamic_cast<const RooRealVar&>(dimension_));
-      sub_data.getRange(var, min,max);
-      sdebug << "Range: " << min << "," << max << endmsg;
-      
-      //plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
-      plot_name = plot_name_ + "_" + sim_cat_type->GetName();
-      Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
-      plot.plot_args_ = this->plot_args_;
-      plot.AddPlotArg(Range(min,max));
-
-      doocore::lutils::setStyle("LHCb");
-      config_plot_.OnDemandOpenPlotStack();
-      TCanvas c1("c1","c1",900,900);
-      std::string label_text1 = std::string("Next plots: dimension ") + dimension_.GetName() + ", category " + sim_cat_type->GetName();
-      std::string label_text2 = std::string(" (") + plot_name + ")";
-      TPaveText label(0.1, 0.25, 0.9, 0.75);
-      label.SetTextSize(0.03);
-      label.AddText(label_text1.c_str());
-      label.AddText(label_text2.c_str());
-      label.SetLineWidth(0.0);
-      label.SetTextAlign(13);
-      label.SetFillColor(0);
-      label.Draw();
-      c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots.pdf").c_str());
-      
-      plot.PlotHandler(logy, suffix);
+      if (&sub_data == NULL) {
+        serr << "PlotSimultaneous::PlotHandler(...): sub dataset for category " << sim_cat_type->GetName() << " empty." << endmsg;
+      } else {
+        double min,max;
+        RooRealVar var(dynamic_cast<const RooRealVar&>(dimension_));
+        sub_data.getRange(var, min,max);
+        sdebug << "Range: " << min << "," << max << endmsg;
+        
+        //plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
+        plot_name = plot_name_ + "_" + sim_cat_type->GetName();
+        Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
+        plot.plot_args_ = this->plot_args_;
+        plot.AddPlotArg(Range(min,max));
+        
+        doocore::lutils::setStyle("LHCb");
+        config_plot_.OnDemandOpenPlotStack();
+        TCanvas c1("c1","c1",900,900);
+        std::string label_text1 = std::string("Next plots: dimension ") + dimension_.GetName() + ", category " + sim_cat_type->GetName();
+        std::string label_text2 = std::string(" (") + plot_name + ")";
+        TPaveText label(0.1, 0.25, 0.9, 0.75);
+        label.SetTextSize(0.03);
+        label.AddText(label_text1.c_str());
+        label.AddText(label_text2.c_str());
+        label.SetLineWidth(0.0);
+        label.SetTextAlign(13);
+        label.SetFillColor(0);
+        label.Draw();
+        c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots.pdf").c_str());
+        
+        plot.PlotHandler(logy, suffix);
+      }
     }
   }
   
