@@ -487,7 +487,7 @@ class EasyPdf {
    *  @param mean mean or bias of resolution
    *  @param sigma1 width of first Gaussian
    *  @param sigma2 width of second Gaussian
-   *  @param fraction fraction between Gaussians
+   *  @param fraction fraction of first Gaussian
    *  @return the appropriate PDF
    */
   RooAddModel& DoubleGaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& fraction);
@@ -505,8 +505,8 @@ class EasyPdf {
    *  @param sigma1 width of first Gaussian
    *  @param sigma2 width of second Gaussian
    *  @param sigma3 width of third Gaussian
-   *  @param fraction1 fraction between first and second Gaussian
-   *  @param fraction2 fraction between second and third Gaussian
+   *  @param fraction1 fraction of first Gaussian
+   *  @param fraction2 fraction of second Gaussian
    *  @return the appropriate PDF
    */
   RooAddModel& TripleGaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& sigma3, RooAbsReal& fraction1, RooAbsReal& fraction2);
@@ -525,12 +525,104 @@ class EasyPdf {
    *  @param sigma2 width of second Gaussian
    *  @param sigma3 width of third Gaussian
    *  @param sigma4 width of fourth Gaussian
-   *  @param fraction1 fraction between first and second Gaussian
-   *  @param fraction2 fraction between second and third Gaussian
-   *  @param fraction3 fraction between third and fourth Gaussian
+   *  @param fraction1 fraction of first Gaussian
+   *  @param fraction2 fraction of second Gaussian
+   *  @param fraction3 fraction of third Gaussian
    *  @return the appropriate PDF
    */
   RooAddModel& QuadGaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& sigma3, RooAbsReal& sigma4, RooAbsReal& fraction1, RooAbsReal& fraction2, RooAbsReal& fraction3);
+  
+  /**
+   *  @brief Add and access a double RooGaussModel with scaled parameters
+   *
+   *  Request a double RooGaussModel by a specified name. If the PDF does not
+   *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The resolution model is modelled as
+   *
+   *  P(x) = fraction * GaussModel(x,mean,sigma) + (1-fraction) * GaussModel(x,mean,sigma2)
+   *
+   *  with sigma2 = scale*sigma as automatically generated formula. If the name
+   *  of sigma2 is not supplied, it will be generated automatically.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param mean mean or bias of resolution
+   *  @param sigma width of first Gaussian
+   *  @param scale variable for scale between sigma and sigma2
+   *  @param fraction fraction of first Gaussian
+   *  @param sigma2_name name of sigma2 formula
+   *  @return the appropriate PDF
+   */
+  RooAddModel& DoubleGaussModelScaled(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale, RooAbsReal& fraction, std::string sigma2_name);
+  
+  /**
+   *  @brief Add and access a triple RooGaussModel with scaled parameters
+   *
+   *  Request a double RooGaussModel by a specified name. If the PDF does not
+   *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The resolution model is modelled as
+   *
+   *  P(x) = fraction1 * GaussModel(x,mean,sigma)
+   *       + fraction2 * GaussModel(x,mean,sigma2)
+   *       + fraction3 * GaussModel(x,mean,sigma3)
+   *
+   *  with sigma2 = scale2*sigma, sigma3 = scale3*sigma2,
+   *  fraction2 = (1-fraction)*frac_rec2 and
+   *  fraction3 = (1-fraction)*(1-frac_rec2) as automatically generated formulae
+   *  for scaled widths and recursive fractions. Names of these will be
+   *  generated automatically based on the model name.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param mean mean or bias of resolution
+   *  @param sigma width of first GaussModel
+   *  @param scale2 variable for scale between sigma and sigma2
+   *  @param scale3 variable for scale between sigma2 and sigma3
+   *  @param fraction1 fraction of first GaussModel
+   *  @param frac_rec2 recursive fraction of second GaussModel
+   *  @return the appropriate PDF
+   */
+  RooAddModel& TripleGaussModelScaled(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale2, RooAbsReal& scale3, RooAbsReal& fraction1, RooAbsReal& frac_rec2);
+  
+  /**
+   *  @brief Add and access a quadruple RooGaussModel with scaled parameters
+   *
+   *  Request a quadruple RooGaussModel by a specified name. If the PDF does not
+   *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The resolution model is modelled as
+   *
+   *  P(x) = fraction1 * GaussModel(x,mean,sigma)
+   *       + fraction2 * GaussModel(x,mean,sigma2)
+   *       + fraction3 * GaussModel(x,mean,sigma3)
+   *       + fraction4 * GaussModel(x,mean,sigma4)
+   *
+   *  with sigma2 = scale2*sigma, sigma3 = scale3*sigma2, sigma4 = scale4*sigma3,
+   *  fraction2 = (1-fraction)*frac_rec2 and
+   *  fraction3 = (1-fraction)*(1-frac_rec2)*frac_rec3 and
+   *  fraction3 = (1-fraction)*(1-frac_rec2)*(1-frac_rec3)
+   *  as automatically generated formulae for scaled widths and recursive 
+   *  fractions. Names of these will be generated automatically based on the 
+   *  model name.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param mean mean or bias of resolution
+   *  @param sigma width of first GaussModel
+   *  @param scale2 variable for scale between sigma and sigma2
+   *  @param scale3 variable for scale between sigma2 and sigma3
+   *  @param scale4 variable for scale between sigma3 and sigma4
+   *  @param fraction1 fraction of first GaussModel
+   *  @param frac_rec2 recursive fraction of second GaussModel
+   *  @param frac_rec3 recursive fraction of third GaussModel
+   *  @return the appropriate PDF
+   */
+  RooAddModel& QuadGaussModelScaled(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale2, RooAbsReal& scale3, RooAbsReal& scale4, RooAbsReal& fraction1, RooAbsReal& frac_rec2, RooAbsReal& frac_rec3);
   
   /**
    *  @brief Add and access an added resolution PDF with supplied coefficients
