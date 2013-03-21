@@ -58,11 +58,11 @@ void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
     if (&sub_pdf != NULL) {
       RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
       if (&sub_data == NULL) {
-        serr << "PlotSimultaneous::PlotHandler(...): sub dataset for category " << sim_cat_type->GetName() << " empty." << endmsg;
+        serr << "PlotSimultaneous::PlotHandler(...): sub dataset for category " << sim_cat_type->GetName() << " empty. Will not plot. " << endmsg;
       } else {
         double min,max;
         RooRealVar var(dynamic_cast<const RooRealVar&>(dimension_));
-        sub_data.getRange(var, min,max);
+        sub_data.getRange(var, min, max);
         sdebug << "Range: " << min << "," << max << endmsg;
         
         //plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();

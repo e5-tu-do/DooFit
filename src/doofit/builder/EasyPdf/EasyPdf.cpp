@@ -367,6 +367,42 @@ RooAddModel& doofit::builder::EasyPdf::QuadGaussModelScaled(const std::string& n
                              Formula(fraction3_name)));
 }
 
+RooAddModel& doofit::builder::EasyPdf::QuinGaussModelScaled(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale2, RooAbsReal& scale3, RooAbsReal& scale4, RooAbsReal& scale5, RooAbsReal& fraction1, RooAbsReal& frac_rec2, RooAbsReal& frac_rec3, RooAbsReal& frac_rec4) {
+  std::string sigma2_name = name+"_sigma2";
+  std::string sigma3_name = name+"_sigma3";
+  std::string sigma4_name = name+"_sigma4";
+  std::string sigma5_name = name+"_sigma5";
+  std::string fraction2_name = name+"_fraction2";
+  std::string fraction3_name = name+"_fraction3";
+  std::string fraction4_name = name+"_fraction4";
+  
+  GaussModel("p2_"+name,x,mean,
+             Formula(sigma2_name,"@0*@1",RooArgList(sigma,scale2)));
+  GaussModel("p3_"+name,x,mean,
+             Formula(sigma3_name,"@0*@1@2",RooArgList(sigma,scale2,scale3)));
+  GaussModel("p4_"+name,x,mean,
+             Formula(sigma4_name,"@0*@1@2*@3",
+                     RooArgList(sigma,scale2,scale3,scale4)));
+  GaussModel("p5_"+name,x,mean,
+             Formula(sigma5_name,"@0*@1@2*@3*@4",
+                     RooArgList(sigma,scale2,scale3,scale4,scale5)));
+  Formula(fraction2_name, "(1-@0)*@1", RooArgList(fraction1,frac_rec2));
+  Formula(fraction3_name, "(1-@0)*(1-@1)*@2",
+          RooArgList(fraction1,frac_rec2,frac_rec3));
+  Formula(fraction4_name, "(1-@0)*(1-@1)*(1-@2)*@3",
+          RooArgList(fraction1,frac_rec2,frac_rec3,frac_rec4));
+  
+  return AddModel(name,
+                  RooArgList(GaussModel("p1_"+name,x,mean,sigma),
+                             Model("p2_"+name),
+                             Model("p3_"+name),
+                             Model("p4_"+name),
+                             Model("p5_"+name)),
+                  RooArgList(fraction1,Formula(fraction2_name),
+                             Formula(fraction3_name), Formula(fraction4_name)));
+}
+
+
 RooAddModel& doofit::builder::EasyPdf::AddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs) {
   return AddPdfToStore<RooAddModel>(new RooAddModel(name.c_str(), name.c_str(), pdfs, coefs));
 }
