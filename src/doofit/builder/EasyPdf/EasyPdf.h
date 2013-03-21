@@ -682,6 +682,25 @@ class EasyPdf {
   RooGaussModel& GaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error, RooAbsReal& scale_mean);
   
   /**
+   *  @brief Add and access a double per-event RooGaussModel
+   *
+   *  Request a RooGaussModel by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param mean mean or bias of resolution
+   *  @param error the per-event resolution estimate
+   *  @param scale_error1 scale first factor for error
+   *  @param scale_error2 scale second factor for error
+   *  @param scale_mean scale factor for mean
+   *  @param fraction fraction of first Gaussian
+   *  @return the appropriate PDF
+   */
+  RooAddModel& DoubleGaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& scale_mean, RooAbsReal& fraction);
+  
+  /**
    *  @brief Add and access an added resolution PDF with supplied coefficients
    *
    *  Request a RooAddModel by a specified name. If the PDF does not yet
