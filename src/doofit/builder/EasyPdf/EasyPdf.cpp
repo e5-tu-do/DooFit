@@ -402,6 +402,9 @@ RooAddModel& doofit::builder::EasyPdf::QuinGaussModelScaled(const std::string& n
                              Formula(fraction3_name), Formula(fraction4_name)));
 }
 
+RooGaussModel& doofit::builder::EasyPdf::GaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error, RooAbsReal& scale_mean) {
+  return AddPdfToStore<RooGaussModel>(new RooGaussModel(name.c_str(), name.c_str(), x, mean, error, scale_error, scale_mean));
+}
 
 RooAddModel& doofit::builder::EasyPdf::AddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs) {
   return AddPdfToStore<RooAddModel>(new RooAddModel(name.c_str(), name.c_str(), pdfs, coefs));

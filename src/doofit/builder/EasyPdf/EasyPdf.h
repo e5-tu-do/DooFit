@@ -665,6 +665,23 @@ class EasyPdf {
   RooAddModel& QuinGaussModelScaled(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale2, RooAbsReal& scale3, RooAbsReal& scale4, RooAbsReal& scale5, RooAbsReal& fraction1, RooAbsReal& frac_rec2, RooAbsReal& frac_rec3, RooAbsReal& frac_rec4);
   
   /**
+   *  @brief Add and access a per-event RooGaussModel
+   *
+   *  Request a RooGaussModel by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param mean mean or bias of resolution
+   *  @param error the per-event resolution estimate
+   *  @param scale_error scale factor for error
+   *  @param scale_mean scale factor for mean
+   *  @return the appropriate PDF
+   */
+  RooGaussModel& GaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error, RooAbsReal& scale_mean);
+  
+  /**
    *  @brief Add and access an added resolution PDF with supplied coefficients
    *
    *  Request a RooAddModel by a specified name. If the PDF does not yet
