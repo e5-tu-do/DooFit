@@ -182,33 +182,13 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
     int i=1;
     for (std::vector<RooArgSet>::const_iterator it = components_.begin();
          it != components_.end(); ++it) {
-      // very dirty workaround for RooFit
-      if (std::string(arg1.GetName()) == "ProjData") {
-        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)),
-                     ProjWData(*(dynamic_cast<const RooArgSet*>(arg1.getObject(0))), *(dynamic_cast<const RooAbsData*>(arg1.getObject(1)))),
-                     arg2, arg3, arg4, arg5, arg6, arg7);
-        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)),
-                     ProjWData(*(dynamic_cast<const RooArgSet*>(arg1.getObject(0))), *(dynamic_cast<const RooAbsData*>(arg1.getObject(1)))),
-                     arg2, arg3, arg4, arg5, arg6, arg7);
-      } else {
-        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-      }
+      pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+      pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
       ++i;
     }
     
-    // very dirty workaround for RooFit
-    if (std::string(arg1.GetName()) == "ProjData") {
-      pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)),
-                   ProjWData(*(dynamic_cast<const RooArgSet*>(arg1.getObject(0))), *(dynamic_cast<const RooAbsData*>(arg1.getObject(1)))),
-                   arg2, arg3, arg4, arg5, arg6, arg7);
-      pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)),
-                   ProjWData(*(dynamic_cast<const RooArgSet*>(arg1.getObject(0))), *(dynamic_cast<const RooAbsData*>(arg1.getObject(1)))),
-                   arg2, arg3, arg4, arg5, arg6, arg7);
-    } else {
-      pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-      pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);      
-    }
+    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     plot_frame_pull->SetMinimum(0.5);
     plot_frame_pull->SetMaximum(1.3*plot_frame_pull->GetMaximum());
     doocore::lutils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, logy);

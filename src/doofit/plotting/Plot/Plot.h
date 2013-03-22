@@ -175,8 +175,14 @@ namespace plotting {
     /**
      *  @brief Add additional RooCmdArgs for plotting
      *
-     *  @warning Please note if you want to use ProjWData() as RooCmdArg: Unfortunately, 
-     *           RooFit...
+     *  @warning Please note if you want to use ProjWData() as RooCmdArg: 
+     *           Unfortunately, RooFit allows you to write very dangerous code
+     *           as ProjWData expects a RooArgSet& reference as first parameter.
+     *           If this RooArgSet is a temporal object (by calling RooArgSet in
+     *           the ProjWData call or by passing a RooRealVar which will 
+     *           trigger the creation of a temporal argset) the RooCmdArg will 
+     *           not function properly inside Plot. Always make sure to pass 
+     *           objects that live long enough!
      *
      *  @param arg RooCmdArg to use for plotting
      */
