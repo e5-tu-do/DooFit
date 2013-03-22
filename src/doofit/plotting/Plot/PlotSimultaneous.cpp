@@ -39,7 +39,7 @@ PlotSimultaneous::PlotSimultaneous(const PlotConfig& cfg_plot, const RooAbsRealL
   
 }
 
-void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
+void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
   const RooSimultaneous& pdf = *dynamic_cast<const RooSimultaneous*>(pdf_);
   const RooAbsData& data     = *datasets_.front();
     const RooAbsCategoryLValue& sim_cat = pdf.indexCat();
@@ -86,7 +86,7 @@ void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
         label.Draw();
         c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots.pdf").c_str());
         
-        plot.PlotHandler(logy, suffix);
+        plot.PlotHandler(sc_y, suffix);
       }
     }
   }
@@ -108,8 +108,26 @@ void PlotSimultaneous::PlotHandler(bool logy, const std::string& suffix) const {
   plot_name = plot_name_ + "_summed";
   Plot plot(config_plot_, dimension_, data, *pdf_, components_regexps_, plot_name);
   plot.plot_args_ = this->plot_args_;
-  plot.AddPlotArg(ProjWData(sim_cat,data));
-  plot.PlotHandler(logy, suffix);
+  
+  bool project_arg_found = false;
+  RooArgSet* set_project = NULL;
+  for (std::vector<RooCmdArg>::iterator it = plot.plot_args_.begin();
+       it != plot.plot_args_.end(); ++it) {
+    if (std::string(it->GetName()) == "ProjData") {
+      sinfo << "Found ProjWData() argument. Will join with " << sim_cat.GetName() << " on same dataset." << endmsg;
+      project_arg_found = true;
+      set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
+      set_project->add(sim_cat);
+      *it = ProjWData(*set_project,
+                      *dynamic_cast<const RooAbsData*>(it->getObject(1)),
+                      it->getInt(0));
+    }
+  }
+  if (!project_arg_found) plot.AddPlotArg(ProjWData(sim_cat,data));
+  
+  plot.PlotHandler(sc_y, suffix);
+  
+  if (set_project != NULL) delete set_project;
   
   TIter next(data_split);
   TObject *obj = NULL;

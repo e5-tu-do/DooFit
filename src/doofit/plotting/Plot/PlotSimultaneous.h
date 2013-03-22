@@ -74,7 +74,7 @@ class PlotSimultaneous : public Plot {
    *  @param logy use logarithmic y scale
    *  @param suffix suffix to put after file names
    */
-  virtual void PlotHandler(bool logy, const std::string& suffix="") const;
+  virtual void PlotHandler(ScaleType sc_y, std::string suffix="") const;
   
  private:
   /**

@@ -113,14 +113,22 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
   }
 }
   
-void Plot::PlotHandler(bool logy, const std::string& suffix) const {
-  std::stringstream plot_name_sstr;
-  plot_name_sstr << plot_name_ << suffix;
-  std::string plot_name = plot_name_sstr.str();
+void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
+  if (suffix == "") suffix = "_log";
+  
+  std::string plot_name = plot_name_;
+  
+  std::stringstream log_plot_name_sstr;
+  log_plot_name_sstr << plot_name << suffix;
+  std::string log_plot_name = log_plot_name_sstr.str();
   
   std::stringstream pull_plot_sstr;
   pull_plot_sstr << plot_name << "_pull";
-  std::string pull_plot_name = pull_plot_sstr.str(); 
+  std::string pull_plot_name = pull_plot_sstr.str();
+  
+  std::stringstream log_pull_plot_sstr;
+  log_pull_plot_sstr << plot_name << "_pull" << suffix;
+  std::string log_pull_plot_name = log_pull_plot_sstr.str();
 
   sinfo << "Plotting " << dimension_.GetName() << " into " << config_plot_.plot_directory() << plot_name << endmsg;
   
@@ -161,17 +169,7 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
     
     // I feel so tupid doing this but apparently RooFit leaves me no other way...
     RooCmdArg arg1, arg2, arg3, arg4, arg5, arg6, arg7;
-    if (plot_args_.size() > 0) {
-      arg1 = plot_args_[0];
-//      // debug
-//      arg1.Print();
-//      sdebug << arg1.getObject(0) << endmsg;
-//      sdebug << arg1.getObject(1) << endmsg;
-//      arg1.getObject(0)->Print();
-//      arg1.getObject(1)->Print();
-//      sdebug << arg1.getObject(0)->ClassName() << endmsg;
-//      sdebug << arg1.getObject(1)->ClassName() << endmsg;
-    }
+    if (plot_args_.size() > 0) arg1 = plot_args_[0];
     if (plot_args_.size() > 1) arg2 = plot_args_[1];
     if (plot_args_.size() > 2) arg3 = plot_args_[2];
     if (plot_args_.size() > 3) arg4 = plot_args_[3];
@@ -191,15 +189,28 @@ void Plot::PlotHandler(bool logy, const std::string& suffix) const {
     pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     plot_frame_pull->SetMinimum(0.5);
     plot_frame_pull->SetMaximum(1.3*plot_frame_pull->GetMaximum());
-    doocore::lutils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, logy);
-    doocore::lutils::PlotResiduals("AllPlots", plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, logy);
+    
+    if (sc_y == kLinear || sc_y == kBoth) {
+      doocore::lutils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, false);
+      doocore::lutils::PlotResiduals("AllPlots", plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, false);
+    }
+    if (sc_y == kLogarithmic || sc_y == kBoth) {
+      doocore::lutils::PlotResiduals(log_pull_plot_name, plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, true);
+      doocore::lutils::PlotResiduals("AllPlots", plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, true);
+    }
     
     delete plot_frame_pull;
   }
   plot_frame->SetMinimum(0.5);
   plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
-  doocore::lutils::PlotSimple(plot_name, plot_frame, &dimension_, config_plot_.plot_directory(), logy);
-  doocore::lutils::PlotSimple("AllPlots", plot_frame, &dimension_, config_plot_.plot_directory(), logy);
+  if (sc_y == kLinear || sc_y == kBoth) {
+    doocore::lutils::PlotSimple(plot_name, plot_frame, &dimension_, config_plot_.plot_directory(), false);
+    doocore::lutils::PlotSimple("AllPlots", plot_frame, &dimension_, config_plot_.plot_directory(), false);
+  }
+  if (sc_y == kLogarithmic || sc_y == kBoth) {
+    doocore::lutils::PlotSimple(log_plot_name, plot_frame, &dimension_, config_plot_.plot_directory(), true);
+    doocore::lutils::PlotSimple("AllPlots", plot_frame, &dimension_, config_plot_.plot_directory(), true);
+  }
   
   delete plot_frame;
 }

@@ -30,6 +30,13 @@ namespace doofit {
  */
   
 namespace plotting {
+  
+enum ScaleType {
+  kLogarithmic,
+  kLinear,
+  kBoth
+};
+  
   /** @class Plot
    *  @brief A simple plot based on a dataset and optional PDFs
    *
@@ -151,21 +158,21 @@ namespace plotting {
      *
      *  This function will plot the data in linear scale.
      */
-    void PlotIt() const { PlotHandler(false); }
+    void PlotIt() const { PlotHandler(kLinear); }
 
     /**
      *  @brief Actually plot the plot in log y scale
      *
      *  This function will plot the data in logarithmic scale on y axis.
      */
-    void PlotItLogY() const { PlotHandler(true); }
+    void PlotItLogY() const { PlotHandler(kLogarithmic); }
     
     /**
      *  @brief Actually plot the plot in normal and log y scale
      *
      *  This function will plot the data in linear and logarithmic y axis scale.
      */
-    void PlotItLogNoLogY() const { PlotHandler(false); PlotHandler(true, "_log"); }
+    void PlotItLogNoLogY() const { PlotHandler(kBoth, "_log"); }
     
     /**
      *  @brief Destructor for Plot
@@ -206,9 +213,9 @@ namespace plotting {
      *  functions.
      *
      *  @param logy use logarithmic y scale
-     *  @param suffix suffix to put after file names
+     *  @param suffix suffix to put after file names for log plots (if sc_y == kBoth)
      */
-    virtual void PlotHandler(bool logy, const std::string& suffix="") const;
+    virtual void PlotHandler(ScaleType sc_y, std::string suffix="") const;
     
     /**
      *  @brief Dimension to plot in
