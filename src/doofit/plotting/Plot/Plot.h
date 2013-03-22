@@ -175,6 +175,9 @@ namespace plotting {
     /**
      *  @brief Add additional RooCmdArgs for plotting
      *
+     *  @warning Please note if you want to use ProjWData() as RooCmdArg: Unfortunately, 
+     *           RooFit...
+     *
      *  @param arg RooCmdArg to use for plotting
      */
     void AddPlotArg(RooCmdArg arg) {plot_args_.push_back(arg);}
