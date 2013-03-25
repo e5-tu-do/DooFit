@@ -717,11 +717,11 @@ class EasyPdf {
    *  @param scale_error2 second scale factor for error
    *  @param scale_error3 third scale factor for error
    *  @param scale_mean scale factor for mean
-   *  @param fraction fraction of first Gaussian
+   *  @param fraction1 fraction of first Gaussian
    *  @param frac_rec2 recursive fraction of second GaussModel
    *  @return the appropriate PDF
    */
-  RooAddModel& TripleGaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& scale_error3, RooAbsReal& scale_mean, RooAbsReal& fraction, RooAbsReal& frac_rec2);
+  RooAddModel& TripleGaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& scale_error3, RooAbsReal& scale_mean, RooAbsReal& fraction1, RooAbsReal& frac_rec2);
   
   /**
    *  @brief Add and access an added resolution PDF with supplied coefficients

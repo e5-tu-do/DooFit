@@ -415,6 +415,21 @@ RooAddModel& doofit::builder::EasyPdf::DoubleGaussModelPerEvent(const std::strin
                   RooArgList(fraction));
 }
 
+RooAddModel& doofit::builder::EasyPdf::TripleGaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& scale_error3, RooAbsReal& scale_mean, RooAbsReal& fraction1, RooAbsReal& frac_rec2) {
+  std::string fraction2_name = name+"_fraction2";
+  
+  Formula(fraction2_name, "(1-@0)*@1", RooArgList(fraction1,frac_rec2));
+  
+  return AddModel(name,
+                  RooArgList(GaussModelPerEvent("p1_"+name,x,mean,scale_error1,
+                                                scale_mean, error),
+                             GaussModelPerEvent("p2_"+name,x,mean,scale_error2,
+                                                scale_mean, error),
+                             GaussModelPerEvent("p3_"+name,x,mean,scale_error3,
+                                                scale_mean, error)),
+                  RooArgList(fraction1, Formula(fraction2_name)));
+}
+
 RooAddModel& doofit::builder::EasyPdf::AddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs) {
   return AddPdfToStore<RooAddModel>(new RooAddModel(name.c_str(), name.c_str(), pdfs, coefs));
 }
