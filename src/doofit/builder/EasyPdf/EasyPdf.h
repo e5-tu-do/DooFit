@@ -707,7 +707,7 @@ class EasyPdf {
    *  exist in this EasyPdf pool of PDFs, it is created and returned.
    *  Otherwise an exception ObjectExistsException is thrown.
    *
-   *  See TripleGaussModelScaled for definition of (recursive) fractions.
+   *  See doofit::builder::EasyPdf::TripleGaussModelScaled for definition of (recursive) fractions.
    *
    *  @param name name of the PDF
    *  @param x the x variable
