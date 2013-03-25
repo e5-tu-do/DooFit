@@ -402,16 +402,16 @@ RooAddModel& doofit::builder::EasyPdf::QuinGaussModelScaled(const std::string& n
                              Formula(fraction3_name), Formula(fraction4_name)));
 }
 
-RooGaussModel& doofit::builder::EasyPdf::GaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error, RooAbsReal& scale_mean) {
-  return AddPdfToStore<RooGaussModel>(new RooGaussModel(name.c_str(), name.c_str(), x, mean, error, scale_error, scale_mean));
+RooGaussModel& doofit::builder::EasyPdf::GaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& scale_error, RooAbsReal& scale_mean, RooAbsReal& error) {
+  return AddPdfToStore<RooGaussModel>(new RooGaussModel(name.c_str(), name.c_str(), x, mean, scale_error, scale_mean, error));
 }
 
-RooAddModel& doofit::builder::EasyPdf::DoubleGaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& scale_mean, RooAbsReal& fraction) {
+RooAddModel& doofit::builder::EasyPdf::DoubleGaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& scale_mean, RooAbsReal& error, RooAbsReal& fraction) {
   return AddModel(name,
-                  RooArgList(GaussModelPerEvent("p1_"+name,x,mean,error,scale_error1,
-                                                scale_mean),
-                             GaussModelPerEvent("p2_"+name,x,mean,error,scale_error2,
-                                                scale_mean)),
+                  RooArgList(GaussModelPerEvent("p1_"+name,x,mean,scale_error1,
+                                                scale_mean, error),
+                             GaussModelPerEvent("p2_"+name,x,mean,scale_error2,
+                                                scale_mean, error)),
                   RooArgList(fraction));
 }
 

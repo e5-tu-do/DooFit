@@ -181,6 +181,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     for (std::vector<RooArgSet>::const_iterator it = components_.begin();
          it != components_.end(); ++it) {
       if (it->getSize() > 0) {
+        sinfo << "Plotting component " << it->first()->GetName() << endmsg;
         pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
         pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
         ++i;

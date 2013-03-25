@@ -679,7 +679,7 @@ class EasyPdf {
    *  @param scale_mean scale factor for mean
    *  @return the appropriate PDF
    */
-  RooGaussModel& GaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error, RooAbsReal& scale_mean);
+  RooGaussModel& GaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& scale_error, RooAbsReal& scale_mean, RooAbsReal& error);
   
   /**
    *  @brief Add and access a double per-event RooGaussModel
@@ -698,7 +698,30 @@ class EasyPdf {
    *  @param fraction fraction of first Gaussian
    *  @return the appropriate PDF
    */
-  RooAddModel& DoubleGaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& scale_mean, RooAbsReal& fraction);
+  RooAddModel& DoubleGaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& scale_mean, RooAbsReal& error, RooAbsReal& fraction);
+
+  /**
+   *  @brief Add and access a triple per-event RooGaussModel
+   *
+   *  Request a RooGaussModel by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  See TripleGaussModelScaled for definition of (recursive) fractions.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param mean mean or bias of resolution
+   *  @param error the per-event resolution estimate
+   *  @param scale_error1 first scale factor for error
+   *  @param scale_error2 second scale factor for error
+   *  @param scale_error3 third scale factor for error
+   *  @param scale_mean scale factor for mean
+   *  @param fraction fraction of first Gaussian
+   *  @param frac_rec2 recursive fraction of second GaussModel
+   *  @return the appropriate PDF
+   */
+  RooAddModel& TripleGaussModelPerEvent(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& scale_error3, RooAbsReal& scale_mean, RooAbsReal& fraction, RooAbsReal& frac_rec2);
   
   /**
    *  @brief Add and access an added resolution PDF with supplied coefficients
