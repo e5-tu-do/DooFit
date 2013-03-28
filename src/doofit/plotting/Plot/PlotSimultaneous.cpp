@@ -18,6 +18,8 @@
 #include "RooAbsRealLValue.h"
 #include "RooAbsCategoryLValue.h"
 #include "RooCatType.h"
+#include "RooDataHist.h"
+#include "RooSuperCategory.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -118,8 +120,22 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
       project_arg_found = true;
       set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
       set_project->add(sim_cat);
+      
+      RooArgSet set_project_really(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
+      set_project_really.add((dynamic_cast<const RooSuperCategory&>(sim_cat)).inputCatList());
+      
+      const RooAbsData* data_proj = dynamic_cast<const RooAbsData*>(it->getObject(1));
+      data_proj->Print();
+      RooAbsData* data_reduced = (const_cast<RooAbsData*>(data_proj))->reduce(set_project_really);
+      std::string name_data_hist = std::string(data_reduced->GetName()) + "_hist";
+      RooDataHist* data_hist = new RooDataHist(name_data_hist.c_str(), "binned projection dataset", *data_reduced->get(), *data_reduced);
+      data_hist->Print();
+      
+//      *it = ProjWData(*set_project,
+//                      *dynamic_cast<const RooAbsData*>(it->getObject(1)),
+//                      it->getInt(0));
       *it = ProjWData(*set_project,
-                      *dynamic_cast<const RooAbsData*>(it->getObject(1)),
+                      *data_hist,
                       it->getInt(0));
     }
   }
