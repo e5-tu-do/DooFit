@@ -26,13 +26,16 @@ for p in $packages; do
   then
     echo "$dir is a Subversion repository. Updating."
     sudo svn up $dir
+    base=$dir/`cat $dir/install_version`
   fi
   if [ -d $dir/.git ];
   then
     echo "$dir is a git repository. Pulling changes."
     sudo git pull $dir
+    tag=`cat $dir/install_version`
+    sudo git checkout $tag 
+    base=$dir
   fi
-  base=$dir/`cat $dir/install_version`
   InstallDooSoftwareProject $p $base "$dvvers"
 done
 
