@@ -7,18 +7,17 @@ source /lhcb/software/tu-dortmund/LHCbSoftwareSetup.sh #> /dev/null 2>&1
 echo "Probing ROOT versions"
 rvers=""
 dvvers=""
-#echo -n "Installing for following DaVinci versions: "
-#for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
-#do
-#  rver=`bash PrintRootVersionForDVVersion $ver`
-#  if [[ ! $rvers =~ $rver ]]; then
-#    rvers="$rvers $rver"
-#    dvvers="$dvvers $ver"
-#    echo -n " $ver"
-#  fi
-#done
-#echo ""
-dvvers="vv33r2"
+echo -n "Installing for following DaVinci versions: "
+for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
+do
+  rver=`bash PrintRootVersionForDVVersion $ver`
+  if [[ ! $rvers =~ $rver ]]; then
+    rvers="$rvers $rver"
+    dvvers="$dvvers $ver"
+    echo -n " $ver"
+  fi
+done
+echo ""
 
 for p in $packages; do
   dir=$DOOSOFTROOT/repos/$p
@@ -39,6 +38,6 @@ for p in $packages; do
     sudo git checkout $tag
     base=$dir
   fi
-  #InstallDooSoftwareProject $p $base "$dvvers"
+  InstallDooSoftwareProject $p $base "$dvvers"
 done
 
