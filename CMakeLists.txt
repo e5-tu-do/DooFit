@@ -6,18 +6,18 @@
 # to Debug prior to calling PROJECT()
 #
 
-IF(DEFINED CMAKE_BUILD_TYPE)
-   SET(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Choose the type of
-build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release
-RelWithDebInfo MinSizeRel.")
-ELSE()
-   SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options
-are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo
-MinSizeRel.")
-ENDIF()
+#IF(DEFINED CMAKE_BUILD_TYPE)
+#   SET(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Choose the type of
+#build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release
+#RelWithDebInfo MinSizeRel.")
+#ELSE()
+#   SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options
+#are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo
+#MinSizeRel.")
+#ENDIF()
 
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb" CACHE STRING "Debug options." FORCE)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "Debug options." FORCE)
 
 #ADD_DEFINITIONS("-std=c++0x")
 
