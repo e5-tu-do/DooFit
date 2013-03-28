@@ -89,13 +89,6 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
   // iterate over sub PDFs and match supplied regular expressions
   RooArgSet nodes;
   pdf.branchNodeServerList(&nodes);
-
-//  sdebug << "Component regexps to plot: ";
-//  for (std::vector<std::string>::const_iterator it = components.begin();
-//       it != components.end(); ++it) {
-//    sdebug << *it << " ";
-//  }
-//  sdebug << endmsg;
   
   for (std::vector<std::string>::const_iterator it = components.begin();
        it != components.end(); ++it) {
@@ -185,17 +178,10 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     if (plot_args_.size() > 6) arg7 = plot_args_[6];
     
     int i=1;
-    
-//    sinfo << "The following components will be plotted: ";
-//    for (std::vector<RooArgSet>::const_iterator it = components_.begin();
-//         it != components_.end(); ++it) {
-//      sinfo << *it << " ";
-//    }
-//    sinfo << endmsg;
     for (std::vector<RooArgSet>::const_iterator it = components_.begin();
          it != components_.end(); ++it) {
       if (it->getSize() > 0) {
-        sinfo << "Plotting component(s) " << *it << endmsg;
+        sinfo << "Plotting component " << it->first()->GetName() << endmsg;
         pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
         pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
         ++i;
