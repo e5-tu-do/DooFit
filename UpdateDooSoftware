@@ -22,7 +22,16 @@ echo ""
 for p in $packages; do
   dir=$DOOSOFTROOT/repos/$p
   echo $dir
-  sudo svn up $dir
+  if [ -d $dir/.svn ];
+  then
+    echo "$dir is a Subversion repository. Updating."
+    sudo svn up $dir
+  fi
+  if [ -d $dir/.git ];
+  then
+    echo "$dir is a git repository. Pulling changes."
+    sudo git pull $dir
+  fi
   base=$dir/`cat $dir/install_version`
   InstallDooSoftwareProject $p $base "$dvvers"
 done
