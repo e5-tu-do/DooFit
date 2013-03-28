@@ -18,6 +18,8 @@
 #include "RooAbsRealLValue.h"
 #include "RooAbsCategoryLValue.h"
 #include "RooCatType.h"
+#include "RooDataHist.h"
+#include "RooSuperCategory.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
