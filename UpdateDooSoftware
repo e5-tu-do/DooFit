@@ -38,6 +38,6 @@ for p in $packages; do
     sudo git checkout $tag
     base=$dir
   fi
-  InstallDooSoftwareProject $p $base "$dvvers"
+  #InstallDooSoftwareProject $p $base "$dvvers"
 done
 
