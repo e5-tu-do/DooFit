@@ -31,10 +31,11 @@ for p in $packages; do
   if [ -d $dir/.git ];
   then
     echo "$dir is a git repository. Pulling changes."
-    sudo git checkout master $dir
-    sudo git pull $dir
+    cd $dir
+    sudo git checkout master
+    sudo git pull
     tag=`cat $dir/install_version`
-    sudo git checkout $tag $dir
+    sudo git checkout $tag
     base=$dir
   fi
   InstallDooSoftwareProject $p $base "$dvvers"
