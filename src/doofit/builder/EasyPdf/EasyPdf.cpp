@@ -460,7 +460,7 @@ RooBDecay& doofit::builder::EasyPdf::BDecay(const std::string& name, RooRealVar&
                                                 RooBDecay::SingleSided));
 }
 
-RooKeysPdf doofit::builder::EasyPdf::KeysPdf(const std::string& name, const std::string& file_name, const std::string& ws_name, const std::string& pdf_name_on_ws) {
+RooKeysPdf& doofit::builder::EasyPdf::KeysPdf(const std::string& name, const std::string& file_name, const std::string& ws_name, const std::string& pdf_name_on_ws) {
   TFile file(file_name.c_str());
   RooWorkspace* ws = dynamic_cast<RooWorkspace*>(file.Get(ws_name.c_str()));
   RooKeysPdf* temp_pdf = dynamic_cast<RooKeysPdf*>(ws->pdf(pdf_name_on_ws.c_str()));

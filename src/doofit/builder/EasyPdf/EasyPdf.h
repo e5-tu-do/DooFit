@@ -826,7 +826,7 @@ class EasyPdf {
    *  @param pdf_name_on_ws name of the keys PDF in the workspace
    *  @return the appropriate PDF
    */
-  RooKeysPdf KeysPdf(const std::string& name, const std::string& file_name, const std::string& ws_name, const std::string& pdf_name_on_ws);
+  RooKeysPdf& KeysPdf(const std::string& name, const std::string& file_name, const std::string& ws_name, const std::string& pdf_name_on_ws);
   ///@}
   
   /**
