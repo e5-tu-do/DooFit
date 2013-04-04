@@ -24,6 +24,7 @@
 #include "RooSimultaneous.h"
 #include "RooCBShape.h"
 #include "RooSuperCategory.h"
+#include "RooKeysPdf.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"

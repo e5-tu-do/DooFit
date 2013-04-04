@@ -36,6 +36,7 @@ class RooEffProd;
 class RooBDecay;
 class RooSimultaneous;
 class RooSuperCategory;
+class RooKeysPdf;
 
 /** @class doofit::builder::EasyPdf
  *  @brief Easy PDF and variable building without the clutter
@@ -811,6 +812,20 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooBDecay& BDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau, RooAbsReal& dgamma, RooAbsReal& coef_cosh, RooAbsReal& coef_sinh, RooAbsReal& coef_cos, RooAbsReal& coef_sin, RooAbsReal& dm, const RooResolutionModel& model);
+  
+  /**
+   *  @brief Add and access a RooKeysPdf from a file
+   *
+   *  Request a RooKeysPdf by a specified name. If the PDF does not yet exist in
+   *  this EasyPdf pool of PDFs, it is created and returned. Otherwise an
+   *  exception ObjectExistsException is thrown.   
+   *
+   *  @param file_name name of TFile containing the keys PDF
+   *  @param ws_name name of workspace in TFile containing the keys PDF
+   *  @param pdf_name name of the keys PDF in the workspace
+   *  @return the appropriate PDF
+   */
+  RooKeysPdf KeysPdf(const std::string& file_name, const std::string& ws_name, const std::string& pdf_name);
   ///@}
   
   /**
