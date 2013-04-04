@@ -820,12 +820,13 @@ class EasyPdf {
    *  this EasyPdf pool of PDFs, it is created and returned. Otherwise an
    *  exception ObjectExistsException is thrown.   
    *
+   *  @param name name of the PDF (after cloning, see below)
    *  @param file_name name of TFile containing the keys PDF
    *  @param ws_name name of workspace in TFile containing the keys PDF
-   *  @param pdf_name name of the keys PDF in the workspace
+   *  @param pdf_name_on_ws name of the keys PDF in the workspace
    *  @return the appropriate PDF
    */
-  RooKeysPdf KeysPdf(const std::string& file_name, const std::string& ws_name, const std::string& pdf_name);
+  RooKeysPdf KeysPdf(const std::string& name, const std::string& file_name, const std::string& ws_name, const std::string& pdf_name_on_ws);
   ///@}
   
   /**

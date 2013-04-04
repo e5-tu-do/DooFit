@@ -4,6 +4,9 @@
 #include <map>
 #include <string>
 
+// from ROOT
+#include "TFile.h"
+
 // from RooFit
 #include "RooRealVar.h"
 #include "RooGaussian.h"
@@ -455,6 +458,14 @@ RooBDecay& doofit::builder::EasyPdf::BDecay(const std::string& name, RooRealVar&
   return AddPdfToStore<RooBDecay>(new RooBDecay(name.c_str(), name.c_str(), t, tau, dgamma,
                                                 coef_cosh, coef_sinh, coef_cos, coef_sin, dm, model,
                                                 RooBDecay::SingleSided));
+}
+
+RooKeysPdf doofit::builder::EasyPdf::KeysPdf(const std::string& name, const std::string& file_name, const std::string& ws_name, const std::string& pdf_name_on_ws) {
+  TFile file(file_name.c_str());
+  RooWorkspace* ws = dynamic_cast<RooWorkspace*>(file.Get(ws_name.c_str()));
+  RooKeysPdf* temp_pdf = dynamic_cast<RooKeysPdf*>(ws->pdf(pdf_name_on_ws.c_str()));
+  
+  return AddPdfToStore<RooKeysPdf>(dynamic_cast<RooKeysPdf*>(temp_pdf->cloneTree(name.c_str())));
 }
 
 RooAbsPdf& doofit::builder::EasyPdf::Pdf(const std::string &name) {
