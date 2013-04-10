@@ -130,6 +130,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
   fitting_args.Add((TObject*)(new RooCmdArg(Save(true))));
   fitting_args.Add((TObject*)(new RooCmdArg(Verbose(false))));
   fitting_args.Add((TObject*)(new RooCmdArg(Timer(true))));
+  fitting_args.Add((TObject*)(new RooCmdArg(Minimizer("Minuit2","minimize"))));
   if (ext_fit_args != NULL) {
     RooLinkedListIter it = ext_fit_args->iterator();
     TObject* arg = NULL;
