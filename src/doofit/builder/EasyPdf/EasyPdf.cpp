@@ -444,6 +444,24 @@ RooAddPdf& doofit::builder::EasyPdf::DoubleGaussianScaled(const std::string& nam
              RooArgList(fraction));
 }
 
+RooAddPdf& doofit::builder::EasyPdf::TripleGaussianScaled(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale2, RooAbsReal& scale3, RooAbsReal& fraction1, RooAbsReal& frac_rec2) {
+  std::string sigma2_name = name+"_sigma2";
+  std::string sigma3_name = name+"_sigma3";
+  std::string fraction2_name = name+"_fraction2";
+  
+  Gaussian("p2_"+name,x,mean,
+           Formula(sigma2_name, "@0*@1", RooArgList(sigma,scale2)));
+  Gaussian("p3_"+name,x,mean,
+           Formula(sigma3_name,"@0*@1@2",RooArgList(sigma,scale2,scale3)));
+  Formula(fraction2_name, "(1-@0)*@1", RooArgList(fraction1,frac_rec2));
+  
+  return Add(name,
+             RooArgList(Gaussian("p1_"+name,x,mean,sigma),
+                        Pdf("p2_"+name),
+                        Pdf("p3_"+name)),
+             RooArgList(fraction1,Formula(fraction2_name)));
+}
+
 RooAddPdf& doofit::builder::EasyPdf::DoubleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& fraction, const RooResolutionModel& model) {
   return Add(name, RooArgList(Decay("p1_"+name, t, tau1, model),
                               Decay("p2_"+name, t, tau2, model)),

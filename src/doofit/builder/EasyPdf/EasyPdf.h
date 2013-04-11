@@ -560,7 +560,7 @@ class EasyPdf {
   /**
    *  @brief Add and access a triple RooGaussModel with scaled parameters
    *
-   *  Request a double RooGaussModel by a specified name. If the PDF does not
+   *  Request a triple RooGaussModel by a specified name. If the PDF does not
    *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
    *  Otherwise an exception ObjectExistsException is thrown.
    *
@@ -766,6 +766,35 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooAddPdf& DoubleGaussianScaled(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale, RooAbsReal& fraction, std::string sigma2_name="");
+  
+  /**
+   *  @brief Add and access a triple Gaussian PDF with scaled widths and recursive fractions
+   *
+   *  Request a triple Gaussian as RooAddPdf by a specified name. If the PDF
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The PDF is modelled as
+   *
+   *  P(x) = fraction1 * Gaussian(x,mean,sigma) + fraction2 * Gaussian(x,mean,sigma2)
+   *         + fraction3 * Gaussian(x,mean,sigma3)
+   *
+   *  with sigma2 = scale2*sigma, sigma3 = scale3*sigma2, 
+   *  fraction2 = (1-fraction)*frac_rec2 and 
+   *  fraction3 = (1-fraction)*(1-frac_rec2) as automatically generated formulae
+   *  for scaled widths and recursive fractions. Names of these will be 
+   *  generated automatically based on the PDF name.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param mean mean variable
+   *  @param sigma sigma variable
+   *  @param scale variable for scale between sigma and sigma2
+   *  @param fraction fraction between two Gaussians
+   *  @param sigma2_name name of sigma2 formula
+   *  @return the appropriate PDF
+   */
+  RooAddPdf& TripleGaussianScaled(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale2, RooAbsReal& scale3, RooAbsReal& fraction1, RooAbsReal& frac_rec2);
   
   /**
    *  @brief Add and access a double Decay PDF
