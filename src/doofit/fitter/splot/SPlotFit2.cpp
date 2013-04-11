@@ -16,6 +16,7 @@
 #include "RooRealVar.h"
 #include "RooLinkedListIter.h"
 #include "RooArgList.h"
+#include "RooFitResult.h"
 
 // from RooFit PDFs
 #include "RooAbsPdf.h"
@@ -143,7 +144,9 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
 
   //=========================================================================
   // fit discriminating pdf
-  pdf_->fitTo(*input_data_, fitting_args);
+  RooFitResult* fit_result = pdf_->fitTo(*input_data_, fitting_args);
+  fit_result->Print("v");
+  delete fit_result;
   
   //=========================================================================
   // create sPlot
