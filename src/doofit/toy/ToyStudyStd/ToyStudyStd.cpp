@@ -380,8 +380,13 @@ namespace toy {
     RooRealVar* new_var = new RooRealVar(new_name.length()>0 ? new_name.c_str() : other.GetName(),
                                          new_title.length()>0 ? new_title.c_str() : other.GetTitle(),
                                          other.getVal());
-    if (other.hasMin())       new_var->setMin(other.getMin());
-    if (other.hasMax())       new_var->setMax(other.getMax());
+    
+    if (other.hasMin()) {
+      new_var->setMin(other.getMin());
+    }
+    if (other.hasMax()) {
+      new_var->setMax(other.getMax());
+    }
     if (other.hasError())     new_var->setError(other.getError());
     if (other.hasAsymError()) new_var->setAsymError(other.getErrorLo(), other.getErrorHi());
     new_var->setUnit(other.getUnit());
