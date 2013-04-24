@@ -17,7 +17,18 @@ shift
 shift
 shift
 
-function catch_errors {
+echo "Installing $module for DaVinci $dv_version from $base_dir"
+source /lhcb/software/tu-dortmund/LHCbSoftwareSetup.sh > /dev/null 2>&1
+source SetupProject.sh DaVinci $dv_version > /dev/null 2>&1
+source LoadDooSoftware --ignore-local
+mkdir /tmp/$uuid
+cd /tmp/$uuid
+echo "Starting build"
+echo
+
+cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir && make VERBOSE="" -j $num_cpu
+rc=$?
+if [[ $rc != 0 ]] ; then
   make VERBOSE=""
   echo 
   echo 
@@ -30,21 +41,10 @@ function catch_errors {
   echo 
   rm -rf /tmp/$uuid
   exit 1
-}
-
-trap catch_errors ERR
-
-echo "Installing $module for DaVinci $dv_version from $base_dir"
-source /lhcb/software/tu-dortmund/LHCbSoftwareSetup.sh > /dev/null 2>&1
-source SetupProject.sh DaVinci $dv_version > /dev/null 2>&1
-source LoadDooSoftware --ignore-local
-mkdir /tmp/$uuid
-cd /tmp/$uuid
-echo "Starting build"
+fi
+echo 
+echo "Deleting old version and installing new."
 echo
-
-cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir
-make VERBOSE="" -j $num_cpu
 sudo rm -rf $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
 sudo mkdir -p $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
 sudo make install
