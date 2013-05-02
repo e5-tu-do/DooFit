@@ -41,5 +41,10 @@ for p in $packages; do
     base=$dir
   fi
   InstallDooSoftwareProject $p $base "$dvvers"
+  if [ -d $dir/.git ];
+  then
+    echo "$dir is a git repository. Reverting to master."
+    sudo git checkout master
+  fi
 done
 
