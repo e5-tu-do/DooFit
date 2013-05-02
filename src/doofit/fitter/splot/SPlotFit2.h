@@ -62,6 +62,17 @@ class SPlotFit2{
    */
   SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data);
   
+  /**
+   *  @brief Constructor based on a set of PDFs
+   *
+   *  Based on a given vector of PDFs, the SPlotFit2 is initialized. It will 
+   *  generate a RooAddPdf based on the supplied PDFs and
+   *  use this added PDF to discriminate and to generate individual sweights.
+   *
+   *  @param pdfs the PDFs to use for discrimination
+   */
+  SPlotFit2(std::vector<RooAbsPdf*> pdfs);
+  
   SPlotFit2();
   ~SPlotFit2();
   

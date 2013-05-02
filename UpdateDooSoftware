@@ -19,6 +19,8 @@ do
 done
 echo ""
 
+exit 0
+
 for p in $packages; do
   dir=$DOOSOFTROOT/repos/$p
   echo $dir

@@ -115,6 +115,34 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data) :
   pdf_ = new RooAddPdf("pdf_splotfit2", "pdf_splotfit2", pdfs_list, yields_);
 }
 
+SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
+  pdf_(NULL),
+  pdf_owned_(true),
+  yields_(),
+  num_cpu_(4),
+  input_data_(NULL),
+  pdf_disc_full_(NULL),
+  disc_vars_(),
+  cont_vars_(),
+  disc_pdfs_(),
+  cont_pdfs_(),
+  disc_pdfs_extend_(),
+  sweighted_data_(),
+  sweighted_hist_(),
+  use_minos_(true)
+{
+  RooArgList pdfs_list;
+  for (std::vector<RooAbsPdf*>::const_iterator it = pdfs.begin();
+       it != pdfs.end(); ++it) {
+    pdfs_list.add(**it);
+    RooRealVar* var = new RooRealVar(TString()+(*it)->GetName()+"_yield",
+                                     TString()+(*it)->GetName()+"_yield",
+                                     1e6, 0.0, 1e8);
+    yields_.addOwned(*var);
+  }
+  pdf_ = new RooAddPdf("pdf_splotfit2", "pdf_splotfit2", pdfs_list, yields_);
+}
+
   
 SPlotFit2::~SPlotFit2(){
   if (pdf_owned_ && pdf_ != NULL) delete pdf_;
