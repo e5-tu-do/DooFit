@@ -366,6 +366,12 @@ RooDataSet* SPlotFit2::GetSwDataSet(const std::string& comp_name){
   return sweighted_data_[comp_name];
 }
 
+void SPlotFit2::WriteParametersFile(std::string filename) {
+  RooArgSet* parameters = pdf().getParameters(*input_data_);
+  parameters->writeToFile(filename.c_str());
+  delete parameters;
+}
+  
 } //namespace splot
 } //namespace fitter
 } //namespace doofit
