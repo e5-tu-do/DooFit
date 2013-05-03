@@ -50,6 +50,8 @@ namespace splot {
 SPlotFit2::SPlotFit2() :
   pdf_(NULL),
   pdf_owned_(false),
+  yields_(NULL),
+  parameters_(NULL),
   num_cpu_(4),
   input_data_(),
   pdf_disc_full_(NULL),
@@ -69,6 +71,7 @@ SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
   pdf_(&pdf),
   pdf_owned_(false),
   yields_(yields),
+  parameters_(NULL),
   num_cpu_(4),
   input_data_(&data),
   pdf_disc_full_(NULL),
@@ -90,6 +93,7 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data) :
   pdf_(NULL),
   pdf_owned_(true),
   yields_(),
+  parameters_(NULL),
   num_cpu_(4),
   input_data_(&data),
   pdf_disc_full_(NULL),
@@ -119,6 +123,7 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
   pdf_(NULL),
   pdf_owned_(true),
   yields_(),
+  parameters_(NULL),
   num_cpu_(4),
   input_data_(NULL),
   pdf_disc_full_(NULL),
@@ -146,6 +151,7 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
   
 SPlotFit2::~SPlotFit2(){
   if (pdf_owned_ && pdf_ != NULL) delete pdf_;
+  if (parameters_ != NULL) delete parameters_;
 }
 
 void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
@@ -175,6 +181,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
   RooFitResult* fit_result = pdf_->fitTo(*input_data_, fitting_args);
   fit_result->Print("v");
   delete fit_result;
+  parameters_ = pdf().getParameters(*input_data_);
   
   //=========================================================================
   // create sPlot
@@ -367,9 +374,7 @@ RooDataSet* SPlotFit2::GetSwDataSet(const std::string& comp_name){
 }
 
 void SPlotFit2::WriteParametersFile(std::string filename) {
-  RooArgSet* parameters = pdf().getParameters(*input_data_);
-  parameters->writeToFile(filename.c_str());
-  delete parameters;
+  parameters_->writeToFile(filename.c_str());
 }
   
 } //namespace splot

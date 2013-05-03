@@ -152,6 +152,11 @@ class SPlotFit2{
    */
   RooArgList yields_;
   
+  /**
+   *  @brief Parameter set after fit
+   */
+  RooArgSet* parameters_;
+  
   unsigned int num_cpu_;
   RooDataSet* input_data_;   //< input data
   
