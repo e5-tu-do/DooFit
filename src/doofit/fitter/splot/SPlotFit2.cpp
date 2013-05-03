@@ -142,7 +142,7 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
     pdfs_list.add(**it);
     RooRealVar* var = new RooRealVar(TString()+(*it)->GetName()+"_yield",
                                      TString()+(*it)->GetName()+"_yield",
-                                     1e6, 0.0, 1e8);
+                                     1e7, 0.0, 1e10);
     yields_.addOwned(*var);
   }
   pdf_ = new RooAddPdf("pdf_splotfit2", "pdf_splotfit2", pdfs_list, yields_);
