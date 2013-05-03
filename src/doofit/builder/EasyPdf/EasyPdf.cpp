@@ -490,6 +490,7 @@ RooAbsPdf& doofit::builder::EasyPdf::Pdf(const std::string &name) {
   if (pdfs_.count(name) == 1) {
     return *pdfs_[name];
   } else {
+    serr << "Pdf " << name << " not existing!" << endmsg;
     throw ObjectNotExistingException();
   }
 }
