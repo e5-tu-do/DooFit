@@ -211,131 +211,131 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
   delete yield_iterator;
 }
   
-void SPlotFit2::Run(RooLinkedList* ext_fit_args){
-
-  // merge our and external fitting arguments
-  RooLinkedList fitting_args;
-  fitting_args.Add((TObject*)(new RooCmdArg(NumCPU(num_cpu_))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Extended())));
-  fitting_args.Add((TObject*)(new RooCmdArg(Minos(use_minos_))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Strategy(2))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Save(true))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Verbose(false))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Timer(true))));
-  if (ext_fit_args != NULL) {
-    RooLinkedListIter it = ext_fit_args->iterator();
-    TObject* arg = NULL;
-    
-    while ((arg = it.Next())) {
-      arg->Print();
-      fitting_args.Add(arg);
-    }
-  }
-  
-  // Make estimtes on yields (for starting values that are not complete nonsense)
-  double yield_start  = input_data_->sumEntries()/disc_pdfs_.size();
-  double yield_max    = 1200*yield_start;
-  
-  //=========================================================================
-  // create discriminating pdfs and fit
-  
-  // prepare iterator
-  map<std::string,RooArgSet>::const_iterator disc_pdfs_it;
-  
-  // iterate over disc_pdfs_ map and create ProdPdfs, yields, and extended PDFs
-  RooArgList pdfs_extend;
-  
-  for (disc_pdfs_it = disc_pdfs_.begin(); disc_pdfs_it != disc_pdfs_.end(); ++disc_pdfs_it){
-    std::string   comp_name = (*disc_pdfs_it).first;
-    RooArgSet     pdfs_set  = (*disc_pdfs_it).second;
-    RooRealVar*   yield = new RooRealVar(TString(comp_name)+"Yield",TString("N_{")+comp_name+"}",yield_start,0,yield_max);
-    RooProdPdf*   pdf_prod = new RooProdPdf(TString(comp_name)+"ProdPdf",TString("Product Disc Pdf of ")+comp_name+" Component",pdfs_set);
-    RooExtendPdf* pdf_extend = new RooExtendPdf(TString(comp_name)+"ExtPdf",TString("Extended Disc Pdf of ")+comp_name+" Component",*pdf_prod,*yield);
-    
-    disc_pdfs_extend_[comp_name] = std::pair<RooRealVar*,RooAbsPdf*>(yield,pdf_extend);
-    //pdfs_set.Print();
-    //pdf_extend->Print("t");
-    pdfs_extend.add(*pdf_extend);
-  }
-  
-  // create full discriminating pdf by RooAddPdf of component pdfs
-  pdf_disc_full_ = new RooAddPdf("pdfDiscFull","Full discriminating Pdf",pdfs_extend);
-    
-	//Introduced by Tobi for the possibility of giving the fit sane satrting values for hadronic background event yields.
-	//Should not interfer with anything
-	pdf_disc_full_->getParameters(input_data_)->writeToFile("SPlotParams.new"); 
-	pdf_disc_full_->getParameters(input_data_)->readFromFile("SPlotParams.txt");
-    
-  // fit discriminating pdf
-  pdf_disc_full_->fitTo(*input_data_, fitting_args);
-  
-	//Introduced by Tobi ... ^^
-	pdf_disc_full_->getParameters(input_data_)->writeToFile("SPlotParams_result.txt"); 
-  
-  //=========================================================================
-  // create sweighted datasets
-  
-  // set all parameters of discriminating pdf constant except for yields
-  
-  // get all parameters
-  RooArgSet* par_disc_set = pdf_disc_full_->getParameters(*input_data_);
-  
-  // get yields
-  RooArgSet disc_pdfs_yields;
-  map<std::string,std::pair<RooRealVar*,RooAbsPdf*> >::const_iterator disc_pdfs_extend_it;
-  for (disc_pdfs_extend_it = disc_pdfs_extend_.begin(); disc_pdfs_extend_it != disc_pdfs_extend_.end(); ++disc_pdfs_extend_it){
-    disc_pdfs_yields.add(*((*disc_pdfs_extend_it).second.first));
-  }
-  
-  // remove yields from parameter set
-  par_disc_set->remove(disc_pdfs_yields);
-  
-  // Helper pointers
-  RooRealVar* var_iter1 = NULL;
-  RooRealVar* var_iter2 = NULL;
-  
-  // iterate over left over parameters of full disc pdf and set constant
-  RooLinkedListIter* par_disc_set_iterator = (RooLinkedListIter*)par_disc_set->createIterator();
-  while (var_iter1=(RooRealVar*)par_disc_set_iterator->Next()) {
-    var_iter1->setConstant();
-  }
-  
-  // create datasets
-  RooStats::SPlot *sData = new RooStats::SPlot("sData","SPlot",*input_data_,pdf_disc_full_,disc_pdfs_yields);
-  
-  //=========================================================================
-  // create sweighted datasets
-  for (disc_pdfs_extend_it = disc_pdfs_extend_.begin(); disc_pdfs_extend_it != disc_pdfs_extend_.end(); ++disc_pdfs_extend_it){
-    std::string comp_name = (*disc_pdfs_extend_it).first;
-    sweighted_data_[comp_name] = new RooDataSet(input_data_->GetName(),input_data_->GetTitle(),input_data_,*input_data_->get(),0,TString("")+(*disc_pdfs_extend_it).second.first->GetName()+"_sw");
-  }
-  
-  // create sweighted datahists
-  pdf_disc_full_->fitTo(*input_data_, fitting_args);
-  
-  for (disc_pdfs_extend_it = disc_pdfs_extend_.begin(); disc_pdfs_extend_it != disc_pdfs_extend_.end(); ++disc_pdfs_extend_it){
-    std::string comp_name = (*disc_pdfs_extend_it).first;
-    sweighted_hist_[comp_name] = new RooDataHist(TString("sDataHist")+comp_name,TString("sDataHist")+comp_name,cont_vars_,*(sweighted_data_[comp_name]));
-  }
-  
-  //=========================================================================
-  // Fit
-  // prepare iterator
-  map<std::string,RooArgSet>::const_iterator cont_pdfs_it;
-  for (cont_pdfs_it = cont_pdfs_.begin(); cont_pdfs_it != cont_pdfs_.end(); ++cont_pdfs_it){
-    std::string comp_name = (*cont_pdfs_it).first;
-    RooArgSet   pdfs_set  = (*cont_pdfs_it).second;
-    
-    std::string prod_pdf_name = comp_name+"DiscProdPdf";
-    RooProdPdf* pdf_fit = new RooProdPdf(prod_pdf_name.c_str(), TString("Product Disc Pdf of ")+comp_name+" Component",pdfs_set);
-    cont_pdfs_prod_[comp_name] = pdf_fit;
-    RooDataHist* fit_data = sweighted_hist_[comp_name];
-    fit_data->Print();
-    
-    fitting_args.Add((TObject*)(new RooCmdArg(SumW2Error(true))));
-    pdf_fit->fitTo(*fit_data, fitting_args);
-  }
-}
+//void SPlotFit2::Run(RooLinkedList* ext_fit_args){
+//
+//  // merge our and external fitting arguments
+//  RooLinkedList fitting_args;
+//  fitting_args.Add((TObject*)(new RooCmdArg(NumCPU(num_cpu_))));
+//  fitting_args.Add((TObject*)(new RooCmdArg(Extended())));
+//  fitting_args.Add((TObject*)(new RooCmdArg(Minos(use_minos_))));
+//  fitting_args.Add((TObject*)(new RooCmdArg(Strategy(2))));
+//  fitting_args.Add((TObject*)(new RooCmdArg(Save(true))));
+//  fitting_args.Add((TObject*)(new RooCmdArg(Verbose(false))));
+//  fitting_args.Add((TObject*)(new RooCmdArg(Timer(true))));
+//  if (ext_fit_args != NULL) {
+//    RooLinkedListIter it = ext_fit_args->iterator();
+//    TObject* arg = NULL;
+//    
+//    while ((arg = it.Next())) {
+//      arg->Print();
+//      fitting_args.Add(arg);
+//    }
+//  }
+//  
+//  // Make estimtes on yields (for starting values that are not complete nonsense)
+//  double yield_start  = input_data_->sumEntries()/disc_pdfs_.size();
+//  double yield_max    = 1200*yield_start;
+//  
+//  //=========================================================================
+//  // create discriminating pdfs and fit
+//  
+//  // prepare iterator
+//  map<std::string,RooArgSet>::const_iterator disc_pdfs_it;
+//  
+//  // iterate over disc_pdfs_ map and create ProdPdfs, yields, and extended PDFs
+//  RooArgList pdfs_extend;
+//  
+//  for (disc_pdfs_it = disc_pdfs_.begin(); disc_pdfs_it != disc_pdfs_.end(); ++disc_pdfs_it){
+//    std::string   comp_name = (*disc_pdfs_it).first;
+//    RooArgSet     pdfs_set  = (*disc_pdfs_it).second;
+//    RooRealVar*   yield = new RooRealVar(TString(comp_name)+"Yield",TString("N_{")+comp_name+"}",yield_start,0,yield_max);
+//    RooProdPdf*   pdf_prod = new RooProdPdf(TString(comp_name)+"ProdPdf",TString("Product Disc Pdf of ")+comp_name+" Component",pdfs_set);
+//    RooExtendPdf* pdf_extend = new RooExtendPdf(TString(comp_name)+"ExtPdf",TString("Extended Disc Pdf of ")+comp_name+" Component",*pdf_prod,*yield);
+//    
+//    disc_pdfs_extend_[comp_name] = std::pair<RooRealVar*,RooAbsPdf*>(yield,pdf_extend);
+//    //pdfs_set.Print();
+//    //pdf_extend->Print("t");
+//    pdfs_extend.add(*pdf_extend);
+//  }
+//  
+//  // create full discriminating pdf by RooAddPdf of component pdfs
+//  pdf_disc_full_ = new RooAddPdf("pdfDiscFull","Full discriminating Pdf",pdfs_extend);
+//    
+//	//Introduced by Tobi for the possibility of giving the fit sane satrting values for hadronic background event yields.
+//	//Should not interfer with anything
+//	pdf_disc_full_->getParameters(input_data_)->writeToFile("SPlotParams.new"); 
+//	pdf_disc_full_->getParameters(input_data_)->readFromFile("SPlotParams.txt");
+//    
+//  // fit discriminating pdf
+//  pdf_disc_full_->fitTo(*input_data_, fitting_args);
+//  
+//	//Introduced by Tobi ... ^^
+//	pdf_disc_full_->getParameters(input_data_)->writeToFile("SPlotParams_result.txt"); 
+//  
+//  //=========================================================================
+//  // create sweighted datasets
+//  
+//  // set all parameters of discriminating pdf constant except for yields
+//  
+//  // get all parameters
+//  RooArgSet* par_disc_set = pdf_disc_full_->getParameters(*input_data_);
+//  
+//  // get yields
+//  RooArgSet disc_pdfs_yields;
+//  map<std::string,std::pair<RooRealVar*,RooAbsPdf*> >::const_iterator disc_pdfs_extend_it;
+//  for (disc_pdfs_extend_it = disc_pdfs_extend_.begin(); disc_pdfs_extend_it != disc_pdfs_extend_.end(); ++disc_pdfs_extend_it){
+//    disc_pdfs_yields.add(*((*disc_pdfs_extend_it).second.first));
+//  }
+//  
+//  // remove yields from parameter set
+//  par_disc_set->remove(disc_pdfs_yields);
+//  
+//  // Helper pointers
+//  RooRealVar* var_iter1 = NULL;
+//  RooRealVar* var_iter2 = NULL;
+//  
+//  // iterate over left over parameters of full disc pdf and set constant
+//  RooLinkedListIter* par_disc_set_iterator = (RooLinkedListIter*)par_disc_set->createIterator();
+//  while (var_iter1=(RooRealVar*)par_disc_set_iterator->Next()) {
+//    var_iter1->setConstant();
+//  }
+//  
+//  // create datasets
+//  RooStats::SPlot *sData = new RooStats::SPlot("sData","SPlot",*input_data_,pdf_disc_full_,disc_pdfs_yields);
+//  
+//  //=========================================================================
+//  // create sweighted datasets
+//  for (disc_pdfs_extend_it = disc_pdfs_extend_.begin(); disc_pdfs_extend_it != disc_pdfs_extend_.end(); ++disc_pdfs_extend_it){
+//    std::string comp_name = (*disc_pdfs_extend_it).first;
+//    sweighted_data_[comp_name] = new RooDataSet(input_data_->GetName(),input_data_->GetTitle(),input_data_,*input_data_->get(),0,TString("")+(*disc_pdfs_extend_it).second.first->GetName()+"_sw");
+//  }
+//  
+//  // create sweighted datahists
+//  pdf_disc_full_->fitTo(*input_data_, fitting_args);
+//  
+//  for (disc_pdfs_extend_it = disc_pdfs_extend_.begin(); disc_pdfs_extend_it != disc_pdfs_extend_.end(); ++disc_pdfs_extend_it){
+//    std::string comp_name = (*disc_pdfs_extend_it).first;
+//    sweighted_hist_[comp_name] = new RooDataHist(TString("sDataHist")+comp_name,TString("sDataHist")+comp_name,cont_vars_,*(sweighted_data_[comp_name]));
+//  }
+//  
+//  //=========================================================================
+//  // Fit
+//  // prepare iterator
+//  map<std::string,RooArgSet>::const_iterator cont_pdfs_it;
+//  for (cont_pdfs_it = cont_pdfs_.begin(); cont_pdfs_it != cont_pdfs_.end(); ++cont_pdfs_it){
+//    std::string comp_name = (*cont_pdfs_it).first;
+//    RooArgSet   pdfs_set  = (*cont_pdfs_it).second;
+//    
+//    std::string prod_pdf_name = comp_name+"DiscProdPdf";
+//    RooProdPdf* pdf_fit = new RooProdPdf(prod_pdf_name.c_str(), TString("Product Disc Pdf of ")+comp_name+" Component",pdfs_set);
+//    cont_pdfs_prod_[comp_name] = pdf_fit;
+//    RooDataHist* fit_data = sweighted_hist_[comp_name];
+//    fit_data->Print();
+//    
+//    fitting_args.Add((TObject*)(new RooCmdArg(SumW2Error(true))));
+//    pdf_fit->fitTo(*fit_data, fitting_args);
+//  }
+//}
 
   std::pair<RooHistPdf*,RooDataHist*> SPlotFit2::GetHistPdf(const std::string& pdf_name, const RooArgSet& vars_set, const std::string& comp_name, const std::string& binningName){
   RooDataHist* data_hist = new RooDataHist(TString("sDataHist")+comp_name,TString("sDataHist")+comp_name,cont_vars_, TString(binningName));

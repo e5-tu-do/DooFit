@@ -92,7 +92,7 @@ class SPlotFit2{
    */
   RooAbsPdf& pdf() { return *pdf_; }
   
-  void Run(RooLinkedList* ext_fit_args=NULL);
+//  void Run(RooLinkedList* ext_fit_args=NULL);
   std::pair<RooHistPdf*,RooDataHist*> GetHistPdf(const std::string& pdf_name, const RooArgSet& vars_set, const std::string& comp_name, const std::string& binningName = "");
   
   RooDataHist* GetRooDataHist( const std::string& com_name, const std::string& binningName );
