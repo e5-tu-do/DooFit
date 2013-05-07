@@ -195,11 +195,11 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     if (sc_y == kLinear || sc_y == kBoth) {
       doocore::lutils::PlotPulls(pull_plot_name, plot_frame_pull, config_plot_.plot_directory(), false, false, true, NULL);
-      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), false, false, true, NULL);
+      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), false, false, true, NULL, "");
     }
     if (sc_y == kLogarithmic || sc_y == kBoth) {
       doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame_pull, config_plot_.plot_directory(), true, false, true, NULL);
-      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), true, false, true, NULL);
+      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), true, false, true, NULL, "");
     }
     
     delete plot_frame_pull;
