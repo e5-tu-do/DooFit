@@ -194,12 +194,12 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     plot_frame_pull->SetMaximum(1.3*plot_frame_pull->GetMaximum());
     
     if (sc_y == kLinear || sc_y == kBoth) {
-      doocore::lutils::PlotResiduals(pull_plot_name, plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, false);
-      doocore::lutils::PlotResiduals("AllPlots", plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, false);
+      doocore::lutils::PlotPulls(pull_plot_name, plot_frame_pull, config_plot_.plot_directory(), false, false, true, NULL);
+      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), false, false, true, NULL, "");
     }
     if (sc_y == kLogarithmic || sc_y == kBoth) {
-      doocore::lutils::PlotResiduals(log_pull_plot_name, plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, true);
-      doocore::lutils::PlotResiduals("AllPlots", plot_frame_pull, &dimension_, NULL, config_plot_.plot_directory(), true, true);
+      doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame_pull, config_plot_.plot_directory(), true, false, true, NULL);
+      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), true, false, true, NULL, "");
     }
     
     delete plot_frame_pull;
@@ -207,12 +207,12 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   plot_frame->SetMinimum(0.5);
   plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
   if (sc_y == kLinear || sc_y == kBoth) {
-    doocore::lutils::PlotSimple(plot_name, plot_frame, &dimension_, config_plot_.plot_directory(), false);
-    doocore::lutils::PlotSimple("AllPlots", plot_frame, &dimension_, config_plot_.plot_directory(), false);
+    doocore::lutils::PlotSimple(plot_name, plot_frame, config_plot_.plot_directory(), false);
+    doocore::lutils::PlotSimple("AllPlots", plot_frame, config_plot_.plot_directory(), false);
   }
   if (sc_y == kLogarithmic || sc_y == kBoth) {
-    doocore::lutils::PlotSimple(log_plot_name, plot_frame, &dimension_, config_plot_.plot_directory(), true);
-    doocore::lutils::PlotSimple("AllPlots", plot_frame, &dimension_, config_plot_.plot_directory(), true);
+    doocore::lutils::PlotSimple(log_plot_name, plot_frame, config_plot_.plot_directory(), true);
+    doocore::lutils::PlotSimple("AllPlots", plot_frame, config_plot_.plot_directory(), true);
   }
   
   delete plot_frame;
