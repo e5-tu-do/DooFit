@@ -177,7 +177,6 @@ void doofit::builder::EasyPdf::SetTitles(const std::string& config_file) {
        it != end; ++it) {
     std::string title = title_config.getString(section+it->second->GetName());
     if (title != "") it->second->SetTitle(title.c_str());
-    sdebug << it->second->GetTitle() << endmsg;
   }
   for (std::map<std::string,RooCategory*>::iterator it = cats_.begin(), end = cats_.end();
        it != end; ++it) {
