@@ -31,6 +31,7 @@
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
+#include "doocore/config/EasyConfig.h"
 
 // from project
 #include "doofit/config/CommaSeparatedList.h"
@@ -164,6 +165,33 @@ RooSuperCategory& doofit::builder::EasyPdf::SuperCat(const std::string &name) {
     return *supercats_[name];
   } else {
     throw ObjectNotExistingException();
+  }
+}
+
+void doofit::builder::EasyPdf::SetTitles(const std::string& config_file) {
+  using namespace doocore::config;
+  EasyConfig title_config(config_file);
+  std::string section = "easypdf_titles";
+
+  for (std::map<std::string,RooRealVar*>::iterator it = vars_.begin(), end = vars_.end();
+       it != end; ++it) {
+    std::string title = title_config.getString(section+it->second->GetName());
+    if (title != "") it->second->SetTitle(title.c_str());
+  }
+  for (std::map<std::string,RooCategory*>::iterator it = cats_.begin(), end = cats_.end();
+       it != end; ++it) {
+    std::string title = title_config.getString(section+it->second->GetName());
+    if (title != "") it->second->SetTitle(title.c_str());
+  }
+  for (std::map<std::string,RooSuperCategory*>::iterator it = supercats_.begin(), end = supercats_.end();
+       it != end; ++it) {
+    std::string title = title_config.getString(section+it->second->GetName());
+    if (title != "") it->second->SetTitle(title.c_str());
+  }
+  for (std::map<std::string,RooAbsPdf*>::iterator it = pdfs_.begin(), end = pdfs_.end();
+       it != end; ++it) {
+    std::string title = title_config.getString(section+it->second->GetName());
+    if (title != "") it->second->SetTitle(title.c_str());
   }
 }
 
