@@ -171,12 +171,13 @@ RooSuperCategory& doofit::builder::EasyPdf::SuperCat(const std::string &name) {
 void doofit::builder::EasyPdf::SetTitles(const std::string& config_file) {
   using namespace doocore::config;
   EasyConfig title_config(config_file);
-  std::string section = "easypdf_titles";
+  std::string section = "easypdf_titles.";
 
   for (std::map<std::string,RooRealVar*>::iterator it = vars_.begin(), end = vars_.end();
        it != end; ++it) {
     std::string title = title_config.getString(section+it->second->GetName());
     if (title != "") it->second->SetTitle(title.c_str());
+    sdebug << it->second->GetTitle() << endmsg;
   }
   for (std::map<std::string,RooCategory*>::iterator it = cats_.begin(), end = cats_.end();
        it != end; ++it) {
@@ -198,7 +199,7 @@ void doofit::builder::EasyPdf::SetTitles(const std::string& config_file) {
 void doofit::builder::EasyPdf::SetUnits(const std::string& config_file) {
   using namespace doocore::config;
   EasyConfig title_config(config_file);
-  std::string section = "easypdf_units";
+  std::string section = "easypdf_units.";
   
   for (std::map<std::string,RooRealVar*>::iterator it = vars_.begin(), end = vars_.end();
        it != end; ++it) {
