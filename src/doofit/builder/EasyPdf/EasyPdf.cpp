@@ -195,6 +195,18 @@ void doofit::builder::EasyPdf::SetTitles(const std::string& config_file) {
   }
 }
 
+void doofit::builder::EasyPdf::SetUnits(const std::string& config_file) {
+  using namespace doocore::config;
+  EasyConfig title_config(config_file);
+  std::string section = "easypdf_units";
+  
+  for (std::map<std::string,RooRealVar*>::iterator it = vars_.begin(), end = vars_.end();
+       it != end; ++it) {
+    std::string title = title_config.getString(section+it->second->GetName());
+    if (title != "") it->second->setUnit(title.c_str());
+  }
+}
+
 RooArgSet doofit::builder::EasyPdf::Vars(const std::string &names, const std::string define_set_name) {
   config::CommaSeparatedList<std::string> variables;
   variables.Parse(names);
