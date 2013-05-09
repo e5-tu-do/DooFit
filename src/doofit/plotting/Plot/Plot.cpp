@@ -192,7 +192,10 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-    plot_frame_pull->SetMinimum(0.5);
+    
+    // =10^(ln(11)/ln(10)-0.5)
+    //plot_frame_pull->SetMinimum(0.5);
+    plot_frame_pull->SetMinimum(TMath::Power(10,TMath::Log10(plot_frame_pull->GetMinimum())-0.5));
     plot_frame_pull->SetMaximum(1.3*plot_frame_pull->GetMaximum());
     
     
@@ -207,7 +210,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     delete plot_frame_pull;
   }
-  plot_frame->SetMinimum(0.5);
+  plot_frame->SetMinimum(TMath::Power(10,TMath::Log10(plot_frame->GetMinimum())-0.5));
   plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
   if (sc_y == kLinear || sc_y == kBoth) {
     doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false);
