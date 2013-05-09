@@ -158,7 +158,9 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
        it != datasets_.end(); ++it) {
     (*it)->plotOn(plot_frame/*, Rescale(1.0/(*it)->sumEntries())*/);
   }
-    
+  
+  TLatex label(0.5,0.5,"LHCb");
+  
   config_plot_.OnDemandOpenPlotStack();
   if (pdf_ != NULL) {
     RooPlot* plot_frame_pull = dimension_.frame(range_arg);
@@ -193,13 +195,14 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     plot_frame_pull->SetMinimum(0.5);
     plot_frame_pull->SetMaximum(1.3*plot_frame_pull->GetMaximum());
     
+    
     if (sc_y == kLinear || sc_y == kBoth) {
-      doocore::lutils::PlotPulls(pull_plot_name, plot_frame_pull, config_plot_.plot_directory(), false, false, true, NULL);
-      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), false, false, true, NULL, "");
+      doocore::lutils::PlotPulls(pull_plot_name, plot_frame_pull, config_plot_.plot_directory(), false, false, true, label);
+      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), false, false, true, label, "");
     }
     if (sc_y == kLogarithmic || sc_y == kBoth) {
-      doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame_pull, config_plot_.plot_directory(), true, false, true, NULL);
-      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), true, false, true, NULL, "");
+      doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame_pull, config_plot_.plot_directory(), true, false, true, label);
+      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), true, false, true, label, "");
     }
     
     delete plot_frame_pull;
@@ -207,12 +210,12 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   plot_frame->SetMinimum(0.5);
   plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
   if (sc_y == kLinear || sc_y == kBoth) {
-    doocore::lutils::PlotSimple(plot_name, plot_frame, config_plot_.plot_directory(), false);
-    doocore::lutils::PlotSimple("AllPlots", plot_frame, config_plot_.plot_directory(), false);
+    doocore::lutils::PlotSimple(plot_name, plot_frame, config_plot_.plot_directory(), false, label);
+    doocore::lutils::PlotSimple("AllPlots", plot_frame, config_plot_.plot_directory(), false, label);
   }
   if (sc_y == kLogarithmic || sc_y == kBoth) {
-    doocore::lutils::PlotSimple(log_plot_name, plot_frame, config_plot_.plot_directory(), true);
-    doocore::lutils::PlotSimple("AllPlots", plot_frame, config_plot_.plot_directory(), true);
+    doocore::lutils::PlotSimple(log_plot_name, plot_frame, config_plot_.plot_directory(), true, label);
+    doocore::lutils::PlotSimple("AllPlots", plot_frame, config_plot_.plot_directory(), true, label);
   }
   
   delete plot_frame;
