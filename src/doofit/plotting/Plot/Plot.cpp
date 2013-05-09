@@ -159,7 +159,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     (*it)->plotOn(plot_frame/*, Rescale(1.0/(*it)->sumEntries())*/);
   }
   
-  TLatex label(0.5,0.5,"LHCb");
+  TLatex label(0.6,0.88,"LHCb");
   
   config_plot_.OnDemandOpenPlotStack();
   if (pdf_ != NULL) {
