@@ -17,6 +17,7 @@
 #include "RooAbsData.h"
 #include "RooAbsPdf.h"
 #include "RooPlot.h"
+#include "RooHist.h"
 
 // from Project
 #include "doocore/io/MsgStream.h"
@@ -135,6 +136,8 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   doocore::lutils::setStyle("LHCb");
   
   RooCmdArg range_arg;
+  
+  // x range
   if (!dimension_.hasMin() && !dimension_.hasMax()) {
     double min, max;
     
@@ -159,6 +162,23 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     (*it)->plotOn(plot_frame/*, Rescale(1.0/(*it)->sumEntries())*/);
   }
   
+  // y range adaptively for log scale
+  RooHist * data = (RooHist*) plot_frame->findObject(0,RooHist::Class());
+  double x,y;
+  data->GetPoint(0,x,y);
+  double min_data_entry = y;
+  
+  for (unsigned int i = 1; i < data->GetN(); ++i) {
+    data->GetPoint(0,x,y);
+    if (min_data_entry < y) min_data_entry = y;
+  }
+  
+  double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.7);
+  
+  sdebug << "plot data minimum: " << min_data_entry << endmsg;
+  sdebug << "plot minimum: " << min_plot << endmsg;
+
+  
   TLatex label(0.6,0.88,"LHCb");
   
   config_plot_.OnDemandOpenPlotStack();
@@ -169,7 +189,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
       (*it)->plotOn(plot_frame_pull);
     }
     
-    // I feel so tupid doing this but apparently RooFit leaves me no other way...
+    // I feel so stupid doing this but apparently RooFit leaves me no other way...
     RooCmdArg arg1, arg2, arg3, arg4, arg5, arg6, arg7;
     if (plot_args_.size() > 0) arg1 = plot_args_[0];
     if (plot_args_.size() > 1) arg2 = plot_args_[1];
@@ -195,14 +215,15 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     // =10^(ln(11)/ln(10)-0.5)
     //plot_frame_pull->SetMinimum(0.5);
-    plot_frame_pull->SetMinimum(TMath::Power(10,TMath::Log10(plot_frame_pull->GetMinimum())-0.5));
+    
+    plot_frame_pull->SetMinimum(1e-5);
     plot_frame_pull->SetMaximum(1.3*plot_frame_pull->GetMaximum());
-    
-    
     if (sc_y == kLinear || sc_y == kBoth) {
       doocore::lutils::PlotPulls(pull_plot_name, plot_frame_pull, label, config_plot_.plot_directory(), false, false, true);
       doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, label, config_plot_.plot_directory(), false, false, true, "");
     }
+    
+    plot_frame_pull->SetMinimum(min_plot);
     if (sc_y == kLogarithmic || sc_y == kBoth) {
       doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame_pull, label, config_plot_.plot_directory(), true, false, true);
       doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, label, config_plot_.plot_directory(), true, false, true, "");
@@ -210,12 +231,15 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     delete plot_frame_pull;
   }
-  plot_frame->SetMinimum(TMath::Power(10,TMath::Log10(plot_frame->GetMinimum())-0.5));
+  
+  plot_frame->SetMinimum(1e-5);
   plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
   if (sc_y == kLinear || sc_y == kBoth) {
     doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false);
     doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), false);
   }
+  
+  plot_frame->SetMinimum(min_plot);
   if (sc_y == kLogarithmic || sc_y == kBoth) {
     doocore::lutils::PlotSimple(log_plot_name, plot_frame, label, config_plot_.plot_directory(), true);
     doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), true);
