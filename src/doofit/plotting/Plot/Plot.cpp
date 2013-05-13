@@ -216,7 +216,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     // =10^(ln(11)/ln(10)-0.5)
     //plot_frame_pull->SetMinimum(0.5);
     
-    plot_frame_pull->SetMinimum(1e-5);
+    plot_frame_pull->SetMinimum(0.5);
     plot_frame_pull->SetMaximum(1.3*plot_frame_pull->GetMaximum());
     if (sc_y == kLinear || sc_y == kBoth) {
       doocore::lutils::PlotPulls(pull_plot_name, plot_frame_pull, label, config_plot_.plot_directory(), false, false, true);
@@ -232,7 +232,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     delete plot_frame_pull;
   }
   
-  plot_frame->SetMinimum(1e-5);
+  plot_frame->SetMinimum(0.0);
   plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
   if (sc_y == kLinear || sc_y == kBoth) {
     doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false);
