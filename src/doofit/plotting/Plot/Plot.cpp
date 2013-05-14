@@ -172,14 +172,9 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     data->GetPoint(0,x,y);
     if (min_data_entry < y) min_data_entry = y;
   }
-  
   double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.7);
   
-  sdebug << "plot data minimum: " << min_data_entry << endmsg;
-  sdebug << "plot minimum: " << min_plot << endmsg;
-
-  
-  TLatex label(0.6,0.88,"LHCb");
+  TLatex label(0.65,0.85,"LHCb");
   
   config_plot_.OnDemandOpenPlotStack();
   if (pdf_ != NULL) {
