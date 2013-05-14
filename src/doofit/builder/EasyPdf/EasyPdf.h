@@ -211,6 +211,49 @@ class EasyPdf {
   RooSuperCategory& SuperCat(const std::string& name);
   ///@}
 
+  /** @name Item title and unit manipulation
+   *  Functions to conveniently set titles and units of items
+   */
+  ///@{
+  /**
+   *  @brief Set item titles based on EasyConfig file
+   *
+   *  Based on a supplied EasyConfig file (see doocore::config::EasyConfig), 
+   *  this function will set titles of all items that can be matched via name
+   *  in the EasyConfig file. It will search for the section "easypdf_titles" in 
+   *  the config file. Items are matched by name like this:
+   *
+   *  @code
+   *  easypdf_titles
+   *  {
+   *    variable_name "fancy variable title for plots et al."
+   *  }
+   *  @endcode
+   *
+   *  @param config_file config file that will be parsed
+   */
+  void SetTitles(const std::string& config_file);
+  
+  /**
+   *  @brief Set variable units based on EasyConfig file
+   *
+   *  Based on a supplied EasyConfig file (see doocore::config::EasyConfig),
+   *  this function will set units of all variables that can be matched via name
+   *  in the EasyConfig file. It will search for the section "easypdf_units" in
+   *  the config file. Items are matched by name like this:
+   *
+   *  @code
+   *  easypdf_units
+   *  {
+   *    variable_name "MeV/c^{2}"
+   *  }
+   *  @endcode
+   *
+   *  @param config_file config file that will be parsed
+   */
+  void SetUnits(const std::string& config_file);
+  ///@}
+  
   /** @name Variable collection access
    *  Functions to access and/or create collections of variables (real, formula, categories)
    */
