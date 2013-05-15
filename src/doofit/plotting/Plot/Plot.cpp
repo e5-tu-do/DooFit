@@ -17,6 +17,7 @@
 #include "RooAbsData.h"
 #include "RooAbsPdf.h"
 #include "RooPlot.h"
+#include "RooHist.h"
 
 // from Project
 #include "doocore/io/MsgStream.h"
@@ -135,6 +136,8 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   doocore::lutils::setStyle("LHCb");
   
   RooCmdArg range_arg;
+  
+  // x range
   if (!dimension_.hasMin() && !dimension_.hasMax()) {
     double min, max;
     
@@ -158,7 +161,21 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
        it != datasets_.end(); ++it) {
     (*it)->plotOn(plot_frame/*, Rescale(1.0/(*it)->sumEntries())*/);
   }
-    
+  
+  // y range adaptively for log scale
+  RooHist * data = (RooHist*) plot_frame->findObject(0,RooHist::Class());
+  double x,y;
+  data->GetPoint(0,x,y);
+  double min_data_entry = y;
+  
+  for (unsigned int i = 1; i < data->GetN(); ++i) {
+    data->GetPoint(0,x,y);
+    if (min_data_entry < y) min_data_entry = y;
+  }
+  double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.7);
+  
+  TLatex label(0.65,0.85,"LHCb");
+  
   config_plot_.OnDemandOpenPlotStack();
   if (pdf_ != NULL) {
     RooPlot* plot_frame_pull = dimension_.frame(range_arg);
@@ -167,7 +184,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
       (*it)->plotOn(plot_frame_pull);
     }
     
-    // I feel so tupid doing this but apparently RooFit leaves me no other way...
+    // I feel so stupid doing this but apparently RooFit leaves me no other way...
     RooCmdArg arg1, arg2, arg3, arg4, arg5, arg6, arg7;
     if (plot_args_.size() > 0) arg1 = plot_args_[0];
     if (plot_args_.size() > 1) arg2 = plot_args_[1];
@@ -190,29 +207,37 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+    
+    // =10^(ln(11)/ln(10)-0.5)
+    //plot_frame_pull->SetMinimum(0.5);
+    
     plot_frame_pull->SetMinimum(0.5);
     plot_frame_pull->SetMaximum(1.3*plot_frame_pull->GetMaximum());
-    
     if (sc_y == kLinear || sc_y == kBoth) {
-      doocore::lutils::PlotPulls(pull_plot_name, plot_frame_pull, config_plot_.plot_directory(), false, false, true, NULL);
-      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), false, false, true, NULL, "");
+      doocore::lutils::PlotPulls(pull_plot_name, plot_frame_pull, label, config_plot_.plot_directory(), false, false, true);
+      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, label, config_plot_.plot_directory(), false, false, true, "");
     }
+    
+    plot_frame_pull->SetMinimum(min_plot);
     if (sc_y == kLogarithmic || sc_y == kBoth) {
-      doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame_pull, config_plot_.plot_directory(), true, false, true, NULL);
-      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, config_plot_.plot_directory(), true, false, true, NULL, "");
+      doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame_pull, label, config_plot_.plot_directory(), true, false, true);
+      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, label, config_plot_.plot_directory(), true, false, true, "");
     }
     
     delete plot_frame_pull;
   }
-  plot_frame->SetMinimum(0.5);
+  
+  plot_frame->SetMinimum(0.0);
   plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
   if (sc_y == kLinear || sc_y == kBoth) {
-    doocore::lutils::PlotSimple(plot_name, plot_frame, config_plot_.plot_directory(), false);
-    doocore::lutils::PlotSimple("AllPlots", plot_frame, config_plot_.plot_directory(), false);
+    doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false);
+    doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), false);
   }
+  
+  plot_frame->SetMinimum(min_plot);
   if (sc_y == kLogarithmic || sc_y == kBoth) {
-    doocore::lutils::PlotSimple(log_plot_name, plot_frame, config_plot_.plot_directory(), true);
-    doocore::lutils::PlotSimple("AllPlots", plot_frame, config_plot_.plot_directory(), true);
+    doocore::lutils::PlotSimple(log_plot_name, plot_frame, label, config_plot_.plot_directory(), true);
+    doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), true);
   }
   
   delete plot_frame;
