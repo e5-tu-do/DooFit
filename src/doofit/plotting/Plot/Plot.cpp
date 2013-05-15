@@ -168,7 +168,8 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   data->GetPoint(0,x,y);
   double min_data_entry = y;
   for (unsigned int i = 1; i < data->GetN(); ++i) {
-    data->GetPoint(0,x,y);
+    data->GetPoint(i,x,y);
+    sdebug << y << endmsg;
     if (min_data_entry > y) min_data_entry = y;
   }
   double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.7);
