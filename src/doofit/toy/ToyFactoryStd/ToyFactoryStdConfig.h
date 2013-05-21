@@ -31,6 +31,7 @@
 
 // forward declarations
 class TFile;
+namespace doofit { namespace builder { class EasyPdf; }}
 
 namespace doofit {
 namespace toy {
@@ -75,6 +76,10 @@ namespace toy {
      *  @brief Getter for workspace to use
      */
     RooWorkspace* workspace() const;
+    /**
+     *  @brief Getter for EasyPdf builder to use
+     */
+    doofit::builder::EasyPdf* easypdf() const { return easypdf_; }
     /**
      *  \brief Getter for RooAbsPdf* to use for dataset generation
      *
@@ -203,33 +208,51 @@ namespace toy {
      *
      *  @param ws RooWorkspace to use
      */
-    void set_workspace(RooWorkspace* ws) {workspace_ = ws;} 
+    void set_workspace(RooWorkspace* ws) {workspace_ = ws;}
+    
     /**
-     *  @brief Setter for RooAbsPdf* name to use for dataset generation on linked 
-     *         workspace
+     *  @brief Setter for EasyPdf to use for getting PDFs and argument sets
      *
-     *  If a workspace is linked and no RooAbsPdf* is set via the appropriate 
-     *  setter itself, a RooAbsPdf* will be loaded from the workspace with the 
-     *  supplied name.
+     *  Setting this EasyPdf builder is only sensible if also using setters 
+     *  for PDF and argument set names.
      *
-     *  @see ToyFactoryStdConfig::set_workspace(const RooWorkspace*)
+     *  @see ToyFactoryStdConfig::set_argset_generation_observables_workspace(const std::string&)
      *  @see ToyFactoryStdConfig::set_generation_pdf_workspace(const std::string&)
      *
-     *  @param name Name of RooAbsPdf on workspace
+     *  @param easypdf EasyPdf builder to use
+     */
+    void set_easypdf(doofit::builder::EasyPdf* easypdf) {easypdf_ = easypdf;}
+
+    /**
+     *  @brief Setter for RooAbsPdf* name to use for dataset generation on linked 
+     *         workspace or EasyPdf builder
+     *
+     *  If an EasyPdf builder or workspace is linked and no RooAbsPdf* is set 
+     *  via the appropriate setter itself, a RooAbsPdf* will be loaded from the 
+     *  EasyPdf builder or workspace with the supplied name. A set EasyPdf 
+     *  builder will take preference over a set workspace.
+     *
+     *  @see ToyFactoryStdConfig::set_easypdf(doofit::builder::EasyPdf*)
+     *  @see ToyFactoryStdConfig::set_workspace(RooWorkspace*)
+     *  @see ToyFactoryStdConfig::set_argset_generation_observables_workspace(const std::string&)
+     *
+     *  @param name Name of RooAbsPdf on EasyPdf builder or workspace
      */
     void set_generation_pdf_workspace(const std::string& name);
     /**
-     *  @brief Setter for RooArgSet* name with all observables to generate 
-     *         directly on linked workspace
+     *  @brief Setter for RooArgSet* name with all observables to generate
+     *         directly on linked EasyPdf builder or workspace
      *
-     *  If a workspace is linked and no RooArgSet* is set via the appropriate 
-     *  setter itself, a RooArgSet* will be loaded from the workspace with the 
-     *  supplied name.
+     *  If an EasyPdf builder or workspace is linked and no RooArgSet* is set 
+     *  via the appropriate setter itself, a RooArgSet* will be loaded from the 
+     *  EasyPdf builder or workspace with the supplied name. A set EasyPdf
+     *  builder will take preference over a set workspace.
      *
-     *  @see ToyFactoryStdConfig::set_workspace(const RooWorkspace*)
+     *  @see ToyFactoryStdConfig::set_easypdf(doofit::builder::EasyPdf*)
+     *  @see ToyFactoryStdConfig::set_workspace(RooWorkspace*)
      *  @see ToyFactoryStdConfig::set_generation_pdf_workspace(const std::string&)
      *
-     *  @param name Name of RooArgSet on workspace
+     *  @param name Name of RooArgSet on EasyPdf builder or workspace
      */
     void set_argset_generation_observables_workspace(const std::string& name); 
     /**
@@ -419,6 +442,7 @@ namespace toy {
      *  \brief RooArgSet with all observables to generate directly
      */
     const RooArgSet* argset_generation_observables_;
+    
     /**
      *  @brief RooWorkspace to use to get PDFs and argument sets
      *
@@ -427,6 +451,16 @@ namespace toy {
      *  giving a shit on const correctness).
      */  
     mutable RooWorkspace* workspace_;
+    
+    /**
+     *  @brief EasyPdf builder to use to get PDFs and argument sets
+     *
+     *  You might ask, why this needs to be a mutable member. It's the same reason
+     *  as for ToyFactoryStdConfig::set_generation_pdf (in short: ROOT developers
+     *  giving a shit on const correctness).
+     */
+    mutable doofit::builder::EasyPdf* easypdf_;
+    
     /**
      *  @brief Name of RooAbsPdf to generate toys for on linked workspace
      *
@@ -517,7 +551,7 @@ namespace toy {
     /**
      *  @brief TFile to read workspace from
      * 
-     *  This file will be set automatically upon requeting of a workspace (if 
+     *  This file will be set automatically upon requesting of a workspace (if 
      *  workspace_filename_name_ is set and workspace was not set directly 
      *  before).
      *

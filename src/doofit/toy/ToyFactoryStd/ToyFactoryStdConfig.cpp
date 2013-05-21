@@ -21,8 +21,11 @@
 #include "RooAbsArg.h"
 #include "RooWorkspace.h"
 
-// from project
+// from DooFit
 #include "doocore/io/MsgStream.h"
+
+// from project
+#include "doofit/builder/EasyPdf/EasyPdf.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -36,6 +39,7 @@ namespace toy {
   expected_yield_(0),
   argset_generation_observables_(NULL),
   workspace_(NULL),
+  easypdf_(NULL),
   generation_pdf_workspace_(""),
   argset_generation_observables_workspace_(""),
   random_seed_(0),
@@ -51,6 +55,7 @@ namespace toy {
   expected_yield_(0),
   argset_generation_observables_(NULL),
   workspace_(NULL),
+  easypdf_(NULL),
   generation_pdf_workspace_(""),
   argset_generation_observables_workspace_(""),
   random_seed_(0),
