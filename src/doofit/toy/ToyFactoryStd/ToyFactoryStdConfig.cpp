@@ -72,6 +72,9 @@ namespace toy {
       ws_file_->Close();
       delete ws_file_;
     }
+    if (argset_generation_observables_ != NULL) {
+      delete argset_generation_observables_;
+    }
   }
   
   RooWorkspace* ToyFactoryStdConfig::workspace() const {
@@ -125,6 +128,14 @@ namespace toy {
   const RooArgSet* ToyFactoryStdConfig::argset_generation_observables() const {
     if (argset_generation_observables_) { 
       return argset_generation_observables_;
+    } else if (argset_generation_observables_workspace_.length() > 0 && easypdf()) {
+      try {
+        argset_generation_observables_ = new RooArgSet(easypdf()->Set(argset_generation_observables_workspace_));
+        return argset_generation_observables_;
+      } catch (doofit::builder::ObjectNotExistingException e) {
+        serr << "Requested argument set " << argset_generation_observables_workspace_ << " does not exist on set EasyPdf builder. " << endmsg;
+        throw ArgSetNotSetException();
+      }
     } else if (argset_generation_observables_workspace_.length() > 0 && workspace() && workspace()->set(argset_generation_observables_workspace_.c_str())) {
       return workspace()->set(argset_generation_observables_workspace_.c_str());
     } else {
@@ -231,16 +242,25 @@ namespace toy {
       delete arg_it;
     }
     
-    scfg << "Workspace:                 ";
-    if (workspace()) {
+    scfg << "EasyPdf:                   ";
+    if (easypdf()) {
       scfg << "(is set)" << endmsg;
-      
-      scfg << " PDF name (workspace):     " << generation_pdf_workspace_ << endmsg;
-      scfg << " Argset name observables (workspace):       " << argset_generation_observables_workspace_ << endmsg;
-      scfg << " Argset name constraining PDFs (workspace): " << argset_constraining_pdfs_workspace_ << endmsg;
     } else {
       scfg << "(is not set)" << endmsg;
     }
+    
+    scfg << "Workspace:                 ";
+    if (workspace()) {
+      scfg << "(is set)" << endmsg;
+    } else {
+      scfg << "(is not set)" << endmsg;
+    }
+    
+    if (easypdf() || workspace()) {
+      scfg << " PDF name (workspace):     " << generation_pdf_workspace_ << endmsg;
+      scfg << " Argset name observables (workspace):       " << argset_generation_observables_workspace_ << endmsg;
+      scfg << " Argset name constraining PDFs (workspace): " << argset_constraining_pdfs_workspace_ << endmsg;
+    } 
 
     if (workspace_filename_name_.first().length() > 0) {
       scfg << "Workspace from file:       " << workspace_filename_name_ << endmsg;

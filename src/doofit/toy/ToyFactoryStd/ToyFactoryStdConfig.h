@@ -196,7 +196,7 @@ namespace toy {
      *  \brief Setter for RooArgSet* with all observables to generate directly
      */
     void set_argset_generation_observables(const RooArgSet* argset_generation_observables) 
-    {argset_generation_observables_ = argset_generation_observables;}
+    {argset_generation_observables_ = new RooArgSet(*argset_generation_observables);}
     /**
      *  @brief Setter for workspace to use for getting PDFs and argument sets
      *
@@ -441,7 +441,7 @@ namespace toy {
     /**
      *  \brief RooArgSet with all observables to generate directly
      */
-    const RooArgSet* argset_generation_observables_;
+    mutable const RooArgSet* argset_generation_observables_;
     
     /**
      *  @brief RooWorkspace to use to get PDFs and argument sets
