@@ -108,6 +108,13 @@ namespace toy {
   RooAbsPdf* ToyFactoryStdConfig::generation_pdf() const {
     if (generation_pdf_) { 
       return generation_pdf_;
+    } else if (generation_pdf_workspace_.length() > 0 && easypdf()) {
+      try {
+        return &easypdf()->Pdf(generation_pdf_workspace_);
+      } catch (doofit::builder::ObjectNotExistingException e) {
+        serr << "Requested PDF " << generation_pdf_workspace_ << " does not exist on set EasyPdf builder. " << endmsg;
+        throw PdfNotSetException();
+      }
     } else if (generation_pdf_workspace_.length() > 0 && workspace() && workspace()->pdf(generation_pdf_workspace_.c_str())) {
       return workspace()->pdf(generation_pdf_workspace_.c_str());
     } else {
