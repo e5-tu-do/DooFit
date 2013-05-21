@@ -397,7 +397,7 @@ namespace toy {
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::easyPdf* easypdf, RooWorkspace* workspace, int yield) const;
+    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const;
     ///@}
     
     /**
