@@ -43,6 +43,7 @@ for p in $packages; do
   then
     echo "$dir is a git repository. Reverting to master."
     sudo git checkout master
+    sudo git reset --hard HEAD
   fi
 done
 
