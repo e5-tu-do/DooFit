@@ -240,6 +240,8 @@ namespace toy {
       }
       scfg << endmsg;
       delete arg_it;
+    } else {
+      scfg << "(not set)" << endmsg;
     }
     
     scfg << "EasyPdf:                   ";
