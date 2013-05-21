@@ -17,9 +17,8 @@
 class RooDataSet;
 class RooArgSet;
 class TFile;
-
+namespace doofit { namespace builder { class EasyPdf; }}
 namespace doofit {
-
 namespace config {
   class CommonConfig; 
 }
@@ -391,13 +390,14 @@ namespace toy {
      *                       dataset
      *  @param argset_generation_observables Argument set with variables in which 
      *                                       dimensions to generate
+     *  @param easypdf EasyPdf builder to use for generation
      *  @param workspace RooWorkspace to use for generation
      *  @param yield Yield to generate
      *  @return Pointer to the generated sample. ToyFactoryStd does not assume 
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, RooWorkspace* workspace, int yield) const;
+    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const;
     ///@}
     
     /**
