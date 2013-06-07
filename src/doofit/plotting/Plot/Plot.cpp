@@ -18,6 +18,7 @@
 #include "RooAbsPdf.h"
 #include "RooPlot.h"
 #include "RooHist.h"
+#include "RooBinning.h"
 
 // from Project
 #include "doocore/io/MsgStream.h"
@@ -159,7 +160,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   
   for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
        it != datasets_.end(); ++it) {
-    (*it)->plotOn(plot_frame/*, Rescale(1.0/(*it)->sumEntries())*/);
+    (*it)->plotOn(plot_frame, Binning(dimension_.getBinning())/*, Rescale(1.0/(*it)->sumEntries())*/);
   }
   
   // y range adaptively for log scale
@@ -184,7 +185,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooPlot* plot_frame_pull = dimension_.frame(range_arg);
     for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
          it != datasets_.end(); ++it) {
-      (*it)->plotOn(plot_frame_pull);
+      (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()));
     }
     
     // I feel so stupid doing this but apparently RooFit leaves me no other way...
