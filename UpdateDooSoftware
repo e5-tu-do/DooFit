@@ -1,8 +1,9 @@
 #!/bin/bash
 
-packages="DooCore DooFit DooSelection"
+packages="doocore doofit dooselection"
 
 source /lhcb/software/tu-dortmund/LHCbSoftwareSetup.sh #> /dev/null 2>&1
+export PATH=$PATH:/usr/local/bin
 
 echo "Probing ROOT versions"
 rvers=""
@@ -19,31 +20,51 @@ do
 done
 echo ""
 
+#dvvers="v33r4"
+
 for p in $packages; do
-  dir=$DOOSOFTROOT/repos/$p
-  echo $dir
-  if [ -d $dir/.svn ];
-  then
-    echo "$dir is a Subversion repository. Updating."
-    sudo svn up $dir
-    base=$dir/`cat $dir/install_version`
-  fi
-  if [ -d $dir/.git ];
-  then
-    echo "$dir is a git repository. Pulling changes."
-    cd $dir
-    sudo git checkout master
-    sudo git pull
-    tag=`cat $dir/install_version`
-    sudo git checkout $tag
-    base=$dir
-  fi
-  InstallDooSoftwareProject $p $base "$dvvers"
-  if [ -d $dir/.git ];
-  then
-    echo "$dir is a git repository. Reverting to master."
-    sudo git checkout master
-    sudo git reset --hard HEAD
-  fi
+  repo="git@git.e5.physik.tu-dortmund.de:lhcbdoosoftware/$p.git"
+  uuid=`uuidgen -r`
+  tmpdir=/tmp/$uuid
+  echo
+  echo "Cloning $p ($repo) into $tmpdir."
+  echo
+  git clone $repo $tmpdir
+  cd $tmpdir
+  tag=`cat $tmpdir/install_version`
+  echo
+  echo "Checking out tag $tag of $p."
+  echo
+  git checkout $tag
+  InstallDooSoftwareProject $p $tmpdir "$dvvers"
+  cd /
+  rm -rf $tmpdir
 done
+
+#for p in $packages; do
+#  dir=$DOOSOFTROOT/repos/$p
+#  echo $dir
+#  if [ -d $dir/.svn ];
+#  then
+#    echo "$dir is a Subversion repository. Updating."
+#    sudo svn up $dir
+#    base=$dir/`cat $dir/install_version`
+#  fi
+#  if [ -d $dir/.git ];
+#  then
+#    echo "$dir is a git repository. Pulling changes."
+#    cd $dir
+#    sudo git checkout master
+#    sudo git pull
+#    tag=`cat $dir/install_version`
+#    sudo git checkout $tag
+#    base=$dir
+#  fi
+#  InstallDooSoftwareProject $p $base "$dvvers"
+#  if [ -d $dir/.git ];
+#  then
+#    echo "$dir is a git repository. Reverting to master."
+#    sudo git checkout master
+#  fi
+#done
 
