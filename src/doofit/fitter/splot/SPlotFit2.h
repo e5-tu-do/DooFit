@@ -130,7 +130,7 @@ class SPlotFit2{
   void set_disc_pdfs(const std::map<std::string,RooArgSet>& disc_pdfs){ disc_pdfs_ = disc_pdfs; }
   void set_cont_pdfs(const std::map<std::string,RooArgSet>& cont_pdfs){ cont_pdfs_ = cont_pdfs; }
   
-  RooAbsPdf* get_pdf_disc_full(){return pdf_disc_full_;}
+  RooAbsPdf* get_pdf_disc_full(){return pdf_;}
   RooAbsPdf* get_pdf_cont(const std::string& comp_name){ return cont_pdfs_prod_[comp_name];}
   const RooArgList& cont_vars() const {return cont_vars_;}
   
