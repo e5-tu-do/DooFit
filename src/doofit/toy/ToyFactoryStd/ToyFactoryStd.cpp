@@ -346,7 +346,7 @@ namespace toy {
       RooDataSet* proto_data_this_pdf = NULL;
       
       for (std::vector<config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
-        RooDataSet* temp_data = GenerateProtoSample(pdf, *it, argset_generation_observables, config_toyfactory_.workspace(), proto_size);
+        RooDataSet* temp_data = GenerateProtoSample(pdf, *it, argset_generation_observables, config_toyfactory_.easypdf(), config_toyfactory_.workspace(), proto_size);
         
         // merge proto sets if necessary
         if (proto_data_this_pdf == NULL) {
@@ -773,7 +773,7 @@ namespace toy {
     return data_discrete;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, RooWorkspace* workspace, int yield) const {
+  RooDataSet* ToyFactoryStd::GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const {
     
     assert(yield>0);
     sinfo << "Generating proto data for PDF " << pdf.GetName() << " using config section " << proto_section.second() << endmsg;
@@ -781,6 +781,7 @@ namespace toy {
     ToyFactoryStdConfig cfg_tfac_proto(proto_section.second());
     cfg_tfac_proto.InitializeOptions(config_common_);
     
+    if (easypdf != NULL) cfg_tfac_proto.set_easypdf(easypdf);
     if (workspace != NULL) cfg_tfac_proto.set_workspace(workspace);
     cfg_tfac_proto.set_argset_generation_observables(&argset_generation_observables);
     cfg_tfac_proto.set_expected_yield(yield);
