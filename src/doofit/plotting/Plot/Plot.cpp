@@ -183,10 +183,6 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   config_plot_.OnDemandOpenPlotStack();
   if (pdf_ != NULL) {
     RooPlot* plot_frame_pull = dimension_.frame(range_arg);
-    for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
-         it != datasets_.end(); ++it) {
-      (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()));
-    }
     
     // I feel so stupid doing this but apparently RooFit leaves me no other way...
     RooCmdArg arg1, arg2, arg3, arg4, arg5, arg6, arg7;
@@ -197,6 +193,11 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     if (plot_args_.size() > 4) arg5 = plot_args_[4];
     if (plot_args_.size() > 5) arg6 = plot_args_[5];
     if (plot_args_.size() > 6) arg7 = plot_args_[6];
+    
+    for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
+         it != datasets_.end(); ++it) {
+      (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()));
+    }
     
     int i=1;
     for (std::vector<RooArgSet>::const_iterator it = components_.begin();
@@ -222,6 +223,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
       doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, label, config_plot_.plot_directory(), false, false, true, "");
     }
     
+    sdebug << "Plot y axis minimum for log scale plot: " << min_plot << endmsg;
     plot_frame_pull->SetMinimum(min_plot);
     if (sc_y == kLogarithmic || sc_y == kBoth) {
       doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame_pull, label, config_plot_.plot_directory(), true, false, true);
