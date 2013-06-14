@@ -158,9 +158,15 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   }
   RooPlot* plot_frame = dimension_.frame(range_arg);
   
+  RooCmdArg cut_range_arg, projection_range_arg;
+  if (plot_range_.length() > 0) {
+    cut_range_arg = CutRange(plot_range_.c_str());
+    projection_range_arg = ProjectionRange(plot_range_.c_str());
+  }
+  
   for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
        it != datasets_.end(); ++it) {
-    (*it)->plotOn(plot_frame, Binning(dimension_.getBinning())/*, Rescale(1.0/(*it)->sumEntries())*/);
+    (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
   }
   
   // y range adaptively for log scale
@@ -173,6 +179,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     if (min_data_entry > y) min_data_entry = y;
   }
   if (min_data_entry == 0.0) min_data_entry = 1.0;
+  if (min_data_entry < 0.0) min_data_entry = 0.01;
   sdebug << "minimum data entry in dataset: " << min_data_entry << endmsg;
   double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.7);
   
@@ -193,11 +200,11 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     if (plot_args_.size() > 3) arg4 = plot_args_[3];
     if (plot_args_.size() > 4) arg5 = plot_args_[4];
     if (plot_args_.size() > 5) arg6 = plot_args_[5];
-    if (plot_args_.size() > 6) arg7 = plot_args_[6];
+//    if (plot_args_.size() > 6) arg7 = plot_args_[6];
     
     for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
          it != datasets_.end(); ++it) {
-      (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()));
+      (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()), cut_range_arg);
     }
     
     int i=1;
@@ -205,14 +212,14 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
          it != components_.end(); ++it) {
       if (it->getSize() > 0) {
         sinfo << "Plotting component " << it->first()->GetName() << endmsg;
-        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, arg1, arg2, arg3, arg4, arg5, arg6);
+        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, arg1, arg2, arg3, arg4, arg5, arg6);
         ++i;
       }
     }
     
-    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, arg1, arg2, arg3, arg4, arg5, arg6);
+    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, arg1, arg2, arg3, arg4, arg5, arg6);
     
     // =10^(ln(11)/ln(10)-0.5)
     //plot_frame_pull->SetMinimum(0.5);

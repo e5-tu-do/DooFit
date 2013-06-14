@@ -196,6 +196,16 @@ enum ScaleType {
     void AddPlotArg(RooCmdArg arg) {plot_args_.push_back(arg);}
     
     /**
+     *  @brief Set plot range to use for this plot
+     *
+     *  Set a range to be used for plotting. This range has to be defined on the
+     *  appropriate RooRealVars to be used for plotting and projecting.
+     *
+     *  @param plot_range plot range to use
+     */
+    void set_plot_range(const std::string& plot_range) {plot_range_ = plot_range;}
+    
+    /**
      *  @brief Friend class PlotSimultaneous
      */
     friend class PlotSimultaneous;
@@ -241,6 +251,11 @@ enum ScaleType {
      *  @brief Plot name
      */
     std::string plot_name_;
+    
+    /**
+     *  @brief Plot range
+     */
+    std::string plot_range_;
         
     /**
      *  @brief Vector containing additional RooCmdArgs for plotting
