@@ -46,6 +46,8 @@
 namespace doofit {
 namespace extraroopdfs {
 
+using namespace std;
+
 //_____________________________________________________________________________
 RooEffResModel::CacheElem::~CacheElem()
 {

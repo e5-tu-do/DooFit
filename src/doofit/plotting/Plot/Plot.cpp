@@ -173,6 +173,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     if (min_data_entry > y) min_data_entry = y;
   }
   if (min_data_entry == 0.0) min_data_entry = 1.0;
+  sdebug << "minimum data entry in dataset: " << min_data_entry << endmsg;
   double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.7);
   
 //  sdebug << "minimum entry in histogram: " << min_data_entry << endmsg;
