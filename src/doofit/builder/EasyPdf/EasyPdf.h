@@ -37,6 +37,8 @@ class RooBDecay;
 class RooSimultaneous;
 class RooSuperCategory;
 class RooKeysPdf;
+class RooAbsHiddenReal;
+class RooUnblindUniform;
 
 /** @class doofit::builder::EasyPdf
  *  @brief Easy PDF and variable building without the clutter
@@ -120,13 +122,14 @@ class EasyPdf {
    */
   ///@{
   /**
-   *  @brief Add or access real based variable (RooRealVar or RooFormulaVar)
+   *  @brief Add or access real based variable (RooRealVar, RooFormulaVar, RooAbsHiddenReal (blinded params))
    *
    *  Request a RooAbsReal by a specified name. If the variable/formula does not 
    *  yet exist in this EasyPdf pool of variables or formulas, it is created as 
    *  a RooRealVar and returned.
    *  Otherwise it will be returned from the pool. Variables take preference 
-   *  over formulas in case of duplicate entries.
+   *  over formulas taking preference over hidden reals (blinded parameters) 
+   *  in case of duplicate entries.
    *
    *  @param name name of the RooAbsReal
    *  @return the appropriate RooAbsReal
@@ -173,6 +176,22 @@ class EasyPdf {
                          const RooArgList& dependents);
   
   /**
+   *  @brief Add and access a RooUnblindUniform
+   *
+   *  Request a RooUnblindUniform by a specified name. If the parameter does not
+   *  yet exist in this EasyPdf pool of hidden reals, it is created and 
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the RooUnblindUniform
+   *  @param blind_string the blinding string to use
+   *  @param scale the blinding scale to use
+   *  @param blind_value the parameter to blind
+   *  @return the appropriate RooUnblindUniform
+   */
+  RooUnblindUniform& UnblindUniform(const std::string& name, const std::string& blind_string,
+                                    double scale, RooAbsReal& blind_value);
+  
+  /**
    *  @brief Add and access RooSuperCategory
    *
    *  Request a RooSuperCategory by a specified name. If the category does not 
@@ -197,6 +216,18 @@ class EasyPdf {
    *  @return the appropriate RooFormulaVar
    */
   RooFormulaVar& Formula(const std::string& name);
+  
+  /**
+   *  @brief Access RooAbsHiddenReal (i.e. blinded parameters)
+   *
+   *  Request a RooAbsHiddenReal by a specified name. If the hidden real does 
+   *  exist in this EasyPdf pool of hidden reals, it is returned.
+   *  Otherwise an exception ObjectNotExistingException is thrown.
+   *
+   *  @param name name of the RooAbsHiddenReal
+   *  @return the appropriate RooAbsHiddenReal
+   */
+  RooAbsHiddenReal& HiddenReal(const std::string& name);
   
   /**
    *  @brief Add or access RooSuperCategory
@@ -322,7 +353,7 @@ class EasyPdf {
    */
   ///@{
   /**
-   *  @brief Check if real based variable exists (RooRealVar or RooFormulaVar)
+   *  @brief Check if real based variable exists (RooRealVar or RooFormulaVar, RooAbsHiddenReal (blinded params))
    *
    *  Check if a RooAbsReal exists by a specified name. If the variable/formula 
    *  does exist in this EasyPdf pool of variables or formulas, true is returned,
@@ -980,6 +1011,11 @@ class EasyPdf {
   std::map<std::string,RooFormulaVar*> formulas_;
   
   /**
+   *  @brief Container for all generated RooAbsHiddenReal
+   */
+  std::map<std::string,RooAbsHiddenReal*> hidden_reals_;
+  
+  /**
    *  @brief Container for all generated RooAbsPdfs
    */
   std::map<std::string,RooAbsPdf*> pdfs_;
@@ -999,14 +1035,14 @@ class EasyPdf {
  *  \brief Exception for objects with same name already existing
  */
 struct ObjectExistsException: public virtual boost::exception, public virtual std::exception { 
-  virtual const char* what() const throw() { return "PDF with same name already existing"; }
+  virtual const char* what() const throw() { return "Object with same name already existing"; }
 };
 
 /** \struct ObjectNotExistingException
  *  \brief Exception for PDF with given name not existing
  */
 struct ObjectNotExistingException: public virtual boost::exception, public virtual std::exception { 
-  virtual const char* what() const throw() { return "PDF with supplied name not existing"; }
+  virtual const char* what() const throw() { return "Object with supplied name not existing"; }
 };
 
 template <class PdfType>
