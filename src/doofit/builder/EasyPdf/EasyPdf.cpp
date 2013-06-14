@@ -52,6 +52,10 @@ doofit::builder::EasyPdf::~EasyPdf() {
          it != pdfs_.end(); ++it) {
       delete it->second;
     }
+    for (std::map<std::string,RooAbsHiddenReal*>::iterator it = hidden_reals_.begin();
+         it != hidden_reals_.end(); ++it) {
+      delete it->second;
+    }
     for (std::map<std::string,RooRealVar*>::iterator it = vars_.begin();
          it != vars_.end(); ++it) {
       delete it->second;

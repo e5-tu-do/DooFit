@@ -1035,7 +1035,7 @@ class EasyPdf {
  *  \brief Exception for objects with same name already existing
  */
 struct ObjectExistsException: public virtual boost::exception, public virtual std::exception { 
-  virtual const char* what() const throw() { return "PDF with same name already existing"; }
+  virtual const char* what() const throw() { return "Object with same name already existing"; }
 };
 
 /** \struct ObjectNotExistingException
