@@ -12,6 +12,9 @@
 // from RooFit
 #include "RooArgList.h"
 
+// from DooCore
+#include "doocore/io/MsgStream.h"
+
 // from project
 #include "doofit/plotting/Plot/PlotConfig.h"
 
@@ -203,7 +206,7 @@ enum ScaleType {
      *
      *  @param plot_range plot range to use
      */
-    void set_plot_range(const std::string& plot_range) {plot_range_ = plot_range;}
+    void set_plot_range(const std::string& plot_range) { plot_range_ = plot_range; }
     
     /**
      *  @brief Friend class PlotSimultaneous

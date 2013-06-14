@@ -156,14 +156,16 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     range_arg = Range(min, max);
   }
-  RooPlot* plot_frame = dimension_.frame(range_arg);
   
-  RooCmdArg cut_range_arg, projection_range_arg;
+  RooCmdArg cut_range_arg, projection_range_arg, frame_range_arg;
   if (plot_range_.length() > 0) {
     sinfo << "doofit::plotting: Plotting on named range " << plot_range_ << endmsg;
     cut_range_arg = CutRange(plot_range_.c_str());
     projection_range_arg = ProjectionRange(plot_range_.c_str());
+    range_arg = Range(plot_range_.c_str());
   }
+
+  RooPlot* plot_frame = dimension_.frame(range_arg);
   
   for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
        it != datasets_.end(); ++it) {

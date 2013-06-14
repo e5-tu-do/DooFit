@@ -71,6 +71,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         plot_name = plot_name_ + "_" + sim_cat_type->GetName();
         Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
         plot.plot_args_ = this->plot_args_;
+        plot.plot_range_ = this->plot_range_;
         plot.AddPlotArg(Range(min,max));
         
         doocore::lutils::setStyle("LHCb");
@@ -110,6 +111,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
   plot_name = plot_name_ + "_summed";
   Plot plot(config_plot_, dimension_, data, *pdf_, components_regexps_, plot_name);
   plot.plot_args_ = this->plot_args_;
+  plot.plot_range_ = this->plot_range_;
   
   // go through supplied cmd args and if necessary merge ProjWData arguments
   bool project_arg_found         = false;
