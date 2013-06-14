@@ -1042,7 +1042,7 @@ struct ObjectExistsException: public virtual boost::exception, public virtual st
  *  \brief Exception for PDF with given name not existing
  */
 struct ObjectNotExistingException: public virtual boost::exception, public virtual std::exception { 
-  virtual const char* what() const throw() { return "PDF with supplied name not existing"; }
+  virtual const char* what() const throw() { return "Object with supplied name not existing"; }
 };
 
 template <class PdfType>
