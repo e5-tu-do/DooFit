@@ -55,10 +55,10 @@
  * https://wiki.e5.physik.tu-dortmund.de/LHCb/Software/DooSoftwareUsage).
  *
  * To build DooFit, download it either as a release version or checkout from
- * SVN. Create a @c build directory where you invoke CMake and install DooFit.
+ * Git. Create a @c build directory where you invoke CMake and install DooFit.
  *
  * @code
- * cmake -DCMAKE_INSTALL_PREFIX=$DOOFITSYS /path/of/doofit/source
+ * /path/of/doofit/source/scripts/rebuild_cmake.sh
  * make
  * make install
  * @endcode

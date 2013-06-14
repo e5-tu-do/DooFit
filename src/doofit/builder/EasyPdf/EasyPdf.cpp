@@ -28,6 +28,7 @@
 #include "RooCBShape.h"
 #include "RooSuperCategory.h"
 #include "RooKeysPdf.h"
+#include "RooUnblindUniform.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -51,6 +52,10 @@ doofit::builder::EasyPdf::~EasyPdf() {
          it != pdfs_.end(); ++it) {
       delete it->second;
     }
+    for (std::map<std::string,RooAbsHiddenReal*>::iterator it = hidden_reals_.begin();
+         it != hidden_reals_.end(); ++it) {
+      delete it->second;
+    }
     for (std::map<std::string,RooRealVar*>::iterator it = vars_.begin();
          it != vars_.end(); ++it) {
       delete it->second;
@@ -71,6 +76,8 @@ RooAbsReal& doofit::builder::EasyPdf::Real(const std::string &name) {
     return *vars_[name];
   } else if (formulas_.count(name) == 1) {
     return *formulas_[name];
+  } else if (hidden_reals_.count(name) == 1) {
+    return *hidden_reals_[name];
   } else {
     return Var(name);
   }
@@ -80,6 +87,8 @@ bool doofit::builder::EasyPdf::RealExists(const std::string &name) {
   if (vars_.count(name) == 1) {
     return true;
   } else if (formulas_.count(name) == 1) {
+    return true;
+  } else if (hidden_reals_.count(name) == 1) {
     return true;
   } else {
     return false;
@@ -152,9 +161,38 @@ RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name, const 
   }
 }
 
+RooUnblindUniform& doofit::builder::EasyPdf::UnblindUniform(const std::string& name,
+                                                            const std::string& blind_string,
+                                                            double scale,
+                                                            RooAbsReal& blind_value) {
+  if (hidden_reals_.count(name) == 1) {
+    throw ObjectExistsException();
+  } else {
+    RooUnblindUniform* temp_unblind = new RooUnblindUniform(name.c_str(), name.c_str(),
+                                                            blind_string.c_str(),
+                                                            scale, blind_value);
+    if (ws_ == NULL) {
+      hidden_reals_[name] = temp_unblind;
+    } else {
+      ws_->import(*temp_unblind, Silence());
+      delete temp_unblind;
+      hidden_reals_[name] = temp_unblind = dynamic_cast<RooUnblindUniform*>(ws_->obj(name.c_str()));
+    }
+    return *temp_unblind;
+  }
+}
+
 RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name) {
   if (formulas_.count(name) == 1) {
     return *formulas_[name];
+  } else {
+    throw ObjectNotExistingException();
+  }
+}
+
+RooAbsHiddenReal& doofit::builder::EasyPdf::HiddenReal(const std::string& name) {
+  if (hidden_reals_.count(name) == 1) {
+    return *hidden_reals_[name];
   } else {
     throw ObjectNotExistingException();
   }
