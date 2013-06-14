@@ -160,6 +160,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   
   RooCmdArg cut_range_arg, projection_range_arg;
   if (plot_range_.length() > 0) {
+    sinfo << "doofit::plotting: Plotting on named range " << plot_range_ << endmsg;
     cut_range_arg = CutRange(plot_range_.c_str());
     projection_range_arg = ProjectionRange(plot_range_.c_str());
   }
