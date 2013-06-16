@@ -89,7 +89,7 @@ SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
   input_data_->Print();
 }
 
-SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data) :
+SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector<RooRealVar*> yields) :
   pdf_(NULL),
   pdf_owned_(true),
   yields_(),
@@ -107,16 +107,33 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data) :
   use_minos_(true)
 {
   RooArgList pdfs_list;
-  for (std::vector<RooAbsPdf*>::const_iterator it = pdfs.begin();
-       it != pdfs.end(); ++it) {
-    pdfs_list.add(**it);
-    RooRealVar* var = new RooRealVar(TString()+(*it)->GetName()+"_yield",
-                                     TString()+(*it)->GetName()+"_yield",
-                                     input_data_->sumEntries()/pdfs.size(), 0.0,
-                                     input_data_->sumEntries()*10);
-    yields_.addOwned(*var);
+  
+  if (yields.size() != pdfs.size()) {
+    if (yields.size() > 0) {
+      serr << "SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*>, RooDataSet&, std::vector<RooRealVar*>): yields are set, but number of yields does not match number of PDFs. Will ignore yields." << endmsg;
+    }
+    
+    for (std::vector<RooAbsPdf*>::const_iterator it = pdfs.begin();
+         it != pdfs.end(); ++it) {
+      pdfs_list.add(**it);
+      RooRealVar* var = new RooRealVar(TString()+(*it)->GetName()+"_yield",
+                                       TString()+(*it)->GetName()+"_yield",
+                                       input_data_->sumEntries()/pdfs.size(), 0.0,
+                                       input_data_->sumEntries()*10);
+      yields_.addOwned(*var);
+    }
+  } else {
+    for (std::vector<RooAbsPdf*>::const_iterator it = pdfs.begin();
+         it != pdfs.end(); ++it) {
+      pdfs_list.add(**it);
+    }
+    for (std::vector<RooRealVar*>::const_iterator it = yields.begin();
+         it != yields.end(); ++it) {
+      yields_.add(**it);
+    }
   }
   pdf_ = new RooAddPdf("pdf_splotfit2", "pdf_splotfit2", pdfs_list, yields_);
+  pdf_->Print("v");
 }
 
 SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :

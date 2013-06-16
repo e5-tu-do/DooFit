@@ -59,8 +59,9 @@ class SPlotFit2{
    *
    *  @param pdfs the PDFs to use for discrimination
    *  @param data the dataset to fit on
+   *  @param yields (optional) yields for the PDFs
    */
-  SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data);
+  SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector<RooRealVar*> yields=std::vector<RooRealVar*>());
   
   /**
    *  @brief Constructor based on a set of PDFs
