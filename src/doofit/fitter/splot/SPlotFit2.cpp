@@ -133,7 +133,7 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector
     }
   }
   pdf_ = new RooAddPdf("pdf_splotfit2", "pdf_splotfit2", pdfs_list, yields_);
-  pdf_->Print("v");
+//  pdf_->Print("v");
 }
 
 SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
