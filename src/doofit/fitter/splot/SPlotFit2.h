@@ -160,9 +160,7 @@ class SPlotFit2{
   
   unsigned int num_cpu_;
   RooDataSet* input_data_;   //< input data
-  
-  RooAbsPdf* pdf_disc_full_; //< full discriminating pdf
-   
+     
   RooArgList disc_vars_; //< discriminating variables
   RooArgList cont_vars_; //< control variables
   
