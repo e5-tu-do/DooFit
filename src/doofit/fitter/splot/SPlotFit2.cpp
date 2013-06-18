@@ -59,8 +59,8 @@ SPlotFit2::SPlotFit2() :
   disc_pdfs_(),
   cont_pdfs_(),
   disc_pdfs_extend_(),
-  sweighted_data_(),
-  sweighted_hist_(),
+  sweighted_data_map_(),
+  sweighted_hist_map_(),
   use_minos_(true)
 {
   
@@ -78,8 +78,8 @@ SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
   disc_pdfs_(),
   cont_pdfs_(),
   disc_pdfs_extend_(),
-  sweighted_data_(),
-  sweighted_hist_(),
+  sweighted_data_map_(),
+  sweighted_hist_map_(),
   use_minos_(true)
 {
   pdf_->Print("v");
@@ -99,8 +99,8 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector
   disc_pdfs_(),
   cont_pdfs_(),
   disc_pdfs_extend_(),
-  sweighted_data_(),
-  sweighted_hist_(),
+  sweighted_data_map_(),
+  sweighted_hist_map_(),
   use_minos_(true)
 {
   RooArgList pdfs_list;
@@ -145,8 +145,8 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
   disc_pdfs_(),
   cont_pdfs_(),
   disc_pdfs_extend_(),
-  sweighted_data_(),
-  sweighted_hist_(),
+  sweighted_data_map_(),
+  sweighted_hist_map_(),
   use_minos_(true)
 {
   RooArgList pdfs_list;
@@ -219,21 +219,22 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
 
   //=========================================================================
   // create sweighted datasets
-  
+  sweighted_data_ = sData->GetSDataSet();
+
   // iterate over yields
   RooLinkedListIter* yield_iterator = (RooLinkedListIter*)yields_.createIterator();
   while (var_iter1=(RooRealVar*)yield_iterator->Next()) {
     std::string comp_name = var_iter1->GetName();
     
     sinfo << "SPlotFit2: Adding sweighted dataset with name " << comp_name << endmsg;
-    sweighted_data_[comp_name] = new RooDataSet(input_data_->GetName(),input_data_->GetTitle(),input_data_,*input_data_->get(),0,TString("")+var_iter1->GetName()+"_sw");
+    sweighted_data_map_[comp_name] = new RooDataSet(input_data_->GetName(),input_data_->GetTitle(),input_data_,*input_data_->get(),0,TString("")+var_iter1->GetName()+"_sw");
   }
   delete yield_iterator;
 }
 
 std::pair<RooHistPdf*,RooDataHist*> SPlotFit2::GetHistPdf(const std::string& pdf_name, const RooArgSet& vars_set, const std::string& comp_name, const std::string& binningName){
   RooDataHist* data_hist = new RooDataHist(TString("sDataHist")+comp_name,TString("sDataHist")+comp_name,cont_vars_, TString(binningName));
-  data_hist->add(*(sweighted_data_[comp_name]));
+  data_hist->add(*(sweighted_data_map_[comp_name]));
   RooHistPdf*  pdf_hist  = new RooHistPdf(pdf_name.c_str(),pdf_name.c_str(),vars_set,*data_hist);
   
   return std::pair<RooHistPdf*,RooDataHist*>(pdf_hist,data_hist);
@@ -241,23 +242,28 @@ std::pair<RooHistPdf*,RooDataHist*> SPlotFit2::GetHistPdf(const std::string& pdf
 
 RooDataHist* SPlotFit2::GetRooDataHist( const std::string& comp_name, const std::string& binningName ){
   RooDataHist* data_hist = new RooDataHist(TString("sDataHist")+comp_name,TString("sDataHist")+comp_name,cont_vars_, TString(binningName));
-  data_hist->add(*(sweighted_data_[comp_name]));
+  data_hist->add(*(sweighted_data_map_[comp_name]));
   return data_hist;
 }
 
 RooDataHist* SPlotFit2::GetRooDataHist( const std::string& comp_name, RooRealVar * var, const std::string& binningName ){
   RooDataHist* data_hist = new RooDataHist(TString("sDataHist")+comp_name+var->GetName(),TString("sDataHist")+comp_name+var->GetName(),RooArgList(*var), TString(binningName));
-  data_hist->add(*(sweighted_data_[comp_name]));
+  data_hist->add(*(sweighted_data_map_[comp_name]));
   return data_hist;
 }
 
 RooKeysPdf& SPlotFit2::GetKeysPdf(const std::string& pdf_name, RooRealVar& var, const std::string& comp_name){
-  RooKeysPdf* pdf_keys = new RooKeysPdf(pdf_name.c_str(),pdf_name.c_str(),var,*sweighted_data_[comp_name]);
+  RooKeysPdf* pdf_keys = new RooKeysPdf(pdf_name.c_str(),pdf_name.c_str(),var,*sweighted_data_map_[comp_name]);
   return *pdf_keys;
 }
 
 RooDataSet* SPlotFit2::GetSwDataSet(const std::string& comp_name){
-  return sweighted_data_[comp_name];
+  if (comp_name==""){
+    return sweighted_data_;
+  }
+  else{
+    return sweighted_data_map_[comp_name];
+  }
 }
 
 void SPlotFit2::WriteParametersFile(std::string filename) {
