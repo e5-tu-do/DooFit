@@ -47,9 +47,9 @@ fi
 echo 
 echo "Deleting old version and installing new."
 echo
-sudo rm -rf $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
-sudo mkdir -p $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
-sudo make install
+rm -rf $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
+mkdir -p $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
+make install
 cd /
 rm -rf /tmp/$uuid
 

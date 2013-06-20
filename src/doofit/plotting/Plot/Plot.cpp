@@ -10,6 +10,8 @@
 
 // ROOT
 #include "TIterator.h" 
+#include "TString.h"
+#include "TAxis.h"
 
 // from RooFit
 #include "RooArgList.h"
@@ -229,6 +231,11 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     plot_frame_pull->SetMinimum(0.5);
     plot_frame_pull->SetMaximum(1.3*plot_frame_pull->GetMaximum());
+    
+    TString ylabel = plot_frame_pull->GetYaxis()->GetTitle();
+    ylabel.ReplaceAll("Events","Candidates");
+    plot_frame_pull->GetYaxis()->SetTitle(ylabel);
+    
     if (sc_y == kLinear || sc_y == kBoth) {
       doocore::lutils::PlotPulls(pull_plot_name, plot_frame_pull, label, config_plot_.plot_directory(), false, false, true);
       doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, label, config_plot_.plot_directory(), false, false, true, "");
@@ -246,6 +253,11 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   
   plot_frame->SetMinimum(0.0);
   plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
+
+  TString ylabel = plot_frame->GetYaxis()->GetTitle();
+  ylabel.ReplaceAll("Events","Candidates");
+  plot_frame->GetYaxis()->SetTitle(ylabel);
+  
   if (sc_y == kLinear || sc_y == kBoth) {
     doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false);
     doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), false);
