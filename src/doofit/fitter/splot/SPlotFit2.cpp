@@ -82,9 +82,9 @@ SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
   sweighted_hist_map_(),
   use_minos_(true)
 {
-  pdf_->Print("v");
-  yields_.Print();
-  input_data_->Print();
+//  pdf_->Print("v");
+//  yields_.Print();
+//  input_data_->Print();
 }
 
 SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector<RooRealVar*> yields) :
