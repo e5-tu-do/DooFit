@@ -50,6 +50,7 @@ doofit::builder::EasyPdf::~EasyPdf() {
     // if no workspace is to be used, delete all elements
     for (std::map<std::string,RooAbsPdf*>::iterator it = pdfs_.begin();
          it != pdfs_.end(); ++it) {
+//      sdebug << "deleting " << it->second->GetName() << endmsg;
       delete it->second;
     }
     for (std::map<std::string,RooAbsHiddenReal*>::iterator it = hidden_reals_.begin();
