@@ -16,6 +16,9 @@ echo "Building CMake build system for installation to $DOOFITSYS."
 if [ "$1" = "debug" ]
 then
   cmake -DCMAKE_INSTALL_PREFIX=$DOOFITSYS -DCMAKE_BUILD_TYPE=Debug ..
+elif [ "$1" = "profiling" ]
+then
+  cmake -DCMAKE_INSTALL_PREFIX=$DOOFITSYS -DCMAKE_BUILD_TYPE=Profiling ..
 else 
   cmake -DCMAKE_INSTALL_PREFIX=$DOOFITSYS ..
 fi
