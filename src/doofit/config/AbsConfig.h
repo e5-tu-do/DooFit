@@ -235,6 +235,21 @@ namespace config {
      */
     ///@{
     /**
+     *  \brief Initialize options
+     *
+     *  This function initializes all options using boost::program_options. This 
+     *  should only be used once and for the first and most general config 
+     *  object. Also the config object using this must define options for 
+     *  AbsConfig::help_flag_ and AbsConfig::config_file_ if a config
+     *  file is to be supported.
+     *
+     *  Further config objects should use AbsConfig::InitializeOptions(const AbsConfig&)
+     *  instead to initialize themself.
+     *
+     */
+    void InitializeOptions();
+    
+    /**
      *  \brief Initialize options with input from command line.
      *
      *  Using argc and argv this function initializes all options using 

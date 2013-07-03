@@ -185,7 +185,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   }
   if (min_data_entry == 0.0) min_data_entry = 1.0;
   if (min_data_entry < 0.0) min_data_entry = 0.01;
-  sdebug << "minimum data entry in dataset: " << min_data_entry << endmsg;
+//  sdebug << "minimum data entry in dataset: " << min_data_entry << endmsg;
   double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.9);
   
 //  sdebug << "minimum entry in histogram: " << min_data_entry << endmsg;
@@ -241,7 +241,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
       doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, label, config_plot_.plot_directory(), false, false, true, "");
     }
     
-    sdebug << "Plot y axis minimum for log scale plot: " << min_plot << endmsg;
+//    sdebug << "Plot y axis minimum for log scale plot: " << min_plot << endmsg;
     plot_frame_pull->SetMinimum(min_plot);
     if (sc_y == kLogarithmic || sc_y == kBoth) {
       doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame_pull, label, config_plot_.plot_directory(), true, false, true);

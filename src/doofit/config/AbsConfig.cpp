@@ -113,6 +113,22 @@ namespace config {
     return *this;
   }
   
+  void AbsConfig::InitializeOptions() {
+    if (!initialized_) {
+      DefineOptions();
+      
+      std::vector<std::string> args;
+      
+      ParseOptionsAndConfigFile(po::command_line_parser(args));
+      
+      LoadOptions();
+      
+      initialized_ = true;
+    } else {
+      throw AlreadyInitializedException() << ConfigName(name_);
+    }
+  }
+  
   void AbsConfig::InitializeOptions(int argc, char* argv[]) {
     if (!initialized_) {
       DefineOptions();
