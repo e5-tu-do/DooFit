@@ -369,6 +369,14 @@ namespace toy {
   }
   
   bool ToyStudyStd::FitResultOkay(const RooFitResult& fit_result) const {
+#if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
+    sdebug << "Fit status report: ";
+    for (int i=0;i<fit_result.numStatusHistory();++i) {
+      sdebug << fit_result.statusLabelHistory(i) << ": " << fit_result.statusCodeHistory(i) << ", ";
+    }
+    sdebug << "Covariance quality: " << fit_result.covQual() << endmsg;
+#endif
+    
     if (fit_result.covQual() != 3) {
       return false;
     } else {
@@ -475,7 +483,7 @@ namespace toy {
               delete fit_result2;
             }
             
-            swarn << "Fit result number " << i << " in file " << *it_files << " negelected." << endmsg;
+            swarn << "Fit result number " << i << " in file " << *it_files << " neglected." << endmsg;
           }
           results_neglected++;
           
