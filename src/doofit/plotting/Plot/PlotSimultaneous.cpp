@@ -74,6 +74,20 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         plot.plot_range_ = this->plot_range_;
         plot.AddPlotArg(Range(min,max));
         
+        // go through supplied cmd args and if necessary adapt ProjWData argument
+
+        for (std::vector<RooCmdArg>::iterator it = plot.plot_args_.begin();
+             it != plot.plot_args_.end(); ++it) {
+          if (std::string(it->GetName()) == "ProjData") {
+            sinfo << "Found ProjWData() argument. Will change projection dataset accordingly." << endmsg;
+            
+            // create the new projection argument
+            *it = ProjWData(*dynamic_cast<const RooArgSet*>(it->getObject(0)),
+                            sub_data,
+                            it->getInt(0));
+          }
+        }
+        
         doocore::lutils::setStyle("LHCb");
         config_plot_.OnDemandOpenPlotStack();
         TCanvas c1("c1","c1",900,900);

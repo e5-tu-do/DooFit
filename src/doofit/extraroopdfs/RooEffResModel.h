@@ -13,8 +13,8 @@
  * 2012-10-04 re-import from upstream, with some experimental changes, which *
  *	which are disabled by default for now...                             *
  *****************************************************************************/
-#ifndef ROO_EFF_RES_MODEL
-#define ROO_EFF_RES_MODEL
+#ifndef EXTRAROOPDFS_ROO_EFF_RES_MODEL
+#define EXTRAROOPDFS_ROO_EFF_RES_MODEL
 
 #include <string>
 

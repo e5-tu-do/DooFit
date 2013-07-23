@@ -160,18 +160,24 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   }
   
   RooCmdArg cut_range_arg, projection_range_arg, frame_range_arg;
+  RooBinning* binning = NULL;
   if (plot_range_.length() > 0) {
     sinfo << "doofit::plotting: Plotting on named range " << plot_range_ << endmsg;
     cut_range_arg = CutRange(plot_range_.c_str());
     projection_range_arg = ProjectionRange(plot_range_.c_str());
     range_arg = Range(plot_range_.c_str());
+    binning = new RooBinning(dimension_.getBinning().numBins(), dimension_.getMin(plot_range_.c_str()), dimension_.getMax(plot_range_.c_str()));
   }
 
   RooPlot* plot_frame = dimension_.frame(range_arg);
   
   for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
        it != datasets_.end(); ++it) {
-    (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+    if (binning != NULL) {
+      (*it)->plotOn(plot_frame, Binning(*binning), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+    } else {
+      (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+    }
   }
   
   // y range adaptively for log scale
@@ -209,7 +215,11 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
          it != datasets_.end(); ++it) {
-      (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()), cut_range_arg);
+      if (binning != NULL) {
+        (*it)->plotOn(plot_frame_pull, Binning(*binning), cut_range_arg);
+      } else {
+        (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()), cut_range_arg);
+      }
     }
     
     int i=1;
@@ -269,6 +279,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), true);
   }
   
+  if (binning != NULL) delete binning;
   delete plot_frame;
 }
   
