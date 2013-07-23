@@ -13,8 +13,8 @@
  * with or without modification, are permitted according to the terms        *
  * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
  *****************************************************************************/
-#ifndef ROO_BMIX_ASYM_DECAY
-#define ROO_BMIX_ASYM_DECAY
+#ifndef EXTRAROOPDFS_ROO_BMIX_ASYM_DECAY
+#define EXTRAROOPDFS_ROO_BMIX_ASYM_DECAY
 
 //from RooFit
 #include "RooAbsAnaConvPdf.h"

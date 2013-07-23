@@ -13,8 +13,8 @@
  * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
  *****************************************************************************/
 
-#ifndef ROO_BINNED_PDF
-#define ROO_BINNED_PDF
+#ifndef EXTRAROOPDFS_ROO_BINNED_PDF
+#define EXTRAROOPDFS_ROO_BINNED_PDF
 
 #include <map>
 #include <vector>

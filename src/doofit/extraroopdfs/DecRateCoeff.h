@@ -6,8 +6,8 @@
  * @author Manuel Schiller <manuel.schiller@nikhef.nl>
  * @date 2012-10-24
  */
-#ifndef DECRATECOEFF
-#define DECRATECOEFF
+#ifndef EXTRAROOPDFS_DECRATECOEFF
+#define EXTRAROOPDFS_DECRATECOEFF
 
 #include <map>
 #include <string>
@@ -508,7 +508,7 @@ class DecRateCoeff : public RooAbsReal
 	ClassDef(DecRateCoeff, 2);
 };
 
-#endif // DECRATECOEFF
+#endif // EXTRAROOPDFS_DECRATECOEFF
 
 // vim: sw=4:tw=78:ft=cpp
 }
