@@ -34,13 +34,8 @@ class RooWorkspace;
  *  configuration of the fit behaviour of one single fit with all the special
  *  fit options that RooFit offers (see the <a href="http://root.cern.ch/root/html/RooAbsPdf.html#RooAbsPdf:fitTo">RooFit documentation</a>).
  *  
- *  © Copyright 2012  - Julian Wishahi. All Rights Reserved.
- *
  *  @author Julian Wishahi 
- *  @author $Author$
  *  @date 2012-05-28
- *  @date $Date$ 
- *  @version $Rev$
  */ 
 
 namespace doofit {
