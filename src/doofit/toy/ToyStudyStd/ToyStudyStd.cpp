@@ -242,7 +242,7 @@ namespace toy {
         if (fit_plot_dataset != evaluated_values_) {
           sinfo << "Losing " << evaluated_values_->numEntries() - fit_plot_dataset->numEntries() << "(" << (evaluated_values_->numEntries() - fit_plot_dataset->numEntries())/static_cast<double>(evaluated_values_->numEntries())*100 << "%) toys for this fit due to cuts applied." << endmsg;
         }
-        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(4), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"));
+        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(2), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"));
         fit_result->Print("v");
         delete fit_result;
         sinfo.increment_indent(-2);
