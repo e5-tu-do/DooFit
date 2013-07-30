@@ -84,6 +84,9 @@ RooBinnedPdf::RooBinnedPdf(const char* name, const char* title,
   // If "ignoreFirstBin" is true, evaluation of the value of the first bin
   // always yields zero.
 
+  // debug output
+  std::cout << "RooBinnedPdf \t Used constructor:\t RooBinnedPdf::RooBinnedPdf(const char* name, const char* title, RooAbsCategory& baseCat, const RooArgList& coefList)" << std::endl;
+
   // add category to list of base categories
   _baseCatsList.add(baseCat);
 
@@ -120,6 +123,9 @@ RooBinnedPdf::RooBinnedPdf(const char* name, const char* title,
   // ... * N_n or N_i * N_j * ... * N_k - 1 coefficients (see also the class
   // description). The order of the coefficients is given by the indices of the
   // "baseCats".
+
+  // debug output
+  std::cout << "RooBinnedPdf \t Used constructor:\t RooBinnedPdf::RooBinnedPdf(const char* name, const char* title, const RooArgList& baseCats, const RooArgList& coefList)" << std::endl;
 
   // loop over input categories
   RooFIter catIter = baseCats.fwdIterator();
@@ -179,6 +185,9 @@ RooBinnedPdf::RooBinnedPdf(const char* name, const char* title,
   // yields zero in the case that all the "current bins" are the first bin of
   // the binnings.
 
+  // debug output
+  std::cout << "RooBinnedPdf \t Used constructor:\t RooBinnedPdf::RooBinnedPdf(const char* name, const char* title, const RooArgList& baseCats, const TObjArray& coefLists, Bool_t ignoreFirstBin)" << std::endl;
+
   // loop over input categories
   RooFIter catIter = baseCats.fwdIterator();
   RooAbsArg* cat = 0;
@@ -231,6 +240,9 @@ RooBinnedPdf::RooBinnedPdf(const char* name, const char* title,
   // If "ignoreFirstBin" is true, evaluation of the value of the first bin
   // always yields zero.
 
+  // debug output
+  std::cout << "RooBinnedPdf \t Used constructor:\t RooBinnedPdf::RooBinnedPdf(const char* name, const char* title, RooAbsRealLValue& baseVar, const char* binningName, const RooArgList& coefList, Bool_t binIntegralCoefs)" << std::endl;
+
   // put the base variable in a list
   RooArgList baseVars(baseVar);
 
@@ -277,6 +289,9 @@ RooBinnedPdf::RooBinnedPdf(const char* name, const char* title,
   // bins. The coefficients may either be interpreted as bin heights or as bin
   // integrals.  This is controlled by "binIntegralCoefs".
 
+  // debug output
+  std::cout << "RooBinnedPdf \t Used constructor:\t RooBinnedPdf::RooBinnedPdf(const char* name, const char* title, const RooArgList& baseVars, const TObjArray& binningNames, const RooArgList& coefList, Bool_t binIntegralCoefs)" << std::endl;
+
   // create base categories and initialize coefficients
   if (createBaseCats(baseVars, binningNames) > 0) {
     TObjArray coefLists(1, 0);
@@ -321,6 +336,9 @@ RooBinnedPdf::RooBinnedPdf(const char* name, const char* title,
   // yields zero in the case that all the "current bins" are the first bin of
   // the binnings.
 
+  // debug output
+  std::cout << "RooBinnedPdf \t Used constructor:\t RooBinnedPdf::RooBinnedPdf(const char* name, const char* title, const RooArgList& baseVars, const TObjArray& binningNames, const TObjArray& coefLists, Bool_t binIntegralCoefs, Bool_t ignoreFirstBin)" << std::endl;
+
   // create base categories and initialize coefficients
   if (createBaseCats(baseVars, binningNames) > 0) initCoefs(coefLists);
 }
@@ -350,6 +368,9 @@ RooBinnedPdf::RooBinnedPdf
   //
   // The supplied function will be evaluated a bin centers to give the value.
 
+  // debug output
+  std::cout << "RooBinnedPdf \t Used constructor:\t RooBinnedPdf::RooBinnedPdf(const char* name, const char* title, RooAbsArg& baseVar, const char* binning, RooAbsReal& function)" << std::endl;
+
   std::auto_ptr<RooArgSet> vars(function.getVariables());
   assert(vars->contains(baseVar));
   _baseVarsList.add(baseVar);
@@ -359,8 +380,8 @@ RooBinnedPdf::RooBinnedPdf
 //_____________________________________________________________________________
 RooBinnedPdf::RooBinnedPdf
 (const char* name, const char* title, const RooArgList& baseVars,
-    const TObjArray& binningNames, RooAbsReal& function)
-   : RooAbsPdf(name, title),
+    const TObjArray& binningNames, RooAbsReal& function) :  
+     RooAbsPdf(name, title),
      _baseCatsList(TString(name) + "_baseCatsList", 0, this),
      _baseVarsList(TString(name) + "_baseVarsList", 0, this),
      _coefLists(),
@@ -381,6 +402,9 @@ RooBinnedPdf::RooBinnedPdf
   //
   // The supplied function will be evaluated a bin centers to give the value.
 
+  // debug output
+  std::cout << "RooBinnedPdf \t Used constructor:\t RooBinnedPdf::RooBinnedPdf(const char* name, const char* title, const RooArgList& baseVars, const TObjArray& binningNames, RooAbsReal& function)" << std::endl;
+
   // create base categories and initialize coefficients
   assert(baseVars.getSize() == binningNames.GetEntries());
 
@@ -400,8 +424,8 @@ RooBinnedPdf::RooBinnedPdf
 }
 
 //_____________________________________________________________________________
-RooBinnedPdf::RooBinnedPdf(const RooBinnedPdf& other, const char* name)
-   : RooAbsPdf(other, name),
+RooBinnedPdf::RooBinnedPdf(const RooBinnedPdf& other, const char* name) :
+     RooAbsPdf(other, name),
      _baseCatsList(TString(name) + "_baseCatsList", this, other._baseCatsList),
      _baseVarsList(TString(name) + "_baseVarsList", this, other._baseVarsList),
      _coefLists(other._numCats, 0),
@@ -1070,6 +1094,8 @@ Int_t RooBinnedPdf::initCoefs(const TObjArray& coefLists, Bool_t factorize)
     RooAbsReal* coef = 0;
     while ((coef = dynamic_cast<RooAbsReal*>(coefIter.next())) != 0) {
       // check if coefficient does not depend on our variables
+      if (_continuousBase && coef->dependsOn(_baseVarsList)) std::cout << "RooBinnedPdf \t Variable/Coefficient dependence:\t _continuousBase && coef->dependsOn(_baseVarsList)" << std::endl;
+      if (!_continuousBase && coef->dependsOn(_baseCatsList)) std::cout << "RooBinnedPdf \t Variable/Coefficient dependence:\t !_continuousBase && coef->dependsOn(_baseCatsList)" << std::endl;
       if ((_continuousBase && coef->dependsOn(_baseVarsList))
           || (!_continuousBase && coef->dependsOn(_baseCatsList))) {
         coutF(InputArguments) << "RooBinnedPdf::initCoefs("
