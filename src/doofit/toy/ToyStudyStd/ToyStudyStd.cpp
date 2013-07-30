@@ -242,7 +242,7 @@ namespace toy {
         if (fit_plot_dataset != evaluated_values_) {
           sinfo << "Losing " << evaluated_values_->numEntries() - fit_plot_dataset->numEntries() << "(" << (evaluated_values_->numEntries() - fit_plot_dataset->numEntries())/static_cast<double>(evaluated_values_->numEntries())*100 << "%) toys for this fit due to cuts applied." << endmsg;
         }
-        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(1), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true));
+        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(2), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"));
         fit_result->Print("v");
         delete fit_result;
         sinfo.increment_indent(-2);
@@ -258,8 +258,8 @@ namespace toy {
       }
       frame->Draw();
       TString plot_name = parameter->GetName();
-      doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory());
-      doocore::lutils::printPlot(&canvas, "AllPlots", config_toystudy_.plot_directory());
+      doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
+      doocore::lutils::printPlot(&canvas, "AllPlots", config_toystudy_.plot_directory(), true);
       
       delete frame;
       
@@ -443,70 +443,72 @@ namespace toy {
       << " from branch " << config_toystudy_.fit_result1_branch_name() << endmsg;
       TFile file((*it_files).first().c_str(), "read");
       if (file.IsZombie() || !file.IsOpen()) {
-        serr << "Cannot open file " << (*it_files).first() << " which may be not existing or corrupted." << endmsg;
-        throw ExceptionCannotReadFitResult();
-      }
-      
-      TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
-      if (tree == NULL) {
-        serr << "Cannot find tree " << (*it_files).second() << " in file. Cannot read in fit results." << endmsg;
-        throw ExceptionCannotReadFitResult();
-      }
-      
-      TBranch* result_branch = tree->GetBranch(config_toystudy_.fit_result1_branch_name().c_str());
-      TBranch* result2_branch = tree->GetBranch(config_toystudy_.fit_result2_branch_name().c_str());
-      if (result_branch == NULL) {
-        serr << "Cannot find branch " << config_toystudy_.fit_result1_branch_name() << " in tree. Cannot read in fit results." << endmsg;
-        throw ExceptionCannotReadFitResult();
-      }
-      
-      RooFitResult* fit_result  = NULL;
-      RooFitResult* fit_result2 = NULL;
-      result_branch->SetAddress(&fit_result);
-      
-      if (result2_branch != NULL) {
-        result2_branch->SetAddress(&fit_result2);
-      }
-      
-      for (int i=0; i<tree->GetEntries(); ++i) {
-        result_branch->GetEntry(i);
-        if (result2_branch != NULL) {
-          result2_branch->GetEntry(i);
-        }
-        // save a copy
-        if (fit_result != NULL && FitResultOkay(*fit_result)) {
-          fit_results_read_queue_.push(std::make_pair(fit_result,fit_result2));
-          
-          results_stored++;
-        } else {
-          if (fit_result == NULL) {
-            serr << "Fit result number " << i << " in file " << *it_files << " is NULL and therefore negelected. This indicates corrupted files and should never happen." << endmsg;
-            while (true) {}
-          } else {
-            delete fit_result;
-            if (fit_result2 != NULL) {
-              delete fit_result2;
-            }
-            
-            swarn << "Fit result number " << i << " in file " << *it_files << " neglected." << endmsg;
-          }
-          results_neglected++;
-          
-        }
-        fit_result = NULL;
-        fit_result2 = NULL;
+        serr << "Cannot open file " << (*it_files).first() << " which may be not existing or corrupted. Ignoring this file." << endmsg;
+        //throw ExceptionCannotReadFitResult();
+      } else {
         
-        while (fit_results_release_queue_.size() > 0) {
-          std::pair<RooFitResult*,RooFitResult*> fit_results = std::pair<RooFitResult*,RooFitResult*>(NULL,NULL);
-          if (fit_results_release_queue_.wait_and_pop(fit_results)) {
-            if (fit_results.first != NULL) delete fit_results.first;
-            if (fit_results.second != NULL) delete fit_results.second;
+        TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
+        if (tree == NULL) {
+          serr << "Cannot find tree " << (*it_files).second() << " in file. Cannot read in fit results. Ignoring this file." << endmsg;
+          //throw ExceptionCannotReadFitResult();
+        } else {
+          
+          TBranch* result_branch = tree->GetBranch(config_toystudy_.fit_result1_branch_name().c_str());
+          TBranch* result2_branch = tree->GetBranch(config_toystudy_.fit_result2_branch_name().c_str());
+          if (result_branch == NULL) {
+            serr << "Cannot find branch " << config_toystudy_.fit_result1_branch_name() << " in tree. Cannot read in fit results." << endmsg;
+            throw ExceptionCannotReadFitResult();
           }
+          
+          RooFitResult* fit_result  = NULL;
+          RooFitResult* fit_result2 = NULL;
+          result_branch->SetAddress(&fit_result);
+          
+          if (result2_branch != NULL) {
+            result2_branch->SetAddress(&fit_result2);
+          }
+          
+          for (int i=0; i<tree->GetEntries(); ++i) {
+            result_branch->GetEntry(i);
+            if (result2_branch != NULL) {
+              result2_branch->GetEntry(i);
+            }
+            // save a copy
+            if (fit_result != NULL && FitResultOkay(*fit_result)) {
+              fit_results_read_queue_.push(std::make_pair(fit_result,fit_result2));
+              
+              results_stored++;
+            } else {
+              if (fit_result == NULL) {
+                serr << "Fit result number " << i << " in file " << *it_files << " is NULL and therefore negelected. This indicates corrupted files and should never happen." << endmsg;
+                while (true) {}
+              } else {
+                delete fit_result;
+                if (fit_result2 != NULL) {
+                  delete fit_result2;
+                }
+                
+                swarn << "Fit result number " << i << " in file " << *it_files << " neglected." << endmsg;
+              }
+              results_neglected++;
+              
+            }
+            fit_result = NULL;
+            fit_result2 = NULL;
+            
+            while (fit_results_release_queue_.size() > 0) {
+              std::pair<RooFitResult*,RooFitResult*> fit_results = std::pair<RooFitResult*,RooFitResult*>(NULL,NULL);
+              if (fit_results_release_queue_.wait_and_pop(fit_results)) {
+                if (fit_results.first != NULL) delete fit_results.first;
+                if (fit_results.second != NULL) delete fit_results.second;
+              }
+            }
+          }
+          
+          delete tree;
+          file.Close();
         }
       }
-      
-      delete tree;
-      file.Close();
     }
     fit_results_read_queue_.disable_queue();
     sinfo << "Read in " << results_stored << " fit results. (" << results_neglected << " results negelected, that is " << static_cast<double>(results_neglected)/static_cast<double>(results_stored+results_neglected)*100.0 << "%)" << endmsg;
