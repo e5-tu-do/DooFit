@@ -134,6 +134,11 @@ class AbsFitter {
    */
   void set_pdf(RooAbsPdf* pdf) {pdf_ = pdf;}
   
+  /**
+   *  @brief Get identifier
+   */
+  std::string identifier() { return identifier_; }
+  
  protected:
   /**
    *  @brief Dataset to work on

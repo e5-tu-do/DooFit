@@ -85,6 +85,8 @@ class EasyFit
   /** @brief Adds argset of constraining pdfs */
   EasyFit& SetExternalConstraints(const RooArgSet* fc_external_constraints);
 
+  /** @brief Adds argset of conditional observables */
+  EasyFit& SetConditionalObservables(const RooArgSet* fc_conditional_observables);
 
   /** @brief Defines the Migrad strategy. 
    *
@@ -99,7 +101,7 @@ class EasyFit
    *
    *  Default is true.
    */
-  EasyFit& SetOptimize(bool fc_optimize);
+  EasyFit& SetOptimize(int fc_optimize);
   
   /** @brief Apply correction to errors and covariance matrix using sum-of-weights covariance matrix.
    *
@@ -250,6 +252,9 @@ class EasyFit
   bool fc_constrained_; ///< Apply all constrained contained in the p.d.f. in the likelihood (false by default).
   bool fc_constrained_externally_; ///< Flag for internal checks if external constraints are set.
   const RooArgSet* fc_external_constraints_; ///< RooArgSet of constraining pdfs.
+  
+  bool fc_conditional_observables_set_; ///< Flag for internal checks if conditional observables are set.
+  const RooArgSet* fc_conditional_observables_; ///< RooArgSet of conditional observables.
   /**@}*/
 
   /** @name FitFlowOptions
@@ -262,7 +267,7 @@ class EasyFit
    */
   /**@{*/
   int fc_strategy_;   ///< Fit strategy (0 through 2, default is 1).
-  bool fc_optimize_;           ///< Activate constant term optimization during minimization (true by default).
+  int fc_optimize_;           ///< Activate constant term optimization during minimization (true by default).
 
   /** @brief Correct errors and covariance matrix using sum-of-weights covariance matrix (false by default).
    *
@@ -324,6 +329,5 @@ class EasyFit
 } // namespace easyfit
 } // namespace fitter
 } // namespace doofit
-
 
 #endif // DOOFIT_FITTER_EASYFIT_EASYFIT_H

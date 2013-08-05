@@ -14,6 +14,9 @@
 #include "RooArgList.h"
 #include "RooArgSet.h"
 
+// from DooFit
+#include "doofit/fitter/easyfit/EasyFit.h"
+
 // forward declarations
 class RooAbsArg;
 class RooAbsPdf;
@@ -137,6 +140,17 @@ class SPlotFit2{
   
   bool use_minos()  const {return use_minos_;}
   
+  /**
+   *  @brief Set EasyFit to use for fitting
+   *
+   *  If this EasyFit is set, it will be preferred for fitting.
+   *
+   *  @param efit EasyFit to use
+   */
+  void set_easyfitter(doofit::fitter::easyfit::EasyFit& efit) {
+    easyfitter_ = &efit;
+  }
+  
  private:
   /**
    *  @brief Full discriminating PDF
@@ -175,6 +189,8 @@ class SPlotFit2{
   std::map<std::string,RooDataHist*>  sweighted_hist_map_; //< maps component name to sweighted datahist
   
   bool use_minos_;
+  
+  doofit::fitter::easyfit::EasyFit* easyfitter_;
 };
 
 } //namespace splot
