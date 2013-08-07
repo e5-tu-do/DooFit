@@ -43,6 +43,8 @@ EasyFit::EasyFit(const string& fit_name)
     , fc_constrained_(false)
     , fc_constrained_externally_(false)
     , fc_external_constraints_(NULL)
+    , fc_conditional_observables_set_(false)
+    , fc_conditional_observables_(NULL)
     , fc_strategy_(1)
     , fc_optimize_(true)
     , fc_sumw2err_(false)
@@ -115,6 +117,10 @@ void EasyFit::PrepareFit() {
   }
   if (fc_constrained_externally_) {
     fc_map_["ExternalConstraints"] = RooFit::ExternalConstraints(*fc_external_constraints_);
+  }
+  
+  if (fc_conditional_observables_set_) {
+    fc_map_["ConditionalObservables"] = RooFit::ConditionalObservables(*fc_conditional_observables_);
   }
   
   fc_map_["Strategy"]    = RooFit::Strategy(fc_strategy_);
@@ -262,7 +268,14 @@ EasyFit& EasyFit::SetExternalConstraints(const RooArgSet* fc_external_constraint
   }
   return *this;
 }
-
+  
+EasyFit& EasyFit::SetConditionalObservables(const RooArgSet* fc_conditional_observables) {
+  if (CheckSettingOptionsOk()) {
+    fc_conditional_observables_set_ = true;
+    fc_conditional_observables_ = fc_conditional_observables;
+  }
+  return *this;
+}
 
 EasyFit& EasyFit::SetStrategy(int fc_strategy) {
   if (CheckSettingOptionsOk()) {
@@ -276,7 +289,7 @@ EasyFit& EasyFit::SetStrategy(int fc_strategy) {
   return *this;
 }
 
-EasyFit& EasyFit::SetOptimize(bool fc_optimize) {
+EasyFit& EasyFit::SetOptimize(int fc_optimize) {
   if (CheckSettingOptionsOk()) {
     fc_optimize_ = fc_optimize;
   }

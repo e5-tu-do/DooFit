@@ -61,7 +61,8 @@ SPlotFit2::SPlotFit2() :
   disc_pdfs_extend_(),
   sweighted_data_map_(),
   sweighted_hist_map_(),
-  use_minos_(true)
+  use_minos_(true),
+  easyfitter_(NULL)
 {
   
 }
@@ -80,7 +81,8 @@ SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
   disc_pdfs_extend_(),
   sweighted_data_map_(),
   sweighted_hist_map_(),
-  use_minos_(true)
+  use_minos_(true),
+  easyfitter_(NULL)
 {
 //  pdf_->Print("v");
 //  yields_.Print();
@@ -101,7 +103,8 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector
   disc_pdfs_extend_(),
   sweighted_data_map_(),
   sweighted_hist_map_(),
-  use_minos_(true)
+  use_minos_(true),
+  easyfitter_(NULL)
 {
   RooArgList pdfs_list;
   
@@ -147,7 +150,8 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
   disc_pdfs_extend_(),
   sweighted_data_map_(),
   sweighted_hist_map_(),
-  use_minos_(true)
+  use_minos_(true),
+  easyfitter_(NULL)
 {
   RooArgList pdfs_list;
   for (std::vector<RooAbsPdf*>::const_iterator it = pdfs.begin();
@@ -170,30 +174,43 @@ SPlotFit2::~SPlotFit2(){
 void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
   //=========================================================================
   // merge our and external fitting arguments
-  RooLinkedList fitting_args;
-  fitting_args.Add((TObject*)(new RooCmdArg(NumCPU(num_cpu_))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Extended())));
-  fitting_args.Add((TObject*)(new RooCmdArg(Minos(use_minos_))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Strategy(2))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Save(true))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Verbose(false))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Timer(true))));
-  fitting_args.Add((TObject*)(new RooCmdArg(Minimizer("Minuit2","minimize"))));
-  if (ext_fit_args != NULL) {
-    RooLinkedListIter it = ext_fit_args->iterator();
-    TObject* arg = NULL;
+  
+  if (easyfitter_ != NULL) {
+    sinfo << "SPlotFit2::Fit(): Using EasyFit for fitting!" << endmsg;
     
-    while ((arg = it.Next())) {
-      arg->Print();
-      fitting_args.Add(arg);
+    easyfitter_->SetSave(true);
+    
+    easyfitter_->Fit();
+    easyfitter_->GetFitResult()->Print("v");
+  } else {
+    swarn << "SPlotFit2::Fit(): Not using EasyFit for fitting! This might be deprecated in the near future." << endmsg;
+    
+    RooLinkedList fitting_args;
+    fitting_args.Add((TObject*)(new RooCmdArg(NumCPU(num_cpu_))));
+    fitting_args.Add((TObject*)(new RooCmdArg(Extended())));
+    fitting_args.Add((TObject*)(new RooCmdArg(Minos(use_minos_))));
+    fitting_args.Add((TObject*)(new RooCmdArg(Strategy(2))));
+    fitting_args.Add((TObject*)(new RooCmdArg(Save(true))));
+    fitting_args.Add((TObject*)(new RooCmdArg(Verbose(false))));
+    fitting_args.Add((TObject*)(new RooCmdArg(Timer(true))));
+    fitting_args.Add((TObject*)(new RooCmdArg(Minimizer("Minuit2","minimize"))));
+    if (ext_fit_args != NULL) {
+      RooLinkedListIter it = ext_fit_args->iterator();
+      TObject* arg = NULL;
+      
+      while ((arg = it.Next())) {
+        arg->Print();
+        fitting_args.Add(arg);
+      }
     }
+    
+    //=========================================================================
+    // fit discriminating pdf
+    RooFitResult* fit_result = pdf_->fitTo(*input_data_, fitting_args);
+    fit_result->Print("v");
+    delete fit_result;
   }
-
-  //=========================================================================
-  // fit discriminating pdf
-  RooFitResult* fit_result = pdf_->fitTo(*input_data_, fitting_args);
-  fit_result->Print("v");
-  delete fit_result;
+  
   parameters_ = pdf().getParameters(*input_data_);
   
   //=========================================================================
