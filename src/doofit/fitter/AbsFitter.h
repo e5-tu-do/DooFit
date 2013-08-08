@@ -139,7 +139,12 @@ class AbsFitter {
    */
   std::string identifier() { return identifier_; }
   
- protected:
+protected:
+  /**
+   *  @brief Set identifier
+   */
+  void set_identifier(std::string identifier) {  identifier_ = identifier; }
+  
   /**
    *  @brief Dataset to work on
    */

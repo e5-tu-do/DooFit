@@ -298,30 +298,50 @@ namespace toy {
       TString init_desc = TString("Init value of ") + parameter->GetTitle();
       TString res_name  = parameter->GetName() + TString("_res");
       TString res_desc  = TString("Residual of ") + parameter->GetTitle();
+      TString err_name  = parameter->GetName() + TString("_err");
+      TString err_desc  = TString("Error of ") + parameter->GetTitle();
+      TString lerr_name = parameter->GetName() + TString("_lerr");
+      TString lerr_desc = TString("Low error of ") + parameter->GetTitle();
+      TString herr_name = parameter->GetName() + TString("_herr");
+      TString herr_desc = TString("High error of ") + parameter->GetTitle();
       
       double par_error = ((RooRealVar*)parameter_list.find(parameter->GetName()))->getError();
       
       RooRealVar& par  = CopyRooRealVar(*parameter);
       RooRealVar* pull = new RooRealVar(pull_name, pull_desc, 0.0);
       RooRealVar* res  = new RooRealVar(res_name, res_desc, 0.0);
+      RooRealVar* err  = new RooRealVar(err_name, err_desc, 0.0);
+      RooRealVar* lerr = new RooRealVar(lerr_name, lerr_desc, 0.0);
+      RooRealVar* herr = new RooRealVar(herr_name, herr_desc, 0.0);
       RooRealVar& init = CopyRooRealVar(*(RooRealVar*)parameter_init_list.find(par.GetName()), std::string(init_name), std::string(init_desc));
       
       double pull_value = 0.0;
+      double err_value  = par.getError();
+      double lerr_value = 0.0;
+      double herr_value = 0.0;
       
       // asymmetric error handling
       if (par.hasAsymError() && config_toystudy_.handle_asymmetric_errors()) {
+        lerr_value = par.getErrorLo();
+        herr_value = par.getErrorHi();
+        
+        lerr->setVal(lerr_value);
+        herr->setVal(herr_value);
+        
         if (par.getVal() <= init.getVal()) {
-          pull_value = (init.getVal() - par.getVal())/par.getErrorHi();
+          pull_value = (init.getVal() - par.getVal())/herr_value;
         } else {
-          pull_value = (par.getVal() - init.getVal())/par.getErrorLo();
+          pull_value = (par.getVal() - init.getVal())/lerr_value;
         }
       } else {
-        pull_value = (init.getVal() - par.getVal())/par.getError();
+        pull_value = (init.getVal() - par.getVal())/err_value;
       }
       pull->setVal(pull_value);
       
       double res_value = (init.getVal() - par.getVal());
       res->setVal(res_value);
+      
+      err->setVal(err_value);
             
       if (TMath::Abs(pull_value) > 5.0) {
         swarn << "Pull for \"" << parameter->GetName() << "\" is " << pull_value
@@ -356,6 +376,12 @@ namespace toy {
       parameters.addOwned(*pull);
       parameters.addOwned(*res);
       parameters.addOwned(init);
+      parameters.addOwned(*err);
+      
+      if (par.hasAsymError()) {
+        parameters.addOwned(*lerr);
+        parameters.addOwned(*herr);
+      }
     }
     if (problems) {
       fit_result.Print("v");
