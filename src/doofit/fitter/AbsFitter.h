@@ -125,7 +125,7 @@ class AbsFitter {
    *
    *  @param dataset The dataset to use for fitting/plotting.
    */
-  void set_dataset(const RooAbsData* dataset) {dataset_ = dataset;}
+  void set_dataset(RooAbsData* dataset) {dataset_ = dataset;}
   
   /**
    *  @brief Set PDF to use
@@ -148,7 +148,7 @@ protected:
   /**
    *  @brief Dataset to work on
    */
-  const RooAbsData* dataset_;
+  RooAbsData* dataset_;
   
   /**
    *  @brief PDF to use for fitting
