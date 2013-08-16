@@ -125,7 +125,7 @@ class AbsFitter {
    *
    *  @param dataset The dataset to use for fitting/plotting.
    */
-  void set_dataset(const RooAbsData* dataset) {dataset_ = dataset;}
+  void set_dataset(RooAbsData* dataset) {dataset_ = dataset;}
   
   /**
    *  @brief Set PDF to use
@@ -139,11 +139,16 @@ class AbsFitter {
    */
   std::string identifier() { return identifier_; }
   
- protected:
+protected:
+  /**
+   *  @brief Set identifier
+   */
+  void set_identifier(std::string identifier) {  identifier_ = identifier; }
+  
   /**
    *  @brief Dataset to work on
    */
-  const RooAbsData* dataset_;
+  RooAbsData* dataset_;
   
   /**
    *  @brief PDF to use for fitting
