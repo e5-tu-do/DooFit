@@ -28,6 +28,8 @@
 #include "RooCBShape.h"
 #include "RooSuperCategory.h"
 #include "RooKeysPdf.h"
+#include "RooHistPdf.h"
+#include "RooDataHist.h"
 #include "RooUnblindUniform.h"
 
 // from DooCore
@@ -68,6 +70,10 @@ doofit::builder::EasyPdf::~EasyPdf() {
     for (std::map<std::string,RooFormulaVar*>::iterator it = formulas_.begin();
          it != formulas_.end(); ++it) {
       delete it->second;
+    }
+    for (std::vector<RooDataHist*>::iterator it = hists_.begin();
+         it != hists_.end(); ++it) {
+      delete *it;
     }
   }
 }
@@ -350,6 +356,11 @@ RooProdPdf& doofit::builder::EasyPdf::Product(const std::string& name, const Roo
   return AddPdfToStore<RooProdPdf>(new RooProdPdf(name.c_str(), name.c_str(), pdfs));
 }
 
+RooProdPdf& doofit::builder::EasyPdf::Product(const std::string& name, const RooArgList& pdfs, const RooCmdArg& arg1, const RooCmdArg& arg2, const RooCmdArg& arg3, const RooCmdArg& arg4, const RooCmdArg& arg5, const RooCmdArg& arg6, const RooCmdArg& arg7, const RooCmdArg& arg8) {
+  return AddPdfToStore<RooProdPdf>(new RooProdPdf(name.c_str(), name.c_str(), pdfs, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
+}
+
+
 RooExtendPdf& doofit::builder::EasyPdf::Extend(const std::string& name, const RooAbsPdf& pdf, const RooAbsReal& yield) {
   return AddPdfToStore<RooExtendPdf>(new RooExtendPdf(name.c_str(), name.c_str(), pdf, yield));
 }
@@ -563,6 +574,15 @@ RooKeysPdf& doofit::builder::EasyPdf::KeysPdf(const std::string& name, const std
   RooKeysPdf* temp_pdf = dynamic_cast<RooKeysPdf*>(ws->pdf(pdf_name_on_ws.c_str()));
   
   return AddPdfToStore<RooKeysPdf>(dynamic_cast<RooKeysPdf*>(temp_pdf->cloneTree(name.c_str())));
+}
+
+RooHistPdf& doofit::builder::EasyPdf::HistPdf(const std::string& name, const RooArgSet& vars, const std::string& file_name, const std::string& hist_name) {
+  TFile file(file_name.c_str());
+  RooDataHist* hist       = dynamic_cast<RooDataHist*>(file.Get(hist_name.c_str()));
+  RooDataHist* hist_clone = dynamic_cast<RooDataHist*>(hist->Clone(hist_name.c_str()));
+  hists_.push_back(hist_clone);
+  
+  return AddPdfToStore<RooHistPdf>(new RooHistPdf(name.c_str(), name.c_str(), vars, *hist_clone));
 }
 
 RooAbsPdf& doofit::builder::EasyPdf::Pdf(const std::string &name) {
