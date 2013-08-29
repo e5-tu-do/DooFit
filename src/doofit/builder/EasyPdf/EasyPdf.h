@@ -37,6 +37,7 @@ class RooBDecay;
 class RooSimultaneous;
 class RooSuperCategory;
 class RooKeysPdf;
+class RooHistPdf;
 class RooAbsHiddenReal;
 class RooUnblindUniform;
 
@@ -474,6 +475,27 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooProdPdf& Product(const std::string& name, const RooArgList& pdfs);
+  
+  /**
+   *  @brief Add and access an product PDF with RooCmdArg support
+   *
+   *  Request a RooProdPdf by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param pdfs RooArgList of factor PDFs
+   *  @param arg1 RooCmdArg
+   *  @param arg2 RooCmdArg
+   *  @param arg3 RooCmdArg
+   *  @param arg4 RooCmdArg
+   *  @param arg5 RooCmdArg
+   *  @param arg6 RooCmdArg
+   *  @param arg7 RooCmdArg
+   *  @param arg8 RooCmdArg
+   *  @return the appropriate PDF
+   */
+  RooProdPdf& Product(const std::string& name, const RooArgList& pdfs, const RooCmdArg& arg1, const RooCmdArg& arg2 = RooCmdArg(), const RooCmdArg& arg3 = RooCmdArg(), const RooCmdArg& arg4 = RooCmdArg(), const RooCmdArg& arg5 = RooCmdArg(), const RooCmdArg& arg6 = RooCmdArg(), const RooCmdArg& arg7 = RooCmdArg(), const RooCmdArg& arg8 = RooCmdArg());
   
   /**
    *  @brief Add and access an extended PDF
@@ -930,6 +952,21 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooKeysPdf& KeysPdf(const std::string& name, const std::string& file_name, const std::string& ws_name, const std::string& pdf_name_on_ws);
+  
+  /**
+   *  @brief Add and access a RooHistPdf from a RooDataHist in a file
+   *
+   *  Request a RooHistPdf by a specified name. If the PDF does not yet exist in
+   *  this EasyPdf pool of PDFs, it is created and returned. Otherwise an
+   *  exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param vars set of variables to use
+   *  @param file_name name of TFile containing the RooDataHist to use for creation
+   *  @param hist_name name of RooDataHist in TFile containing the histogrammed data
+   *  @return the appropriate PDF
+   */
+  RooHistPdf& HistPdf(const std::string& name, const RooArgSet& vars, const std::string& file_name, const std::string& hist_name);
   ///@}
   
   /**
@@ -1019,6 +1056,11 @@ class EasyPdf {
    *  @brief Container for all generated RooAbsPdfs
    */
   std::map<std::string,RooAbsPdf*> pdfs_;
+  
+  /**
+   *  @brief Container for all cloned RooDataHists
+   */
+  std::vector<RooDataHist*> hists_;
   
   /**
    *  @brief RooWorkspace for all objects
