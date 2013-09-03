@@ -31,6 +31,7 @@
 #include "RooHistPdf.h"
 #include "RooDataHist.h"
 #include "RooUnblindUniform.h"
+#include "RooLognormal.h" 
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -344,6 +345,10 @@ RooDecay& doofit::builder::EasyPdf::Decay(const std::string& name, RooRealVar& t
   return AddPdfToStore<RooDecay>(new RooDecay(name.c_str(), name.c_str(), t, tau, model, RooDecay::SingleSided));
 }
 
+RooLognormal& doofit::builder::EasyPdf::Lognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m, RooAbsReal& k) {
+  return AddPdfToStore<RooLognormal>(new RooLognormal(name.c_str(), name.c_str(), x, m, k));
+}
+
 RooSimultaneous& doofit::builder::EasyPdf::Simultaneous(const std::string& name, RooAbsCategoryLValue& category) {
   return AddPdfToStore<RooSimultaneous>(new RooSimultaneous(name.c_str(), name.c_str(), category));
 }
@@ -579,7 +584,14 @@ RooKeysPdf& doofit::builder::EasyPdf::KeysPdf(const std::string& name, const std
 RooHistPdf& doofit::builder::EasyPdf::HistPdf(const std::string& name, const RooArgSet& vars, const std::string& file_name, const std::string& hist_name) {
   TFile file(file_name.c_str());
   RooDataHist* hist       = dynamic_cast<RooDataHist*>(file.Get(hist_name.c_str()));
-  RooDataHist* hist_clone = dynamic_cast<RooDataHist*>(hist->Clone(hist_name.c_str()));
+  std::string name_hist_clone = hist_name + "_clone";
+
+  if (hist == NULL) {
+    serr << "Cannot load RooDataHist " << hist_name << " from file " << file_name << endmsg;
+    throw ObjectNotExistingException();
+  }
+  
+  RooDataHist* hist_clone = dynamic_cast<RooDataHist*>(hist->Clone(name_hist_clone.c_str()));
   hists_.push_back(hist_clone);
   
   return AddPdfToStore<RooHistPdf>(new RooHistPdf(name.c_str(), name.c_str(), vars, *hist_clone));

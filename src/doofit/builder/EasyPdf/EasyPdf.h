@@ -40,6 +40,7 @@ class RooKeysPdf;
 class RooHistPdf;
 class RooAbsHiddenReal;
 class RooUnblindUniform;
+class RooLognormal;
 
 /** @class doofit::builder::EasyPdf
  *  @brief Easy PDF and variable building without the clutter
@@ -431,6 +432,21 @@ class EasyPdf {
    */
   RooDecay& Decay(const std::string& name, RooRealVar& t, RooAbsReal& tau, const RooResolutionModel& model);
   
+  /**
+   *  @brief Add and access a lognormal PDF
+   *
+   *  Request a RooLognormal by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param m median of the distribution
+   *  @param k shape parameter
+   *  @return the appropriate PDF
+   */
+  RooLognormal& Lognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m, RooAbsReal& k);
+    
   /**
    *  @brief Add and access a simultaneous PDF
    *
