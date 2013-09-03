@@ -106,7 +106,8 @@ class AbsFitter {
    *  @param filename file name to write to
    */
   void WriteObservablesFile(std::string filename) {
-    Observables().writeToFile(filename.c_str());
+    file_parameters_ = filename
+    Observables().writeToFile(file_parameters_.c_str());
   }
   
   /**
@@ -117,7 +118,8 @@ class AbsFitter {
    *  @param filename file name to read from
    */
   void ReadObservablesFile(std::string filename) {
-    Observables().readFromFile(filename.c_str());
+    file_observables_ = filename;
+    Observables().readFromFile(file_observables_.c_str());
   }
   
   /**
@@ -155,6 +157,16 @@ protected:
    */
   RooAbsPdf* pdf_;
   
+  /**
+   *  @brief Observables file (last one used)
+   */
+  RooAbsPdf* file_observables_;
+
+  /**
+   *  @brief Parameters file (last one used)
+   */
+  RooAbsPdf* file_parameters_;
+
  private:
   /**
    *  @brief Identifier
