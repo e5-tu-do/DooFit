@@ -95,7 +95,8 @@ class AbsFitter {
    *  @param filename file name to read from
    */
   void ReadParametersFile(std::string filename) {
-    Parameters().readFromFile(filename.c_str());
+    file_parameters_ = filename;
+    Parameters().readFromFile(file_parameters_.c_str());
   }
   
   /**
@@ -106,8 +107,7 @@ class AbsFitter {
    *  @param filename file name to write to
    */
   void WriteObservablesFile(std::string filename) {
-    file_parameters_ = filename;
-    Observables().writeToFile(file_parameters_.c_str());
+    Observables().writeToFile(filename.c_str());
   }
   
   /**
