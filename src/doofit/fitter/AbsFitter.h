@@ -160,12 +160,12 @@ protected:
   /**
    *  @brief Observables file (last one used)
    */
-  RooAbsPdf* file_observables_;
+  std::string file_observables_;
 
   /**
    *  @brief Parameters file (last one used)
    */
-  RooAbsPdf* file_parameters_;
+  std::string file_parameters_;
 
  private:
   /**
