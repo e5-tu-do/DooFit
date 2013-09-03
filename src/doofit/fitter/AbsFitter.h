@@ -106,7 +106,7 @@ class AbsFitter {
    *  @param filename file name to write to
    */
   void WriteObservablesFile(std::string filename) {
-    file_parameters_ = filename
+    file_parameters_ = filename;
     Observables().writeToFile(file_parameters_.c_str());
   }
   
