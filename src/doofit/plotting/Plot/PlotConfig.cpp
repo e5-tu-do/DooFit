@@ -5,12 +5,14 @@
 
 // from Boost
 #include <boost/assign/std/vector.hpp> // for 'operator+=()'
+#include <boost/filesystem.hpp>
 
 // from ROOT
 #include "TCanvas.h"
 
 // from DooCore
 #include <doocore/io/MsgStream.h>
+#include <doocore/config/Summary.h>
 #include <doocore/lutils/lutils.h>
 
 // from project
@@ -77,8 +79,11 @@ void PlotConfig::PrintOptions() const {
   
 void PlotConfig::OnDemandOpenPlotStack() const {
   if (!plot_stack_open_) {
+    namespace fs = boost::filesystem;
     plot_stack_canvas_ = new TCanvas("dummy_canvas", "dummy_canvas", 900, 900);
+    doocore::config::Summary::GetInstance().AddFile(fs::path(plot_directory()) / fs::path("pdf/AllPlots.pdf"));
     doocore::lutils::printPlotOpenStack(plot_stack_canvas_, "AllPlots", plot_directory());
+    
     plot_stack_open_ = true;
   }
 }

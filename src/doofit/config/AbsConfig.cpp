@@ -13,6 +13,9 @@
 // from Project
 #include "doocore/io/MsgStream.h"
 
+// from DooCore
+#include "doocore/config/Summary.h"
+
 namespace doofit {
 namespace config {
   using namespace std;
@@ -233,6 +236,7 @@ namespace config {
       unrec_options_ = po::collect_unrecognized(parsed.options, po::exclude_positional);
       
       if (config_file_.length() > 0) {
+        doocore::config::Summary::GetInstance().AddFile(config_file_);
         ifstream ifs(config_file_.c_str());
         if (!ifs) {
           serr << "ERROR in AbsConfig::ParseOptionsAndConfigFile(boost::program_options::command_line_parser): Can not open config file: " << config_file_ << endmsg;

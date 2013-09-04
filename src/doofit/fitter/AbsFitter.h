@@ -7,6 +7,9 @@
 // from RooFit
 #include "RooArgSet.h"
 
+// from DooCore
+#include <doocore/config/Summary.h>
+
 // forward declarations
 class RooAbsData;
 class RooAbsPdf;
@@ -84,6 +87,7 @@ class AbsFitter {
    *  @param filename file name to write to
    */
   void WriteParametersFile(std::string filename) {
+    doocore::config::Summary::GetInstance().AddFile(filename);
     Parameters().writeToFile(filename.c_str());
   }
   
@@ -96,6 +100,7 @@ class AbsFitter {
    */
   void ReadParametersFile(std::string filename) {
     file_parameters_ = filename;
+    doocore::config::Summary::GetInstance().AddFile(file_parameters_);
     Parameters().readFromFile(file_parameters_.c_str());
   }
   
@@ -107,6 +112,7 @@ class AbsFitter {
    *  @param filename file name to write to
    */
   void WriteObservablesFile(std::string filename) {
+    doocore::config::Summary::GetInstance().AddFile(filename);
     Observables().writeToFile(filename.c_str());
   }
   
@@ -119,6 +125,7 @@ class AbsFitter {
    */
   void ReadObservablesFile(std::string filename) {
     file_observables_ = filename;
+    doocore::config::Summary::GetInstance().AddFile(file_observables_);
     Observables().readFromFile(file_observables_.c_str());
   }
   
