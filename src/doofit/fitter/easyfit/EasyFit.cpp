@@ -157,7 +157,7 @@ void EasyFit::PrepareFit() {
   BOOST_FOREACH(CmdArgMap::value_type &entry, fc_map_) {
     fc_linklist_.Add(dynamic_cast<TObject*>(&(entry.second)));
   }
-  fc_linklist_.Print("v");
+  //fc_linklist_.Print("v");
   prepared_ = true;
 }
 

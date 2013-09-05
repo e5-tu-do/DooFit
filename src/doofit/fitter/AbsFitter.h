@@ -28,12 +28,12 @@ class AbsFitter {
   /**
    *  @brief Constructor
    */
-  AbsFitter() : identifier_("") {}
+  AbsFitter() : identifier_(""), num_cpu_(1) {}
   
   /**
    *  @brief Constructor with name
    */
-  AbsFitter(std::string identifier) : identifier_(identifier) {}
+  AbsFitter(std::string identifier) : identifier_(identifier), num_cpu_(1) {}
   
   /**
    *  @brief Destructor
@@ -152,6 +152,16 @@ class AbsFitter {
    *  @brief Set identifier
    */
   void set_identifier(std::string identifier) {  identifier_ = identifier; }
+  
+  /**
+   *  @brief Get number of available CPUs
+   */
+  unsigned int num_cpu() { return num_cpu_; }
+  
+  /**
+   *  @brief Set identifier
+   */
+  void set_num_cpu(unsigned int num_cpu) { num_cpu_ = num_cpu; }
 
 protected:
   /**
@@ -179,6 +189,11 @@ protected:
    *  @brief Identifier
    */
   std::string identifier_;
+  
+  /**
+   *  @brief Number of available CPUs
+   */
+  unsigned int num_cpu_;
 };
 } // namespace fitter
 } // namespace doofit
