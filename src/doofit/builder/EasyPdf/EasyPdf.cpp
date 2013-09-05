@@ -116,6 +116,14 @@ bool doofit::builder::EasyPdf::RealExists(const std::string &name) {
   }
 }
 
+bool doofit::builder::EasyPdf::PdfExists(const std::string &name) {
+  if (pdfs_.count(name) == 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 RooRealVar& doofit::builder::EasyPdf::Var(const std::string &name) {
   if (vars_.count(name) == 1) {
     return *vars_[name];

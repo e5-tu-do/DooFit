@@ -359,7 +359,7 @@ class EasyPdf {
   RooArgSet AllVars();
   ///@}
   
-  /** @name Variable existency check
+  /** @name Object existency check
    *  Functions to test existence of variables
    */
   ///@{
@@ -374,6 +374,17 @@ class EasyPdf {
    *  @return whether the variable already exists
    */
   bool RealExists(const std::string& name);
+  
+  /**
+   *  @brief Check if PDF exists
+   *
+   *  Check if a PDF exists by a specified name. If it does exist in this 
+   *  EasyPdf pool of variables or formulas, true is returned, otherwise false.
+   *
+   *  @param name name of the RooAbsPdf
+   *  @return whether the variable already exists
+   */
+  bool PdfExists(const std::string& name);
   ///@}
   
   /** @name Basic PDFs
