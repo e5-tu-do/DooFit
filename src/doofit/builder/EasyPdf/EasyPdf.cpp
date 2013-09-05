@@ -80,15 +80,14 @@ void doofit::builder::EasyPdf::PurgeAllObjects() {
          it != hists_.end(); ++it) {
       delete *it;
     }
-  } else {
-    pdfs_.clear();
-    hidden_reals_.clear();
-    vars_.clear();
-    cats_.clear();
-    formulas_.clear();
-    hists_.clear();
   }
   
+  pdfs_.clear();
+  hidden_reals_.clear();
+  vars_.clear();
+  cats_.clear();
+  formulas_.clear();
+  hists_.clear();
   variable_sets_.clear();
 }
 
@@ -281,6 +280,7 @@ RooArgSet doofit::builder::EasyPdf::Vars(const std::string &names, const std::st
   RooArgSet argset;
   for (int i=0; i<variables.size(); ++i) {
     if (vars_.count(variables[i]) == 1) {
+      sdebug << "Variable " << variables[i] << endmsg;
       argset.add(Var(variables[i]));
     } else if (cats_.count(variables[i]) == 1) {
       argset.add(Cat(variables[i]));
