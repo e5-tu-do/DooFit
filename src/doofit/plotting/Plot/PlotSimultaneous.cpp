@@ -73,7 +73,11 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
         plot.plot_args_ = this->plot_args_;
         plot.plot_range_ = this->plot_range_;
-        plot.AddPlotArg(Range(min,max));
+        
+        // 20130905 FK: deactivated this manual setting of the plot range as it
+        //              can dramatically increase plot time. Maybe need to
+        //              rethink that later
+        //plot.AddPlotArg(Range(min,max));
         
         // go through supplied cmd args and if necessary adapt ProjWData argument
 
