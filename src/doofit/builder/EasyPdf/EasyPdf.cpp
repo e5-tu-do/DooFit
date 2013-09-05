@@ -49,11 +49,15 @@ doofit::builder::EasyPdf::EasyPdf(RooWorkspace* ws)
 {}
 
 doofit::builder::EasyPdf::~EasyPdf() {
+  PurgeAllObjects();
+}
+
+void doofit::builder::EasyPdf::PurgeAllObjects() {
   if (ws_ == NULL) {
     // if no workspace is to be used, delete all elements
     for (std::map<std::string,RooAbsPdf*>::iterator it = pdfs_.begin();
          it != pdfs_.end(); ++it) {
-//      sdebug << "deleting " << it->second->GetName() << endmsg;
+      //      sdebug << "deleting " << it->second->GetName() << endmsg;
       delete it->second;
     }
     for (std::map<std::string,RooAbsHiddenReal*>::iterator it = hidden_reals_.begin();
@@ -76,7 +80,16 @@ doofit::builder::EasyPdf::~EasyPdf() {
          it != hists_.end(); ++it) {
       delete *it;
     }
+  } else {
+    pdfs_.clear();
+    hidden_reals_.clear();
+    vars_.clear();
+    cats_.clear();
+    formulas_.clear();
+    hists_.clear();
   }
+  
+  variable_sets_.clear();
 }
 
 RooAbsReal& doofit::builder::EasyPdf::Real(const std::string &name) {

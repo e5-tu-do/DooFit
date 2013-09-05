@@ -119,6 +119,15 @@ class EasyPdf {
    */
   ~EasyPdf();
   
+  /**
+   *  @brief Clean up all internally stored objects
+   *
+   *  Upon destruction or sometimes on users' demand it is necessary to delete
+   *  all internally stored objects. This function takes care of that. In
+   *  workspace mode, the user has to take care of emptying the workspace.
+   */
+  void PurgeAllObjects();
+  
   /** @name Variable access and creation
    *  Functions to access and/or create variables (real, formula, categories)
    */
