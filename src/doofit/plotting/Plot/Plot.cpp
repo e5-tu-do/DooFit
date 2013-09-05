@@ -134,7 +134,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   log_pull_plot_sstr << plot_name << "_pull" << suffix;
   std::string log_pull_plot_name = log_pull_plot_sstr.str();
 
-  sinfo << "Plotting " << dimension_.GetName() << " into " << config_plot_.plot_directory() << plot_name << endmsg;
+  sinfo << "Plotting " << dimension_.GetName() << " into directory " << config_plot_.plot_directory() << " as " << plot_name << endmsg;
   
   doocore::lutils::setStyle("LHCb");
   
