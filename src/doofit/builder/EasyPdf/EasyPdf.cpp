@@ -68,6 +68,10 @@ void doofit::builder::EasyPdf::PurgeAllObjects() {
          it != vars_.end(); ++it) {
       delete it->second;
     }
+    for (std::map<std::string,RooSuperCategory*>::iterator it = supercats_.begin();
+         it != supercats_.end(); ++it) {
+      delete it->second;
+    }
     for (std::map<std::string,RooCategory*>::iterator it = cats_.begin();
          it != cats_.end(); ++it) {
       delete it->second;
@@ -85,6 +89,7 @@ void doofit::builder::EasyPdf::PurgeAllObjects() {
   pdfs_.clear();
   hidden_reals_.clear();
   vars_.clear();
+  supercats_.clear();
   cats_.clear();
   formulas_.clear();
   hists_.clear();
