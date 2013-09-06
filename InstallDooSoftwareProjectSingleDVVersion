@@ -28,7 +28,7 @@ echo "Starting build"
 echo
 
 #cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir && make VERBOSE="" -j $num_cpu
-cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir && make VERBOSE=""
+cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir -DCMAKE_BUILD_TYPE=Release && make VERBOSE=""
 rc=$?
 if [[ $rc != 0 ]] ; then
   make VERBOSE=""

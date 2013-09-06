@@ -80,6 +80,20 @@ class AbsFitter {
   virtual RooArgSet Parameters() = 0;
   
   /**
+   *  @brief Get signal yield after fit
+   *
+   *  @return signal yield (if applicable)
+   */
+  virtual double SignalYield() const { return 0.0; }
+
+  /**
+   *  @brief Get background yield after fit
+   *
+   *  @return background yield (if applicable)
+   */
+  virtual double BackgroundYield() const { return 0.0; }
+  
+  /**
    *  @brief Write parameters to file
    *
    *  Write parameter information (ranges etc.) to an ASCII file
