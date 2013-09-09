@@ -16,11 +16,11 @@
 #MinSizeRel.")
 #ENDIF()
 
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -pg" CACHE STRING "Debug options." FORCE)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "Debug options." FORCE)
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -pg -std=c++11 -stdlib=libc++" CACHE STRING "Debug options." FORCE)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -std=c++11 -stdlib=libc++" CACHE STRING "Debug options." FORCE)
 
 SET(CMAKE_BUILD_TYPE Profiling)
-SET(CMAKE_CXX_FLAGS_PROFILING "-O3 -pg" CACHE STRING "Debug options." FORCE)
+SET(CMAKE_CXX_FLAGS_PROFILING "-O3 -pg -std=c++11 -stdlib=libc++" CACHE STRING "Debug options." FORCE)
 
 #ADD_DEFINITIONS("-std=c++0x")
 
