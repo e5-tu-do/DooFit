@@ -161,22 +161,41 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   
   RooCmdArg cut_range_arg, projection_range_arg, frame_range_arg;
   RooBinning* binning = NULL;
+  RooAbsData* dataset_reduced = NULL;
   if (plot_range_.length() > 0) {
     sinfo << "doofit::plotting: Plotting on named range " << plot_range_ << endmsg;
     cut_range_arg = CutRange(plot_range_.c_str());
     projection_range_arg = ProjectionRange(plot_range_.c_str());
     range_arg = Range(plot_range_.c_str());
     binning = new RooBinning(dimension_.getBinning().numBins(), dimension_.getMin(plot_range_.c_str()), dimension_.getMax(plot_range_.c_str()));
+
+    // ugly const cast as RooFit (once again) gives a shit about const correctness
+    RooAbsData* dataset = const_cast<RooAbsData*>(datasets_.front());
+    //dataset_reduced = dataset->reduce(cut_range_arg);
+    dataset_reduced = dataset->reduce(CutRange(plot_range_.c_str()));
+    
+//    serr << "obsMass has range cbkg_sideband: " << dataset->get()->find("obsMass")->hasRange("cbkg_sideband") << endmsg;
+    
+    sinfo << "Created reduced dataset with " << dataset_reduced->numEntries() << " (original dataset has " << dataset->numEntries() << ")" << endmsg;
+    dataset_reduced->Print();
   }
 
   RooPlot* plot_frame = dimension_.frame(range_arg);
   
-  for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
-       it != datasets_.end(); ++it) {
+  if (dataset_reduced != NULL) {
     if (binning != NULL) {
-      (*it)->plotOn(plot_frame, Binning(*binning), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+      dataset_reduced->plotOn(plot_frame, Binning(*binning), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
     } else {
-      (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+      dataset_reduced->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+    }
+  } else {
+    for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
+         it != datasets_.end(); ++it) {
+      if (binning != NULL) {
+        (*it)->plotOn(plot_frame, Binning(*binning), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+      } else {
+        (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+      }
     }
   }
   
@@ -210,15 +229,24 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     if (plot_args_.size() > 2) arg3 = plot_args_[2];
     if (plot_args_.size() > 3) arg4 = plot_args_[3];
     if (plot_args_.size() > 4) arg5 = plot_args_[4];
-    if (plot_args_.size() > 5) arg6 = plot_args_[5];
+//    if (plot_args_.size() > 5) arg6 = plot_args_[5];
 //    if (plot_args_.size() > 6) arg7 = plot_args_[6];
     
-    for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
-         it != datasets_.end(); ++it) {
+    if (dataset_reduced != NULL) {
+      serr << "Reduced dataset available. Plotting this." << endmsg;
       if (binning != NULL) {
-        (*it)->plotOn(plot_frame_pull, Binning(*binning), cut_range_arg);
+        dataset_reduced->plotOn(plot_frame_pull, Binning(*binning), cut_range_arg);
       } else {
-        (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()), cut_range_arg);
+        dataset_reduced->plotOn(plot_frame_pull, Binning(dimension_.getBinning()), cut_range_arg);
+      }
+    } else {
+      for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
+           it != datasets_.end(); ++it) {
+        if (binning != NULL) {
+          (*it)->plotOn(plot_frame_pull, Binning(*binning), cut_range_arg);
+        } else {
+          (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()), cut_range_arg);
+        }
       }
     }
     
@@ -227,14 +255,14 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
          it != components_.end(); ++it) {
       if (it->getSize() > 0) {
         sinfo << "Plotting component " << it->first()->GetName() << endmsg;
-        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, arg1, arg2, arg3, arg4, arg5, arg6);
-        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, arg1, arg2, arg3, arg4, arg5, arg6);
+        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, NumCPU(8), arg1, arg2, arg3, arg4, arg5);
+        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, NumCPU(8), arg1, arg2, arg3, arg4, arg5);
         ++i;
       }
     }
     
-    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, arg1, arg2, arg3, arg4, arg5, arg6);
-    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, arg1, arg2, arg3, arg4, arg5, arg6);
+    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, NumCPU(8), arg1, arg2, arg3, arg4, arg5);
+    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, NumCPU(8), arg1, arg2, arg3, arg4, arg5);
     
     // =10^(ln(11)/ln(10)-0.5)
     //plot_frame_pull->SetMinimum(0.5);
@@ -279,6 +307,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), true);
   }
   
+  if (dataset_reduced != NULL) delete dataset_reduced;
   if (binning != NULL) delete binning;
   delete plot_frame;
 }
