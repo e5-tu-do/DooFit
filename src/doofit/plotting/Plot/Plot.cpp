@@ -173,9 +173,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooAbsData* dataset = const_cast<RooAbsData*>(datasets_.front());
     //dataset_reduced = dataset->reduce(cut_range_arg);
     dataset_reduced = dataset->reduce(CutRange(plot_range_.c_str()));
-    
-//    serr << "obsMass has range cbkg_sideband: " << dataset->get()->find("obsMass")->hasRange("cbkg_sideband") << endmsg;
-    
+        
     sinfo << "Created reduced dataset with " << dataset_reduced->numEntries() << " (original dataset has " << dataset->numEntries() << ")" << endmsg;
     dataset_reduced->Print();
   }
@@ -229,7 +227,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     if (plot_args_.size() > 2) arg3 = plot_args_[2];
     if (plot_args_.size() > 3) arg4 = plot_args_[3];
     if (plot_args_.size() > 4) arg5 = plot_args_[4];
-//    if (plot_args_.size() > 5) arg6 = plot_args_[5];
+    if (plot_args_.size() > 5) arg6 = plot_args_[5];
 //    if (plot_args_.size() > 6) arg7 = plot_args_[6];
     
     if (dataset_reduced != NULL) {
@@ -255,14 +253,14 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
          it != components_.end(); ++it) {
       if (it->getSize() > 0) {
         sinfo << "Plotting component " << it->first()->GetName() << endmsg;
-        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, NumCPU(8), arg1, arg2, arg3, arg4, arg5);
-        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, NumCPU(8), arg1, arg2, arg3, arg4, arg5);
+        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
+        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
         ++i;
       }
     }
     
-    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, NumCPU(8), arg1, arg2, arg3, arg4, arg5);
-    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, NumCPU(8), arg1, arg2, arg3, arg4, arg5);
+    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
+    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
     
     // =10^(ln(11)/ln(10)-0.5)
     //plot_frame_pull->SetMinimum(0.5);
