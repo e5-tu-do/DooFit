@@ -32,7 +32,7 @@ DimMass::~DimMass(){
 
 boost::shared_ptr<AbsPdf> DimMass::CreatePdf( const std::string& pdf_type ){
   if ( pdf_type == "Gaussian" ){
-    return shared_ptr<AbsPdf>( new MassGaussianPdf() );
+    return boost::shared_ptr<AbsPdf>( new MassGaussianPdf() );
   }
   else{
     serr << "DimMass: Could not find pdf of type '" << pdf_type << "'." << endmsg;

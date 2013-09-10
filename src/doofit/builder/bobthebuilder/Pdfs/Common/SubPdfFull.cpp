@@ -33,7 +33,7 @@ SubPdfFull::~SubPdfFull(){
 }
 
 void SubPdfFull::Initialize( const ptree& tree_subpdffull, 
-                             const map< string, shared_ptr<AbsDimension> >& map_dimensions,
+                             const map< string, boost::shared_ptr<AbsDimension> >& map_dimensions,
                              const string& simcat_type)
 {
   try{
@@ -83,7 +83,7 @@ void SubPdfFull::Initialize( const ptree& tree_subpdffull,
 }
 
 void SubPdfFull::InitializeComponents( const ptree& tree_components, 
-                                       const map< string, shared_ptr<AbsDimension> >& map_dimensions){
+                                       const map< string, boost::shared_ptr<AbsDimension> >& map_dimensions){
   sinfo << "Components" << endmsg;
   sinfo << "{" << endmsg;
   sinfo.increment_indent(+2);
@@ -91,8 +91,8 @@ void SubPdfFull::InitializeComponents( const ptree& tree_components,
   BOOST_FOREACH( ptree::value_type tree_component_head, tree_components){
     string component_name = tree_component_head.first;
     // insert to map and check for duplicates
-    pair<map<string,shared_ptr<Component> >::iterator,bool> ret;
-    ret = map_components_.insert(pair<string,shared_ptr<Component> >( component_name, shared_ptr<Component>( new Component() ) )) ;
+    pair<map<string,boost::shared_ptr<Component> >::iterator,bool> ret;
+    ret = map_components_.insert(pair<string,boost::shared_ptr<Component> >( component_name, boost::shared_ptr<Component>( new Component() ) )) ;
     if ( ret.second == false ){
       cout << "SubPdfFull: Tried to insert category '" << component_name << "' in SubPdfFull '" << name_ << "' to map_componentss_ twice." << endl;
       throw;
