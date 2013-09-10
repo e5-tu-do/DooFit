@@ -190,7 +190,7 @@ void EasyFit::FinalizeFit() {
 }
 
 const RooFitResult* EasyFit::GetFitResult() {
-  if (!prepared_ || !fitted_ || !finalized_){
+  if (!prepared_ || !fitted_ || !finalized_ || fit_result_ == NULL){
     // something went wrong
     serr << "Cannot get the FitResult for Fit " << fit_name_ << ". Fit is in inappropriate state: " << endmsg;
     serr << "  Prepared: "  << prepared_ 

@@ -36,10 +36,7 @@ PlotConfig::PlotConfig(const std::string& name)
 }
   
 PlotConfig::~PlotConfig() {
-  if (plot_stack_open_) {
-    doocore::lutils::printPlotCloseStack(plot_stack_canvas_, "AllPlots", plot_directory());
-    delete plot_stack_canvas_;
-  }
+  ClosePlotStack();
 }
   
 int PlotConfig::GetPdfLineColor(int index) const {
@@ -85,6 +82,14 @@ void PlotConfig::OnDemandOpenPlotStack() const {
     doocore::lutils::printPlotOpenStack(plot_stack_canvas_, "AllPlots", plot_directory());
     
     plot_stack_open_ = true;
+  }
+}
+  
+void PlotConfig::ClosePlotStack() const {
+  if (plot_stack_open_) {
+    doocore::lutils::printPlotCloseStack(plot_stack_canvas_, "AllPlots", plot_directory());
+    delete plot_stack_canvas_;
+    plot_stack_open_ = false;
   }
 }
 
