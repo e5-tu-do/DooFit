@@ -461,12 +461,30 @@ class EasyPdf {
    *
    *  @param name name of the PDF
    *  @param x x variable
-   *  @param m median of the distribution
-   *  @param k shape parameter
+   *  @param m1 median of the first distribution
+   *  @param k1 first shape parameter
+   *  @param m2 median of the second distribution
+   *  @param k2 second shape parameter
    *  @return the appropriate PDF
    */
   RooLognormal& Lognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m, RooAbsReal& k);
-    
+  
+  /**
+   *  @brief Add and access a double lognormal PDF
+   *
+   *  Request a double RooLognormal by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param m median of the distribution
+   *  @param k shape parameter
+   *  @param fraction fraction of first Gaussian
+   *  @return the appropriate PDF
+   */
+  RooAddPdf& DoubleLognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m1, RooAbsReal& k1, RooAbsReal& m2, RooAbsReal& k2, RooAbsReal& fraction);
+
   /**
    *  @brief Add and access a simultaneous PDF
    *

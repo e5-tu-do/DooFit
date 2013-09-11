@@ -374,6 +374,14 @@ RooLognormal& doofit::builder::EasyPdf::Lognormal(const std::string& name, RooAb
   return AddPdfToStore<RooLognormal>(new RooLognormal(name.c_str(), name.c_str(), x, m, k));
 }
 
+RooAddPdf& doofit::builder::EasyPdf::DoubleLognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m1, RooAbsReal& k1, RooAbsReal& m2, RooAbsReal& k2, RooAbsReal& fraction) {
+  //return AddPdfToStore<RooLognormal>(new RooLognormal(name.c_str(), name.c_str(), x, m, k));
+  
+  return Add(name, RooArgList(Lognormal("p1_"+name,x,m1,k1),
+                              Lognormal("p2_"+name,x,m2,k2)),
+             RooArgList(fraction));
+}
+
 RooSimultaneous& doofit::builder::EasyPdf::Simultaneous(const std::string& name, RooAbsCategoryLValue& category) {
   return AddPdfToStore<RooSimultaneous>(new RooSimultaneous(name.c_str(), name.c_str(), category));
 }
