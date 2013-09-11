@@ -77,7 +77,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         // 20130905 FK: deactivated this manual setting of the plot range as it
         //              can dramatically increase plot time. Maybe need to
         //              rethink that later
-        //plot.AddPlotArg(Range(min,max));
+        plot.AddPlotArg(Range(min,max));
         
         // go through supplied cmd args and if necessary adapt ProjWData argument
 
