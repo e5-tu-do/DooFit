@@ -206,7 +206,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
       TObject* arg = NULL;
       
       while ((arg = it.Next())) {
-        arg->Print();
+        //arg->Print();
         fitting_args.Add(arg);
       }
     }
