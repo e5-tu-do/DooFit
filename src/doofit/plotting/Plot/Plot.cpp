@@ -253,14 +253,18 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
          it != components_.end(); ++it) {
       if (it->getSize() > 0) {
         sinfo << "Plotting component " << it->first()->GetName() << endmsg;
+        RooMsgService::instance().setStreamStatus(1, false);
         pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
         pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
+        RooMsgService::instance().setStreamStatus(1, true);
         ++i;
       }
     }
     
+    RooMsgService::instance().setStreamStatus(1, false);
     pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
     pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
+    RooMsgService::instance().setStreamStatus(1, true);
     
     // =10^(ln(11)/ln(10)-0.5)
     //plot_frame_pull->SetMinimum(0.5);
