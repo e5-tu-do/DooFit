@@ -251,6 +251,21 @@ class EasyPdf {
    *  @return the appropriate RooSuperCategory
    */
   RooSuperCategory& SuperCat(const std::string& name);
+  
+  /**
+   *  @brief Add or access a fraction based on recursive fractions
+   *
+   *  This helper function defines a regular fraction as RooFormulaVar based on
+   *  a supplied list of recursive fractions (as RooArgList). In this list the 
+   *  fractions are ordered as fraction1, recursive_fraction2, 
+   *  recursive_fraction3 and so on. The number of supplied fractions is handled
+   *  automatically.
+   *
+   *  @param name of the fraction to define
+   *  @param recursive_fractions list of recursive fractions
+   *  @return the fraction as formula to use in added PDFs.
+   */
+  RooFormulaVar& RecursiveFraction(const std::string& name, const RooArgList& recursive_fractions);
   ///@}
 
   /** @name Item title and unit manipulation
