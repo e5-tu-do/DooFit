@@ -418,7 +418,8 @@ namespace toy {
       }
       
       if (obs_argset->getSize() == 0 && proto_set != NULL ) {
-        sinfo << "The argset of observables to generate is empty and proto data is available. Thus this PDF " <<  pdf.GetName() << " is to be ignored here and no data will be generated. Instead the proto set taken directly." << endmsg;
+        sinfo << "The argset of observables to generate is empty and proto data is available. Thus this PDF " <<  pdf.GetName() << " is to be ignored here" << endmsg;
+        sinfo << "  and no data will be generated. Instead the proto set is taken directly." << endmsg;
         
         data = dynamic_cast<RooDataSet*>(proto_set->reduce(EventRange(0, yield_to_generate)));
       } else {
