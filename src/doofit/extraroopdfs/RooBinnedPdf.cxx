@@ -760,7 +760,7 @@ std::list<Double_t>* RooBinnedPdf::binBoundaries(RooAbsRealLValue& obs,
    // Retrieve position of all bin boundaries
    const RooAbsBinning* binning = lvarg->getBinningPtr(_binningNames[i]);
    Double_t* boundaries = binning->array();
-   
+    
    std::list<Double_t>* bounds = new list<Double_t>;
    
    // Construct array with pairs of points positioned epsilon to the left and

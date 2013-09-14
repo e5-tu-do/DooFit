@@ -218,7 +218,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   
   config_plot_.OnDemandOpenPlotStack();
   if (pdf_ != NULL) {
-    RooPlot* plot_frame_pull = dimension_.frame(range_arg);
+//    RooPlot* plot_frame_pull = dimension_.frame(range_arg);
     
     // I feel so stupid doing this but apparently RooFit leaves me no other way...
     RooCmdArg arg1, arg2, arg3, arg4, arg5, arg6, arg7;
@@ -230,83 +230,101 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     if (plot_args_.size() > 5) arg6 = plot_args_[5];
 //    if (plot_args_.size() > 6) arg7 = plot_args_[6];
     
-    if (dataset_reduced != NULL) {
-      serr << "Reduced dataset available. Plotting this." << endmsg;
-      if (binning != NULL) {
-        dataset_reduced->plotOn(plot_frame_pull, Binning(*binning), cut_range_arg);
-      } else {
-        dataset_reduced->plotOn(plot_frame_pull, Binning(dimension_.getBinning()), cut_range_arg);
-      }
-    } else {
-      for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
-           it != datasets_.end(); ++it) {
-        if (binning != NULL) {
-          (*it)->plotOn(plot_frame_pull, Binning(*binning), cut_range_arg);
-        } else {
-          (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()), cut_range_arg);
-        }
-      }
-    }
+//    if (dataset_reduced != NULL) {
+//      serr << "Reduced dataset available. Plotting this." << endmsg;
+//      if (binning != NULL) {
+//        dataset_reduced->plotOn(plot_frame_pull, Binning(*binning), cut_range_arg);
+//      } else {
+//        dataset_reduced->plotOn(plot_frame_pull, Binning(dimension_.getBinning()), cut_range_arg);
+//      }
+//    } else {
+//      for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
+//           it != datasets_.end(); ++it) {
+//        if (binning != NULL) {
+//          (*it)->plotOn(plot_frame_pull, Binning(*binning), cut_range_arg);
+//        } else {
+//          (*it)->plotOn(plot_frame_pull, Binning(dimension_.getBinning()), cut_range_arg);
+//        }
+//      }
+//    }
     
     int i=1;
     for (std::vector<RooArgSet>::const_iterator it = components_.begin();
          it != components_.end(); ++it) {
       if (it->getSize() > 0) {
         sinfo << "Plotting component " << it->first()->GetName() << endmsg;
-        RooMsgService::instance().setStreamStatus(1, false);
+        //RooMsgService::instance().setStreamStatus(1, false);
         pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
-        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
-        RooMsgService::instance().setStreamStatus(1, true);
+//        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
+        //RooMsgService::instance().setStreamStatus(1, true);
         ++i;
       }
     }
     
-    RooMsgService::instance().setStreamStatus(1, false);
+    //RooMsgService::instance().setStreamStatus(1, false);
     pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
-    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
-    RooMsgService::instance().setStreamStatus(1, true);
+//    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
+    //RooMsgService::instance().setStreamStatus(1, true);
     
     // =10^(ln(11)/ln(10)-0.5)
     //plot_frame_pull->SetMinimum(0.5);
     
-    plot_frame_pull->SetMinimum(0.5);
-    plot_frame_pull->SetMaximum(1.3*plot_frame_pull->GetMaximum());
+    plot_frame->SetMinimum(0.0);
+    plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
     
-    TString ylabel = plot_frame_pull->GetYaxis()->GetTitle();
+    TString ylabel = plot_frame->GetYaxis()->GetTitle();
     ylabel.ReplaceAll("Events","Candidates");
-    plot_frame_pull->GetYaxis()->SetTitle(ylabel);
+    plot_frame->GetYaxis()->SetTitle(ylabel);
     
     if (sc_y == kLinear || sc_y == kBoth) {
-      doocore::lutils::PlotPulls(pull_plot_name, plot_frame_pull, label, config_plot_.plot_directory(), false, false, true);
-      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, label, config_plot_.plot_directory(), false, false, true, "");
+      doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false);
+      doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), false);
+    }
+    
+    plot_frame->SetMinimum(min_plot);
+    if (sc_y == kLogarithmic || sc_y == kBoth) {
+      doocore::lutils::PlotSimple(log_plot_name, plot_frame, label, config_plot_.plot_directory(), true);
+      doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), true);
+    }
+    
+    plot_frame->SetMinimum(0.5);
+    plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
+    
+//    TString ylabel = plot_frame->GetYaxis()->GetTitle();
+//    ylabel.ReplaceAll("Events","Candidates");
+//    plot_frame->GetYaxis()->SetTitle(ylabel);
+    
+    if (sc_y == kLinear || sc_y == kBoth) {
+      doocore::lutils::PlotPulls(pull_plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, true);
+      doocore::lutils::PlotPulls("AllPlots", plot_frame, label, config_plot_.plot_directory(), false, false, true, "");
     }
     
 //    sdebug << "Plot y axis minimum for log scale plot: " << min_plot << endmsg;
-    plot_frame_pull->SetMinimum(min_plot);
+    plot_frame->SetMinimum(min_plot);
     if (sc_y == kLogarithmic || sc_y == kBoth) {
-      doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame_pull, label, config_plot_.plot_directory(), true, false, true);
-      doocore::lutils::PlotPulls("AllPlots", plot_frame_pull, label, config_plot_.plot_directory(), true, false, true, "");
+      doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame, label, config_plot_.plot_directory(), true, false, true);
+      doocore::lutils::PlotPulls("AllPlots", plot_frame, label, config_plot_.plot_directory(), true, false, true, "");
     }
     
-    delete plot_frame_pull;
-  }
-  
-  plot_frame->SetMinimum(0.0);
-  plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
-
-  TString ylabel = plot_frame->GetYaxis()->GetTitle();
-  ylabel.ReplaceAll("Events","Candidates");
-  plot_frame->GetYaxis()->SetTitle(ylabel);
-  
-  if (sc_y == kLinear || sc_y == kBoth) {
-    doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false);
-    doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), false);
-  }
-  
-  plot_frame->SetMinimum(min_plot);
-  if (sc_y == kLogarithmic || sc_y == kBoth) {
-    doocore::lutils::PlotSimple(log_plot_name, plot_frame, label, config_plot_.plot_directory(), true);
-    doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), true);
+//    delete plot_frame_pull;
+  } else {
+    plot_frame->SetMinimum(0.0);
+    plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
+    
+    TString ylabel = plot_frame->GetYaxis()->GetTitle();
+    ylabel.ReplaceAll("Events","Candidates");
+    plot_frame->GetYaxis()->SetTitle(ylabel);
+    
+    if (sc_y == kLinear || sc_y == kBoth) {
+      doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false);
+      doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), false);
+    }
+    
+    plot_frame->SetMinimum(min_plot);
+    if (sc_y == kLogarithmic || sc_y == kBoth) {
+      doocore::lutils::PlotSimple(log_plot_name, plot_frame, label, config_plot_.plot_directory(), true);
+      doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), true);
+    }
   }
   
   if (dataset_reduced != NULL) delete dataset_reduced;
