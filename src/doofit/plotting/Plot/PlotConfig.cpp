@@ -9,6 +9,8 @@
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #endif
 #include <boost/filesystem.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/lexical_cast.hpp>
 
 // from ROOT
 #include "TCanvas.h"
@@ -79,8 +81,11 @@ void PlotConfig::PrintOptions() const {
   
 void PlotConfig::OnDemandOpenPlotStack() const {
   if (!plot_stack_open_) {
+    boost::uuids::uuid uuid;
+    std::string s_uuid = "canvas_" + boost::lexical_cast<std::string>(uuid);
+    
     namespace fs = boost::filesystem;
-    plot_stack_canvas_ = new TCanvas("dummy_canvas", "dummy_canvas", 900, 900);
+    plot_stack_canvas_ = new TCanvas(s_uuid.c_str(), "dummy_canvas", 900, 900);
     doocore::config::Summary::GetInstance().AddFile(fs::path(plot_directory()) / fs::path("pdf/AllPlots.pdf"));
     doocore::lutils::printPlotOpenStack(plot_stack_canvas_, "AllPlots", plot_directory());
     
