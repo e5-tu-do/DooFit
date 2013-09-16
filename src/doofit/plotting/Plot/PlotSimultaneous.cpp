@@ -137,6 +137,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         if (set_project != NULL) delete set_project;
         if (binned_projection) {
           delete data_project;
+          delete data_reduced;
         }
         
         ++num_slices;
