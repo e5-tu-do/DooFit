@@ -408,7 +408,9 @@ namespace toy {
 //    
 //#endif
     
-    if (fit_result.covQual() != 3) {
+//    sdebug << "Covariance quality: " << fit_result.covQual() << endmsg;
+    
+    if (fit_result.covQual() < 2) {
       return false;
     } else {
       return true;
