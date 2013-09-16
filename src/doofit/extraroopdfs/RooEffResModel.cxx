@@ -88,6 +88,7 @@ RooEffResModel::CacheElem::CacheElem(const RooEffResModel& parent, const RooArgS
 
     std::auto_ptr<std::list<Double_t> > bounds(
 	    eff.binBoundaries(x, x.getMin(), x.getMax()));
+  
     assert(bounds->size() > 1);
     _bounds.reserve(bounds->size());
     for (std::list<Double_t>::const_iterator

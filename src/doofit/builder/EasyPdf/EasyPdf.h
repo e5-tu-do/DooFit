@@ -40,6 +40,7 @@ class RooKeysPdf;
 class RooHistPdf;
 class RooAbsHiddenReal;
 class RooUnblindUniform;
+class RooLognormal;
 
 /** @class doofit::builder::EasyPdf
  *  @brief Easy PDF and variable building without the clutter
@@ -117,6 +118,15 @@ class EasyPdf {
    *  @brief Destructor for EasyPdf
    */
   ~EasyPdf();
+  
+  /**
+   *  @brief Clean up all internally stored objects
+   *
+   *  Upon destruction or sometimes on users' demand it is necessary to delete
+   *  all internally stored objects. This function takes care of that. In
+   *  workspace mode, the user has to take care of emptying the workspace.
+   */
+  void PurgeAllObjects();
   
   /** @name Variable access and creation
    *  Functions to access and/or create variables (real, formula, categories)
@@ -241,6 +251,21 @@ class EasyPdf {
    *  @return the appropriate RooSuperCategory
    */
   RooSuperCategory& SuperCat(const std::string& name);
+  
+  /**
+   *  @brief Add or access a fraction based on recursive fractions
+   *
+   *  This helper function defines a regular fraction as RooFormulaVar based on
+   *  a supplied list of recursive fractions (as RooArgList). In this list the 
+   *  fractions are ordered as fraction1, recursive_fraction2, 
+   *  recursive_fraction3 and so on. The number of supplied fractions is handled
+   *  automatically.
+   *
+   *  @param name of the fraction to define
+   *  @param recursive_fractions list of recursive fractions
+   *  @return the fraction as formula to use in added PDFs.
+   */
+  RooFormulaVar& RecursiveFraction(const std::string& name, const RooArgList& recursive_fractions);
   ///@}
 
   /** @name Item title and unit manipulation
@@ -349,7 +374,7 @@ class EasyPdf {
   RooArgSet AllVars();
   ///@}
   
-  /** @name Variable existency check
+  /** @name Object existency check
    *  Functions to test existence of variables
    */
   ///@{
@@ -364,6 +389,17 @@ class EasyPdf {
    *  @return whether the variable already exists
    */
   bool RealExists(const std::string& name);
+  
+  /**
+   *  @brief Check if PDF exists
+   *
+   *  Check if a PDF exists by a specified name. If it does exist in this 
+   *  EasyPdf pool of variables or formulas, true is returned, otherwise false.
+   *
+   *  @param name name of the RooAbsPdf
+   *  @return whether the variable already exists
+   */
+  bool PdfExists(const std::string& name);
   ///@}
   
   /** @name Basic PDFs
@@ -431,6 +467,39 @@ class EasyPdf {
    */
   RooDecay& Decay(const std::string& name, RooRealVar& t, RooAbsReal& tau, const RooResolutionModel& model);
   
+  /**
+   *  @brief Add and access a lognormal PDF
+   *
+   *  Request a RooLognormal by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param m1 median of the first distribution
+   *  @param k1 first shape parameter
+   *  @param m2 median of the second distribution
+   *  @param k2 second shape parameter
+   *  @return the appropriate PDF
+   */
+  RooLognormal& Lognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m, RooAbsReal& k);
+  
+  /**
+   *  @brief Add and access a double lognormal PDF
+   *
+   *  Request a double RooLognormal by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param m median of the distribution
+   *  @param k shape parameter
+   *  @param fraction fraction of first Gaussian
+   *  @return the appropriate PDF
+   */
+  RooAddPdf& DoubleLognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m1, RooAbsReal& k1, RooAbsReal& m2, RooAbsReal& k2, RooAbsReal& fraction);
+
   /**
    *  @brief Add and access a simultaneous PDF
    *

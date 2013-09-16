@@ -181,7 +181,14 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
     easyfitter_->SetSave(true);
     
     easyfitter_->Fit();
-    easyfitter_->GetFitResult()->Print("v");
+    
+    const RooFitResult* fit_result = easyfitter_->GetFitResult();
+    
+    if (fit_result != NULL) {
+      fit_result->Print("v");
+    } else {
+      serr << "Error in SPlotFit2::Fit(RooLinkedList*): Fit result not available." << endmsg;
+    }
   } else {
     swarn << "SPlotFit2::Fit(): Not using EasyFit for fitting! This might be deprecated in the near future." << endmsg;
     
@@ -199,7 +206,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
       TObject* arg = NULL;
       
       while ((arg = it.Next())) {
-        arg->Print();
+        //arg->Print();
         fitting_args.Add(arg);
       }
     }

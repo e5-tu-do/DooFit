@@ -38,9 +38,9 @@ PdfFull::~PdfFull(){
 }
   
 void PdfFull::Initialize( const boost::property_tree::ptree& tree_pdffull,
-                          const map< string, shared_ptr<AbsDimension> >& map_dimensions,
-                          const map< string, shared_ptr<CategoryBasic> >& map_cats_basic,
-                          const map< string, shared_ptr<CategorySuper> >& map_cats_super
+                          const map< string, boost::shared_ptr<AbsDimension> >& map_dimensions,
+                          const map< string, boost::shared_ptr<CategoryBasic> >& map_cats_basic,
+                          const map< string, boost::shared_ptr<CategorySuper> >& map_cats_super
                          ){
   try{
     // Set name, description, extended of PdfFull.
@@ -80,9 +80,9 @@ void PdfFull::Initialize( const boost::property_tree::ptree& tree_pdffull,
 }
 
 void PdfFull::InitializeSimCatSubPdfs(const boost::property_tree::ptree& tree_simcatsubpdfs,
-                                      const map< string, shared_ptr<AbsDimension> >& map_dimensions,
-                                      const map< string, shared_ptr<CategoryBasic> >& map_cats_basic,
-                                      const map< string, shared_ptr<CategorySuper> >& map_cats_super)
+                                      const map< string, boost::shared_ptr<AbsDimension> >& map_dimensions,
+                                      const map< string, boost::shared_ptr<CategoryBasic> >& map_cats_basic,
+                                      const map< string, boost::shared_ptr<CategorySuper> >& map_cats_super)
 {
   sinfo << "SimCatSubPdfs \"" << simcat_name_ << "\"" << endmsg;
   sinfo << "{" << endmsg;
@@ -115,8 +115,8 @@ void PdfFull::InitializeSimCatSubPdfs(const boost::property_tree::ptree& tree_si
     }
     
     // Try to add new SubPdfFull to map_subpdfs_
-    pair<map<string,shared_ptr<SubPdfFull> >::iterator,bool> ret;
-    ret = map_subpdfs_.insert( pair< string, shared_ptr<SubPdfFull> >( simcat_type, shared_ptr<SubPdfFull>( new SubPdfFull() ) ) ) ;
+    pair<map<string,boost::shared_ptr<SubPdfFull> >::iterator,bool> ret;
+    ret = map_subpdfs_.insert( pair< string, boost::shared_ptr<SubPdfFull> >( simcat_type, boost::shared_ptr<SubPdfFull>( new SubPdfFull() ) ) ) ;
     // Check if key exists twice in map_subpdfs_
     if ( ret.second == false ){
       cout << "PdfFull: Tried to insert SubPdfFull for category type '" << simcat_type << "' to map_subpdfs_ twice." << endl;
@@ -137,7 +137,7 @@ void PdfFull::InitializeSimCatSubPdfs(const boost::property_tree::ptree& tree_si
 
 void PdfFull::AddToWorkspace( RooWorkspace& ws ){
   // add subpdfs to workspace
-  typedef pair< string, shared_ptr< SubPdfFull > > pair_subpdffull;
+  typedef pair< string, boost::shared_ptr< SubPdfFull > > pair_subpdffull;
   BOOST_FOREACH( pair_subpdffull subpdf, map_subpdfs_ ){
     subpdf.second->AddToWorkspace( ws );
   }

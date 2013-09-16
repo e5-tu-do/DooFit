@@ -69,16 +69,16 @@ namespace toy {
     if (fitresult_reader_worker_.joinable()) fitresult_reader_worker_.join();
     
     if (evaluated_values_ != NULL) delete evaluated_values_;
-    for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
+    for (std::vector<const RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
       delete *it_results;
     }
-    for (std::vector<RooFitResult*>::const_iterator it_results = fit_results2_bookkeep_.begin(); it_results != fit_results2_bookkeep_.end(); ++it_results) {
+    for (std::vector<const RooFitResult*>::const_iterator it_results = fit_results2_bookkeep_.begin(); it_results != fit_results2_bookkeep_.end(); ++it_results) {
       delete *it_results;
     }
   }
   
-  void ToyStudyStd::StoreFitResult(RooFitResult* fit_result1, 
-                                  RooFitResult* fit_result2) {
+  void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result1, 
+                                   const RooFitResult* fit_result2) {
     if (!accepting_fit_results_) {
       serr << "No longer accepting fit results." << endmsg;
     } else {
@@ -92,8 +92,8 @@ namespace toy {
       }
       
       //RooFitResult* fit_result1_copy = new RooFitResult(*fit_result1);
-      RooFitResult* fit_result1_copy = fit_result1;
-      RooFitResult* fit_result2_copy = NULL;
+      const RooFitResult* fit_result1_copy = fit_result1;
+      const RooFitResult* fit_result2_copy = NULL;
       
       if (fit_result2 != NULL) {
         //fit_result2_copy = new RooFitResult(*fit_result2);
@@ -120,8 +120,8 @@ namespace toy {
     }
   }
   
-  std::pair<RooFitResult*, RooFitResult*> ToyStudyStd::GetFitResult() {
-    std::pair<RooFitResult*, RooFitResult*> fit_results(NULL,NULL);
+  std::pair<const RooFitResult*, const RooFitResult*> ToyStudyStd::GetFitResult() {
+    std::pair<const RooFitResult*, const RooFitResult*> fit_results(NULL,NULL);
     if (!fitresult_reader_worker_.joinable()) {
       return fit_results;
     } else {
@@ -135,12 +135,12 @@ namespace toy {
     }
   }
   
-  void ToyStudyStd::ReleaseFitResult(std::pair<RooFitResult*, RooFitResult*> fit_results) {
+  void ToyStudyStd::ReleaseFitResult(std::pair<const RooFitResult*, const RooFitResult*> fit_results) {
     fit_results_release_queue_.push(fit_results);
   }
   
   void ToyStudyStd::EvaluateFitResults() {
-    std::pair<RooFitResult*, RooFitResult*> fit_results(NULL,NULL);
+    std::pair<const RooFitResult*, const RooFitResult*> fit_results(NULL,NULL);
     do {
       fit_results = GetFitResult();
       
@@ -168,7 +168,7 @@ namespace toy {
     evaluated_values_->add(parameter_set);
     int i = 1;
     if (fit_results_.size() > 1) {
-      for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_.begin()+1; it_results != fit_results_.end(); ++it_results) {
+      for (std::vector<const RooFitResult*>::const_iterator it_results = fit_results_.begin()+1; it_results != fit_results_.end(); ++it_results) {
         RooArgSet params = BuildEvaluationArgSet(**it_results);
         
         evaluated_values_->add(params);
@@ -523,7 +523,7 @@ namespace toy {
             fit_result2 = NULL;
             
             while (fit_results_release_queue_.size() > 0) {
-              std::pair<RooFitResult*,RooFitResult*> fit_results = std::pair<RooFitResult*,RooFitResult*>(NULL,NULL);
+              std::pair<const RooFitResult*,const RooFitResult*> fit_results = std::pair<const RooFitResult*,const RooFitResult*>(NULL,NULL);
               if (fit_results_release_queue_.wait_and_pop(fit_results)) {
                 if (fit_results.first != NULL) delete fit_results.first;
                 if (fit_results.second != NULL) delete fit_results.second;
@@ -547,7 +547,7 @@ namespace toy {
     TThread this_tthread;
     TStopwatch sw_lock;
     sw_lock.Reset();
-    std::queue<std::pair<RooFitResult*, RooFitResult*> > saver_queue;
+    std::queue<std::pair<const RooFitResult*, const RooFitResult*> > saver_queue;
 
     // list of last 5 dead times for averaging to find a new flexible wait time
     std::list<double> deadtimes;
@@ -566,7 +566,7 @@ namespace toy {
       if (saver_queue.empty()) {
         //sdebug << "SaveFitResultWorker(): waiting for fit results as we have none." << endmsg;
         
-        std::pair<RooFitResult*, RooFitResult*> fit_results;
+        std::pair<const RooFitResult*, const RooFitResult*> fit_results;
         if (fit_results_save_queue_.wait_and_pop(fit_results)) {
           saver_queue.push(fit_results);
           //sdebug << "SaveFitResultWorker(): got a fit result pair." << endmsg;
@@ -577,7 +577,7 @@ namespace toy {
       
       // if global queue has entries, we should get them all
       while (!fit_results_save_queue_.empty()) {
-        std::pair<RooFitResult*, RooFitResult*> fit_results;
+        std::pair<const RooFitResult*, const RooFitResult*> fit_results;
         if (fit_results_save_queue_.wait_and_pop(fit_results)) {
           saver_queue.push(fit_results);
           //sdebug << "SaveFitResultWorker(): got another fit result pair." << endmsg;
@@ -630,10 +630,10 @@ namespace toy {
             } else {
               if (!abort_save_) {
                 //sdebug << "SaveFitResultWorker(): number of results in queue: " << saver_queue.size() << endmsg;
-                std::pair<RooFitResult*, RooFitResult*> fit_results = saver_queue.front();
+                std::pair<const RooFitResult*, const RooFitResult*> fit_results = saver_queue.front();
                 saver_queue.pop();
-                RooFitResult* fit_result1 = fit_results.first;
-                RooFitResult* fit_result2 = fit_results.second;
+                const RooFitResult* fit_result1 = fit_results.first;
+                const RooFitResult* fit_result2 = fit_results.second;
                 
                 TTree* tree_results = NULL;
                 if (file_existing) {      
@@ -670,8 +670,8 @@ namespace toy {
                 
                 delete fit_result1;
                 if (fit_result2 != NULL) { 
-				  delete fit_result2;
-				}
+                  delete fit_result2;
+                }
                 
                 while (!saver_queue.empty()) {
                   fit_results = saver_queue.front();
@@ -683,8 +683,8 @@ namespace toy {
                   save_counter++;
                   delete fit_result1;
                   if (fit_result2 != NULL) {
-					delete fit_result2;
-				  }
+                    delete fit_result2;
+                  }
                 }
                 
                 tree_results->Write("",TObject::kOverwrite);

@@ -158,6 +158,14 @@ class PlotConfig : public config::AbsConfig {
    *  which all be put.
    */
   void OnDemandOpenPlotStack() const;
+  
+  /**
+   *  @brief Close plot stack (for saving plots)
+   *
+   *  This helper function can be called to close the plot stack in order to 
+   *  save the all plots file.
+   */
+  void ClosePlotStack() const;
   ///@}
   
  protected:

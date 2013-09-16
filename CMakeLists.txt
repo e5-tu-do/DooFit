@@ -6,16 +6,6 @@
 # to Debug prior to calling PROJECT()
 #
 
-#IF(DEFINED CMAKE_BUILD_TYPE)
-#   SET(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Choose the type of
-#build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release
-#RelWithDebInfo MinSizeRel.")
-#ELSE()
-#   SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options
-#are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo
-#MinSizeRel.")
-#ENDIF()
-
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -pg" CACHE STRING "Debug options." FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "Debug options." FORCE)
 
@@ -36,6 +26,15 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 # Project Definition
 project(DooFit)
 cmake_minimum_required(VERSION 2.6)
+
+if(${APPLE})
+  MESSAGE( STATUS "Building for Mac OS X, switching on C++11 flags for Mac OS X/clang" )
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+endif(${APPLE})
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  MESSAGE( STATUS "Building for Linux, switching on C++11 flags for Linux/gcc" )
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 install(FILES external/FindDooFit.cmake DESTINATION cmake/Modules)
 

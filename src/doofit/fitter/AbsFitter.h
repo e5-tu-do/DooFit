@@ -7,6 +7,9 @@
 // from RooFit
 #include "RooArgSet.h"
 
+// from DooCore
+#include <doocore/config/Summary.h>
+
 // forward declarations
 class RooAbsData;
 class RooAbsPdf;
@@ -25,12 +28,12 @@ class AbsFitter {
   /**
    *  @brief Constructor
    */
-  AbsFitter() : identifier_("") {}
+  AbsFitter() : identifier_(""), num_cpu_(1) {}
   
   /**
    *  @brief Constructor with name
    */
-  AbsFitter(std::string identifier) : identifier_(identifier) {}
+  AbsFitter(std::string identifier) : identifier_(identifier), num_cpu_(1) {}
   
   /**
    *  @brief Destructor
@@ -77,6 +80,20 @@ class AbsFitter {
   virtual RooArgSet Parameters() = 0;
   
   /**
+   *  @brief Get signal yield after fit
+   *
+   *  @return signal yield (if applicable)
+   */
+  virtual double SignalYield() const { return 0.0; }
+
+  /**
+   *  @brief Get background yield after fit
+   *
+   *  @return background yield (if applicable)
+   */
+  virtual double BackgroundYield() const { return 0.0; }
+  
+  /**
    *  @brief Write parameters to file
    *
    *  Write parameter information (ranges etc.) to an ASCII file
@@ -84,6 +101,7 @@ class AbsFitter {
    *  @param filename file name to write to
    */
   void WriteParametersFile(std::string filename) {
+    doocore::config::Summary::GetInstance().AddFile(filename);
     Parameters().writeToFile(filename.c_str());
   }
   
@@ -95,7 +113,9 @@ class AbsFitter {
    *  @param filename file name to read from
    */
   void ReadParametersFile(std::string filename) {
-    Parameters().readFromFile(filename.c_str());
+    file_parameters_ = filename;
+    doocore::config::Summary::GetInstance().AddFile(file_parameters_);
+    Parameters().readFromFile(file_parameters_.c_str());
   }
   
   /**
@@ -106,6 +126,7 @@ class AbsFitter {
    *  @param filename file name to write to
    */
   void WriteObservablesFile(std::string filename) {
+    doocore::config::Summary::GetInstance().AddFile(filename);
     Observables().writeToFile(filename.c_str());
   }
   
@@ -117,7 +138,9 @@ class AbsFitter {
    *  @param filename file name to read from
    */
   void ReadObservablesFile(std::string filename) {
-    Observables().readFromFile(filename.c_str());
+    file_observables_ = filename;
+    doocore::config::Summary::GetInstance().AddFile(file_observables_);
+    Observables().readFromFile(file_observables_.c_str());
   }
   
   /**
@@ -139,12 +162,22 @@ class AbsFitter {
    */
   std::string identifier() { return identifier_; }
   
-protected:
   /**
    *  @brief Set identifier
    */
   void set_identifier(std::string identifier) {  identifier_ = identifier; }
   
+  /**
+   *  @brief Get number of available CPUs
+   */
+  unsigned int num_cpu() { return num_cpu_; }
+  
+  /**
+   *  @brief Set identifier
+   */
+  void set_num_cpu(unsigned int num_cpu) { num_cpu_ = num_cpu; }
+
+protected:
   /**
    *  @brief Dataset to work on
    */
@@ -155,11 +188,26 @@ protected:
    */
   RooAbsPdf* pdf_;
   
+  /**
+   *  @brief Observables file (last one used)
+   */
+  std::string file_observables_;
+
+  /**
+   *  @brief Parameters file (last one used)
+   */
+  std::string file_parameters_;
+
  private:
   /**
    *  @brief Identifier
    */
   std::string identifier_;
+  
+  /**
+   *  @brief Number of available CPUs
+   */
+  unsigned int num_cpu_;
 };
 } // namespace fitter
 } // namespace doofit

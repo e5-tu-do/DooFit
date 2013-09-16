@@ -5,12 +5,19 @@
 
 // from Boost
 #include <boost/assign/std/vector.hpp> // for 'operator+=()'
+#ifdef __GNUG__
+#define BOOST_NO_CXX11_SCOPED_ENUMS
+#endif
+#include <boost/filesystem.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/lexical_cast.hpp>
 
 // from ROOT
 #include "TCanvas.h"
 
 // from DooCore
 #include <doocore/io/MsgStream.h>
+#include <doocore/config/Summary.h>
 #include <doocore/lutils/lutils.h>
 
 // from project
@@ -34,10 +41,7 @@ PlotConfig::PlotConfig(const std::string& name)
 }
   
 PlotConfig::~PlotConfig() {
-  if (plot_stack_open_) {
-    doocore::lutils::printPlotCloseStack(plot_stack_canvas_, "AllPlots", plot_directory());
-    delete plot_stack_canvas_;
-  }
+  ClosePlotStack();
 }
   
 int PlotConfig::GetPdfLineColor(int index) const {
@@ -77,9 +81,23 @@ void PlotConfig::PrintOptions() const {
   
 void PlotConfig::OnDemandOpenPlotStack() const {
   if (!plot_stack_open_) {
-    plot_stack_canvas_ = new TCanvas("dummy_canvas", "dummy_canvas", 900, 900);
+    boost::uuids::uuid uuid;
+    std::string s_uuid = "canvas_" + boost::lexical_cast<std::string>(uuid);
+    
+    namespace fs = boost::filesystem;
+    plot_stack_canvas_ = new TCanvas(s_uuid.c_str(), "dummy_canvas", 900, 900);
+    doocore::config::Summary::GetInstance().AddFile(fs::path(plot_directory()) / fs::path("pdf/AllPlots.pdf"));
     doocore::lutils::printPlotOpenStack(plot_stack_canvas_, "AllPlots", plot_directory());
+    
     plot_stack_open_ = true;
+  }
+}
+  
+void PlotConfig::ClosePlotStack() const {
+  if (plot_stack_open_) {
+    doocore::lutils::printPlotCloseStack(plot_stack_canvas_, "AllPlots", plot_directory());
+    delete plot_stack_canvas_;
+    plot_stack_open_ = false;
   }
 }
 

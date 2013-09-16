@@ -112,8 +112,8 @@ void Bob::CreateDimensions(){
     string dim_id   = tree_dim.second.get_value<string>();
     
     // insert to map and check for duplicates
-    pair<map<string,shared_ptr<AbsDimension> >::iterator,bool> ret;
-    ret = map_dimensions_.insert(pair<string,shared_ptr<AbsDimension> >( dim_id, CreateDimension(dim_type))) ;
+    pair<map<string,boost::shared_ptr<AbsDimension> >::iterator,bool> ret;
+    ret = map_dimensions_.insert(pair<string,boost::shared_ptr<AbsDimension> >( dim_id, CreateDimension(dim_type))) ;
     if ( ret.second == false ){
       cout << "Bob: Tried to insert dimension of type '" << dim_type << "' and id '" << dim_id << "' to map_dimensions_ twice. ABORTING." << endl;
       throw;
@@ -125,13 +125,13 @@ void Bob::CreateDimensions(){
   sinfo << "}" << endmsg;
 }
 
-shared_ptr<AbsDimension> const Bob::CreateDimension( std::string dim_type ){
+boost::shared_ptr<AbsDimension> const Bob::CreateDimension( std::string dim_type ){
   // Real dimensions
-  if ( dim_type == "Mass" )       return shared_ptr<AbsDimension>(new DimMass);       
-  //if ( dim_type == "Propertime" ) return shared_ptr<AbsDimension>(new DimPropertime);
+  if ( dim_type == "Mass" )       return boost::shared_ptr<AbsDimension>(new DimMass);       
+  //if ( dim_type == "Propertime" ) return boost::shared_ptr<AbsDimension>(new DimPropertime);
   
   // Category dimensions
-  if ( dim_type == "Tag" ) return shared_ptr<AbsDimension>(new DimTag);
+  if ( dim_type == "Tag" ) return boost::shared_ptr<AbsDimension>(new DimTag);
   
   
   else{
@@ -165,9 +165,9 @@ void Bob::CreateCategories(){
       
       // Create normal categories
       if ( cat_type == "Basic"){
-        shared_ptr<CategoryBasic> cat_basic_obj_temp(new CategoryBasic());
-        pair< map< string, shared_ptr< CategoryBasic > >::iterator, bool > ret; 
-        ret = map_categories_basic_.insert(pair< string, shared_ptr<CategoryBasic> >( cat_name, cat_basic_obj_temp ));
+        boost::shared_ptr<CategoryBasic> cat_basic_obj_temp(new CategoryBasic());
+        pair< map< string, boost::shared_ptr< CategoryBasic > >::iterator, bool > ret; 
+        ret = map_categories_basic_.insert(pair< string, boost::shared_ptr<CategoryBasic> >( cat_name, cat_basic_obj_temp ));
         if ( ret.second == false ){
           serr << "Bob: Tried to insert category of type '" << cat_type << "' and name '" << cat_name << "' to categories' map twice." << endmsg;
           throw;
@@ -181,9 +181,9 @@ void Bob::CreateCategories(){
       
       // Create SuperCategories     
       else if ( cat_type == "Super" ){       
-        shared_ptr<CategorySuper> cat_super_obj_temp(new CategorySuper());
-        pair< map< string, shared_ptr< CategorySuper > >::iterator, bool > ret; 
-        ret = map_categories_super_.insert(pair< string, shared_ptr<CategorySuper> >( cat_name, cat_super_obj_temp ));
+        boost::shared_ptr<CategorySuper> cat_super_obj_temp(new CategorySuper());
+        pair< map< string, boost::shared_ptr< CategorySuper > >::iterator, bool > ret; 
+        ret = map_categories_super_.insert(pair< string, boost::shared_ptr<CategorySuper> >( cat_name, cat_super_obj_temp ));
         if ( ret.second == false ){
           serr << "Bob: Tried to insert category of type '" << cat_type << "' and name '" << cat_name << "' to map_categories_ twice." << endmsg;
           throw;
@@ -223,19 +223,19 @@ void Bob::CreatePdfFull(){
 
 void Bob::DumpToRooWorkspace( RooWorkspace& ws){
   // loop over dimensions and add them to workspace
-  typedef pair<string,shared_ptr<AbsDimension> > pair_absdim;
+  typedef pair<string,boost::shared_ptr<AbsDimension> > pair_absdim;
   BOOST_FOREACH( pair_absdim dimension, map_dimensions_){
     dimension.second->AddToWorkspace( ws );
   }
   
   // loop over basic categories and add them to workspace
-  typedef pair<string,shared_ptr<CategoryBasic> > pair_catbasic;
+  typedef pair<string,boost::shared_ptr<CategoryBasic> > pair_catbasic;
   BOOST_FOREACH( pair_catbasic basic_cat, map_categories_basic_){
     basic_cat.second->AddToWorkspace( ws );
   }
   
   // loop over super categories and add them to workspace
-  typedef pair<string,shared_ptr<CategorySuper> > pair_catsuper;
+  typedef pair<string,boost::shared_ptr<CategorySuper> > pair_catsuper;
   BOOST_FOREACH( pair_catsuper super_cat, map_categories_super_ ){
     super_cat.second->AddToWorkspace( ws );
   }

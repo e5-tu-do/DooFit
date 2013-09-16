@@ -407,16 +407,28 @@ namespace toy {
       int yield_to_generate = boost::math::iround(expected_yield);
       
       RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
+
+//      sdebug << "All Generation observables: " << argset_generation_observables << endmsg;
+//      sdebug << "PDF observables: " << *obs_argset << endmsg;
+//      pdf.Print("v");
+      
       // if necessary, remove observables already generated as proto set
       if (proto_set != NULL) {
         obs_argset->remove(*proto_set->get(),true,true);
       }
-               
+      
+      if (obs_argset->getSize() == 0 && proto_set != NULL ) {
+        sinfo << "The argset of observables to generate is empty and proto data is available. Thus this PDF " <<  pdf.GetName() << " is to be ignored here" << endmsg;
+        sinfo << "  and no data will be generated. Instead the proto set is taken directly." << endmsg;
+        
+        data = dynamic_cast<RooDataSet*>(proto_set->reduce(EventRange(0, yield_to_generate)));
+      } else {
 #if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
-      data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
+        data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
 #else
-      data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
+        data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
 #endif
+      }
       
       // bugfix for a RooFit bug: if no events are to be generated, the empty
       // dataset will *not* contain the proto variables. Although an empty
@@ -432,7 +444,7 @@ namespace toy {
         delete proto_set;
       }
     }
-    sinfo << "Generated " << data->numEntries() << " events for PDF " << pdf.GetName() << endmsg;
+    sinfo << "Generated " << data->numEntries() << " events for PDF " << pdf.GetName() <<  " in dimensions " << *data->get() << endmsg;
     
     if (have_to_delete_proto_data) {
       delete proto_data.back();
