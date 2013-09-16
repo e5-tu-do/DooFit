@@ -81,6 +81,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         
         // go through supplied cmd args and if necessary adapt ProjWData argument
         bool project_arg_found         = false;
+        RooArgSet* set_project         = NULL;
+        RooAbsData* data_reduced       = NULL;
         const RooAbsData* data_project = NULL;
         bool binned_projection         = false;
         for (std::vector<RooCmdArg>::iterator it = plot.plot_args_.begin();
@@ -93,10 +95,14 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
             // check for binned projection and if so generate binned dataset here to
             // accelerate projection
             if (binned_projection) {
+              set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
+              
               sinfo << " Binned projection is requested. Will generate a binned dataset to accelerate projection." << endmsg;
 
+
+              data_reduced = sub_data.reduce(*set_project);
               std::string name_data_hist = std::string(sub_data.GetName()) + "_hist" + sim_cat_type->GetName();
-              data_project = new RooDataHist(name_data_hist.c_str(), "binned projection dataset", *sub_data.get(), sub_data);
+              data_project = new RooDataHist(name_data_hist.c_str(), "binned projection dataset", *data_reduced->get(), *data_reduced);
               
               sinfo << " Created binned dataset with " << data_project->numEntries() << " bins." << endmsg;
             } else {
@@ -128,6 +134,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         
         plot.PlotHandler(sc_y, suffix);
         
+        if (set_project != NULL) delete set_project;
         if (binned_projection) {
           delete data_project;
         }
