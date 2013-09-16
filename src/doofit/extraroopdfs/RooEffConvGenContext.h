@@ -1,12 +1,11 @@
-#ifndef EXTRAROOPDFS_ROO_EFF_CONV_GEN_CONTEXT
-#define EXTRAROOPDFS_ROO_EFF_CONV_GEN_CONTEXT
+#ifndef ROO_EFF_CONV_GEN_CONTEXT
+#define ROO_EFF_CONV_GEN_CONTEXT
 
 // use C preprocessor to smuggle in a friend class into RooAbsGenContext
 //
 // *** this is an ugly hack but seems to work well enough for now, and is
 // *** better than hacking the header files that come with ROOT for now...
-namespace doofit { namespace extraroopdfs { class RooEffConvGenContext; } };
-#define RooEffGenContext RooEffGenContext; friend class doofit::extraroopdfs::RooEffConvGenContext;
+#define RooEffGenContext RooEffGenContext; friend class RooEffConvGenContext;
 
 #include <RooConvGenContext.h>
 #include <RooArgSet.h>
@@ -17,7 +16,7 @@ class RooAbsReal;
 
 namespace doofit {
 namespace extraroopdfs {
-   
+
 class RooEffConvGenContext : public RooConvGenContext {
 public:
    RooEffConvGenContext(const RooFFTConvPdf &model, const RooArgSet &vars, const RooDataSet *prototype= 0,
@@ -45,7 +44,6 @@ private:
 
    ClassDef(RooEffConvGenContext,0) // Context for generating a dataset from a PDF
 };
-
 }
 }
 
