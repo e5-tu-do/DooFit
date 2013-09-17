@@ -221,15 +221,15 @@ RooEffResModel* RooEffResModel::convolution(
     // Check that primary variable of basis functions is our convolution variable
     if (inBasis->getParameter(0) != x.absArg()) {
 	coutE(InputArguments) << "RooEffResModel::convolution(" << GetName() << "," << this
-	    << ") convolution parameter of basis function and PDF don't match" << endl
-	    << "basis->findServer(0) = " << inBasis->findServer(0) << endl
-	    << "x.absArg()           = " << x.absArg() << endl;
+	    << ") convolution parameter of basis function and PDF don't match" << std::endl
+	    << "basis->findServer(0) = " << inBasis->findServer(0) << std::endl
+	    << "x.absArg()           = " << x.absArg() << std::endl;
 	return 0;
     }
 
     if (basisCode(inBasis->GetTitle())==0) {
 	coutE(InputArguments) << "RooEffResModel::convolution(" << GetName() << "," << this
-	    << ") basis function '" << inBasis->GetTitle() << "' is not supported." << endl;
+	    << ") basis function '" << inBasis->GetTitle() << "' is not supported." << std::endl;
 	return 0;
     }
 

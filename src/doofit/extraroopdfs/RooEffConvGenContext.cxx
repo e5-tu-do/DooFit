@@ -115,7 +115,7 @@ void RooEffConvGenContext::generateEvent(RooArgSet &theEvent, Int_t remaining)
       if (val > _maxEff && !efficiency()->getMaxVal(*_modelVars)) {
          coutE(Generation) << ClassName() << "::" << GetName() 
                            << ":generateEvent: value of efficiency is larger "
-                           << "than assumed maximum of 1." << endl;
+        << "than assumed maximum of 1." << std::endl;
          continue;
       }
       if (val > RooRandom::uniform() * _maxEff) {
