@@ -248,7 +248,12 @@ namespace toy {
         sinfo.increment_indent(-2);
       }
       
+      sdebug << "Dataset contains: " << fit_plot_dataset->numEntries() << endmsg;
+      int num_bins = fit_plot_dataset->numEntries() < 1000 ? fit_plot_dataset->numEntries()/10 : 100;
+      parameter->setBins(num_bins);
+      
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
+      
       fit_plot_dataset->plotOn(frame);
       if (fit_plot_dataset != evaluated_values_) delete fit_plot_dataset;
       
