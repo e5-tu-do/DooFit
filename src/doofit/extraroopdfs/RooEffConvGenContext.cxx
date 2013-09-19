@@ -85,9 +85,9 @@ void RooEffConvGenContext::attach(const RooArgSet& args)
    std::vector<RooAbsReal*> efficiencies = model->efficiencies();
    for (std::vector<RooAbsReal*>::const_iterator it = efficiencies.begin(),
            end = efficiencies.end(); it != end; ++it) {
-      RooAbsReal* efficiency = *it;
+      RooAbsReal* eff = *it;
       RooArgSet cvSet(*_cvOut);
-      efficiency->recursiveRedirectServers(cvSet, kFALSE);
+      eff->recursiveRedirectServers(cvSet, kFALSE);
    }
 }
 //_____________________________________________________________________________
@@ -115,7 +115,7 @@ void RooEffConvGenContext::generateEvent(RooArgSet &theEvent, Int_t remaining)
       if (val > _maxEff && !efficiency()->getMaxVal(*_modelVars)) {
          coutE(Generation) << ClassName() << "::" << GetName() 
                            << ":generateEvent: value of efficiency is larger "
-                           << "than assumed maximum of 1." << std::endl;
+        << "than assumed maximum of 1." << std::endl;
          continue;
       }
       if (val > RooRandom::uniform() * _maxEff) {
@@ -136,13 +136,13 @@ void RooEffConvGenContext::initEfficiency()
    std::vector<RooAbsReal*> efficiencies = model->efficiencies();
    for (std::vector<RooAbsReal*>::const_iterator it = efficiencies.begin(),
            end = efficiencies.end(); it != end; ++it) {
-      RooAbsReal* efficiency = *it;
-      Int_t maxCode = efficiency->getMaxVal(*_modelVars);
+      RooAbsReal* eff = *it;
+      Int_t maxCode = eff->getMaxVal(*_modelVars);
       if (!maxCode) {
          _maxEff = 1.;
          break;
       } else {
-         Double_t maxVal = efficiency->maxVal(maxCode);
+         Double_t maxVal = eff->maxVal(maxCode);
          if (maxVal > _maxEff) _maxEff = maxVal;
       }
    }
@@ -153,10 +153,9 @@ const RooAbsReal* RooEffConvGenContext::efficiency()
 {
    const RooAbsEffResModel* model = static_cast<const RooAbsEffResModel*>(_modelCloneSet->first());
    assert(model);
-   const RooAbsReal* efficiency = model->efficiency();
-   assert(efficiency);
-   return efficiency;
+   const RooAbsReal* eff = model->efficiency();
+   assert(eff);
+   return eff;
 }
-
 }
 }

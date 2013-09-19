@@ -18,7 +18,6 @@
 
 namespace doofit {
 namespace extraroopdfs {
-
 class RooAbsEffResModel : public RooResolutionModel  {
 public:
    // Constructors, assignment etc
@@ -35,7 +34,7 @@ private:
 
    ClassDef(RooAbsEffResModel, 0) // EffResian Resolution Model
 };
+}
+}
 
-}
-}
 #endif

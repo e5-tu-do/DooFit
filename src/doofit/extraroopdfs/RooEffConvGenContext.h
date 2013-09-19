@@ -1,5 +1,5 @@
-#ifndef EXTRAROOPDFS_ROO_EFF_CONV_GEN_CONTEXT
-#define EXTRAROOPDFS_ROO_EFF_CONV_GEN_CONTEXT
+#ifndef ROO_EFF_CONV_GEN_CONTEXT
+#define ROO_EFF_CONV_GEN_CONTEXT
 
 // use C preprocessor to smuggle in a friend class into RooAbsGenContext
 //
@@ -17,7 +17,7 @@ class RooAbsReal;
 
 namespace doofit {
 namespace extraroopdfs {
-   
+
 class RooEffConvGenContext : public RooConvGenContext {
 public:
    RooEffConvGenContext(const RooFFTConvPdf &model, const RooArgSet &vars, const RooDataSet *prototype= 0,
@@ -45,7 +45,6 @@ private:
 
    ClassDef(RooEffConvGenContext,0) // Context for generating a dataset from a PDF
 };
-
 }
 }
 

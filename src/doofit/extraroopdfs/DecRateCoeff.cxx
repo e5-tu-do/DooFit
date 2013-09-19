@@ -7,6 +7,7 @@
  * @date 2012-10-24
  */
 
+#include <cmath>
 #include <limits>
 #include <memory>
 #include <cstdio>
@@ -16,6 +17,7 @@
 #include <RooRealVar.h>
 #include <RooProduct.h>
 #include <RooCategory.h>
+#include <RooCustomizer.h>
 
 #include "DecRateCoeff.h"
 
@@ -709,9 +711,13 @@ Double_t DecRateCoeff::evaluate() const
 	    RooNameReg::ptr(nrange)).first->eval(1., 1., 1., 1.);
 }
 
-Bool_t DecRateCoeff::forceAnalyticalInt(
-	const RooAbsArg& /*dep*/) const
-{ return kTRUE; }
+Bool_t DecRateCoeff::forceAnalyticalInt(const RooAbsArg& dep) const
+{
+    if (&dep == m_qf.absArg()) return kTRUE;
+    if (&dep == m_qt.absArg()) return kTRUE;
+    if (&dep == m_etaobs.absArg()) return kTRUE;
+    return kFALSE;
+}
 
 Int_t DecRateCoeff::getAnalyticalIntegral(
 	RooArgSet& allVars, RooArgSet& anaIntVars,
@@ -809,30 +815,30 @@ UInt_t DecRateCoeff::hash(const RooArgSet& s) const
     UInt_t sz = s.getSize();
     if (0 == sz) return 0;
     // use FNV1a to hash things - fast and easy to implement
-    UInt_t hash = 2166136261u;
+    UInt_t uhash = 2166136261u;
     // hash size
     for (unsigned i = sizeof(sz); i--; sz >>= 8) {
-	hash ^= sz & 0xffu;
-	hash *= 16777619u;
+	uhash ^= sz & 0xffu;
+	uhash *= 16777619u;
     }
     // hash name, pointer of each member of the set
     for (RooFIter it = s.fwdIterator(); const RooAbsArg* arg = it.next(); ) {
 	std::ptrdiff_t ptr = reinterpret_cast<const char*>(arg) -
 	    reinterpret_cast<const char*>(0);
 	for (unsigned i = sizeof(ptr); i--; ptr >>= 8) {
-	    hash ^= ptr & 0xffu;
-	    hash *= 16777619u;
+	    uhash ^= ptr & 0xffu;
+	    uhash *= 16777619u;
 	}
-	for (const unsigned char* ptr =
+	for (const unsigned char* cptr =
 		reinterpret_cast<const unsigned char*>(arg->GetName());
-		*ptr; ++ptr) {
-	    hash ^= *ptr;
-	    hash *= 16777619u;
+		*cptr; ++cptr) {
+	    uhash ^= *cptr;
+	    uhash *= 16777619u;
 	}
     }
     // protect against zero hash - reserved for empty set
-    if (!hash) ++hash;
-    return hash;
+    if (!uhash) ++uhash;
+    return uhash;
 }
 
 DecRateCoeff::CacheElem::CacheElem(const DecRateCoeff& parent,
@@ -934,7 +940,7 @@ void DecRateCoeff::CacheElem::setupBinnedProductIntegral(
 	RooAbsReal* &prod, const RooAbsReal& eta, int idx)
 {
     // define name of working range
-    m_workRangeName[idx] = prod->GetName();
+    m_workRangeName[idx] += prod->GetName();
     m_workRangeName[idx] += "_workRange";
     // get binning
     const double rxmin = m_parent.m_etaobs.min(m_rangeName);
@@ -960,8 +966,12 @@ void DecRateCoeff::CacheElem::setupBinnedProductIntegral(
 	    m_etabins.push_back(xmax);
 	}
 	assert(m_etabins.size() >= 2);
-	assert(m_etabins.front() == rxmin);
-	assert(m_etabins.back() == rxmax);
+	assert(std::abs(m_etabins.front() - rxmin) <
+		16. * std::numeric_limits<double>::epsilon() *
+		std::max(std::abs(rxmin), 1.));
+	assert(std::abs(m_etabins.back() - rxmax) <
+		16. * std::numeric_limits<double>::epsilon() *
+		std::max(std::abs(rxmax), 1.));
     }
     // set up required binning
     m_workRange[idx].first = new RooRealVar(
@@ -970,18 +980,43 @@ void DecRateCoeff::CacheElem::setupBinnedProductIntegral(
     m_workRange[idx].second = new RooRealVar(
 	    (m_workRangeName[idx] + "_max").c_str(),
 	    (m_workRangeName[idx] + "_max").c_str(), rxmax, rxmin, rxmax);
-    const_cast<RooRealVar&>(dynamic_cast<const RooRealVar&>(
-		m_parent.m_etaobs.arg())).setRange(
+    // we need to operate on a clone of etaobs with our custom binning, or
+    // things die a horrible death when using more than one CPU
+    RooRealVar* etaobs = dynamic_cast<RooRealVar*>(
+	    m_parent.m_etaobs.arg().clone(0));
+    assert(etaobs);
+    etaobs->setRange(
 	    m_workRangeName[idx].c_str(),
 	    *m_workRange[idx].first, *m_workRange[idx].second);
     // ok get rid of prod, and set to what is needed for binned evaluation
     std::string prodname(prod->GetName());
     delete prod;
-    RooArgSet etaiset(m_parent.m_etaobs.arg());
-    RooAbsReal* pdf = m_parent.m_etapdf.arg().createIntegral(etaiset,
+    RooArgSet etaiset(*etaobs);
+    RooAbsPdf* etapdf = 0;
+    {
+	std::string str(m_parent.m_etapdf.arg().GetName());
+	str += "_for_";
+	str += m_workRangeName[idx];
+	RooCustomizer cust(m_parent.m_etapdf.arg(), str.c_str());
+	cust.replaceArg(m_parent.m_etaobs.arg(), *etaobs);
+	etapdf = dynamic_cast<RooAbsPdf*>(cust.build());
+	assert(etapdf);
+    }
+    RooAbsReal* etaa = 0;
+    {
+	std::string str(eta.GetName());
+	str += "_for_";
+	str += m_workRangeName[idx];
+	RooCustomizer cust(eta, str.c_str());
+	cust.replaceArg(m_parent.m_etaobs.arg(), *etaobs);
+	etaa = dynamic_cast<RooAbsReal*>(cust.build());
+	assert(etaa);
+    }
+
+    RooAbsReal* pdf = etapdf->createIntegral(etaiset,
 	    (m_flags & NormEta) ? &m_nset : 0, 0, m_workRangeName[idx].c_str());
     assert(pdf);
-    RooAbsReal* etai = eta.createIntegral(etaiset,
+    RooAbsReal* etai = etaa->createIntegral(etaiset,
 	    (m_flags & NormEta) ? &m_nset : 0, 0, m_workRangeName[idx].c_str());
     assert(etai);
     prod = new RooProduct(
@@ -990,6 +1025,9 @@ void DecRateCoeff::CacheElem::setupBinnedProductIntegral(
     // make sure we do not leak
     prod->addOwnedComponents(*pdf);
     prod->addOwnedComponents(*etai);
+    prod->addOwnedComponents(*etapdf);
+    prod->addOwnedComponents(*etaa);
+    prod->addOwnedComponents(*etaobs);
     // all done
 }
 
@@ -1036,6 +1074,19 @@ RooArgList DecRateCoeff::CacheElem::containedArgs(Action)
 	retVal.add(*m_workRange[1].first);
     if (m_workRange[1].second)
 	retVal.add(*m_workRange[1].second);
+    if (!(m_flags & IntQf)) retVal.add(m_parent.m_qf.arg());
+    if (!(m_flags & IntQt)) retVal.add(m_parent.m_qt.arg());
+    if (!(m_flags & IntEta)) {
+	if (m_parent.m_etaobs.absArg()) retVal.add(m_parent.m_etaobs.arg());
+	if (m_parent.m_etapdf.absArg()) retVal.add(m_parent.m_etapdf.arg());
+	if (m_parent.m_etapdfut.absArg()) retVal.add(m_parent.m_etapdfut.arg());
+    }
+    retVal.add(m_parent.m_tageff.arg());
+    retVal.add(m_parent.m_eta.arg());
+    if (m_parent.m_etabar.absArg()) retVal.add(m_parent.m_etabar.arg());
+    retVal.add(m_parent.m_aprod.arg());
+    retVal.add(m_parent.m_adet.arg());
+    retVal.add(m_parent.m_atageff.arg());
     return retVal;
 }
 
@@ -1067,8 +1118,8 @@ double DecRateCoeff::CacheElem::qtetapdf(const int qf, const int qt,
 	    }
 	case 0:
 	    return etaintpdfuntagged() * (
-		    (1. + ap) * (1 - eps * (1. + at)) * cp +
-		    (1. - ap) * (1 - eps * (1. - at)) * cm);
+		    (1. + ap) * (1. - eps * (1. + at)) * cp +
+		    (1. - ap) * (1. - eps * (1. - at)) * cm);
 	case +1:
 	    {
 		const double m(etaintpdftagged());
@@ -1248,7 +1299,7 @@ double DecRateCoeff::CacheElem::etaintprodpdfmistagtagged(int qt) const
     }
     return (m_prodcachedval[cacheidx] = retVal);
 }
+}
+}
 
 // vim: sw=4:tw=78:ft=cpp
-}
-}

@@ -248,7 +248,12 @@ namespace toy {
         sinfo.increment_indent(-2);
       }
       
+      sdebug << "Dataset contains: " << fit_plot_dataset->numEntries() << endmsg;
+      int num_bins = fit_plot_dataset->numEntries() < 1000 ? fit_plot_dataset->numEntries()/10 : 100;
+      parameter->setBins(num_bins);
+      
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
+      
       fit_plot_dataset->plotOn(frame);
       if (fit_plot_dataset != evaluated_values_) delete fit_plot_dataset;
       
@@ -408,7 +413,9 @@ namespace toy {
 //    
 //#endif
     
-    if (fit_result.covQual() != 3) {
+//    sdebug << "Covariance quality: " << fit_result.covQual() << endmsg;
+    
+    if (fit_result.covQual() < 2) {
       return false;
     } else {
       return true;
