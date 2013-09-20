@@ -544,6 +544,14 @@ RooAddPdf& doofit::builder::EasyPdf::TripleGaussianScaled(const std::string& nam
              RooArgList(fraction1,Formula(fraction2_name)));
 }
 
+RooFormulaVar& doofit::builder::EasyPdf::AtanAcceptance(const std::string& name, RooRealVar& x, RooAbsReal& slope_a, RooAbsReal& slope_b) {
+  return Formula(name, "(atan(@0*exp(@1*@0+@2)))/1.570796327", RooArgList(x, slope_a, slope_b));
+}
+
+RooFormulaVar& doofit::builder::EasyPdf::AtanAcceptanceIncludingBeta(const std::string& name, RooRealVar& x, RooAbsReal& slope_a, RooAbsReal& slope_b, RooAbsReal& beta) {
+  return Formula(name, "(atan(@0*exp(@1*@0+@2)))*(1-@3*@0)/1.570796327", RooArgList(x, slope_a, slope_b, beta));
+}
+
 RooAddPdf& doofit::builder::EasyPdf::DoubleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& fraction, const RooResolutionModel& model) {
   return Add(name, RooArgList(Decay("p1_"+name, t, tau1, model),
                               Decay("p2_"+name, t, tau2, model)),

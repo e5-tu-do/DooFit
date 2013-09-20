@@ -813,6 +813,23 @@ class EasyPdf {
   RooAddModel& AddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs);
   ///@}
   
+
+  /** @name Acceptance functions 
+   *  RooFormulaVar definitions of Acceptance functions
+   */
+  ///@{
+  /**
+   *  @brief Add and access an Atan acceptance with 2 slope parameters
+   */
+  RooFormulaVar& AtanAcceptance(const std::string& name, RooRealVar& x, RooAbsReal& slope_a, RooAbsReal& slope_b);
+
+  /**
+   *  @brief Add and access an Atan acceptance with 2 slope parameters and beta effect
+   */
+  RooFormulaVar& AtanAcceptanceIncludingBeta(const std::string& name, RooRealVar& x, RooAbsReal& slope_a, RooAbsReal& slope_b, RooAbsReal& beta);
+  ///@}
+
+
   /** @name Higher level PDFs
    *  PDF definitions of non-trivial PDFs
    */
