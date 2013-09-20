@@ -14,6 +14,9 @@
 #include "RooArgList.h"
 #include "RooArgSet.h"
 
+// from DooFit
+#include "doofit/fitter/easyfit/EasyFit.h"
+
 // forward declarations
 class RooAbsArg;
 class RooAbsPdf;
@@ -59,8 +62,9 @@ class SPlotFit2{
    *
    *  @param pdfs the PDFs to use for discrimination
    *  @param data the dataset to fit on
+   *  @param yields (optional) yields for the PDFs
    */
-  SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data);
+  SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector<RooRealVar*> yields=std::vector<RooRealVar*>());
   
   /**
    *  @brief Constructor based on a set of PDFs
@@ -109,15 +113,15 @@ class SPlotFit2{
 	RooDataHist* GetRooDataHist( const std::string& com_name, RooRealVar * var, const std::string& binningName );
   
   RooKeysPdf& GetKeysPdf(const std::string& pdf_name, RooRealVar& var, const std::string& comp_name);
-  
-  RooDataSet* GetSwDataSet(const std::string& comp_name);
+
+  RooDataSet* GetSwDataSet(const std::string& comp_name = "");
   
   /**
    *  @brief Get all sweighted datasets
    *
    *  @return map of all sweighted datasets
    */
-  std::map<std::string,RooDataSet*> GetSwDataSets() { return sweighted_data_; }
+  std::map<std::string,RooDataSet*> GetSwDataSets() { return sweighted_data_map_; }
   
   /// Setters and Getters
   void set_num_cpu(unsigned int num_cpu){ num_cpu_ = num_cpu; }
@@ -135,6 +139,17 @@ class SPlotFit2{
   const RooArgList& cont_vars() const {return cont_vars_;}
   
   bool use_minos()  const {return use_minos_;}
+  
+  /**
+   *  @brief Set EasyFit to use for fitting
+   *
+   *  If this EasyFit is set, it will be preferred for fitting.
+   *
+   *  @param efit EasyFit to use
+   */
+  void set_easyfitter(doofit::fitter::easyfit::EasyFit& efit) {
+    easyfitter_ = &efit;
+  }
   
  private:
   /**
@@ -158,10 +173,9 @@ class SPlotFit2{
   RooArgSet* parameters_;
   
   unsigned int num_cpu_;
-  RooDataSet* input_data_;   //< input data
-  
-  RooAbsPdf* pdf_disc_full_; //< full discriminating pdf
-   
+  RooDataSet* input_data_;    //< input data
+  RooDataSet* sweighted_data_; //< sweighted dataset
+     
   RooArgList disc_vars_; //< discriminating variables
   RooArgList cont_vars_; //< control variables
   
@@ -171,10 +185,12 @@ class SPlotFit2{
   std::map<std::string,std::pair<RooRealVar*,RooAbsPdf*> > disc_pdfs_extend_; //< Extended version of ProdPdfs in disc_pdfs_
   std::map<std::string,RooAbsPdf*> cont_pdfs_prod_;                           //< ProdPdfs of cont_pdfs_
   
-  std::map<std::string,RooDataSet*>   sweighted_data_; //< maps component name to sweighted dataset
-  std::map<std::string,RooDataHist*>  sweighted_hist_; //< maps component name to sweighted datahist
+  std::map<std::string,RooDataSet*>   sweighted_data_map_; //< maps component name to sweighted dataset
+  std::map<std::string,RooDataHist*>  sweighted_hist_map_; //< maps component name to sweighted datahist
   
   bool use_minos_;
+  
+  doofit::fitter::easyfit::EasyFit* easyfitter_;
 };
 
 } //namespace splot

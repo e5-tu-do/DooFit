@@ -69,16 +69,16 @@ namespace toy {
     if (fitresult_reader_worker_.joinable()) fitresult_reader_worker_.join();
     
     if (evaluated_values_ != NULL) delete evaluated_values_;
-    for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
+    for (std::vector<const RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
       delete *it_results;
     }
-    for (std::vector<RooFitResult*>::const_iterator it_results = fit_results2_bookkeep_.begin(); it_results != fit_results2_bookkeep_.end(); ++it_results) {
+    for (std::vector<const RooFitResult*>::const_iterator it_results = fit_results2_bookkeep_.begin(); it_results != fit_results2_bookkeep_.end(); ++it_results) {
       delete *it_results;
     }
   }
   
-  void ToyStudyStd::StoreFitResult(RooFitResult* fit_result1, 
-                                  RooFitResult* fit_result2) {
+  void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result1, 
+                                   const RooFitResult* fit_result2) {
     if (!accepting_fit_results_) {
       serr << "No longer accepting fit results." << endmsg;
     } else {
@@ -92,8 +92,8 @@ namespace toy {
       }
       
       //RooFitResult* fit_result1_copy = new RooFitResult(*fit_result1);
-      RooFitResult* fit_result1_copy = fit_result1;
-      RooFitResult* fit_result2_copy = NULL;
+      const RooFitResult* fit_result1_copy = fit_result1;
+      const RooFitResult* fit_result2_copy = NULL;
       
       if (fit_result2 != NULL) {
         //fit_result2_copy = new RooFitResult(*fit_result2);
@@ -120,8 +120,8 @@ namespace toy {
     }
   }
   
-  std::pair<RooFitResult*, RooFitResult*> ToyStudyStd::GetFitResult() {
-    std::pair<RooFitResult*, RooFitResult*> fit_results(NULL,NULL);
+  std::pair<const RooFitResult*, const RooFitResult*> ToyStudyStd::GetFitResult() {
+    std::pair<const RooFitResult*, const RooFitResult*> fit_results(NULL,NULL);
     if (!fitresult_reader_worker_.joinable()) {
       return fit_results;
     } else {
@@ -135,12 +135,12 @@ namespace toy {
     }
   }
   
-  void ToyStudyStd::ReleaseFitResult(std::pair<RooFitResult*, RooFitResult*> fit_results) {
+  void ToyStudyStd::ReleaseFitResult(std::pair<const RooFitResult*, const RooFitResult*> fit_results) {
     fit_results_release_queue_.push(fit_results);
   }
   
   void ToyStudyStd::EvaluateFitResults() {
-    std::pair<RooFitResult*, RooFitResult*> fit_results(NULL,NULL);
+    std::pair<const RooFitResult*, const RooFitResult*> fit_results(NULL,NULL);
     do {
       fit_results = GetFitResult();
       
@@ -168,7 +168,7 @@ namespace toy {
     evaluated_values_->add(parameter_set);
     int i = 1;
     if (fit_results_.size() > 1) {
-      for (std::vector<RooFitResult*>::const_iterator it_results = fit_results_.begin()+1; it_results != fit_results_.end(); ++it_results) {
+      for (std::vector<const RooFitResult*>::const_iterator it_results = fit_results_.begin()+1; it_results != fit_results_.end(); ++it_results) {
         RooArgSet params = BuildEvaluationArgSet(**it_results);
         
         evaluated_values_->add(params);
@@ -242,13 +242,18 @@ namespace toy {
         if (fit_plot_dataset != evaluated_values_) {
           sinfo << "Losing " << evaluated_values_->numEntries() - fit_plot_dataset->numEntries() << "(" << (evaluated_values_->numEntries() - fit_plot_dataset->numEntries())/static_cast<double>(evaluated_values_->numEntries())*100 << "%) toys for this fit due to cuts applied." << endmsg;
         }
-        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(1), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true));
+        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(2), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"));
         fit_result->Print("v");
         delete fit_result;
         sinfo.increment_indent(-2);
       }
       
+      sdebug << "Dataset contains: " << fit_plot_dataset->numEntries() << endmsg;
+      int num_bins = fit_plot_dataset->numEntries() < 1000 ? fit_plot_dataset->numEntries()/10 : 100;
+      parameter->setBins(num_bins);
+      
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
+      
       fit_plot_dataset->plotOn(frame);
       if (fit_plot_dataset != evaluated_values_) delete fit_plot_dataset;
       
@@ -258,8 +263,8 @@ namespace toy {
       }
       frame->Draw();
       TString plot_name = parameter->GetName();
-      doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory());
-      doocore::lutils::printPlot(&canvas, "AllPlots", config_toystudy_.plot_directory());
+      doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
+      doocore::lutils::printPlot(&canvas, "AllPlots", config_toystudy_.plot_directory(), true);
       
       delete frame;
       
@@ -298,30 +303,50 @@ namespace toy {
       TString init_desc = TString("Init value of ") + parameter->GetTitle();
       TString res_name  = parameter->GetName() + TString("_res");
       TString res_desc  = TString("Residual of ") + parameter->GetTitle();
+      TString err_name  = parameter->GetName() + TString("_err");
+      TString err_desc  = TString("Error of ") + parameter->GetTitle();
+      TString lerr_name = parameter->GetName() + TString("_lerr");
+      TString lerr_desc = TString("Low error of ") + parameter->GetTitle();
+      TString herr_name = parameter->GetName() + TString("_herr");
+      TString herr_desc = TString("High error of ") + parameter->GetTitle();
       
       double par_error = ((RooRealVar*)parameter_list.find(parameter->GetName()))->getError();
       
       RooRealVar& par  = CopyRooRealVar(*parameter);
       RooRealVar* pull = new RooRealVar(pull_name, pull_desc, 0.0);
       RooRealVar* res  = new RooRealVar(res_name, res_desc, 0.0);
+      RooRealVar* err  = new RooRealVar(err_name, err_desc, 0.0);
+      RooRealVar* lerr = new RooRealVar(lerr_name, lerr_desc, 0.0);
+      RooRealVar* herr = new RooRealVar(herr_name, herr_desc, 0.0);
       RooRealVar& init = CopyRooRealVar(*(RooRealVar*)parameter_init_list.find(par.GetName()), std::string(init_name), std::string(init_desc));
       
       double pull_value = 0.0;
+      double err_value  = par.getError();
+      double lerr_value = 0.0;
+      double herr_value = 0.0;
       
       // asymmetric error handling
       if (par.hasAsymError() && config_toystudy_.handle_asymmetric_errors()) {
+        lerr_value = par.getErrorLo();
+        herr_value = par.getErrorHi();
+        
+        lerr->setVal(lerr_value);
+        herr->setVal(herr_value);
+        
         if (par.getVal() <= init.getVal()) {
-          pull_value = (init.getVal() - par.getVal())/par.getErrorHi();
+          pull_value = (init.getVal() - par.getVal())/herr_value;
         } else {
-          pull_value = (par.getVal() - init.getVal())/par.getErrorLo();
+          pull_value = (par.getVal() - init.getVal())/lerr_value;
         }
       } else {
-        pull_value = (init.getVal() - par.getVal())/par.getError();
+        pull_value = (init.getVal() - par.getVal())/err_value;
       }
       pull->setVal(pull_value);
       
       double res_value = (init.getVal() - par.getVal());
       res->setVal(res_value);
+      
+      err->setVal(err_value);
             
       if (TMath::Abs(pull_value) > 5.0) {
         swarn << "Pull for \"" << parameter->GetName() << "\" is " << pull_value
@@ -356,6 +381,12 @@ namespace toy {
       parameters.addOwned(*pull);
       parameters.addOwned(*res);
       parameters.addOwned(init);
+      parameters.addOwned(*err);
+      
+      if (par.hasAsymError()) {
+        parameters.addOwned(*lerr);
+        parameters.addOwned(*herr);
+      }
     }
     if (problems) {
       fit_result.Print("v");
@@ -369,7 +400,22 @@ namespace toy {
   }
   
   bool ToyStudyStd::FitResultOkay(const RooFitResult& fit_result) const {
-    if (fit_result.covQual() != 3) {
+//#if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
+//    sdebug << "Fit status report: ";
+//    for (int i=0;i<fit_result.numStatusHistory();++i) {
+//      sdebug << fit_result.statusLabelHistory(i) << ": " << fit_result.statusCodeHistory(i) << ", ";
+//    }
+//    sdebug << "Covariance quality: " << fit_result.covQual() << endmsg;
+//    
+//    if (fit_result.covQual() != 3) {
+//      fit_result.Print("v");
+//    }
+//    
+//#endif
+    
+//    sdebug << "Covariance quality: " << fit_result.covQual() << endmsg;
+    
+    if (fit_result.covQual() < 2) {
       return false;
     } else {
       return true;
@@ -430,70 +476,72 @@ namespace toy {
       << " from branch " << config_toystudy_.fit_result1_branch_name() << endmsg;
       TFile file((*it_files).first().c_str(), "read");
       if (file.IsZombie() || !file.IsOpen()) {
-        serr << "Cannot open file " << (*it_files).first() << " which may be not existing or corrupted." << endmsg;
-        throw ExceptionCannotReadFitResult();
-      }
-      
-      TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
-      if (tree == NULL) {
-        serr << "Cannot find tree " << (*it_files).second() << " in file. Cannot read in fit results." << endmsg;
-        throw ExceptionCannotReadFitResult();
-      }
-      
-      TBranch* result_branch = tree->GetBranch(config_toystudy_.fit_result1_branch_name().c_str());
-      TBranch* result2_branch = tree->GetBranch(config_toystudy_.fit_result2_branch_name().c_str());
-      if (result_branch == NULL) {
-        serr << "Cannot find branch " << config_toystudy_.fit_result1_branch_name() << " in tree. Cannot read in fit results." << endmsg;
-        throw ExceptionCannotReadFitResult();
-      }
-      
-      RooFitResult* fit_result  = NULL;
-      RooFitResult* fit_result2 = NULL;
-      result_branch->SetAddress(&fit_result);
-      
-      if (result2_branch != NULL) {
-        result2_branch->SetAddress(&fit_result2);
-      }
-      
-      for (int i=0; i<tree->GetEntries(); ++i) {
-        result_branch->GetEntry(i);
-        if (result2_branch != NULL) {
-          result2_branch->GetEntry(i);
-        }
-        // save a copy
-        if (fit_result != NULL && FitResultOkay(*fit_result)) {
-          fit_results_read_queue_.push(std::make_pair(fit_result,fit_result2));
-          
-          results_stored++;
-        } else {
-          if (fit_result == NULL) {
-            serr << "Fit result number " << i << " in file " << *it_files << " is NULL and therefore negelected. This indicates corrupted files and should never happen." << endmsg;
-            while (true) {}
-          } else {
-            delete fit_result;
-            if (fit_result2 != NULL) {
-              delete fit_result2;
-            }
-            
-            swarn << "Fit result number " << i << " in file " << *it_files << " negelected." << endmsg;
-          }
-          results_neglected++;
-          
-        }
-        fit_result = NULL;
-        fit_result2 = NULL;
+        serr << "Cannot open file " << (*it_files).first() << " which may be not existing or corrupted. Ignoring this file." << endmsg;
+        //throw ExceptionCannotReadFitResult();
+      } else {
         
-        while (fit_results_release_queue_.size() > 0) {
-          std::pair<RooFitResult*,RooFitResult*> fit_results = std::pair<RooFitResult*,RooFitResult*>(NULL,NULL);
-          if (fit_results_release_queue_.wait_and_pop(fit_results)) {
-            if (fit_results.first != NULL) delete fit_results.first;
-            if (fit_results.second != NULL) delete fit_results.second;
+        TTree* tree = (TTree*)file.Get((*it_files).second().c_str());
+        if (tree == NULL) {
+          serr << "Cannot find tree " << (*it_files).second() << " in file. Cannot read in fit results. Ignoring this file." << endmsg;
+          //throw ExceptionCannotReadFitResult();
+        } else {
+          
+          TBranch* result_branch = tree->GetBranch(config_toystudy_.fit_result1_branch_name().c_str());
+          TBranch* result2_branch = tree->GetBranch(config_toystudy_.fit_result2_branch_name().c_str());
+          if (result_branch == NULL) {
+            serr << "Cannot find branch " << config_toystudy_.fit_result1_branch_name() << " in tree. Cannot read in fit results." << endmsg;
+            throw ExceptionCannotReadFitResult();
           }
+          
+          RooFitResult* fit_result  = NULL;
+          RooFitResult* fit_result2 = NULL;
+          result_branch->SetAddress(&fit_result);
+          
+          if (result2_branch != NULL) {
+            result2_branch->SetAddress(&fit_result2);
+          }
+          
+          for (int i=0; i<tree->GetEntries(); ++i) {
+            result_branch->GetEntry(i);
+            if (result2_branch != NULL) {
+              result2_branch->GetEntry(i);
+            }
+            // save a copy
+            if (fit_result != NULL && FitResultOkay(*fit_result)) {
+              fit_results_read_queue_.push(std::make_pair(fit_result,fit_result2));
+              
+              results_stored++;
+            } else {
+              if (fit_result == NULL) {
+                serr << "Fit result number " << i << " in file " << *it_files << " is NULL and therefore negelected. This indicates corrupted files and should never happen." << endmsg;
+                while (true) {}
+              } else {
+                delete fit_result;
+                if (fit_result2 != NULL) {
+                  delete fit_result2;
+                }
+                
+                swarn << "Fit result number " << i << " in file " << *it_files << " neglected." << endmsg;
+              }
+              results_neglected++;
+              
+            }
+            fit_result = NULL;
+            fit_result2 = NULL;
+            
+            while (fit_results_release_queue_.size() > 0) {
+              std::pair<const RooFitResult*,const RooFitResult*> fit_results = std::pair<const RooFitResult*,const RooFitResult*>(NULL,NULL);
+              if (fit_results_release_queue_.wait_and_pop(fit_results)) {
+                if (fit_results.first != NULL) delete fit_results.first;
+                if (fit_results.second != NULL) delete fit_results.second;
+              }
+            }
+          }
+          
+          delete tree;
+          file.Close();
         }
       }
-      
-      delete tree;
-      file.Close();
     }
     fit_results_read_queue_.disable_queue();
     sinfo << "Read in " << results_stored << " fit results. (" << results_neglected << " results negelected, that is " << static_cast<double>(results_neglected)/static_cast<double>(results_stored+results_neglected)*100.0 << "%)" << endmsg;
@@ -506,7 +554,7 @@ namespace toy {
     TThread this_tthread;
     TStopwatch sw_lock;
     sw_lock.Reset();
-    std::queue<std::pair<RooFitResult*, RooFitResult*> > saver_queue;
+    std::queue<std::pair<const RooFitResult*, const RooFitResult*> > saver_queue;
 
     // list of last 5 dead times for averaging to find a new flexible wait time
     std::list<double> deadtimes;
@@ -525,7 +573,7 @@ namespace toy {
       if (saver_queue.empty()) {
         //sdebug << "SaveFitResultWorker(): waiting for fit results as we have none." << endmsg;
         
-        std::pair<RooFitResult*, RooFitResult*> fit_results;
+        std::pair<const RooFitResult*, const RooFitResult*> fit_results;
         if (fit_results_save_queue_.wait_and_pop(fit_results)) {
           saver_queue.push(fit_results);
           //sdebug << "SaveFitResultWorker(): got a fit result pair." << endmsg;
@@ -536,7 +584,7 @@ namespace toy {
       
       // if global queue has entries, we should get them all
       while (!fit_results_save_queue_.empty()) {
-        std::pair<RooFitResult*, RooFitResult*> fit_results;
+        std::pair<const RooFitResult*, const RooFitResult*> fit_results;
         if (fit_results_save_queue_.wait_and_pop(fit_results)) {
           saver_queue.push(fit_results);
           //sdebug << "SaveFitResultWorker(): got another fit result pair." << endmsg;
@@ -589,10 +637,10 @@ namespace toy {
             } else {
               if (!abort_save_) {
                 //sdebug << "SaveFitResultWorker(): number of results in queue: " << saver_queue.size() << endmsg;
-                std::pair<RooFitResult*, RooFitResult*> fit_results = saver_queue.front();
+                std::pair<const RooFitResult*, const RooFitResult*> fit_results = saver_queue.front();
                 saver_queue.pop();
-                RooFitResult* fit_result1 = fit_results.first;
-                RooFitResult* fit_result2 = fit_results.second;
+                const RooFitResult* fit_result1 = fit_results.first;
+                const RooFitResult* fit_result2 = fit_results.second;
                 
                 TTree* tree_results = NULL;
                 if (file_existing) {      
@@ -629,8 +677,8 @@ namespace toy {
                 
                 delete fit_result1;
                 if (fit_result2 != NULL) { 
-				  delete fit_result2;
-				}
+                  delete fit_result2;
+                }
                 
                 while (!saver_queue.empty()) {
                   fit_results = saver_queue.front();
@@ -642,8 +690,8 @@ namespace toy {
                   save_counter++;
                   delete fit_result1;
                   if (fit_result2 != NULL) {
-					delete fit_result2;
-				  }
+                    delete fit_result2;
+                  }
                 }
                 
                 tree_results->Write("",TObject::kOverwrite);

@@ -63,13 +63,13 @@ void MassGaussianPdf::InitializeParameters(){
     string default_mean  = string("par")+subpdffull_id_+comp_id_+dim_id_+"Mean|m_{"+comp_id_+","+subpdffull_id_+"}";
     string default_sigma = string("par")+subpdffull_id_+comp_id_+dim_id_+"Sigma|#sigma_{m,"+comp_id_+","+subpdffull_id_+"}";
     
-    map_params_["mean"]  = shared_ptr<Parameter>( new Parameter(default_mean) );
-    map_params_["sigma"] = shared_ptr<Parameter>( new Parameter(default_sigma) );
+    map_params_["mean"]  = boost::shared_ptr<Parameter>( new Parameter(default_mean) );
+    map_params_["sigma"] = boost::shared_ptr<Parameter>( new Parameter(default_sigma) );
   }
   else{
     ptree tree_param = tree_pdf_.get_child("Parameters");
-    map_params_["mean"]  = shared_ptr<Parameter>( new Parameter(tree_param.get<Parameter>("mean")));
-    map_params_["sigma"] = shared_ptr<Parameter>( new Parameter(tree_param.get<Parameter>("sigma")));
+    map_params_["mean"]  = boost::shared_ptr<Parameter>( new Parameter(tree_param.get<Parameter>("mean")));
+    map_params_["sigma"] = boost::shared_ptr<Parameter>( new Parameter(tree_param.get<Parameter>("sigma")));
   }
   sinfo.increment_indent(-2);
   sinfo << "}" << endmsg;

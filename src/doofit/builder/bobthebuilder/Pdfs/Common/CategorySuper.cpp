@@ -41,7 +41,7 @@ CategorySuper::~CategorySuper(){
   
 }
 
-void CategorySuper::Initialize( const ptree::value_type& pt_head, const map< string, shared_ptr< CategoryBasic > > &map_category_basic ){
+void CategorySuper::Initialize( const ptree::value_type& pt_head, const map< string, boost::shared_ptr< CategoryBasic > > &map_category_basic ){
   name_    = pt_head.second.get_value<string>();
   
   ptree pt = pt_head.second;
@@ -54,14 +54,14 @@ void CategorySuper::Initialize( const ptree::value_type& pt_head, const map< str
   sinfo << "subcats \"" << subcats_ << "\"" << endmsg;
 }
 
-void CategorySuper::CreateTypes( const string &subcats, const map< string, shared_ptr< CategoryBasic > > &map_category_basic ){
+void CategorySuper::CreateTypes( const string &subcats, const map< string, boost::shared_ptr< CategoryBasic > > &map_category_basic ){
   // split subcats
   split(vector_subcats_, subcats, is_any_of(","), token_compress_on);
   
   vector< vector< string > > subcat_type_vectors_vector;
   BOOST_FOREACH(string subcat_name, vector_subcats_){
     // find subcategory    
-    map<std::string, shared_ptr< CategoryBasic > >::const_iterator subcat_it;
+    map<std::string, boost::shared_ptr< CategoryBasic > >::const_iterator subcat_it;
     subcat_it = map_category_basic.find(subcat_name);
     
     if (  subcat_it == map_category_basic.end()){
