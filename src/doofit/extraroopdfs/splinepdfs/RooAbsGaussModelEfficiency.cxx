@@ -4,6 +4,7 @@
 
 namespace doofit {
 namespace extraroopdfs {
+namespace splinepdfs {
 
 RooAbsGaussModelEfficiency::~RooAbsGaussModelEfficiency()  {};
 
@@ -109,5 +110,6 @@ template class RooGaussModelAcceptance::M_n<4U>;
 // template class RooGaussModelAcceptance::M_n<5U>;
 // template class RooGaussModelAcceptance::M_n<6U>;
 
+}
 }
 }

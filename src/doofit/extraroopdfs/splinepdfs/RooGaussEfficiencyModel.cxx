@@ -42,6 +42,7 @@ using namespace std;
 
 namespace doofit {
 namespace extraroopdfs {
+namespace splinepdfs {
 
 namespace {
     enum basisType { noBasis=0  ,  expBasis= 3
@@ -358,5 +359,6 @@ void RooGaussEfficiencyModel::generateEvent(Int_t code)
   }
 }
 
+}
 }
 }

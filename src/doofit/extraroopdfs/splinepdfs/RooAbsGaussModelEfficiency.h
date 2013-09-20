@@ -1,5 +1,5 @@
-#ifndef ROO_ABSGAUSSMODELEFF
-#define ROO_ABSGAUSSMODELEFF
+#ifndef DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_ABSGAUSSMODELEFF
+#define DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_ABSGAUSSMODELEFF
 // Interface Mixin class for Piecewise Polynomial Efficiency
 
 
@@ -8,6 +8,7 @@
 
 namespace doofit {
 namespace extraroopdfs {
+namespace splinepdfs {
 
 class RooAbsGaussModelEfficiency : public RooAbsReal {
 public:
@@ -47,7 +48,9 @@ namespace RooGaussModelAcceptance {
   };
 
 }
-#endif
 
 }
 }
+}
+
+#endif

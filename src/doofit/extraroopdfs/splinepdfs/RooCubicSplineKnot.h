@@ -1,5 +1,5 @@
-#ifndef ROO_CUBICSPLINEKNOT
-#define ROO_CUBICSPLINEKNOT
+#ifndef DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_CUBICSPLINEKNOT
+#define DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_CUBICSPLINEKNOT
 #include <vector>
 #include <algorithm>
 #include "RooArgList.h"
@@ -7,10 +7,11 @@
 #include "TH1.h"
 #include "TGraphErrors.h"
 
-// CINT doesn't like it if we encapsulate this in RooCubicSplineKnot ;-(
-
 namespace doofit {
 namespace extraroopdfs {
+namespace splinepdfs {
+
+// CINT doesn't like it if we encapsulate this in RooCubicSplineKnot ;-(
 
 class RooCubicSplineKnot {
 public:
@@ -172,4 +173,6 @@ private:
 
 }
 }
+}
+
 #endif

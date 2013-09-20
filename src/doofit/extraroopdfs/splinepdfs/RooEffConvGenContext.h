@@ -1,15 +1,15 @@
-#ifndef ROO_EFF_CONV_GEN_CONTEXT
-#define ROO_EFF_CONV_GEN_CONTEXT
+#ifndef DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_EFF_CONV_GEN_CONTEXT
+#define DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_EFF_CONV_GEN_CONTEXT
 
 // use C preprocessor to smuggle in a friend class into RooAbsGenContext
 //
 // *** this is an ugly hack but seems to work well enough for now, and is
 // *** better than hacking the header files that come with ROOT for now...
-namespace doofit { namespace extraroopdfs { class RooEffConvGenContext; } };
-#define RooEffGenContext RooEffGenContext; friend class doofit::extraroopdfs::RooEffConvGenContext;
+namespace doofit { namespace extraroopdfs { namespace splinepdfs { class RooEffConvGenContext; } } };
+#define RooEffGenContext RooEffGenContext; friend class doofit::extraroopdfs::splinepdfs::RooEffConvGenContext;
 
-#include <RooConvGenContext.h>
-#include <RooArgSet.h>
+#include "RooConvGenContext.h"
+#include "RooArgSet.h"
 
 class RooAbsAnaConvPdf;
 class RooDataSet;
@@ -17,6 +17,7 @@ class RooAbsReal;
 
 namespace doofit {
 namespace extraroopdfs {
+namespace splinepdfs {
 
 class RooEffConvGenContext : public RooConvGenContext {
 public:
@@ -26,12 +27,12 @@ public:
                         const RooArgSet* auxProto=0, Bool_t _verbose= kFALSE);
    RooEffConvGenContext(const RooAbsAnaConvPdf &model, const RooArgSet &vars, const RooDataSet *prototype= 0,
                         const RooArgSet* auxProto=0, Bool_t _verbose= kFALSE);
-   virtual ~RooEffConvGenContext();
+   virtual ~RooEffConvGenContext() { }
 
-   virtual void attach(const RooArgSet& params);
 
 protected:
 
+   virtual void initGenerator(const RooArgSet& theEvent) ;
    virtual void generateEvent(RooArgSet &theEvent, Int_t remaining);
 
    RooEffConvGenContext(const RooEffConvGenContext& other) ;
@@ -45,6 +46,8 @@ private:
 
    ClassDef(RooEffConvGenContext,0) // Context for generating a dataset from a PDF
 };
+
+}
 }
 }
 

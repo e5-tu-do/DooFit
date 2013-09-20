@@ -8,32 +8,33 @@
  * with or without modification, are permitted according to the terms        *
  * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
  *****************************************************************************/
-#ifndef EXTRAROOPDFS_ROO_ABS_EFF_RES_MODEL
-#define EXTRAROOPDFS_ROO_ABS_EFF_RES_MODEL
+#ifndef DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_ABS_EFF_RES_MODEL
+#define DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_ABS_EFF_RES_MODEL
 
-#include <RooResolutionModel.h>
-#include <RooRealProxy.h>
-#include <RooObjCacheManager.h>
-#include <RooSetProxy.h>
+#include "RooResolutionModel.h"
 
 namespace doofit {
 namespace extraroopdfs {
-class RooAbsEffResModel : public RooResolutionModel  {
+namespace splinepdfs {
+
+class RooAbsEffResModel {
 public:
    // Constructors, assignment etc
    inline RooAbsEffResModel() { }
-   RooAbsEffResModel(const char *name, const char *title, RooRealVar& convVar);
-   RooAbsEffResModel(const RooAbsEffResModel& other, const char* name=0);
-
-   virtual ~RooAbsEffResModel();
+   virtual ~RooAbsEffResModel() {}
   
-   virtual RooAbsReal* efficiency() const = 0;
-   virtual std::vector<RooAbsReal*> efficiencies() const = 0;
+   /** 
+    * Get a RooArgSet of all observables
+    * (pointer because genreflex dictionaries can't handle value)
+    * @return RooArgSet of observables
+    */
+   virtual RooArgSet* observables() const = 0;
 
-private:
+   virtual const RooAbsReal* efficiency() const = 0;
 
-   ClassDef(RooAbsEffResModel, 0) // EffResian Resolution Model
 };
+
+}
 }
 }
 

@@ -9,8 +9,8 @@
  * with or without modification, are permitted according to the terms        *
  * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
  *****************************************************************************/
-#ifndef ROO_CS_GAUSS_MODEL
-#define ROO_CS_GAUSS_MODEL
+#ifndef DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_CS_GAUSS_MODEL
+#define DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_CS_GAUSS_MODEL
 
 #include <complex>
 #include <RooResolutionModel.h>
@@ -24,6 +24,7 @@ class RooRealVar;
 
 namespace doofit {
 namespace extraroopdfs {
+namespace splinepdfs {
 
 class RooGaussEfficiencyModel : public RooResolutionModel, public RooAbsEffResModel {
 public:
@@ -79,4 +80,6 @@ private:
 
 }
 }
+}
+
 #endif

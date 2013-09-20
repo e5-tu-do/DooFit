@@ -50,6 +50,7 @@ using namespace std;
 
 namespace doofit {
 namespace extraroopdfs {
+namespace splinepdfs {
 
 //_____________________________________________________________________________
 void RooCubicSplineFun::init(const char* name,
@@ -310,5 +311,6 @@ Double_t RooCubicSplineFun::maxVal(Int_t code) const
     return res;
 }
 
+}
 }
 }

@@ -10,8 +10,8 @@
  * with or without modification, are permitted according to the terms        *
  * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
  *****************************************************************************/
-#ifndef ROO_CUBICSPLINEFUN
-#define ROO_CUBICSPLINEFUN
+#ifndef DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_CUBICSPLINEFUN
+#define DOOFIT_EXTRAROOPDFS_SPLINEPDFS_ROO_CUBICSPLINEFUN
 
 #include "RooAbsReal.h"
 #include "RooRealProxy.h"
@@ -27,6 +27,7 @@ class TGraphErrors;
 
 namespace doofit {
 namespace extraroopdfs {
+namespace splinepdfs {
 
 class RooCubicSplineFun : public  RooAbsGaussModelEfficiency {
 public:
@@ -90,6 +91,7 @@ private:
   ClassDef(RooCubicSplineFun,1) // CubicSpline polynomial PDF
 };
 
+}
 }
 }
 

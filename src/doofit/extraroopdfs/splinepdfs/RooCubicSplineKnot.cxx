@@ -8,6 +8,7 @@ using namespace std;
 
 namespace doofit {
 namespace extraroopdfs {
+namespace splinepdfs {
 
 namespace RooCubicSplineKnot_aux {
 
@@ -378,5 +379,6 @@ double  RooCubicSplineKnot::expIntegral(const TH1* hist, double gamma, TVectorD&
     return chisq;
 }
 
+}
 }
 }
