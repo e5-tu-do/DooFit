@@ -21,5 +21,5 @@ target_link_libraries(dfsplineroopdfs ${ALL_LIBRARIES})
 # see above, not sure if it works
 add_dependencies(dfsplineroopdfs dfsplineroopdfsDict)
 
-install(TARGETS dfsplineroopdfs DESTINATION lib)
-install(FILES RooAbsEffResModel.h RooAbsGaussModelEfficiency.h RooCubicSplineFun.h RooCubicSplineKnot.h RooEffConvGenContext.h RooEffResModel.h RooGaussEfficiencyModel.h DESTINATION include/doofit/extraroopdfs)
+install(TARGETS dfsplineroopdfs DESTINATION lib/splinepdfs)
+install(FILES RooAbsEffResModel.h RooAbsGaussModelEfficiency.h RooCubicSplineFun.h RooCubicSplineKnot.h RooEffConvGenContext.h RooEffResModel.h RooGaussEfficiencyModel.h DESTINATION include/doofit/extraroopdfs/splinepdfs)
