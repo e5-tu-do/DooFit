@@ -15,7 +15,7 @@
 #include <RooObjCacheManager.h>
 #include <RooSetProxy.h>
 
-#include "RooAbsEffResModel.h"
+#include "SplineRooAbsEffResModel.h"
 
 class RooCustomizer;
 class RooResoluitionModel;

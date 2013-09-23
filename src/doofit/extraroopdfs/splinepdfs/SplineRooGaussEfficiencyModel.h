@@ -16,8 +16,8 @@
 #include <RooResolutionModel.h>
 #include <RooRealProxy.h>
 
-#include "RooAbsEffResModel.h"
-#include "RooAbsGaussModelEfficiency.h"
+#include "SplineRooAbsEffResModel.h"
+#include "SplineRooAbsGaussModelEfficiency.h"
 
 class RooAbsReal;
 class RooRealVar;

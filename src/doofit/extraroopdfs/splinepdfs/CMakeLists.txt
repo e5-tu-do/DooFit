@@ -4,16 +4,16 @@
 # link: https://cds.cern.ch/record/1563169
 # from PhysFit/P2VV
 # ______________________________________________________________________________________________________________
-root_generate_dictionaries_local(splineroopdfsDict RooAbsEffResModel.h RooAbsGaussModelEfficiency.h RooCubicSplineFun.h RooCubicSplineKnot.h RooEffConvGenContext.h RooEffResModel.h RooGaussEfficiencyModel.h)
+root_generate_dictionaries_local(splineroopdfsDict SplineRooAbsEffResModel.h SplineRooAbsGaussModelEfficiency.h SplineRooCubicSplineFun.h SplineRooCubicSplineKnot.h SplineRooEffConvGenContext.h SplineRooEffResModel.h SplineRooGaussEfficiencyModel.h)
 
 add_library(dfsplineroopdfs SHARED 
-RooAbsEffResModel.h RooAbsEffResModel_dict.cc RooAbsEffResModel_dict.h 
-RooAbsGaussModelEfficiency.cxx RooAbsGaussModelEfficiency.h RooAbsGaussModelEfficiency_dict.cc RooAbsGaussModelEfficiency_dict.h 
-RooCubicSplineFun.cxx RooCubicSplineFun.h RooCubicSplineFun_dict.cc RooCubicSplineFun_dict.h 
-RooCubicSplineKnot.cxx RooCubicSplineKnot.h RooCubicSplineKnot_dict.cc RooCubicSplineKnot_dict.h 
-RooEffConvGenContext.cxx RooEffConvGenContext.h RooEffConvGenContext_dict.cc RooEffConvGenContext_dict.h 
-RooEffResModel.cxx RooEffResModel.h RooEffResModel_dict.cc RooEffResModel_dict.h 
-RooGaussEfficiencyModel.cxx RooGaussEfficiencyModel.h RooGaussEfficiencyModel_dict.cc RooGaussEfficiencyModel_dict.h
+SplineRooAbsEffResModel.h SplineRooAbsEffResModel_dict.cc SplineRooAbsEffResModel_dict.h 
+SplineRooAbsGaussModelEfficiency.cxx SplineRooAbsGaussModelEfficiency.h SplineRooAbsGaussModelEfficiency_dict.cc SplineRooAbsGaussModelEfficiency_dict.h 
+SplineRooCubicSplineFun.cxx SplineRooCubicSplineFun.h SplineRooCubicSplineFun_dict.cc SplineRooCubicSplineFun_dict.h 
+SplineRooCubicSplineKnot.cxx SplineRooCubicSplineKnot.h SplineRooCubicSplineKnot_dict.cc SplineRooCubicSplineKnot_dict.h 
+SplineRooEffConvGenContext.cxx SplineRooEffConvGenContext.h SplineRooEffConvGenContext_dict.cc SplineRooEffConvGenContext_dict.h 
+SplineRooEffResModel.cxx SplineRooEffResModel.h SplineRooEffResModel_dict.cc SplineRooEffResModel_dict.h 
+SplineRooGaussEfficiencyModel.cxx SplineRooGaussEfficiencyModel.h SplineRooGaussEfficiencyModel_dict.cc SplineRooGaussEfficiencyModel_dict.h
 )
 
 target_link_libraries(dfsplineroopdfs ${ALL_LIBRARIES})
@@ -22,4 +22,4 @@ target_link_libraries(dfsplineroopdfs ${ALL_LIBRARIES})
 add_dependencies(dfsplineroopdfs dfsplineroopdfsDict)
 
 install(TARGETS dfsplineroopdfs DESTINATION lib/splinepdfs)
-install(FILES RooAbsEffResModel.h RooAbsGaussModelEfficiency.h RooCubicSplineFun.h RooCubicSplineKnot.h RooEffConvGenContext.h RooEffResModel.h RooGaussEfficiencyModel.h DESTINATION include/doofit/extraroopdfs/splinepdfs)
+install(FILES SplineRooAbsEffResModel.h SplineRooAbsGaussModelEfficiency.h SplineRooCubicSplineFun.h SplineRooCubicSplineKnot.h SplineRooEffConvGenContext.h SplineRooEffResModel.h SplineRooGaussEfficiencyModel.h DESTINATION include/doofit/extraroopdfs/splinepdfs)

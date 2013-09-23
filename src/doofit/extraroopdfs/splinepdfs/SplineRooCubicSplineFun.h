@@ -16,8 +16,8 @@
 #include "RooAbsReal.h"
 #include "RooRealProxy.h"
 #include "RooListProxy.h"
-#include "RooCubicSplineKnot.h"
-#include "RooAbsGaussModelEfficiency.h"
+#include "SplineRooCubicSplineKnot.h"
+#include "SplineRooAbsGaussModelEfficiency.h"
 
 class RooRealVar;
 class RooArgList ;

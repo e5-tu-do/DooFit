@@ -2,7 +2,7 @@
 #include <iostream>
 #include "TMath.h"
 #include "RooAbsReal.h"
-#include "RooCubicSplineKnot.h"
+#include "SplineRooCubicSplineKnot.h"
 
 using namespace std;
 

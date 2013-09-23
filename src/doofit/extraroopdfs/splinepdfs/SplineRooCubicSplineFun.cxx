@@ -43,8 +43,8 @@
 #include "RooArgList.h"
 
 // P2VV
-#include "RooCubicSplineFun.h"
-#include "RooCubicSplineKnot.h"
+#include "SplineRooCubicSplineFun.h"
+#include "SplineRooCubicSplineKnot.h"
 
 using namespace std;
 

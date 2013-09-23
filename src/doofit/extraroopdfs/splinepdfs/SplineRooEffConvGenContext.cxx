@@ -28,7 +28,7 @@
 #include "RooFit.h"
 
 #include "RooMsgService.h"
-#include "RooEffConvGenContext.h"
+#include "SplineRooEffConvGenContext.h"
 #include "RooAbsAnaConvPdf.h"
 #include "RooNumConvPdf.h"
 #include "RooFFTConvPdf.h"
@@ -39,7 +39,7 @@
 #include "Riostream.h"
 #include "RooRandom.h"
 
-#include "RooEffResModel.h"
+#include "SplineRooEffResModel.h"
 #include <iostream>
 using std::endl;
 

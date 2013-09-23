@@ -1,4 +1,4 @@
-#include "RooAbsGaussModelEfficiency.h"
+#include "SplineRooAbsGaussModelEfficiency.h"
 #include "RooMath.h"
 #include "TMath.h"
 

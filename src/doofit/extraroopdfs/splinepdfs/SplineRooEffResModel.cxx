@@ -22,13 +22,13 @@
 
 #include "RooFit.h"
 #include "Riostream.h"
-#include "RooEffResModel.h"
+#include "SplineRooEffResModel.h"
 #include "RooRealConstant.h"
 #include "RooCustomizer.h"
 #include "RooAddition.h"
 #include "RooStringVar.h"
 #include "RooAbsAnaConvPdf.h"
-#include "RooEffConvGenContext.h"
+#include "SplineRooEffConvGenContext.h"
 #include "RooCachedReal.h"
 
 using namespace std;
