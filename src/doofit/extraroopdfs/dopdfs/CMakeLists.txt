@@ -11,5 +11,5 @@ target_link_libraries(dfdoroopdfs ${ALL_LIBRARIES})
 # not sure if it actually works, I guess not. Idea: Should help in multithreaded builds.
 add_dependencies(dfdoroopdfs dfdoroopdfsDict)
 
-install(TARGETS dfdoroopdfs DESTINATION lib/dopdfs)
+install(TARGETS dfdoroopdfs DESTINATION lib)
 install(FILES RooBMixAsymDecay.h RooBCPGenDecayUt.h DESTINATION include/doofit/extraroopdfs/dopdfs)

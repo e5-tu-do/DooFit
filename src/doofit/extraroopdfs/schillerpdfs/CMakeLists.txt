@@ -17,6 +17,6 @@ target_link_libraries(dfschillerroopdfs ${ALL_LIBRARIES})
 # see above, not sure if it works
 add_dependencies(dfschillerroopdfs dfschillerroopdfsDict)
 
-install(TARGETS dfschillerroopdfs DESTINATION lib/schillerpdfs)
+install(TARGETS dfschillerroopdfs DESTINATION lib)
 install(FILES DecRateCoeff.h RooAbsEffResModel.h RooBinnedPdf.h RooEffConvGenContext.h RooEffResModel.h DESTINATION include/doofit/extraroopdfs/schillerpdfs)
 
