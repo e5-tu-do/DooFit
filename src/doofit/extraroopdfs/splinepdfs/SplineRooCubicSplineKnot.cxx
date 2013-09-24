@@ -3,6 +3,9 @@
 #include "TMath.h"
 #include "RooAbsReal.h"
 #include "SplineRooCubicSplineKnot.h"
+#include "TMatrixD.h"
+#include "TVectorD.h"
+#include "TDecompBK.h"
 
 using namespace std;
 
@@ -271,10 +274,6 @@ namespace {
 
 #endif
 }
-
-#include "TMatrixD.h"
-#include "TVectorD.h"
-#include "TDecompBK.h"
 
 // return integrals from lo to hi of basis spline . exp(-gamma x), for each basis spline...
 // FIXME: # of splines != # of knots... so cannot return as TGraphErrors...
