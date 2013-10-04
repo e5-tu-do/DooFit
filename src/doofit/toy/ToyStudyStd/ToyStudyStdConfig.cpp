@@ -27,14 +27,16 @@ namespace toy {
   handle_asymmetric_errors_(true),
   fit_plot_on_quantile_window_(true),
   neglect_parameters_at_limit_(false),
-  neglect_minos_problems_(false)
+  neglect_minos_problems_(false),
+  min_acceptable_cov_matrix_quality_(3)
   {
     swarn << "Usage of ToyStudyStdConfig::ToyStudyStdConfig() is not recommended!" <<endmsg;
   }
   
   ToyStudyStdConfig::ToyStudyStdConfig(const std::string& name) :
   config::AbsConfig(name),
-  handle_asymmetric_errors_(true)
+  handle_asymmetric_errors_(true),
+  min_acceptable_cov_matrix_quality_(3)
   {
   }
   
@@ -79,7 +81,8 @@ namespace toy {
     (GetOptionString("fit_plot_on_quantile_window").c_str(), po::value<bool>(&fit_plot_on_quantile_window_)->default_value(true),"Fit and plot pulls and other distributions on a sensible quantile based window instead of the full dataset (default: true; use this to avoid influence of pull values of obviously failed fits and other outliers).")
     (GetOptionString("neglect_parameters_at_limit").c_str(), po::value<bool>(&neglect_parameters_at_limit_)->default_value(false),"Neglect any toy fit where at least one parameter is near the defined limits (default: false).")
     (GetOptionString("neglect_minos_problems").c_str(), po::value<bool>(&neglect_minos_problems_)->default_value(false),"Neglect any toy fit where at least one parameter has MINOS problems (default: false; only applies, if MINOS was run).")
-    (GetOptionString("parameter_genvalue_read_file").c_str(), po::value<std::string>(&parameter_genvalue_read_file_),"Read in generation values from this file instead of using the init values in the fit results (default: empty, i.e. use init values).");
+    (GetOptionString("parameter_genvalue_read_file").c_str(), po::value<std::string>(&parameter_genvalue_read_file_),"Read in generation values from this file instead of using the init values in the fit results (default: empty, i.e. use init values).")
+    (GetOptionString("min_acceptable_cov_matrix_quality").c_str(), po::value<int>(&min_acceptable_cov_matrix_quality_),"Minimum acceptable covariance matrix quality for fit results.");
     
     descs_visible_.push_back(generation);
   }

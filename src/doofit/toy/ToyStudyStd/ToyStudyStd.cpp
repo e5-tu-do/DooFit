@@ -346,6 +346,12 @@ namespace toy {
       double res_value = (init.getVal() - par.getVal());
       res->setVal(res_value);
       
+//      std::string paramname = parameter->GetName();
+//      if (paramname == "par_bssig_time_S" && TMath::Abs(res->getVal()) < 0.01) {
+//        swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-" << par.getVal() << endmsg;
+//        fit_result.Print("v");
+//      }
+      
       err->setVal(err_value);
             
       if (TMath::Abs(pull_value) > 5.0) {
@@ -415,7 +421,7 @@ namespace toy {
     
 //    sdebug << "Covariance quality: " << fit_result.covQual() << endmsg;
     
-    if (fit_result.covQual() < 2) {
+    if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality()) {
       return false;
     } else {
       return true;
