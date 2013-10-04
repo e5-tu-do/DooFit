@@ -421,7 +421,7 @@ namespace toy {
     
 //    sdebug << "Covariance quality: " << fit_result.covQual() << endmsg;
     
-    if (fit_result.covQual() < 3) {
+    if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality()) {
       return false;
     } else {
       return true;
