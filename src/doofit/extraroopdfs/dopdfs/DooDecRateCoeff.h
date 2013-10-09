@@ -114,13 +114,6 @@ class DooDecRateCoeff : public RooAbsReal
 	typedef std::pair<DooDecRateCoeff::CacheElem*, Int_t> CacheElemPair;
 
     public:
-	/// flags
-	typedef enum {
-	    CPEven = 0,	  ///< nothing set for CP even coefficients
-	    CPOdd = 1,	  ///< bit 0 set for CP odd coefficient
-	    Minus = 2,	  ///< bit 1 set to apply an overall minus sign
-	} Flags;
-
 	/// default constructor for ROOT I/O
 	DooDecRateCoeff() : m_nset(0), m_nsethash(0) { }
 
@@ -131,23 +124,20 @@ class DooDecRateCoeff : public RooAbsReal
 	 *
 	 * @param name		name of the pdf
 	 * @param title		title of the pdf
-	 * @param flags		flags
 	 * @param qt      tagging decision (-1, 0, 1)
 	 * @param Cf      coefficient
 	 * @param etaobs	mistag observable
 	 * @param etapdf	per-event-mistag distribution for tagged events
-	 * @param tageff	tagging efficiency
 	 * @param eta     (calibrated) per-event mistag
 	 * @param aprod		production asymmetry
 	 * @param atageff	tagging efficiency asymmetry (as function of qi)
 	 *
 	 */
 
-	DooDecRateCoeff(const char* name, const char* title, Flags flags,
+	DooDecRateCoeff(const char* name, const char* title,
 		RooAbsCategory& qt, RooAbsReal& Cf,
     RooAbsRealLValue& etaobs, RooAbsPdf& etapdf,
-		RooAbsReal& tageff, RooAbsReal& eta,
-		RooAbsReal& aprod, RooAbsReal& atageff);
+		RooAbsReal& eta, RooAbsReal& aprod, RooAbsReal& atageff);
 
 	/** @brief constructor
 	 *
@@ -156,22 +146,20 @@ class DooDecRateCoeff : public RooAbsReal
 	 *
 	 * @param name		name of the pdf
 	 * @param title		title of the pdf
-	 * @param flags		flags
 	 * @param qt      tagging decision (-1, 0, 1)
 	 * @param Cf      coefficient
 	 * @param etaobs	mistag observable
 	 * @param etapdf	per-event-mistag distribution for tagged events
-	 * @param tageff	tagging efficiency
 	 * @param eta     (calibrated) per-event mistag for true B
 	 * @param etabar	(calibrated) per-event mistag for true Bbar
 	 * @param aprod		production asymmetry
 	 * @param atageff	tagging efficiency asymmetry (as function of qi)
 	 *
 	 */
-	DooDecRateCoeff(const char* name, const char* title, Flags flags,
+	DooDecRateCoeff(const char* name, const char* title,
 		RooAbsCategory& qt,	RooAbsReal& Cf,
 		RooAbsRealLValue& etaobs, RooAbsPdf& etapdf,
-		RooAbsReal& tageff, RooAbsReal& eta, RooAbsReal& etabar,
+		RooAbsReal& eta, RooAbsReal& etabar,
 		RooAbsReal& aprod, RooAbsReal& atageff);
 
 	/** @brief constructor
@@ -181,20 +169,17 @@ class DooDecRateCoeff : public RooAbsReal
 	 *
 	 * @param name		name of the pdf
 	 * @param title		title of the pdf
-	 * @param flags		flags
 	 * @param qt      tagging decision (-1, 0, 1)
 	 * @param Cf      coefficient
-	 * @param tageff	tagging efficiency
 	 * @param eta     average mistag
 	 * @param aprod		production asymmetry
 	 * @param atageff	tagging efficiency asymmetry (as function of qi)
 	 *
 	 */
 
-	DooDecRateCoeff(const char* name, const char* title, Flags flags,
+	DooDecRateCoeff(const char* name, const char* title,
 		RooAbsCategory& qt,	RooAbsReal& Cf,
-		RooAbsReal& tageff, RooAbsReal& eta,
-		RooAbsReal& aprod, RooAbsReal& atageff);
+		RooAbsReal& eta, RooAbsReal& aprod, RooAbsReal& atageff);
 
 	/** @brief constructor
 	 *
@@ -203,19 +188,17 @@ class DooDecRateCoeff : public RooAbsReal
 	 *
 	 * @param name		name of the pdf
 	 * @param title		title of the pdf
-	 * @param flags		flags
 	 * @param qt      tagging decision (-1, 0, 1)
 	 * @param Cf      coefficient
-	 * @param tageff	tagging efficiency
 	 * @param eta     average mistag for true B
 	 * @param etabar	average mistag for true Bbar
 	 * @param aprod		production asymmetry
 	 * @param atageff	tagging efficiency asymmetry (as function of qi)
 	 *
 	 */
-	DooDecRateCoeff(const char* name, const char* title, Flags flags,
+	DooDecRateCoeff(const char* name, const char* title,
 		RooAbsCategory& qt,	RooAbsReal& Cf,
-		RooAbsReal& tageff, RooAbsReal& eta, RooAbsReal& etabar,
+		RooAbsReal& eta, RooAbsReal& etabar,
 		RooAbsReal& aprod, RooAbsReal& atageff);
 
 	/** @brief copy constructor
@@ -321,7 +304,6 @@ class DooDecRateCoeff : public RooAbsReal
 	RooUniform m_etapdfutinstance;
 	/// per-event mistag pdf for untagged events (flat)
 	RooRealProxy m_etapdfut;
-	RooRealProxy m_tageff;		///< tagging efficiency
 	RooRealProxy m_eta;		///< per-event/average mistag (B)
 	RooRealProxy m_etabar;		///< per-event/average mistag (Bbar)
 	RooRealProxy m_aprod;		///< production asymmetry
@@ -334,7 +316,6 @@ class DooDecRateCoeff : public RooAbsReal
 	mutable const RooArgSet* m_nset; //! transient member
 	/// hash of current normalisation set
 	mutable UInt_t m_nsethash; //! transient member
-        Flags m_flags;			///< flags
 
 	/** @brief hold cached integrals
 	 *
