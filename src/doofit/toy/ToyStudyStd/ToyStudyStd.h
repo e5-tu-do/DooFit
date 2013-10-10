@@ -9,8 +9,8 @@
 // ROOT
 
 // from RooFit
-#include "RooArgSet.h"
 #include "RooFitResult.h"
+#include "RooArgSet.h"
 
 // from project
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
@@ -229,6 +229,7 @@ namespace toy {
      *  @todo enhance this to be able to work with asymmetric errors if available
      */
     RooArgSet BuildEvaluationArgSet(const RooFitResult& fit_result);
+
     /**
      *  @brief Evaluate fit result quality
      *
@@ -239,6 +240,19 @@ namespace toy {
      *  @return true if fit result is okay, false if not
      */
     bool FitResultOkay(const RooFitResult& fit_result) const;
+    
+    /**
+     *  @brief Check if fit result has (nearly) no varied parameters
+     *
+     *  For a given fit result evaluate the fit quality in terms of parameter
+     *  variation. If more than 80% of non-fixed parameters have not been varied
+     *  the fit result is to be neglected.
+     *
+     *  @param fit_result RooFitResult to use for evaluation
+     *  @return true if fit result is problematic, false if not
+     */
+    bool FitResultNotVariedParameterSet(const RooFitResult& fit_result) const;
+
     /**
      *  @brief Copy an existing RooRealVar into a new RooRealVar
      *

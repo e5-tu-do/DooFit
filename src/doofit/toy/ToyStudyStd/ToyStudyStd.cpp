@@ -346,11 +346,11 @@ namespace toy {
       double res_value = (init.getVal() - par.getVal());
       res->setVal(res_value);
       
-//      std::string paramname = parameter->GetName();
-//      if (paramname == "par_bssig_time_S" && TMath::Abs(res->getVal()) < 0.01) {
-//        swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-" << par.getVal() << endmsg;
-//        fit_result.Print("v");
-//      }
+      std::string paramname = parameter->GetName();
+      if (paramname == "par_bdsig_time_C" && TMath::Abs(res->getVal()) < 0.000001) {
+        swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-(" << par.getVal() << ")" << endmsg;
+        fit_result.Print("v");
+      }
       
       err->setVal(err_value);
             
@@ -419,12 +419,49 @@ namespace toy {
 //    
 //#endif
     
-//    sdebug << "Covariance quality: " << fit_result.covQual() << endmsg;
+//    sdebug << "Covariance quality: " << fit_result.covQual() << ", "
+//           << fit_result.statusLabelHistory(0) << ": " << fit_result.statusCodeHistory(0) << ", "
+//           << fit_result.statusLabelHistory(1) << ": " << fit_result.statusCodeHistory(1) << ", "
+//    //<< fit_result.statusLabelHistory(2) << ": " << fit_result.statusCodeHistory(2) << ", "
+//           << endmsg;
+    
     
     if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality()) {
       return false;
+    } else if (fit_result.statusCodeHistory(0) < 0) {
+      return false;
+    } else if (FitResultNotVariedParameterSet(fit_result)) {
+      swarn << "Fit result has more than 80% of nonvaried parameters." << endmsg;
+      //fit_result.Print("v");
+      return false;
     } else {
       return true;
+    }
+  }
+  
+  bool ToyStudyStd::FitResultNotVariedParameterSet(const RooFitResult& fit_result) const {
+    const RooArgSet& parameter_init_list = fit_result.floatParsInit();
+    const RooArgList& parameter_list     = fit_result.floatParsFinal();
+    
+    TIterator* parameter_iter        = parameter_list.createIterator();
+    RooRealVar* parameter            = NULL;
+    int num_nonvaried = 0;
+    int num_nonfixed  = 0;
+    
+    while ((parameter = (RooRealVar*)parameter_iter->Next())) {
+      if (!parameter->isConstant()) {
+        if (TMath::Abs(parameter->getVal()-dynamic_cast<RooRealVar*>(parameter_init_list.find(parameter->GetName()))->getVal())/parameter->getError() < 1e-11) {
+          num_nonvaried++;
+        }
+        num_nonfixed++;
+      }
+    }
+    
+    double rate_nonvaried = static_cast<double>(num_nonvaried)/num_nonfixed;
+    if (rate_nonvaried >= 0.8) {
+      return true;
+    } else {
+      return false;
     }
   }
   
