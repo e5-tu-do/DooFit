@@ -278,13 +278,13 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     if (sc_y == kLinear || sc_y == kBoth) {
       doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false);
-      doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), false);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false);
     }
     
     plot_frame->SetMinimum(min_plot);
     if (sc_y == kLogarithmic || sc_y == kBoth) {
       doocore::lutils::PlotSimple(log_plot_name, plot_frame, label, config_plot_.plot_directory(), true);
-      doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), true);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true);
     }
     
     plot_frame->SetMinimum(0.5);
@@ -296,14 +296,14 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     if (sc_y == kLinear || sc_y == kBoth) {
       doocore::lutils::PlotPulls(pull_plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, true);
-      doocore::lutils::PlotPulls("AllPlots", plot_frame, label, config_plot_.plot_directory(), false, false, true, "");
+      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, true, "");
     }
     
 //    sdebug << "Plot y axis minimum for log scale plot: " << min_plot << endmsg;
     plot_frame->SetMinimum(min_plot);
     if (sc_y == kLogarithmic || sc_y == kBoth) {
       doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame, label, config_plot_.plot_directory(), true, false, true);
-      doocore::lutils::PlotPulls("AllPlots", plot_frame, label, config_plot_.plot_directory(), true, false, true, "");
+      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, false, true, "");
     }
     
 //    delete plot_frame_pull;
@@ -317,13 +317,13 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     if (sc_y == kLinear || sc_y == kBoth) {
       doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false);
-      doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), false);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false);
     }
     
     plot_frame->SetMinimum(min_plot);
     if (sc_y == kLogarithmic || sc_y == kBoth) {
       doocore::lutils::PlotSimple(log_plot_name, plot_frame, label, config_plot_.plot_directory(), true);
-      doocore::lutils::PlotSimple("AllPlots", plot_frame, label, config_plot_.plot_directory(), true);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true);
     }
   }
   

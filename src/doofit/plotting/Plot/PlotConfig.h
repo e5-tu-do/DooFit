@@ -86,6 +86,14 @@ class PlotConfig : public config::AbsConfig {
    * @see set_plot_directory()
    **/
   std::string plot_directory() const { return plot_directory_; }
+
+  /**
+   * @brief Getter for plot_appendix_
+   *
+   * @see set_plot_appendix()
+   **/
+  std::string plot_appendix() const { return plot_appendix_; }
+
   ///@}
 
   /** @name Setter functions
@@ -144,6 +152,16 @@ class PlotConfig : public config::AbsConfig {
   void set_plot_directory(const std::string& plot_directory) {
     plot_directory_ = plot_directory;
   }
+
+  /**
+   * @brief Setter for plot_appendix_ 
+   *
+   * Set appendix for stacked plot output file name
+   * 
+   * @param pdf_linecolors colors to use in same order as PDFs are supplied
+   **/
+  void set_plot_appendix(const std::string& plot_appendix) { plot_appendix_ = plot_appendix; }
+
   ///@}
   
   /** @name Stacked plotting support functions
@@ -213,7 +231,7 @@ class PlotConfig : public config::AbsConfig {
    *  @brief Plot output directory
    */
   std::string plot_directory_;
-  
+
   /** @name Stacked plotting support members
    *  Members to support stacked plotting into one file.
    */
@@ -227,6 +245,12 @@ class PlotConfig : public config::AbsConfig {
    *  @brief Dummy canvas to create plot stack
    */
   mutable TCanvas* plot_stack_canvas_;
+
+  /**
+   *  @brief Appendix for stacked plot file name
+   */
+  std::string plot_appendix_;
+
   ///@}
 };
 
