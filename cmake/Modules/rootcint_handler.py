@@ -25,7 +25,8 @@ def lock_file(file):
 
 def is_locked(file):
   lock_file_name = file + '.lock'
-  if os.path.exists(lock_file_name):
+  print "lock time diff: " + str(time.time()-os.path.getctime(lock_file_name))
+  if os.path.exists(lock_file_name) and time.time()-os.path.getctime(lock_file_name)<60:
     return True
   else:
     return False
@@ -35,9 +36,17 @@ def unlock_file(file):
   if os.path.exists(lock_file_name):
     os.remove(lock_file_name)
 
-def generate_dictionary(rootcint, dict_file, input_files):
+def generate_dictionary(rootcint, dict_file, args):
+  include_dirs = []
+  input_files = []
+  for arg in args:
+    if os.path.isdir(arg):
+      include_dirs.append('-I'+arg)
+    else:
+      input_files.append(arg)
+
   dict_file_completed = dict_file + "_completed"
-  cmd = rootcint + " -f " + dict_file + " -c -p " + ' '.join(input_files)
+  cmd = rootcint + ' '.join(include_dirs) + " -f " + dict_file + " -c -p " + ' '.join(input_files)
   if lock_file(dict_file): 
     p = call_shell(cmd)
     r = p.wait()
@@ -55,4 +64,6 @@ if __name__ == "__main__":
   if len(sys.argv) < 4:
     print "Usage: " + sys.argv[0] + " rootcint dict_file input_files"
     sys.exit(0)
+  if len(sys.argv) > 4:
+    print "Additional parameters: " + str(sys.argv[4:])
   generate_dictionary(sys.argv[1], sys.argv[2], sys.argv[3:])

@@ -16,7 +16,7 @@ RooEffResModel.cxx RooEffResModel.h RooEffResModel_dict.cc RooEffResModel_dict.h
 RooGaussEfficiencyModel.cxx RooGaussEfficiencyModel.h RooGaussEfficiencyModel_dict.cc RooGaussEfficiencyModel_dict.h
 )
 
-target_link_libraries(dfp2pvvpdfs ${ALL_LIBRARIES})
+target_link_libraries(dfp2vvpdfs ${ALL_LIBRARIES})
 
 # see above, not sure if it works
 add_dependencies(dfp2vvpdfs dfp2vvpdfs_dict)
