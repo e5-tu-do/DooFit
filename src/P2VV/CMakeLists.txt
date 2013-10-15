@@ -25,4 +25,4 @@ install(TARGETS dfp2vvpdfs DESTINATION lib)
 install(FILES RooAbsEffResModel.h RooAbsGaussModelEfficiency.h
 RooCubicSplineFun.h RooCubicSplineKnot.h RooEffConvGenContext.h
 RooEffResModel.h RooGaussEfficiencyModel.h DESTINATION
-include/doofit/extraroopdfs/p2vvpdfs)
+include/P2VV)
