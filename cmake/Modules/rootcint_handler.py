@@ -17,15 +17,16 @@ def touch(fname, times = None):
 # simple file locking
 def lock_file(file):
   lock_file_name = file + '.lock'
-  if os.path.exists(lock_file_name):
+  if os.path.exists(lock_file_name) and time.time()-os.path.getctime(lock_file_name)<60:
     return False
   else:
+    if os.path.exists(lock_file_name):
+      os.remove(lock_file_name)
     touch(lock_file_name)
     return True
 
 def is_locked(file):
   lock_file_name = file + '.lock'
-  print "lock time diff: " + str(time.time()-os.path.getctime(lock_file_name))
   if os.path.exists(lock_file_name) and time.time()-os.path.getctime(lock_file_name)<60:
     return True
   else:
@@ -46,7 +47,8 @@ def generate_dictionary(rootcint, dict_file, args):
       input_files.append(arg)
 
   dict_file_completed = dict_file + "_completed"
-  cmd = rootcint + ' '.join(include_dirs) + " -f " + dict_file + " -c -p " + ' '.join(input_files)
+  cmd = rootcint + " -f " + dict_file + " -c -p " + ' ' + ' '.join(include_dirs) + ' ' + ' '.join(input_files)
+  print cmd
   if lock_file(dict_file): 
     p = call_shell(cmd)
     r = p.wait()
@@ -57,13 +59,12 @@ def generate_dictionary(rootcint, dict_file, args):
     unlock_file(dict_file)
   else:
     print >> sys.stderr, "File " + dict_file + " is locked. Waiting for unlock."
-    while is_locked(dict_file):
+    if is_locked(dict_file):
       time.sleep(1)
+      generate_dictionary(rootcint, dict_file, args)
     
 if __name__ == "__main__":
   if len(sys.argv) < 4:
     print "Usage: " + sys.argv[0] + " rootcint dict_file input_files"
     sys.exit(0)
-  if len(sys.argv) > 4:
-    print "Additional parameters: " + str(sys.argv[4:])
   generate_dictionary(sys.argv[1], sys.argv[2], sys.argv[3:])
