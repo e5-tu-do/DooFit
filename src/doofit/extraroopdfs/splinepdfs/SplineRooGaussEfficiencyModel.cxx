@@ -266,12 +266,18 @@ Double_t RooGaussEfficiencyModel::analyticalIntegral(Int_t code, const char* ran
   Double_t omega  = (basisCode==sinBasis  || basisCode==cosBasis)  ? ((RooAbsReal*)basis().getParameter(2))->getVal() : 0 ;
   Double_t dGamma = (basisCode==sinhBasis || basisCode==coshBasis) ? ((RooAbsReal*)basis().getParameter(2))->getVal() : 0 ;
   if (basisCode == coshBasis && basisCode!=noBasis && dGamma==0 ) basisCode = expBasis;
-
+  
   Double_t scale  = sigma*ssf*TMath::Sqrt2();
   Double_t offset = mean*msf;
+
+//  std::cout << "scale = " << sigma << "*" << ssf << "*" << TMath::Sqrt2() << " = " << scale << std::endl;
+  
   Double_t umin = (x.min(rangeName)-offset)/scale;
   Double_t umax = (x.max(rangeName)-offset)/scale;
 
+  //  std::cout << "umax = " << "(" << x.max(rangeName) << " - " << offset << ")/" << scale << std::endl;
+//  std::cout << "umin = " << "(" << x.min(rangeName) << " - " << offset << ")/" << scale << " = " << umin << std::endl;
+  
   if (basisCode==noBasis || ((basisCode==expBasis || basisCode==cosBasis) && tau==0)) {
     if (verboseEval()>0) cout << "RooGaussEfficiencyModel::analyticalIntegral(" << GetName() << ") 1st form" << endl ;
     Double_t result =  0.5*(RooMath::erf( umax )-RooMath::erf( umin )) ;

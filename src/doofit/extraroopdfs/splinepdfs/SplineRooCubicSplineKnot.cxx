@@ -211,6 +211,7 @@ RooCubicSplineKnot::S_edge::S_edge(const S_edge& other, double offset) :
 {
     if (offset != 0) {
         std::cout << "RooCubicSplitKnot::S_edge: argument \"offset\" is not equal to 0" << std::endl;
+      std::cout << "offset = " << offset << endl;
         assert(offset==0);
     }
 }
