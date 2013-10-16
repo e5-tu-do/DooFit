@@ -40,8 +40,8 @@
 #include <Riostream.h>
 #include <RooRandom.h>
 
-#include "RooEffConvGenContext.h"
-#include "RooEffResModel.h"
+#include "SchillerRooEffConvGenContext.h"
+#include "SchillerRooEffResModel.h"
 
 namespace doofit {
 namespace extraroopdfs {

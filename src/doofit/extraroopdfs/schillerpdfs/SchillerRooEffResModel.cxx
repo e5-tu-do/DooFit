@@ -40,8 +40,8 @@
 #include <RooProduct.h>
 #include <RooStringVar.h>
 #include <RooAbsAnaConvPdf.h>
-#include "RooEffConvGenContext.h"
-#include "RooEffResModel.h"
+#include "SchillerRooEffConvGenContext.h"
+#include "SchillerRooEffResModel.h"
 
 namespace doofit {
 namespace extraroopdfs {

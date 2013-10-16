@@ -21,7 +21,7 @@
 #include <RooRealProxy.h>
 #include <RooObjCacheManager.h>
 #include <RooSetProxy.h>
-#include "RooAbsEffResModel.h"
+#include "SchillerRooAbsEffResModel.h"
 
 class RooCustomizer;
 class RooResoluitionModel;

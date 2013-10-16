@@ -2,17 +2,9 @@
 #include <iostream>
 #include "TMath.h"
 #include "RooAbsReal.h"
-#include "SplineRooCubicSplineKnot.h"
-#include "TMatrixD.h"
-#include "TVectorD.h"
-#include "TDecompBK.h"
+#include "P2VV/RooCubicSplineKnot.h"
 
 using namespace std;
-
-namespace doofit {
-namespace extraroopdfs {
-namespace splinepdfs {
-
 namespace RooCubicSplineKnot_aux {
 
   Double_t get(const RooArgList& b,int i) { return ((RooAbsReal&)b[i]).getVal() ; }
@@ -211,7 +203,6 @@ RooCubicSplineKnot::S_edge::S_edge(const S_edge& other, double offset) :
 {
     if (offset != 0) {
         std::cout << "RooCubicSplitKnot::S_edge: argument \"offset\" is not equal to 0" << std::endl;
-      std::cout << "offset = " << offset << endl;
         assert(offset==0);
     }
 }
@@ -275,6 +266,10 @@ namespace {
 
 #endif
 }
+
+#include "TMatrixD.h"
+#include "TVectorD.h"
+#include "TDecompBK.h"
 
 // return integrals from lo to hi of basis spline . exp(-gamma x), for each basis spline...
 // FIXME: # of splines != # of knots... so cannot return as TGraphErrors...
@@ -377,8 +372,4 @@ double  RooCubicSplineKnot::expIntegral(const TH1* hist, double gamma, TVectorD&
     }
 
     return chisq;
-}
-
-}
-}
 }

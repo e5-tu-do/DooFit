@@ -43,14 +43,10 @@
 #include "RooArgList.h"
 
 // P2VV
-#include "SplineRooCubicSplineFun.h"
-#include "SplineRooCubicSplineKnot.h"
+#include "P2VV/RooCubicSplineFun.h"
+#include "P2VV/RooCubicSplineKnot.h"
 
 using namespace std;
-
-namespace doofit {
-namespace extraroopdfs {
-namespace splinepdfs {
 
 //_____________________________________________________________________________
 void RooCubicSplineFun::init(const char* name,
@@ -270,26 +266,13 @@ RooCubicSplineFun::productAnalyticalIntegral(Double_t umin, Double_t umax,
     double lo = scale*umin+offset;
     double hi = scale*umax+offset;
     std::complex<double> sum(0,0);
-
-//    std::cout << "lo = " << scale << "*" << umin << " + " << offset << " = " << lo << std::endl;
-
-//  std::cout << "hi = " << scale << "*" << umax << " + " << offset << std::endl;
-//  std::cout << "hi: " << hi << ", u(0): " << u(0) << std::endl;
-  
     //TODO: verify we remain within [lo,hi]
     assert(hi>=u(0)); // front only if hi>u(0)!!!
     if (lo<u(0)) sum += gaussIntegralE(true,  M.front()-M_n( umin,z), K, offset, sc);
     for (unsigned i=0;i<knotSize()-1 && u(i)<hi ;++i) {
         if (u(i+1)<lo) continue;
         // FIXME:TODO: we currently assume that u(0),u(knotSize()-1)] fully contained in [lo,hi]
-      
-//      std::cout << "lo = " << lo << ", u(" << i << ") = " << u(i) << ", diff: " << u(i)-lo << std::endl;
-      
-      //assert(lo<=u(i));
-      assert(u(i)-lo>-1e-12);
-      
-//      std::cout << "hi: " << hi << ", u(" << i << "+1): " << u(i+1) << " diff: " << hi-u(i+1) << std::endl;
-      
+        assert(lo<=u(i));
         assert(u(i+1)<=hi);
         M_n dM = M[i+1]-M[i]; // take M[i] if lo<=u(i) else M_n(lo) ; take M[i+1] if u(i+1)<=hi else M_n(hi)
         RooCubicSplineKnot::S_jk s_jk( _aux.S_jk_sum( i, _coefList ), offset );  // pass sc into S_jk, remove from loop
@@ -322,8 +305,4 @@ Double_t RooCubicSplineFun::maxVal(Int_t code) const
           if (x>res)  { res = x; }
     }
     return res;
-}
-
-}
-}
 }

@@ -656,6 +656,7 @@ RooResolutionModel& doofit::builder::EasyPdf::Model(const std::string &name) {
       throw ObjectNotExistingException();
     }
   } else {
+    serr << "EasyPdf::Model(const std::string&): Requested model " << name << " not existing." << endmsg;
     throw ObjectNotExistingException();
   }
 }

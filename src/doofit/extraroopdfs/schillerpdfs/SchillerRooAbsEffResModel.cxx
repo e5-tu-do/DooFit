@@ -1,5 +1,5 @@
 #include <RooResolutionModel.h>
-#include "RooAbsEffResModel.h"
+#include "SchillerRooAbsEffResModel.h"
 
 namespace doofit {
 namespace extraroopdfs {
