@@ -12,7 +12,8 @@ RooAbsGaussModelEfficiency.cxx RooAbsGaussModelEfficiency.h RooAbsGaussModelEffi
 RooCubicSplineFun.cxx RooCubicSplineFun.h RooCubicSplineFun_dict.cc RooCubicSplineFun_dict.h 
 RooCubicSplineKnot.cxx RooCubicSplineKnot.h RooCubicSplineKnot_dict.cc RooCubicSplineKnot_dict.h 
 RooEffConvGenContext.cxx RooEffConvGenContext.h RooEffConvGenContext_dict.cc RooEffConvGenContext_dict.h 
-RooEffResModel.cxx RooEffResModel.h RooEffResModel_dict.cc RooEffResModel_dict.h 
+RooEffResModel.cxx RooEffResModel.h RooEffResModel_dict.cc RooEffResModel_dict.h
+RooEffResAddModel.cxx RooEffResAddModel.h RooEffResAddModel_dict.cc RooEffResAddModel_dict.h 
 RooGaussEfficiencyModel.cxx RooGaussEfficiencyModel.h RooGaussEfficiencyModel_dict.cc RooGaussEfficiencyModel_dict.h
 )
 

@@ -32,6 +32,7 @@
 #include "RooDataHist.h"
 #include "RooUnblindUniform.h"
 #include "RooLognormal.h" 
+#include "RooConstVar.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -39,6 +40,9 @@
 
 // from project
 #include "doofit/config/CommaSeparatedList.h"
+#include "P2VV/RooAbsGaussModelEfficiency.h"
+#include "P2VV/RooGaussEfficiencyModel.h"
+#include "P2VV/RooEffResAddModel.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -564,6 +568,38 @@ RooAddModel& doofit::builder::EasyPdf::TripleGaussModelPerEvent(const std::strin
 
 RooAddModel& doofit::builder::EasyPdf::AddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs) {
   return AddPdfToStore<RooAddModel>(new RooAddModel(name.c_str(), name.c_str(), pdfs, coefs));
+}
+
+RooGaussEfficiencyModel& doofit::builder::EasyPdf::GaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma) {
+  return AddPdfToStore<RooGaussEfficiencyModel>(new RooGaussEfficiencyModel(name.c_str(), name.c_str(), x, eff, mean, sigma));
+}
+
+RooEffResAddModel& doofit::builder::EasyPdf::DoubleGaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& fraction) {
+  return EffResAddModel(name,
+                        RooArgList(GaussEfficiencyModel("p1_"+name,x,eff,mean,sigma1),
+                                   GaussEfficiencyModel("p2_"+name,x,eff,mean,sigma2)),
+                  RooArgList(fraction));
+}
+
+RooGaussEfficiencyModel& doofit::builder::EasyPdf::GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal &scale_error) {
+  return AddPdfToStore<RooGaussEfficiencyModel>(new RooGaussEfficiencyModel(name.c_str(), name.c_str(), x, eff, mean, error, RooConst(1.0), scale_error));
+}
+
+RooEffResAddModel& doofit::builder::EasyPdf::DoubleGaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& fraction) {
+  return EffResAddModel(name,
+                        RooArgList(GaussEfficiencyModelPerEvent("p1_"+name,
+                                                                x,eff,mean,
+                                                                error,
+                                                                scale_error1),
+                                   GaussEfficiencyModelPerEvent("p2_"+name,
+                                                                x,eff,mean,
+                                                                error,
+                                                                scale_error2)),
+                        RooArgList(fraction));
+}
+
+RooEffResAddModel& doofit::builder::EasyPdf::EffResAddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs) {
+  return AddPdfToStore<RooEffResAddModel>(new RooEffResAddModel(name.c_str(), name.c_str(), pdfs, coefs));
 }
 
 RooAddPdf& doofit::builder::EasyPdf::DoubleGaussianScaled(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale, RooAbsReal& fraction, std::string sigma2_name) {
