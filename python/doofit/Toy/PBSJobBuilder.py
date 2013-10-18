@@ -111,6 +111,10 @@ def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_it
     with open(os.path.join(jobs_dir,'max_id')) as f:
       min_id = int(f.read())+1
       print "File max_id existing. Starting from id " + str(min_id)
+  if os.path.isfile(os.path.join(jobs_dir,'basename')):
+    with open(os.path.join(jobs_dir,'basename')) as f:
+      job_base_name = f.read()
+      print "File basename existing. Using basename " + job_base_name
   submit_file_name = os.path.join(jobs_dir,'submit_' + job_base_name + '.sh')
   submit_file = open(submit_file_name, 'w')
   submit_file.writelines('#!/bin/sh\n')
@@ -152,6 +156,9 @@ def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_it
   maxid_file_name = os.path.join(jobs_dir,'max_id')
   maxid_file = open(maxid_file_name, 'w')
   maxid_file.writelines(str(job_index-1)+'\n')
+  basename_file_name = os.path.join(jobs_dir,'basename')
+  basename_file = open(basename_file_name, 'w')
+  basename_file.writelines(job_base_name)
   print 'Jobs successfully created. Maximum seed used: ' + str(min_seed-1) + ", maximum job id used: " + str(job_index-1)
   print 'Submit jobs via this command:'
   print 'sh ' + submit_file_name
