@@ -7,8 +7,8 @@
 // *** better than hacking the header files that come with ROOT for now...
 #define RooEffGenContext RooEffGenContext; friend class RooEffConvGenContext;
 
-#include "RooConvGenContext.h"
-#include "RooArgSet.h"
+#include <RooConvGenContext.h>
+#include <RooArgSet.h>
 
 class RooAbsAnaConvPdf;
 class RooDataSet;

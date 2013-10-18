@@ -1,7 +1,8 @@
-#include "P2VV/RooAbsGaussModelEfficiency.h"
-#include "RooMath.h"
-#include "TMath.h"
+#include "RooAbsGaussModelEfficiency.h"
+#include <RooMath.h>
+#include <TMath.h>
 
+ClassImp(RooAbsGaussModelEfficiency);
 RooAbsGaussModelEfficiency::~RooAbsGaussModelEfficiency()  {};
 
 namespace {

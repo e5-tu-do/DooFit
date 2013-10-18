@@ -11,7 +11,7 @@
 #ifndef ROO_ABS_EFF_RES_MODEL
 #define ROO_ABS_EFF_RES_MODEL
 
-#include "RooResolutionModel.h"
+#include <RooResolutionModel.h>
 
 class RooAbsEffResModel {
 public:
@@ -21,10 +21,9 @@ public:
   
    /** 
     * Get a RooArgSet of all observables
-    * (pointer because genreflex dictionaries can't handle value)
     * @return RooArgSet of observables
     */
-   virtual RooArgSet* observables() const = 0;
+   virtual RooArgSet observables() const = 0;
 
    virtual const RooAbsReal* efficiency() const = 0;
 

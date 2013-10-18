@@ -20,16 +20,17 @@
 
 #include <memory>
 
-#include "RooFit.h"
-#include "Riostream.h"
-#include "P2VV/RooEffResModel.h"
-#include "RooRealConstant.h"
-#include "RooCustomizer.h"
-#include "RooAddition.h"
-#include "RooStringVar.h"
-#include "RooAbsAnaConvPdf.h"
-#include "P2VV/RooEffConvGenContext.h"
-#include "RooCachedReal.h"
+#include <RooFit.h>
+#include <Riostream.h>
+#include <RooRealConstant.h>
+#include <RooCustomizer.h>
+#include <RooAddition.h>
+#include <RooStringVar.h>
+#include <RooAbsAnaConvPdf.h>
+#include <RooCachedReal.h>
+
+#include "RooEffResModel.h"
+#include "RooEffConvGenContext.h"
 
 using namespace std;
 

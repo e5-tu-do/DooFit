@@ -16,8 +16,8 @@
 #include <RooResolutionModel.h>
 #include <RooRealProxy.h>
 
-#include <P2VV/RooAbsEffResModel.h>
-#include "P2VV/RooAbsGaussModelEfficiency.h"
+#include "RooAbsEffResModel.h"
+#include "RooAbsGaussModelEfficiency.h"
 
 class RooAbsReal;
 class RooRealVar;
@@ -54,7 +54,7 @@ public:
   void advertiseFlatScaleFactorIntegral(Bool_t flag) { _flatSFInt = flag ; }
 
   virtual const RooAbsReal* efficiency() const;
-  virtual RooArgSet* observables() const;
+  virtual RooArgSet observables() const;
 
 private:
 

@@ -15,7 +15,7 @@
 #include <RooObjCacheManager.h>
 #include <RooSetProxy.h>
 
-#include <P2VV/RooAbsEffResModel.h>
+#include "RooAbsEffResModel.h"
 
 class RooCustomizer;
 class RooResoluitionModel;
@@ -55,10 +55,9 @@ public:
 
    const RooArgList& getIntegralRanges(const RooArgSet& iset, const char* rangeName = 0) const;
 
-   virtual RooArgSet* observables() const {
+   virtual RooArgSet observables() const { 
       // Return pointer to pdf in product
-      // (pointer because genreflex dictionaries can't handle value)
-      return new RooArgSet(_observables);
+      return RooArgSet(_observables);
    }
 
 protected:

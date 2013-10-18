@@ -13,9 +13,9 @@
 #ifndef ROO_CUBICSPLINEFUN
 #define ROO_CUBICSPLINEFUN
 
-#include "RooAbsReal.h"
-#include "RooRealProxy.h"
-#include "RooListProxy.h"
+#include <RooAbsReal.h>
+#include <RooRealProxy.h>
+#include <RooListProxy.h>
 #include "RooCubicSplineKnot.h"
 #include "RooAbsGaussModelEfficiency.h"
 

@@ -1,8 +1,7 @@
 #include <algorithm>
-#include <iostream>
-#include "TMath.h"
-#include "RooAbsReal.h"
-#include "P2VV/RooCubicSplineKnot.h"
+#include <TMath.h>
+#include <RooAbsReal.h>
+#include "RooCubicSplineKnot.h"
 
 using namespace std;
 namespace RooCubicSplineKnot_aux {
@@ -196,15 +195,6 @@ RooCubicSplineKnot::S_jk RooCubicSplineKnot::S_jk_sum(int i, const RooArgList& b
          + get(_S_jk,i,1)*get(b,i,1)
          + get(_S_jk,i,2)*get(b,i,2)
          + get(_S_jk,i,3)*get(b,i,3);
-}
-
-RooCubicSplineKnot::S_edge::S_edge(const S_edge& other, double offset) :
-    alpha(other.alpha), beta(other.beta)
-{
-    if (offset != 0) {
-        std::cout << "RooCubicSplitKnot::S_edge: argument \"offset\" is not equal to 0" << std::endl;
-        assert(offset==0);
-    }
 }
 
 // S matrix for natural extrapolation beyond the first/last knot...

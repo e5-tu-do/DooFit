@@ -5,9 +5,9 @@
 // Include files
 #include <RooAddModel.h>
 
-#include <P2VV/RooAbsEffResModel.h>
+#include "RooAbsEffResModel.h"
 
-/** @class RooEffResAddModel RooEffResAddModel.h P2VV/RooEffResAddModel.h
+/** @class RooEffResAddModel RooEffResAddModel.h RooEffResAddModel.h
  *  
  *
  *  @author Roel Aaij
@@ -33,11 +33,14 @@ public:
 
    /** 
     * Get a RooArgSet of all observables, caller takes ownership.
-    * (pointer because genreflex dictionaries can't handle value)
     * 
     * @return RooArgSet of observables
     */
-   virtual RooArgSet* observables() const;
+   virtual RooArgSet observables() const;
+
+   virtual RooAbsGenContext* modelGenContext(const RooAbsAnaConvPdf& convPdf, const RooArgSet &vars,
+                                             const RooDataSet *prototype=0, const RooArgSet* auxProto=0,
+                                             Bool_t verbose= kFALSE) const;
 
    virtual const RooAbsReal* efficiency() const;
 
@@ -52,4 +55,4 @@ private:
    ClassDef(RooEffResAddModel, 1)
 
 };
-#endif // P2VV_ROOEFFRESADDMODEL_H
+#endif // ROOEFFRESADDMODEL_H

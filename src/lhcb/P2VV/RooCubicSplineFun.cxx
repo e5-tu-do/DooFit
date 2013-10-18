@@ -27,26 +27,27 @@
 #include <sstream>
 
 // ROOT
-#include "TMath.h"
-#include "TH1.h"
-#include "TGraph.h"
-#include "TGraphErrors.h"
+#include <TMath.h>
+#include <TH1.h>
+#include <TGraph.h>
+#include <TGraphErrors.h>
 
 // RooFit
-#include "RooFit.h"
-#include "Riostream.h"
-#include "RooMsgService.h"
-#include "RooMath.h"
-#include "RooAbsReal.h"
-#include "RooRealVar.h"
-#include "RooConstVar.h"
-#include "RooArgList.h"
+#include <RooFit.h>
+#include <Riostream.h>
+#include <RooMath.h>
+#include <RooAbsReal.h>
+#include <RooRealVar.h>
+#include <RooConstVar.h>
+#include <RooArgList.h>
 
-// P2VV
-#include "P2VV/RooCubicSplineFun.h"
-#include "P2VV/RooCubicSplineKnot.h"
+// Splines
+#include "RooCubicSplineFun.h"
+#include "RooCubicSplineKnot.h"
 
 using namespace std;
+
+ClassImp(RooCubicSplineFun);
 
 //_____________________________________________________________________________
 void RooCubicSplineFun::init(const char* name,
@@ -230,11 +231,7 @@ Int_t RooCubicSplineFun::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& an
 //_____________________________________________________________________________
 Double_t RooCubicSplineFun::analyticalIntegral(Int_t code, const char* /* rangeName */) const
 {
-  if (code != 1) {
-    coutE(InputArguments) << "RooCubicSplineFun::analyticalIntegral(" << GetName()
-        << "): argument \"code\" can only have value 1" << std::endl;
-    assert(code==1) ;
-  }
+  assert(code==1) ;
   return _aux.analyticalIntegral(_coefList);
 }
 
@@ -272,8 +269,8 @@ RooCubicSplineFun::productAnalyticalIntegral(Double_t umin, Double_t umax,
     for (unsigned i=0;i<knotSize()-1 && u(i)<hi ;++i) {
         if (u(i+1)<lo) continue;
         // FIXME:TODO: we currently assume that u(0),u(knotSize()-1)] fully contained in [lo,hi]
-        assert(lo<=u(i));
-        assert(u(i+1)<=hi);
+        assert(std::abs(u(i)-lo)>-pow(10,-7));
+        assert(std::abs(hi-u(i+1))>-pow(10,-7));
         M_n dM = M[i+1]-M[i]; // take M[i] if lo<=u(i) else M_n(lo) ; take M[i+1] if u(i+1)<=hi else M_n(hi)
         RooCubicSplineKnot::S_jk s_jk( _aux.S_jk_sum( i, _coefList ), offset );  // pass sc into S_jk, remove from loop
         for (int j=0;j<4;++j) for (int k=0;k<4-j;++k) sum += dM(j)*s_jk(j,k)*K(k)*sc[j+k];
@@ -292,11 +289,7 @@ Int_t RooCubicSplineFun::getMaxVal(const RooArgSet& vars) const
 //_____________________________________________________________________________
 Double_t RooCubicSplineFun::maxVal(Int_t code) const
 {
-    if (code != 1) {
-      coutE(InputArguments) << "RooCubicSplineFun::maxVal(" << GetName()
-          << "): argument \"code\" can only have value 1" << std::endl;
-      assert(code==1) ;
-    }
+    assert(code==1);
     RooFIter iter = _coefList.fwdIterator();
     RooAbsReal *c(0);
     double res = 0;

@@ -1,12 +1,11 @@
 #include <set>
 #include <vector>
 
-#include "Riostream.h"
-#include "RooMsgService.h"
 #include <RooAddModel.h>
 
-#include <P2VV/RooAbsEffResModel.h>
-#include <P2VV/RooEffResAddModel.h>
+#include "RooAbsEffResModel.h"
+#include "RooEffResAddModel.h"
+#include "RooEffConvGenContext.h"
 
 //_____________________________________________________________________________R
 RooEffResAddModel::RooEffResAddModel()
@@ -27,12 +26,7 @@ RooEffResAddModel::RooEffResAddModel(const char *name, const char *title, const 
    while(RooAbsArg* model = iter.next()) {
       //TODO: verify all models share the same efficiency 
       RooAbsEffResModel* effModel = dynamic_cast<RooAbsEffResModel*>(model);
-      if (effModel == 0) {
-        coutE(InputArguments) << "RooEffResAddModel(" << GetName()
-            << "): \"" << model->GetName() << "\" is not RooAbsEffResModel"
-            << std::endl;
-        assert(effModel);
-      }
+      assert(effModel);
    }
 }
  
@@ -82,7 +76,17 @@ const RooAbsReal* RooEffResAddModel::efficiency() const
 }
 
 //_____________________________________________________________________________
-RooArgSet* RooEffResAddModel::observables() const {
+RooArgSet RooEffResAddModel::observables() const { 
    // Return pointer to pdf in product
-   return new RooArgSet(RooAddModel::convVar());
+   return RooArgSet(RooAddModel::convVar());
+}
+
+
+
+//_____________________________________________________________________________
+RooAbsGenContext* RooEffResAddModel::modelGenContext
+(const RooAbsAnaConvPdf& convPdf, const RooArgSet &vars, const RooDataSet *prototype,
+ const RooArgSet* auxProto, Bool_t verbose) const
+{
+   return new RooEffConvGenContext(convPdf, vars, prototype, auxProto, verbose);
 }

@@ -27,18 +27,21 @@
 //
 #include <memory>
 
-#include "RooFit.h"
+#include <RooFit.h>
 
-#include "TMath.h"
-#include "Riostream.h"
-#include "RooMsgService.h"
-#include "P2VV/RooGaussEfficiencyModel.h"
-#include "P2VV/RooEffConvGenContext.h"
-#include "RooMath.h"
-#include "RooRealConstant.h"
-#include "RooRandom.h"
+#include <TMath.h>
+#include <Riostream.h>
+#include <RooMath.h>
+#include <RooRealConstant.h>
+#include <RooRandom.h>
+
+#include "RooGaussEfficiencyModel.h"
+#include "RooEffConvGenContext.h"
 
 using namespace std;
+
+ClassImp(RooGaussEfficiencyModel)
+;
 
 namespace {
     enum basisType { noBasis=0  ,  expBasis= 3
@@ -151,10 +154,10 @@ const RooAbsReal* RooGaussEfficiencyModel::efficiency() const
 }
 
 //_____________________________________________________________________________
-RooArgSet* RooGaussEfficiencyModel::observables() const {
+RooArgSet RooGaussEfficiencyModel::observables() const {
    // Return pointer to pdf in product
    // verify whether efficiency depends on additional observables!!!
-   return new RooArgSet(convVar());
+   return RooArgSet(convVar());
 }
 
 //_____________________________________________________________________________
@@ -335,13 +338,7 @@ Int_t RooGaussEfficiencyModel::getGenerator(const RooArgSet& directVars, RooArgS
 //_____________________________________________________________________________
 void RooGaussEfficiencyModel::generateEvent(Int_t code)
 {
-  if (code != 1) {
-    coutE(InputArguments) << "RooGaussEfficiencyModel::generateEvent("
-        << GetName()<< "): argument \"code\" can only have value 1"
-        << std::endl;
-    assert(code==1);
-  }
-
+  assert(code==1) ;
   Double_t xmin = x.min();
   Double_t xmax = x.max();
   Double_t m = mean*msf;

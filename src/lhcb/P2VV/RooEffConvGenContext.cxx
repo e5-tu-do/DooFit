@@ -25,22 +25,23 @@
 // END_HTML
 //
 
-#include "RooFit.h"
-
-#include "RooMsgService.h"
-#include "P2VV/RooEffConvGenContext.h"
-#include "RooAbsAnaConvPdf.h"
-#include "RooNumConvPdf.h"
-#include "RooFFTConvPdf.h"
-#include "RooProdPdf.h"
-#include "RooDataSet.h"
-#include "RooArgSet.h"
-#include "RooTruthModel.h"
-#include "Riostream.h"
-#include "RooRandom.h"
-
-#include "P2VV/RooEffResModel.h"
 #include <iostream>
+
+#include <RooFit.h>
+
+#include <RooMsgService.h>
+#include <RooAbsAnaConvPdf.h>
+#include <RooNumConvPdf.h>
+#include <RooFFTConvPdf.h>
+#include <RooProdPdf.h>
+#include <RooDataSet.h>
+#include <RooArgSet.h>
+#include <RooTruthModel.h>
+#include <Riostream.h>
+#include <RooRandom.h>
+
+#include "RooEffResModel.h"
+#include "RooEffConvGenContext.h"
 using std::endl;
 
 
@@ -80,12 +81,11 @@ void RooEffConvGenContext::initGenerator(const RooArgSet& theEvent)
 void RooEffConvGenContext::generateEvent(RooArgSet &theEvent, Int_t remaining)
 {
    // Generate a single event 
-
    while(1) {      
       // Generate pdf and model data
       _modelGen->generateEvent(*_modelVars, remaining) ;
       _pdfGen->generateEvent(*_pdfVars, remaining) ;    
-    
+ 
       // Construct smeared convolution variable
       Double_t convValSmeared = _cvPdf->getVal() + _cvModel->getVal() ;
 
@@ -96,6 +96,8 @@ void RooEffConvGenContext::generateEvent(RooArgSet &theEvent, Int_t remaining)
       _cvOut->setVal(convValSmeared) ;
 
       double val = efficiency()->getVal();
+      // std::cout << "PDF: " << _cvPdf->getVal() << " + Res: " << _cvModel->getVal() << " = Final: " << convValSmeared
+      //           << " -> Acc: " << val << std::endl;
       if (val > _maxEff && !efficiency()->getMaxVal(*_modelVars)) {
          coutE(Generation) << ClassName() << "::" << GetName() 
                            << ":generateEvent: value of efficiency is larger "
@@ -106,7 +108,7 @@ void RooEffConvGenContext::generateEvent(RooArgSet &theEvent, Int_t remaining)
          // Smeared value in acceptance range, transfer values to output set
          theEvent = *_modelVars ;
          theEvent = *_pdfVars ;
-         _cvOut->setVal(convValSmeared) ; // Add this line again
+         _cvOut->setVal(convValSmeared) ;
          return;
       }
    }

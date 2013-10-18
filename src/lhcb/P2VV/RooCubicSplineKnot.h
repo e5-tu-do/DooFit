@@ -2,10 +2,10 @@
 #define ROO_CUBICSPLINEKNOT
 #include <vector>
 #include <algorithm>
-#include "RooArgList.h"
-#include "TVectorD.h"
-#include "TH1.h"
-#include "TGraphErrors.h"
+#include <RooArgList.h>
+#include <TVectorD.h>
+#include <TH1.h>
+#include <TGraphErrors.h>
 
 // CINT doesn't like it if we encapsulate this in RooCubicSplineKnot ;-(
 
@@ -87,7 +87,9 @@ public:
     class S_edge {
     public:
         S_edge(double a, double b) : alpha(0.5*a), beta(b) {}
-        S_edge(const S_edge& other, double offset=0);
+        S_edge(const S_edge& other, double offset=0) : alpha(other.alpha), beta(other.beta) {
+            assert(offset==0); // TODO: fix me!
+        }
         double operator()(int j, int k) const {
             assert(j==0||j==1);
             assert(0<=(j+k) && (j+k)<2);
