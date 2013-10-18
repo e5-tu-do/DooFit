@@ -25,5 +25,5 @@ add_dependencies(dfp2vvpdfs dfp2vvpdfs_dict)
 install(TARGETS dfp2vvpdfs DESTINATION lib)
 install(FILES RooAbsEffResModel.h RooAbsGaussModelEfficiency.h
 RooCubicSplineFun.h RooCubicSplineKnot.h RooEffConvGenContext.h
-RooEffResModel.h RooGaussEfficiencyModel.h DESTINATION
+RooEffResModel.h RooEffResAddModel.h RooGaussEfficiencyModel.h DESTINATION
 include/P2VV)

@@ -5,20 +5,23 @@ packages="doocore doofit dooselection"
 source /lhcb/software/tu-dortmund/LHCbSoftwareSetup.sh #> /dev/null 2>&1
 export PATH=$PATH:/usr/local/bin
 
-echo "Probing ROOT versions"
+#echo "Probing ROOT versions"
 rvers=""
 dvvers=""
 echo -n "Installing for following DaVinci versions: "
-for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
-do
-  rver=`bash PrintRootVersionForDVVersion $ver`
-  if [[ ! $rvers =~ $rver ]]; then
-    rvers="$rvers $rver"
-    dvvers="$dvvers $ver"
-    echo -n " $ver"
-  fi
-done
-echo ""
+#for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
+#do
+#  rver=`bash PrintRootVersionForDVVersion $ver`
+#  if [[ ! $rvers =~ $rver ]]; then
+#    rvers="$rvers $rver"
+#    dvvers="$dvvers $ver"
+#    echo -n " $ver"
+#  fi
+#done
+#echo ""
+
+dvvers=$(cat /doosoft/dv_versions)
+echo $dvvers
 
 #dvvers="v33r4"
 
