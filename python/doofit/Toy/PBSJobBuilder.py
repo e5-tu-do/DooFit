@@ -102,15 +102,24 @@ def create_single_job(proto_script, settings_dict, jobs_dir, num_iterations, min
 #
 def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_iterations_per_job, walltime, num_cpu, min_seed):
   jobs_dir = os.path.realpath(os.path.abspath(os.path.expanduser(jobs_dir)))
+  min_id = 0
+  if os.path.isfile(os.path.join(jobs_dir,'max_seed')):
+    with open(os.path.join(jobs_dir,'max_seed')) as f:
+      min_seed = int(f.read())+1
+      print "File max_seed existing. Starting from seed " + str(min_seed)
+  if os.path.isfile(os.path.join(jobs_dir,'max_id')):
+    with open(os.path.join(jobs_dir,'max_id')) as f:
+      min_id = int(f.read())+1
+      print "File max_id existing. Starting from id " + str(min_id)
   submit_file_name = os.path.join(jobs_dir,'submit_' + job_base_name + '.sh')
   submit_file = open(submit_file_name, 'w')
   submit_file.writelines('#!/bin/sh\n')
   scan2_value = options.scan2start
-  job_index  = 0
+  job_index  = min_id
   while scan2_value <= options.scan2end:
     scan1_value = options.scan1start
     while scan1_value <= options.scan1end:
-      for i in range(0,num_jobs):
+      for i in range(min_id,min_id+num_jobs):
         settings_dict = {
           'job_name'   : job_base_name + '_' + str(job_index),
           'out_file'   : os.path.join(jobs_dir,'o_' + job_base_name + '_' + str(job_index) + '.log'),
@@ -137,10 +146,13 @@ def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_it
   control_file_name = os.path.join(jobs_dir,'control_' + job_base_name + '')
   control_file = open(control_file_name, 'w')
   control_file.writelines(os.path.join(jobs_dir,job_base_name + '_*.sh'))
-  maxseed_file_name = os.path.join(jobs_dir,'maxseed_' + job_base_name + '')
-  maxseed_file = open(control_file_name, 'w')
+  maxseed_file_name = os.path.join(jobs_dir,'max_seed')
+  maxseed_file = open(maxseed_file_name, 'w')
   maxseed_file.writelines(str(min_seed-1)+'\n')
-  print 'Jobs successfully created. Maximum seed used: ' + str(min_seed-1)
+  maxid_file_name = os.path.join(jobs_dir,'max_id')
+  maxid_file = open(maxid_file_name, 'w')
+  maxid_file.writelines(str(job_index-1)+'\n')
+  print 'Jobs successfully created. Maximum seed used: ' + str(min_seed-1) + ", maximum job id used: " + str(job_index-1)
   print 'Submit jobs via this command:'
   print 'sh ' + submit_file_name
 
