@@ -115,7 +115,7 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
       print "File max_id existing. Starting from id " + str(min_id)
   if os.path.isfile(os.path.join(jobs_dir,'basename')):
     with open(os.path.join(jobs_dir,'basename')) as f:
-      job_base_name = f.read()
+      job_base_name = f.read().strip()
       print "File basename existing. Using basename " + job_base_name
   submit_file_name = os.path.join(jobs_dir,'submit_' + job_base_name + '.sh')
   submit_file = open(submit_file_name, 'w')
