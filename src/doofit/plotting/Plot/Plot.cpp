@@ -184,7 +184,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   
   if (dataset_reduced != NULL) {
     if (dataset_reduced->isWeighted()) {
-      sdebug << "Weighted dataset, setting SumW2 errors." << endmsg;
+      sdebug << "Spotted a weighted dataset, setting SumW2 errors." << endmsg;
       weight_arg = DataError(RooAbsData::SumW2);
     }
     
