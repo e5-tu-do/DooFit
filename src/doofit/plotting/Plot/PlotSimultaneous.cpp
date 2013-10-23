@@ -60,6 +60,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooAbsPdf& sub_pdf = *(pdf.getPdf(sim_cat_type->GetName()));
     if (&sub_pdf != NULL) {
       RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
+      
       if (&sub_data == NULL) {
         serr << "PlotSimultaneous::PlotHandler(...): sub dataset for category " << sim_cat_type->GetName() << " empty. Will not plot. " << endmsg;
       } else {
