@@ -139,7 +139,9 @@ namespace toy {
   }
   
   std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> ToyStudyStd::GetFitResult() {
-    std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results(NULL,NULL,0.0,0.0,0.0,0.0);
+    const RooFitResult* dummy = nullptr;
+    std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0);
+    
     if (!fitresult_reader_worker_.joinable()) {
       return fit_results;
     } else {
@@ -158,7 +160,8 @@ namespace toy {
   }
   
   void ToyStudyStd::EvaluateFitResults() {
-    std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results(NULL,NULL,0.0,0.0,0.0,0.0);
+    const RooFitResult* dummy = nullptr;
+    std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0);
     do {
       fit_results = GetFitResult();
       
@@ -632,7 +635,8 @@ namespace toy {
             time_cpu2 = NULL; time_real2 = NULL;
             
             while (fit_results_release_queue_.size() > 0) {
-              std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results = std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double>(NULL,NULL,0.0,0.0,0.0,0.0);
+              const RooFitResult* dummy = nullptr;
+              std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results(dummy,dummy,0.0,0.0,0.0,0.0);
               if (fit_results_release_queue_.wait_and_pop(fit_results)) {
                 if (std::get<0>(fit_results) != NULL) delete std::get<0>(fit_results);
                 if (std::get<1>(fit_results) != NULL) delete std::get<1>(fit_results);
