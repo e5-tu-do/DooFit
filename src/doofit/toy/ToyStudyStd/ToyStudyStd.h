@@ -2,6 +2,7 @@
 #define TOYSTUDYSTD_h
 
 // STL
+#include <tuple>
 
 // BOOST
 #include <boost/thread.hpp>
@@ -21,6 +22,7 @@
 class RooFitResult;
 class RooDataSet;
 class RooRealVar;
+class TStopwatch;
 
 namespace doofit {
   namespace config {
@@ -119,9 +121,13 @@ namespace toy {
      *
      *  @param fit_result1 first RooFitResult to save
      *  @param fit_result2 second RooFitResult to save (optional)
+     *  @param stopwatch1 first stop watch to save fit times (optional)
+     *  @param stopwatch2 second stop watch to save fit times (optional)
      */
     void StoreFitResult(const RooFitResult* fit_result1, 
-                        const RooFitResult* fit_result2=NULL);
+                        const RooFitResult* fit_result2=NULL,
+                        TStopwatch* stopwatch1=NULL,
+                        TStopwatch* stopwatch2=NULL);
     
     /**
      *  @brief End the save fit result worker thread and wait for it to save everything
@@ -159,7 +165,7 @@ namespace toy {
      *  @brief Get a read in fit result (pair)
      *
      *  While the fit result reader is reading in fit results in the background
-     *  this function will get one of these fit result (or fit result pairs if 
+     *  this function will get one of these fit results (or fit result pairs if
      *  two results are to be read in simultaneously). Null pointers are 
      *  returned if no more fit results are available.
      *
@@ -167,9 +173,9 @@ namespace toy {
      *  results. The caller needs to release these via 
      *  ToyStudyStd::ReleaseFitResult()
      *
-     *  @return pair of fit results that have been read in
+     *  @return tuple of fit results and respective fit times (CPU and real)
      */
-    std::pair<const RooFitResult*, const RooFitResult*> GetFitResult();
+    std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> GetFitResult();
     /**
      *  @brief Release a fit result (pair) for deletion
      *
@@ -178,9 +184,9 @@ namespace toy {
      *  two results are to be read in simultaneously) for deletion as apparently
      *  RooFit's constructor/destructor methods are not thread-safe.
      *
-     *  @param fit_results pair of fit results to release
+     *  @param fit_results tuple of fit results and respective fit times (CPU and real) to release
      */
-    void ReleaseFitResult(std::pair<const RooFitResult*, const RooFitResult*> fit_results);
+    void ReleaseFitResult(std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results);
     /**
      *  @brief Evaluate read in fit results
      *
@@ -387,7 +393,7 @@ namespace toy {
     /**
      *  @brief Thread-safe queue for fit results to save
      */
-    doocore::lutils::concurrent_queue<std::pair<const RooFitResult*,const RooFitResult*> > fit_results_save_queue_;
+    doocore::lutils::concurrent_queue<std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> > fit_results_save_queue_;
     ///@}
     
     /** @name Reader worker members
@@ -409,11 +415,11 @@ namespace toy {
     /**
      *  @brief Thread-safe queue for fit results to read in
      */
-    doocore::lutils::concurrent_queue<std::pair<const RooFitResult*,const RooFitResult*> > fit_results_read_queue_;
+    doocore::lutils::concurrent_queue<std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> > fit_results_read_queue_;
     /**
      *  @brief Thread-safe queue for fit results to delete
      */
-    doocore::lutils::concurrent_queue<std::pair<const RooFitResult*,const RooFitResult*> > fit_results_release_queue_;
+    doocore::lutils::concurrent_queue<std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> > fit_results_release_queue_;
     ///@}
   };
   
