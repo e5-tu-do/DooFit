@@ -30,6 +30,10 @@ namespace doofit {
   }
   
 namespace toy {
+  
+  typedef std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> FitResultContainer;
+  
+  
   /** @class ToyStudyStd
    *  @brief Standard toy study for DooFit to help conduct and evaluate mass toy fits
    *
@@ -175,7 +179,7 @@ namespace toy {
      *
      *  @return tuple of fit results and respective fit times (CPU and real)
      */
-    std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> GetFitResult();
+    FitResultContainer GetFitResult();
     /**
      *  @brief Release a fit result (pair) for deletion
      *
@@ -186,7 +190,7 @@ namespace toy {
      *
      *  @param fit_results tuple of fit results and respective fit times (CPU and real) to release
      */
-    void ReleaseFitResult(std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results);
+    void ReleaseFitResult(FitResultContainer fit_results);
     /**
      *  @brief Evaluate read in fit results
      *
@@ -336,19 +340,11 @@ namespace toy {
     /**
      *  \brief Container for read in and active fit results
      */
-    std::vector<const RooFitResult*> fit_results_;
+    std::vector<FitResultContainer> fit_results_;
     /**
      *  \brief Container for all ever read in fit results
      */
-    std::vector<const RooFitResult*> fit_results_bookkeep_;
-    /**
-     *  \brief Container for read in and active second fit results
-     */
-    std::vector<const RooFitResult*> fit_results2_;
-    /**
-     *  \brief Container for all ever read in second fit results
-     */
-    std::vector<const RooFitResult*> fit_results2_bookkeep_;
+    std::vector<FitResultContainer> fit_results_bookkeep_;
     /**
      *  \brief RooDataSet for all evaluated parameters, their pulls and so on
      */
@@ -393,7 +389,7 @@ namespace toy {
     /**
      *  @brief Thread-safe queue for fit results to save
      */
-    doocore::lutils::concurrent_queue<std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> > fit_results_save_queue_;
+    doocore::lutils::concurrent_queue<FitResultContainer > fit_results_save_queue_;
     ///@}
     
     /** @name Reader worker members
@@ -415,11 +411,11 @@ namespace toy {
     /**
      *  @brief Thread-safe queue for fit results to read in
      */
-    doocore::lutils::concurrent_queue<std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> > fit_results_read_queue_;
+    doocore::lutils::concurrent_queue<FitResultContainer > fit_results_read_queue_;
     /**
      *  @brief Thread-safe queue for fit results to delete
      */
-    doocore::lutils::concurrent_queue<std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> > fit_results_release_queue_;
+    doocore::lutils::concurrent_queue<FitResultContainer > fit_results_release_queue_;
     ///@}
   };
   

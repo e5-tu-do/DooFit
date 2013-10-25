@@ -70,11 +70,9 @@ namespace toy {
     if (fitresult_reader_worker_.joinable()) fitresult_reader_worker_.join();
     
     if (evaluated_values_ != NULL) delete evaluated_values_;
-    for (std::vector<const RooFitResult*>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
-      delete *it_results;
-    }
-    for (std::vector<const RooFitResult*>::const_iterator it_results = fit_results2_bookkeep_.begin(); it_results != fit_results2_bookkeep_.end(); ++it_results) {
-      delete *it_results;
+    for (std::vector<FitResultContainer>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
+      delete std::get<0>(*it_results);
+      if (std::get<1>(*it_results) != NULL) delete std::get<1>(*it_results);
     }
   }
   
@@ -138,9 +136,9 @@ namespace toy {
     }
   }
   
-  std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> ToyStudyStd::GetFitResult() {
+  FitResultContainer ToyStudyStd::GetFitResult() {
     const RooFitResult* dummy = nullptr;
-    std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0);
+    FitResultContainer fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0);
     
     if (!fitresult_reader_worker_.joinable()) {
       return fit_results;
@@ -155,21 +153,19 @@ namespace toy {
     }
   }
   
-  void ToyStudyStd::ReleaseFitResult(std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results) {
+  void ToyStudyStd::ReleaseFitResult(FitResultContainer fit_results) {
     fit_results_release_queue_.push(fit_results);
   }
   
   void ToyStudyStd::EvaluateFitResults() {
     const RooFitResult* dummy = nullptr;
-    std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0);
+    FitResultContainer fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0);
     do {
       fit_results = GetFitResult();
       
       if (std::get<0>(fit_results) != NULL) {
-        fit_results_.push_back(std::get<0>(fit_results));
-        fit_results_bookkeep_.push_back(std::get<0>(fit_results));
-        fit_results2_.push_back(std::get<1>(fit_results));
-        fit_results2_bookkeep_.push_back(std::get<1>(fit_results));
+        fit_results_.push_back(fit_results);
+        fit_results_bookkeep_.push_back(fit_results);
       }
     } while (std::get<0>(fit_results) != NULL);
     
@@ -181,7 +177,7 @@ namespace toy {
     }
         
     // build list of all parameters, pulls, etc.
-    RooArgSet parameter_set = BuildEvaluationArgSet(*fit_results_.front());
+    RooArgSet parameter_set = BuildEvaluationArgSet(*std::get<0>(fit_results_.front()));
     
     // loop over fit results and fill all values into RooDataSet
     if (evaluated_values_ != NULL) delete evaluated_values_;
@@ -189,8 +185,8 @@ namespace toy {
     evaluated_values_->add(parameter_set);
     int i = 1;
     if (fit_results_.size() > 1) {
-      for (std::vector<const RooFitResult*>::const_iterator it_results = fit_results_.begin()+1; it_results != fit_results_.end(); ++it_results) {
-        RooArgSet params = BuildEvaluationArgSet(**it_results);
+      for (std::vector<FitResultContainer>::const_iterator it_results = fit_results_.begin()+1; it_results != fit_results_.end(); ++it_results) {
+        RooArgSet params = BuildEvaluationArgSet(*std::get<0>(*it_results));
         
         evaluated_values_->add(params);
         ++i;
@@ -636,7 +632,7 @@ namespace toy {
             
             while (fit_results_release_queue_.size() > 0) {
               const RooFitResult* dummy = nullptr;
-              std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results(dummy,dummy,0.0,0.0,0.0,0.0);
+              FitResultContainer fit_results(dummy,dummy,0.0,0.0,0.0,0.0);
               if (fit_results_release_queue_.wait_and_pop(fit_results)) {
                 if (std::get<0>(fit_results) != NULL) delete std::get<0>(fit_results);
                 if (std::get<1>(fit_results) != NULL) delete std::get<1>(fit_results);
@@ -660,7 +656,7 @@ namespace toy {
     TThread this_tthread;
     TStopwatch sw_lock;
     sw_lock.Reset();
-    std::queue<std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> > saver_queue;
+    std::queue<FitResultContainer > saver_queue;
 
     // list of last 5 dead times for averaging to find a new flexible wait time
     std::list<double> deadtimes;
@@ -679,7 +675,7 @@ namespace toy {
       if (saver_queue.empty()) {
         //sdebug << "SaveFitResultWorker(): waiting for fit results as we have none." << endmsg;
         
-        std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results;
+        FitResultContainer fit_results;
         if (fit_results_save_queue_.wait_and_pop(fit_results)) {
           saver_queue.push(fit_results);
           //sdebug << "SaveFitResultWorker(): got a fit result pair." << endmsg;
@@ -690,7 +686,7 @@ namespace toy {
       
       // if global queue has entries, we should get them all
       while (!fit_results_save_queue_.empty()) {
-        std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results;
+        FitResultContainer fit_results;
         if (fit_results_save_queue_.wait_and_pop(fit_results)) {
           saver_queue.push(fit_results);
           //sdebug << "SaveFitResultWorker(): got another fit result pair." << endmsg;
@@ -743,7 +739,7 @@ namespace toy {
             } else {
               if (!abort_save_) {
                 //sdebug << "SaveFitResultWorker(): number of results in queue: " << saver_queue.size() << endmsg;
-                std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> fit_results = saver_queue.front();
+                FitResultContainer fit_results = saver_queue.front();
                 saver_queue.pop();
                 const RooFitResult* fit_result1 = std::get<0>(fit_results);
                 const RooFitResult* fit_result2 = std::get<1>(fit_results);
