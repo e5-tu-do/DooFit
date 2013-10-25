@@ -238,7 +238,7 @@ namespace toy {
      *
      *  @todo enhance this to be able to work with asymmetric errors if available
      */
-    RooArgSet BuildEvaluationArgSet(const RooFitResult& fit_result);
+    RooArgSet BuildEvaluationArgSet(FitResultContainer fit_results);
 
     /**
      *  @brief Evaluate fit result quality
