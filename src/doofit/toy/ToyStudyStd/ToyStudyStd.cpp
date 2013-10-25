@@ -265,7 +265,6 @@ namespace toy {
         sinfo.increment_indent(-2);
       }
       
-      sdebug << "Dataset contains: " << fit_plot_dataset->numEntries() << endmsg;
       int num_bins = fit_plot_dataset->numEntries() < 1000 ? fit_plot_dataset->numEntries()/10 : 100;
       parameter->setBins(num_bins);
       
@@ -573,39 +572,48 @@ namespace toy {
           
           RooFitResult* fit_result  = NULL;
           RooFitResult* fit_result2 = NULL;
-          double *time_cpu1 = NULL, *time_real1 = NULL;
-          double *time_cpu2 = NULL, *time_real2 = NULL;
+          double time_cpu1 = 0.0, time_real1 = 0.0;
+          double time_cpu2 = 0.0, time_real2 = 0.0;
+          
+          tree->SetCacheEntryRange(0,tree->GetEntries());
+          
+          tree->AddBranchToCache(result_branch, true);
           result_branch->SetAddress(&fit_result);
           
           if (result2_branch != NULL) {
+            tree->AddBranchToCache(result2_branch, true);
             result2_branch->SetAddress(&fit_result2);
           }
           if (time_cpu1_branch != NULL) {
+            tree->AddBranchToCache(time_cpu1_branch, true);
             time_cpu1_branch->SetAddress(&time_cpu1);
           }
           if (time_real1_branch != NULL) {
+            tree->AddBranchToCache(time_real1_branch, true);
             time_real1_branch->SetAddress(&time_real1);
           }
           if (time_cpu2_branch != NULL) {
+            tree->AddBranchToCache(time_cpu2_branch, true);
             time_cpu2_branch->SetAddress(&time_cpu2);
           }
           if (time_real2_branch != NULL) {
+            tree->AddBranchToCache(time_real2_branch, true);
             time_real2_branch->SetAddress(&time_real2);
           }
           
+          tree->StopCacheLearningPhase();
+          
           for (int i=0; i<tree->GetEntries(); ++i) {
-            result_branch->GetEntry(i);
-            if (result2_branch != NULL) {
-              result2_branch->GetEntry(i);
-            }
+            tree->GetEntry(i);
+            
             // save a copy
             if (fit_result != NULL && FitResultOkay(*fit_result)) {
               fit_results_read_queue_.push(std::make_tuple(fit_result,
                                                            fit_result2,
-                                                           time_cpu1==NULL ? 0.0 : *time_cpu1,
-                                                           time_real1==NULL ? 0.0 : *time_real1,
-                                                           time_cpu2==NULL ? 0.0 : *time_cpu2,
-                                                           time_real2==NULL ? 0.0 : *time_real2
+                                                           time_cpu1,
+                                                           time_real1,
+                                                           time_cpu2,
+                                                           time_real2
                                                            ));
               
               results_stored++;
@@ -618,18 +626,6 @@ namespace toy {
                 if (fit_result2 != NULL) {
                   delete fit_result2;
                 }
-                if (time_cpu1 != NULL) {
-                  delete time_cpu1;
-                }
-                if (time_real1 != NULL) {
-                  delete time_real1;
-                }
-                if (time_cpu2 != NULL) {
-                  delete time_cpu2;
-                }
-                if (time_real2 != NULL) {
-                  delete time_real2;
-                }
                 
                 swarn << "Fit result number " << i << " in file " << *it_files << " neglected." << endmsg;
               }
@@ -638,8 +634,6 @@ namespace toy {
             }
             fit_result = NULL;
             fit_result2 = NULL;
-            time_cpu1 = NULL; time_real1 = NULL;
-            time_cpu2 = NULL; time_real2 = NULL;
             
             while (fit_results_release_queue_.size() > 0) {
               const RooFitResult* dummy = nullptr;
