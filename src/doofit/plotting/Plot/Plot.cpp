@@ -180,19 +180,31 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 
   RooPlot* plot_frame = dimension_.frame(range_arg);
   
+  RooCmdArg weight_arg;
+  
   if (dataset_reduced != NULL) {
+    if (dataset_reduced->isWeighted()) {
+      sdebug << "Spotted a weighted dataset, setting SumW2 errors." << endmsg;
+      weight_arg = DataError(RooAbsData::SumW2);
+    }
+    
     if (binning != NULL) {
-      dataset_reduced->plotOn(plot_frame, Binning(*binning), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+      dataset_reduced->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
     } else {
-      dataset_reduced->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+      dataset_reduced->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
     }
   } else {
     for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
          it != datasets_.end(); ++it) {
+      if ((*it)->isWeighted()) {
+        sdebug << "Weighted dataset, setting SumW2 errors." << endmsg;
+        weight_arg = DataError(RooAbsData::SumW2);
+      }
+      
       if (binning != NULL) {
-        (*it)->plotOn(plot_frame, Binning(*binning), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+        (*it)->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
       } else {
-        (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+        (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
       }
     }
   }
