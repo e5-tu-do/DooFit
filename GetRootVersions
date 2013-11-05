@@ -15,4 +15,4 @@ do
   fi
 done
 
-echo $dvvers
+#echo $dvvers
