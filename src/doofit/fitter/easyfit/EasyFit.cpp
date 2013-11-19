@@ -38,7 +38,7 @@ EasyFit::EasyFit(const string& fit_name)
     , minimizer_combs_()
     , fc_map_()
     , fc_linklist_()
-    , fc_num_cpu_(1),
+    , fc_num_cpu_(1)
     , fc_num_cpu_strategy(0)
     , fc_extended_(false)
     , fc_constrained_(false)
