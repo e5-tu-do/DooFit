@@ -220,6 +220,12 @@ namespace toy {
       std::string param_name = parameter->GetName();
             
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
+      
+      
+      if (param_name == "par_bssig_time_S_err") {
+        minmax.second = 2.3;
+      }
+      
       sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
             
       RooRealVar* mean             = NULL;
@@ -250,7 +256,8 @@ namespace toy {
       if (param_name.length() > 5 &&
           (param_name.substr(param_name.length()-5).compare("_pull") == 0 ||
            param_name.substr(param_name.length()-4).compare("_res") == 0 ||
-           param_name.substr(param_name.length()-4).compare("_err") == 0)) {
+           param_name.substr(param_name.length()-4).compare("_err") == 0 ||
+           param_name.substr(0,4).compare("time") == 0)) {
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
         sigma = new RooRealVar("s", "sigma of pull", (minmax.second-minmax.first)/10.0,0,minmax.second-minmax.first);
         gauss = new RooGaussian("pdf_pull", "Gaussian PDF of pull", *parameter, *mean, *sigma);
@@ -267,6 +274,7 @@ namespace toy {
       }
       
       int num_bins = fit_plot_dataset->numEntries() < 1000 ? fit_plot_dataset->numEntries()/10 : 100;
+      if (num_bins < 10) num_bins = 10;
       parameter->setBins(num_bins);
       
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));

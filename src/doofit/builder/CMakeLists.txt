@@ -1,8 +1,8 @@
-add_subdirectory(BuilderStd)
-add_subdirectory(bobthebuilder)
-add_subdirectory(fitmodelbrewery)
+#add_subdirectory(BuilderStd)
+#add_subdirectory(bobthebuilder)
+#add_subdirectory(fitmodelbrewery)
 #add_subdirectory(Sin2bSPBBuilder)
-add_subdirectory(numerobis)
+#add_subdirectory(numerobis)
 
 add_library(Builder SHARED EasyPdf/EasyPdf.h EasyPdf/EasyPdf.cpp)
 target_link_libraries(Builder Config dfp2vvpdfs ${ALL_LIBRARIES})

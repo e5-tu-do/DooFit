@@ -38,7 +38,8 @@ EasyFit::EasyFit(const string& fit_name)
     , minimizer_combs_()
     , fc_map_()
     , fc_linklist_()
-    , fc_num_cpu_(1)
+    , fc_num_cpu_(1),
+    , fc_num_cpu_strategy(0)
     , fc_extended_(false)
     , fc_constrained_(false)
     , fc_constrained_externally_(false)
@@ -109,7 +110,7 @@ void EasyFit::PrepareFit() {
          << "." << endmsg;
   return;
   }
-  fc_map_["NumCPU"]      = RooFit::NumCPU(fc_num_cpu_);
+  fc_map_["NumCPU"]      = RooFit::NumCPU(fc_num_cpu_, fc_num_cpu_strategy_);
   fc_map_["Extended"]    = RooFit::Extended(fc_extended_);
 
   if (fc_constrained_) {
@@ -236,10 +237,11 @@ bool EasyFit::CheckMinimizerCombiOk(const std::string& type, const std::string& 
 
 //------------------------------------------------------------------------------
 // Setters for fit options
-EasyFit& EasyFit::SetNumCPU(int fc_num_cpu) {
+EasyFit& EasyFit::SetNumCPU(int fc_num_cpu, int fc_num_cpu_strategy) {
   if (CheckSettingOptionsOk()) {
     if (fc_num_cpu > 0) {
-      fc_num_cpu_ = fc_num_cpu;  
+      fc_num_cpu_ = fc_num_cpu;
+      fc_num_cpu_strategy_ = fc_num_cpu_strategy;
     } else {
       serr << "Fit " << fit_name_ << ": Cannot set number of CPU < 1." << endmsg;
     }

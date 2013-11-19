@@ -66,7 +66,7 @@ class EasyFit
    *  Sets the number of processes that are created for -logLL evaluation. Only 
    *  positive values are allowed. Default is 1.
    */
-  EasyFit& SetNumCPU(int fc_num_cpu);
+  EasyFit& SetNumCPU(int fc_num_cpu, int fc_num_cpu_strategy=0);
 
   /** @brief This method adds an extended likelihood term to the -logLL.
    *
@@ -248,6 +248,7 @@ class EasyFit
    */
   /**@{*/
   int  fc_num_cpu_;     ///< Number of CPUs to be used. Default is 1.
+  int  fc_num_cpu_strategy_; ///< Parallelisation strategy to be used. Default is 0.
   bool fc_extended_;    ///< Add extended likelihood term (false by default).
   bool fc_constrained_; ///< Apply all constrained contained in the p.d.f. in the likelihood (false by default).
   bool fc_constrained_externally_; ///< Flag for internal checks if external constraints are set.

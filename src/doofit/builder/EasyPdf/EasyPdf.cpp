@@ -64,6 +64,10 @@ void doofit::builder::EasyPdf::PurgeAllObjects() {
       //      sdebug << "deleting " << it->second->GetName() << endmsg;
       delete it->second;
     }
+    for (std::map<std::string,RooAbsReal*>::iterator it = external_reals_.begin();
+         it != external_reals_.end(); ++it) {
+      delete it->second;
+    }
     for (std::map<std::string,RooAbsHiddenReal*>::iterator it = hidden_reals_.begin();
          it != hidden_reals_.end(); ++it) {
       delete it->second;
@@ -91,6 +95,7 @@ void doofit::builder::EasyPdf::PurgeAllObjects() {
   }
   
   pdfs_.clear();
+  external_reals_.clear();
   hidden_reals_.clear();
   vars_.clear();
   supercats_.clear();
@@ -107,6 +112,8 @@ RooAbsReal& doofit::builder::EasyPdf::Real(const std::string &name) {
     return *formulas_[name];
   } else if (hidden_reals_.count(name) == 1) {
     return *hidden_reals_[name];
+  } else if (external_reals_.count(name) == 1) {
+    return *external_reals_[name];
   } else {
     return Var(name);
   }
@@ -118,6 +125,8 @@ bool doofit::builder::EasyPdf::RealExists(const std::string &name) {
   } else if (formulas_.count(name) == 1) {
     return true;
   } else if (hidden_reals_.count(name) == 1) {
+    return true;
+  } else if (external_reals_.count(name) == 1) {
     return true;
   } else {
     return false;
