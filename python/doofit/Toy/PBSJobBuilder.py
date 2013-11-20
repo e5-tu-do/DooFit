@@ -105,6 +105,8 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
   min_id = 0
   job_base_name = options.basename
   min_seed = options.minseed
+  if job_base_name == "pbs_job":
+    job_base_name = os.path.basename(jobs_dir)
   if os.path.isfile(os.path.join(jobs_dir,'max_seed')):
     with open(os.path.join(jobs_dir,'max_seed')) as f:
       min_seed = int(f.read())+1
