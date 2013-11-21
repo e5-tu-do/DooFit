@@ -358,6 +358,11 @@ namespace toy {
       double lerr_value = 0.0;
       double herr_value = 0.0;
       
+      // Log 20131121 (FK): Changing definitions of pulls after a discussion with
+      //                    Julian. We agree that a positive pull/residual should
+      //                    reflect a parameter bein overestimated. The previous
+      //                    definition was in accordance with the CDF pull paper.
+      
       // asymmetric error handling
       if (par.hasAsymError() && config_toystudy_.handle_asymmetric_errors()) {
         lerr_value = par.getErrorLo();
@@ -367,16 +372,16 @@ namespace toy {
         herr->setVal(herr_value);
         
         if (par.getVal() <= init.getVal()) {
-          pull_value = (init.getVal() - par.getVal())/herr_value;
+          pull_value = -(init.getVal() - par.getVal())/herr_value;
         } else {
-          pull_value = (par.getVal() - init.getVal())/lerr_value;
+          pull_value = -(par.getVal() - init.getVal())/lerr_value;
         }
       } else {
-        pull_value = (init.getVal() - par.getVal())/err_value;
+        pull_value = -(init.getVal() - par.getVal())/err_value;
       }
       pull->setVal(pull_value);
       
-      double res_value = (init.getVal() - par.getVal());
+      double res_value = -(init.getVal() - par.getVal());
       res->setVal(res_value);
       
       std::string paramname = parameter->GetName();
