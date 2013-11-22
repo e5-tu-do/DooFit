@@ -5,7 +5,7 @@
 # from PhysFit/P2VV
 # ______________________________________________________________________________________________________________
 root_generate_dictionaries_local(dfp2vvpdfs_dict RooAmoroso.h
-RooCruijff.h RooAbsEffResModel.h RooEffResAddModel.h RooAbsGaussModelEfficiency.h RooCubicSplineFun.h RooCubicSplineKnot.h RooEffConvGenContext.h RooEffResModel.h RooGaussEfficiencyModel.h)
+RooCruijff.h RooAbsEffResModel.h RooEffResAddModel.h RooAbsGaussModelEfficiency.h RooCubicSplineFun.h RooCubicSplineKnot.h RooEffConvGenContext.h RooEffResModel.h RooGaussEfficiencyModel.h RooBinnedFun.h)
 
 add_library(dfp2vvpdfs SHARED
 RooAmoroso.cxx RooAmoroso.h RooAmoroso_dict.cc RooAmoroso_dict.h
@@ -18,6 +18,7 @@ RooEffConvGenContext.cxx RooEffConvGenContext.h RooEffConvGenContext_dict.cc Roo
 RooEffResModel.cxx RooEffResModel.h RooEffResModel_dict.cc RooEffResModel_dict.h
 RooEffResAddModel.cxx RooEffResAddModel.h RooEffResAddModel_dict.cc RooEffResAddModel_dict.h 
 RooGaussEfficiencyModel.cxx RooGaussEfficiencyModel.h RooGaussEfficiencyModel_dict.cc RooGaussEfficiencyModel_dict.h
+RooBinnedFun.cxx RooBinnedFun.h RooBinnedFun_dict.cc RooBinnedFun_dict.h
 
 )
 
@@ -29,5 +30,5 @@ add_dependencies(dfp2vvpdfs dfp2vvpdfs_dict)
 install(TARGETS dfp2vvpdfs DESTINATION lib)
 install(FILES RooAmoroso.h RooCruijff.h RooAbsEffResModel.h RooAbsGaussModelEfficiency.h
 RooCubicSplineFun.h RooCubicSplineKnot.h RooEffConvGenContext.h
-RooEffResModel.h RooEffResAddModel.h RooGaussEfficiencyModel.h DESTINATION
+RooEffResModel.h RooEffResAddModel.h RooGaussEfficiencyModel.h RooBinnedFun.h DESTINATION
 include/P2VV)
