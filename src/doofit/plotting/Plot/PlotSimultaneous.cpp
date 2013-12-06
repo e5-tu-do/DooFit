@@ -48,6 +48,18 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
   TList* data_split = data.split(sim_cat);
   std::string plot_name;
   
+//  const RooSuperCategory* super_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
+//  if (super_cat != NULL) {
+//    RooLinkedListIter* it  = (RooLinkedListIter*)super_cat->inputCatList().createIterator();
+//    RooAbsArg*         arg = NULL;
+//    
+//    while ((arg=(RooAbsArg*)it->Next())) {
+//      arg->Print();
+//    }
+//    delete it;
+//
+//  }
+  
 //  TCanvas c1("c1","c1",900,900);
 //  TLatex label(0.5, 0.5, "Bla");
 //  label.Draw();
