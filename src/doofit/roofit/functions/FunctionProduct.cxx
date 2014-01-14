@@ -14,7 +14,11 @@
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(FunctionProduct) 
+ClassImp(doofit::roofit::functions::FunctionProduct) 
+
+namespace doofit {
+namespace roofit {
+namespace functions {
 
  FunctionProduct::FunctionProduct(std::string name,
                         RooAbsReal& _par_factor1,
@@ -45,3 +49,6 @@ Int_t FunctionProduct::getAnalyticalIntegral(RooArgSet& allVars,
   
   return 0;
 }
+} // namespace functions
+} // namespace roofit
+} // namespace doofit

@@ -14,10 +14,15 @@
 #include <math.h> 
 #include "TMath.h" 
 
+ClassImp(doofit::roofit::functions::FunctionCoeffSinh)
+
+namespace doofit {
+namespace roofit {
+namespace functions {
+
 long long FunctionCoeffSinh::num_calls_evaluate_ = 0;
 long long FunctionCoeffSinh::num_calls_integral_ = 0;
 
-ClassImp(FunctionCoeffSinh) 
 
  FunctionCoeffSinh::FunctionCoeffSinh(std::string name,
                         RooAbsReal& _par_sinh) :
@@ -66,5 +71,8 @@ Int_t FunctionCoeffSinh::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& 
   return 0;
 }
 
+} // namespace functions
+} // namespace roofit
+} // namespace doofit
 
 

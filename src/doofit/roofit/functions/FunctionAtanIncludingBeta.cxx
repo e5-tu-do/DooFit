@@ -14,7 +14,11 @@
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(FunctionAtanIncludingBeta) 
+ClassImp(doofit::roofit::functions::FunctionAtanIncludingBeta) 
+
+namespace doofit {
+namespace roofit {
+namespace functions {
 
 long long FunctionAtanIncludingBeta::num_calls_evaluate_ = 0;
 long long FunctionAtanIncludingBeta::num_calls_integral_ = 0;
@@ -73,3 +77,6 @@ Int_t FunctionAtanIncludingBeta::getAnalyticalIntegralWN(RooArgSet& allVars, Roo
   
   return 0;
 }
+} // namespace functions
+} // namespace roofit
+} // namespace doofit

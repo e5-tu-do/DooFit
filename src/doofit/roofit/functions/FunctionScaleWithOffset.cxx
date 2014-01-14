@@ -14,10 +14,14 @@
 #include <math.h> 
 #include "TMath.h" 
 
+ClassImp(doofit::roofit::functions::FunctionScaleWithOffset)
+
+namespace doofit {
+namespace roofit {
+namespace functions {
+
 long long FunctionScaleWithOffset::num_calls_evaluate_ = 0;
 long long FunctionScaleWithOffset::num_calls_integral_ = 0;
-
-ClassImp(FunctionScaleWithOffset) 
 
  FunctionScaleWithOffset::FunctionScaleWithOffset(const char *name, const char *title, 
                         RooAbsReal& _par_x,
@@ -69,3 +73,6 @@ Int_t FunctionScaleWithOffset::getAnalyticalIntegralWN(RooArgSet& allVars, RooAr
   
   return 0;
 }
+} // namespace functions
+} // namespace roofit
+} // namespace doofit
