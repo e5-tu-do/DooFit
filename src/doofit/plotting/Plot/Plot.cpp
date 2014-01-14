@@ -174,8 +174,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     //dataset_reduced = dataset->reduce(cut_range_arg);
     dataset_reduced = dataset->reduce(CutRange(plot_range_.c_str()));
         
-    sinfo << "Created reduced dataset with " << dataset_reduced->numEntries() << " (original dataset has " << dataset->numEntries() << ")" << endmsg;
-    dataset_reduced->Print();
+    sdebug << "Created reduced dataset with " << dataset_reduced->numEntries() << " (original dataset has " << dataset->numEntries() << ")" << endmsg;
   }
 
   RooPlot* plot_frame = dimension_.frame(range_arg);
