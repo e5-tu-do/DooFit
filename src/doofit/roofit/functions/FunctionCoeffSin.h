@@ -45,6 +45,18 @@ public:
                    RooAbsCategory& _cat_tag,
                    CoeffType type_coeff);
   
+  FunctionCoeffSin(std::string name,
+                   RooAbsReal& _par_S,
+                   RooAbsReal& _par_tag_p1,
+                   RooAbsReal& _par_tag_p0,
+                   RooAbsReal& _par_tag_meaneta,
+                   RooAbsReal& _par_tag_delta_p1,
+                   RooAbsReal& _par_tag_delta_p0,
+                   RooAbsReal& _par_prod_asym,
+                   RooAbsReal& _par_tag_eta,
+                   RooAbsCategory& _cat_tag,
+                   CoeffType type_coeff);
+  
   FunctionCoeffSin(const FunctionCoeffSin& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new FunctionCoeffSin(*this,newname); }
   inline virtual ~FunctionCoeffSin() {
@@ -66,7 +78,12 @@ protected:
   RooRealProxy par_tag_meaneta_ ;
   RooRealProxy par_tag_eta_ ;
   
+  RooRealProxy par_tag_delta_p0_;
+  RooRealProxy par_tag_delta_p1_;
+  RooRealProxy par_prod_asym_;
+  
   const bool per_event_tagging_;
+  const bool tagging_asymmetries_;
   
   const double const1_;
   const double const2_;
@@ -90,7 +107,10 @@ protected:
       //std::cout << "FunctionCoeffSin::evaluate(): eta = " << par_tag_eta_ << std::endl;
       
       //return cat_tag*par_S*(const2_*par_tag_eta_- + const1_);
-      return type_coeff_*cat_tag*(1.0 - 2.0*(par_tag_p1_*(par_tag_eta_-par_tag_meaneta_) + par_tag_p0_))*par_S;
+      if (tagging_asymmetries_) {
+        return type_coeff_*(cat_tag*(1.0 - 2.0*(par_tag_meaneta_+par_tag_p0_ + par_tag_p1_*(par_tag_eta_-par_tag_meaneta_))) - par_prod_asym_*(1.0 - cat_tag*(par_tag_delta_p0_ + par_tag_delta_p1_*(par_tag_eta_-par_tag_meaneta_))))*par_S;
+      }
+      else return type_coeff_*cat_tag*(1.0 - 2.0*(par_tag_p1_*(par_tag_eta_-par_tag_meaneta_) + par_tag_p0_))*par_S;
     } else {
 //      const int tag = cat_tag;
 //      double coeff_sin = type_coeff_*tag*(1.0 - 2.0*par_omega)*par_S;
