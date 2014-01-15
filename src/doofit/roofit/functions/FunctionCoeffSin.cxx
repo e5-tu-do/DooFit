@@ -104,21 +104,24 @@ FunctionCoeffSin::FunctionCoeffSin(std::string name,
   }
 
 FunctionCoeffSin::FunctionCoeffSin(const FunctionCoeffSin& other, const char* name) :
-RooAbsReal(other,name), 
-par_S("par_S",this,other.par_S),
-par_omega("par_omega",this,other.par_omega),
-cat_tag("cat_tag",this,other.cat_tag),
-type_coeff_(other.type_coeff_),
-par_tag_p1_("par_tag_p1_",this,other.par_tag_p1_),
-par_tag_p0_("par_tag_p0_",this,other.par_tag_p0_),
-par_tag_meaneta_("par_tag_meaneta_",this,other.par_tag_meaneta_),
-par_tag_eta_("par_tag_eta_",this,other.par_tag_eta_),
-per_event_tagging_(other.per_event_tagging_),
-tagging_asymmetries_(other.tagging_asymmetries_),
-const1_(other.const1_),
-const2_(other.const2_)
- {
- } 
+  RooAbsReal(other,name),
+  par_S("par_S",this,other.par_S),
+  par_omega("par_omega",this,other.par_omega),
+  cat_tag("cat_tag",this,other.cat_tag),
+  type_coeff_(other.type_coeff_),
+  par_tag_p1_("par_tag_p1_",this,other.par_tag_p1_),
+  par_tag_p0_("par_tag_p0_",this,other.par_tag_p0_),
+  par_tag_meaneta_("par_tag_meaneta_",this,other.par_tag_meaneta_),
+  par_tag_eta_("par_tag_eta_",this,other.par_tag_eta_),
+  par_tag_delta_p0_("par_tag_delta_p0_","par_tag_delta_p0_",this,other.par_tag_delta_p0_),
+  par_tag_delta_p1_("par_tag_delta_p1_","par_tag_delta_p1_",this,other.par_tag_delta_p1_),
+  par_prod_asym_("par_prod_asym_","par_prod_asym_",this,other.par_prod_asym_),
+  per_event_tagging_(other.per_event_tagging_),
+  tagging_asymmetries_(other.tagging_asymmetries_),
+  const1_(other.const1_),
+  const2_(other.const2_)
+  {
+  }
 
 Int_t FunctionCoeffSin::getAnalyticalIntegral(RooArgSet& allVars,
                                         RooArgSet& analVars, const char* rangeName) const
