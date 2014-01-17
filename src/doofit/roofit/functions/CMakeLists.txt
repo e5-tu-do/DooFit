@@ -1,10 +1,11 @@
 
-root_generate_dictionaries_local(dfFunctionsDict FunctionCoeffSin.h FunctionCoeffCosh.h
+root_generate_dictionaries_local(dfFunctionsDict FunctionCoeffSin.h FunctionCoeffCosh.h FunctionCoeffSin2.h
 FunctionCoeffSinh.h FunctionProduct.h FunctionScaleWithOffset.h FunctionTauCorrection.h
 FunctionAtanIncludingBeta.h FunctionAtan.h)
 
 add_library(dfFunctions SHARED 
 FunctionCoeffSin.h FunctionCoeffSin.cxx FunctionCoeffSin_dict.h FunctionCoeffSin_dict.cc
+FunctionCoeffSin2.h FunctionCoeffSin2.cxx FunctionCoeffSin2_dict.h FunctionCoeffSin2_dict.cc
 FunctionCoeffCosh.h FunctionCoeffCosh.cxx FunctionCoeffCosh_dict.h FunctionCoeffCosh_dict.cc
 FunctionCoeffSinh.h FunctionCoeffSinh.cxx FunctionCoeffSinh_dict.h FunctionCoeffSinh_dict.cc
 FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dict.cc
@@ -19,7 +20,7 @@ target_link_libraries(dfFunctions ${ALL_LIBRARIES})
 add_dependencies(dfFunctions dfFunctionsDict)
 
 install(TARGETS dfFunctions DESTINATION lib)
-install(FILES FunctionCoeffSin.h FunctionCoeffSinh.h FunctionProduct.h FunctionCoeffCosh.h
+install(FILES FunctionCoeffSin.h FunctionCoeffSinh.h FunctionProduct.h FunctionCoeffCosh.h FunctionCoeffSin2.h
 FunctionScaleWithOffset.h FunctionAtanIncludingBeta.h FunctionAtan.h FunctionTauCorrection.h
 DESTINATION include/doofit/roofit/functions)
 
