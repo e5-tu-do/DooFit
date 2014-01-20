@@ -21,8 +21,7 @@ class FunctionCoeffCosh : public RooAbsReal {
 public:
   FunctionCoeffCosh() {} ;
   FunctionCoeffCosh(const char *name, const char *title,
-                    RooAbsReal& _par_tag_p0,
-                    RooAbsReal& _par_tag_p1,
+                    RooAbsReal& _par_tag_omega,
                     RooAbsReal& _par_tag_meaneta,
                     RooAbsReal& _par_tag_delta_p0,
                     RooAbsReal& _par_tag_delta_p1,
@@ -40,8 +39,7 @@ public:
 
 protected:
 
-  RooRealProxy par_tag_p0 ;
-  RooRealProxy par_tag_p1 ;
+  RooRealProxy par_tag_omega ;
   RooRealProxy par_tag_meaneta ;
   RooRealProxy par_tag_delta_p0 ;
   RooRealProxy par_tag_delta_p1 ;
@@ -58,10 +56,9 @@ protected:
     #endif
     // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
     
-    //std::cout << 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*(par_tag_meaneta+par_tag_p0 + par_tag_p1*(par_tag_eta-par_tag_meaneta))) << std::endl;
+    //std::cout << 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega) << std::endl;
     
-
-    return 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*(par_tag_meaneta+par_tag_p0 + par_tag_p1*(par_tag_eta-par_tag_meaneta)));
+    return 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega);
   }
 
   virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,

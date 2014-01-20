@@ -22,6 +22,14 @@ public:
   FunctionTaggingCalib() {} ;
   FunctionTaggingCalib(const char *name, const char *title,
                        RooAbsCategory& _cat_tag_OS,
+                       RooAbsCategory& _cat_tag_SS,
+                       RooAbsReal& _par_tag_eta_OS,
+                       RooAbsReal& _par_tag_eta_SS,
+                       RooAbsReal& _par_tag_p0,
+                       RooAbsReal& _par_tag_p1,
+                       RooAbsReal& _par_tag_meaneta);
+  FunctionTaggingCalib(const char *name, const char *title,
+                       RooAbsCategory& _cat_tag_OS,
                        RooAbsReal& _par_tag_p0_OS,
                        RooAbsReal& _par_tag_p1_OS,
                        RooAbsReal& _par_tag_meaneta_OS,
@@ -42,6 +50,9 @@ public:
 
 protected:
 
+  RooRealProxy par_tag_p0 ;
+  RooRealProxy par_tag_p1 ;
+  RooRealProxy par_tag_meaneta ;
   RooRealProxy par_tag_p0_OS ;
   RooRealProxy par_tag_p1_OS ;
   RooRealProxy par_tag_meaneta_OS ;
@@ -65,17 +76,25 @@ protected:
     
     //std::cout <<  << std::endl;
     
-    Double_t omega_OS = par_tag_p0_OS + par_tag_meaneta_OS + par_tag_p1_OS*(par_tag_eta_OS-par_tag_meaneta_OS);
-    Double_t omega_SS = par_tag_p0_SS + par_tag_p1_SS*(par_tag_eta_SS-par_tag_meaneta_SS);
-    
-    if (cat_tag_OS == cat_tag_SS) {
-      return omega_OS*omega_SS/(omega_OS*omega_SS + (1-omega_OS)*(1-omega_SS));
+    if (cat_tag_OS == 0) {
+      return par_tag_p0 + par_tag_p1*(par_tag_eta_SS-par_tag_meaneta);
+    }
+    else if (cat_tag_SS == 0) {
+      return par_tag_p0 + par_tag_meaneta + par_tag_p1*(par_tag_eta_OS-par_tag_meaneta);
     }
     else {
-      if (omega_SS >= omega_OS) {
-        return omega_OS*(1-omega_SS)/(omega_OS*(1-omega_SS) + (1-omega_OS)*omega_SS);
+      Double_t omega_OS = par_tag_p0_OS + par_tag_meaneta_OS + par_tag_p1_OS*(par_tag_eta_OS-par_tag_meaneta_OS);
+      Double_t omega_SS = par_tag_p0_SS + par_tag_p1_SS*(par_tag_eta_SS-par_tag_meaneta_SS);
+      
+      if (cat_tag_OS == cat_tag_SS) {
+        return omega_OS*omega_SS/(omega_OS*omega_SS + (1-omega_OS)*(1-omega_SS));
       }
-      else return (1-omega_OS)*omega_SS/(omega_OS*(1-omega_SS) + (1-omega_OS)*omega_SS);
+      else {
+        if (omega_SS >= omega_OS) {
+          return omega_OS*(1-omega_SS)/(omega_OS*(1-omega_SS) + (1-omega_OS)*omega_SS);
+        }
+        else return (1-omega_OS)*omega_SS/(omega_OS*(1-omega_SS) + (1-omega_OS)*omega_SS);
+      }
     }
   }
 

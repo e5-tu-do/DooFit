@@ -21,8 +21,7 @@ namespace roofit {
 namespace functions {
 
 FunctionCoeffCosh::FunctionCoeffCosh(const char *name, const char *title,
-                                     RooAbsReal& _par_tag_p0,
-                                     RooAbsReal& _par_tag_p1,
+                                     RooAbsReal& _par_tag_omega,
                                      RooAbsReal& _par_tag_meaneta,
                                      RooAbsReal& _par_tag_delta_p0,
                                      RooAbsReal& _par_tag_delta_p1,
@@ -30,8 +29,7 @@ FunctionCoeffCosh::FunctionCoeffCosh(const char *name, const char *title,
                                      RooAbsReal& _par_prod_asym,
                                      RooAbsCategory& _cat_tag) :
   RooAbsReal(name,title),
-  par_tag_p0("par_tag_p0","par_tag_p0",this,_par_tag_p0),
-  par_tag_p1("par_tag_p1","par_tag_p1",this,_par_tag_p1),
+  par_tag_omega("par_tag_omega","par_tag_omega",this,_par_tag_omega),
   par_tag_meaneta("par_tag_meaneta","par_tag_meaneta",this,_par_tag_meaneta),
   par_tag_delta_p0("par_tag_delta_p0","par_tag_delta_p0",this,_par_tag_delta_p0),
   par_tag_delta_p1("par_tag_delta_p1","par_tag_delta_p1",this,_par_tag_delta_p1),
@@ -44,8 +42,7 @@ FunctionCoeffCosh::FunctionCoeffCosh(const char *name, const char *title,
   
 FunctionCoeffCosh::FunctionCoeffCosh(const FunctionCoeffCosh& other, const char* name) :
   RooAbsReal(other,name),
-  par_tag_p0("par_tag_p0",this,other.par_tag_p0),
-  par_tag_p1("par_tag_p1",this,other.par_tag_p1),
+  par_tag_omega("par_tag_omega",this,other.par_tag_omega),
   par_tag_meaneta("par_tag_meaneta",this,other.par_tag_meaneta),
   par_tag_delta_p0("par_tag_delta_p0",this,other.par_tag_delta_p0),
   par_tag_delta_p1("par_tag_delta_p1",this,other.par_tag_delta_p1),
