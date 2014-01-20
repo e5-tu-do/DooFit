@@ -1,16 +1,16 @@
 
-root_generate_dictionaries_local(dfFunctionsDict FunctionCoeffSin.h FunctionCoeffCosh.h FunctionCoeffSin2.h
-FunctionCoeffSinh.h FunctionProduct.h FunctionScaleWithOffset.h FunctionTauCorrection.h
+root_generate_dictionaries_local(dfFunctionsDict FunctionCoeffSin.h FunctionCoeffCosh.h
+FunctionCoeffSinh.h FunctionProduct.h FunctionScaleWithOffset.h FunctionTauCorrection.h FunctionTaggingCalib.h
 FunctionAtanIncludingBeta.h FunctionAtan.h)
 
 add_library(dfFunctions SHARED 
 FunctionCoeffSin.h FunctionCoeffSin.cxx FunctionCoeffSin_dict.h FunctionCoeffSin_dict.cc
-FunctionCoeffSin2.h FunctionCoeffSin2.cxx FunctionCoeffSin2_dict.h FunctionCoeffSin2_dict.cc
 FunctionCoeffCosh.h FunctionCoeffCosh.cxx FunctionCoeffCosh_dict.h FunctionCoeffCosh_dict.cc
 FunctionCoeffSinh.h FunctionCoeffSinh.cxx FunctionCoeffSinh_dict.h FunctionCoeffSinh_dict.cc
 FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dict.cc
 FunctionScaleWithOffset.h FunctionScaleWithOffset.cxx FunctionScaleWithOffset_dict.h FunctionScaleWithOffset_dict.cc
 FunctionTauCorrection.h FunctionTauCorrection.cxx FunctionTauCorrection_dict.h FunctionTauCorrection_dict.cc
+FunctionTaggingCalib.h FunctionTaggingCalib.cxx FunctionTaggingCalib_dict.h FunctionTaggingCalib_dict.cc
 FunctionAtanIncludingBeta.h FunctionAtanIncludingBeta.cxx FunctionAtanIncludingBeta_dict.h FunctionAtanIncludingBeta_dict.cc
 FunctionAtan.h FunctionAtan.cxx FunctionAtan_dict.h FunctionAtan_dict.cc)
 
@@ -20,7 +20,7 @@ target_link_libraries(dfFunctions ${ALL_LIBRARIES})
 add_dependencies(dfFunctions dfFunctionsDict)
 
 install(TARGETS dfFunctions DESTINATION lib)
-install(FILES FunctionCoeffSin.h FunctionCoeffSinh.h FunctionProduct.h FunctionCoeffCosh.h FunctionCoeffSin2.h
-FunctionScaleWithOffset.h FunctionAtanIncludingBeta.h FunctionAtan.h FunctionTauCorrection.h
+install(FILES FunctionCoeffSin.h FunctionCoeffSinh.h FunctionProduct.h FunctionCoeffCosh.h
+FunctionScaleWithOffset.h FunctionAtanIncludingBeta.h FunctionAtan.h FunctionTauCorrection.h FunctionTaggingCalib.h
 DESTINATION include/doofit/roofit/functions)
 
