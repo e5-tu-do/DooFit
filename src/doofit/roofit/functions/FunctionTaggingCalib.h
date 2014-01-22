@@ -39,6 +39,21 @@ public:
                        RooAbsReal& _par_tag_p1_SS,
                        RooAbsReal& _par_tag_meaneta_SS,
                        RooAbsReal& _par_tag_eta_SS);
+  FunctionTaggingCalib(const char *name, const char *title,
+                       RooAbsCategory& _cat_tag_OS,
+                       RooAbsReal& _par_tag_p0_OS,
+                       RooAbsReal& _par_tag_p1_OS,
+                       RooAbsReal& _par_tag_meaneta_OS,
+                       RooAbsReal& _par_tag_eta_OS,
+                       RooAbsReal& _par_tag_delta_p0_OS,
+                       RooAbsReal& _par_tag_delta_p1_OS,
+                       RooAbsCategory& _cat_tag_SS,
+                       RooAbsReal& _par_tag_p0_SS,
+                       RooAbsReal& _par_tag_p1_SS,
+                       RooAbsReal& _par_tag_meaneta_SS,
+                       RooAbsReal& _par_tag_eta_SS,
+                       RooAbsReal& _par_tag_delta_p0_SS,
+                       RooAbsReal& _par_tag_delta_p1_SS);
   FunctionTaggingCalib(const FunctionTaggingCalib& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new FunctionTaggingCalib(*this,newname); }
   inline virtual ~FunctionTaggingCalib() {
@@ -57,10 +72,14 @@ protected:
   RooRealProxy par_tag_p1_OS ;
   RooRealProxy par_tag_meaneta_OS ;
   RooRealProxy par_tag_eta_OS ;
+  RooRealProxy par_tag_delta_p0_OS ;
+  RooRealProxy par_tag_delta_p1_OS ;
   RooRealProxy par_tag_p0_SS ;
   RooRealProxy par_tag_p1_SS ;
   RooRealProxy par_tag_meaneta_SS ;
   RooRealProxy par_tag_eta_SS ;
+  RooRealProxy par_tag_delta_p0_SS ;
+  RooRealProxy par_tag_delta_p1_SS ;
   
   RooCategoryProxy cat_tag_OS ;
   RooCategoryProxy cat_tag_SS ;
@@ -79,12 +98,12 @@ protected:
     if (cat_tag_OS == 0) {
       return par_tag_p0 + par_tag_p1*(par_tag_eta_SS-par_tag_meaneta);
     }
-    else if (cat_tag_SS == 0) {
+    if (cat_tag_SS == 0) {
       return par_tag_p0 + par_tag_meaneta + par_tag_p1*(par_tag_eta_OS-par_tag_meaneta);
     }
     else {
-      Double_t omega_OS = par_tag_p0_OS + par_tag_meaneta_OS + par_tag_p1_OS*(par_tag_eta_OS-par_tag_meaneta_OS);
-      Double_t omega_SS = par_tag_p0_SS + par_tag_p1_SS*(par_tag_eta_SS-par_tag_meaneta_SS);
+      Double_t omega_OS = par_tag_p0_OS + par_tag_meaneta_OS + cat_tag_OS*par_tag_delta_p0_OS + (par_tag_p1_OS + cat_tag_OS*par_tag_delta_p1_OS)*(par_tag_eta_OS-par_tag_meaneta_OS);
+      Double_t omega_SS = par_tag_p0_SS + 0.5*cat_tag_SS*par_tag_delta_p0_SS + (par_tag_p1_SS + 0.5*cat_tag_SS*par_tag_delta_p1_SS)*(par_tag_eta_SS-par_tag_meaneta_SS);
       
       if (cat_tag_OS == cat_tag_SS) {
         return omega_OS*omega_SS/(omega_OS*omega_SS + (1-omega_OS)*(1-omega_SS));
