@@ -30,10 +30,19 @@ public:
   };
   
   FunctionCoeffSin();
+  
   FunctionCoeffSin(std::string name,
                    RooAbsReal& _par_S,
                    RooAbsReal& _par_omega,
                    RooAbsCategory& _cat_tag,
+                   CoeffType type_coeff);
+  
+  FunctionCoeffSin(std::string name,
+                   RooAbsReal& _par_S,
+                   RooAbsReal& _par_omega_Bd,
+                   RooAbsReal& _par_omega_Bdb,
+                   RooAbsCategory& _cat_tag,
+                   RooAbsReal& _par_prod_asym,
                    CoeffType type_coeff);
   
   FunctionCoeffSin(std::string name,
@@ -67,28 +76,31 @@ public:
   
 protected:
 
-  RooRealProxy par_S ;
-  RooRealProxy par_omega ;
-  RooCategoryProxy cat_tag ;
-  const CoeffType type_coeff_;
+  RooRealProxy par_S_ ;
+  RooRealProxy par_omega_ ;
+  RooCategoryProxy cat_tag_ ;
+  const CoeffType type_coeff_ ;
+  
+  RooRealProxy par_omega_Bd_ ;
+  RooRealProxy par_omega_Bdb_ ;
   
   RooRealProxy par_tag_p1_ ;
   RooRealProxy par_tag_p0_ ;
   RooRealProxy par_tag_meaneta_ ;
   RooRealProxy par_tag_eta_ ;
   
-  RooRealProxy par_tag_delta_p0_;
-  RooRealProxy par_tag_delta_p1_;
-  RooRealProxy par_prod_asym_;
+  RooRealProxy par_tag_delta_p0_ ;
+  RooRealProxy par_tag_delta_p1_ ;
+  RooRealProxy par_prod_asym_ ;
   
-  const bool per_event_tagging_;
-  const bool tagging_asymmetries_;
+  const bool per_event_tagging_ ;
+  const bool tagging_asymmetries_ ;
   
-  const double const1_;
-  const double const2_;
+  const double const1_ ;
+  const double const2_ ;
   
-  static long long num_calls_evaluate_;
-  static long long num_calls_integral_;
+  static long long num_calls_evaluate_ ;
+  static long long num_calls_integral_ ;
   
   inline Double_t evaluate() const {
     #ifdef FUNCTIONS_COUNT_CALLS
@@ -107,16 +119,21 @@ protected:
       
       //return cat_tag*par_S*(const2_*par_tag_eta_- + const1_);
       if (tagging_asymmetries_) {
-        return type_coeff_*(cat_tag*(1.0 - 2.0*par_omega) - par_prod_asym_*(1.0 - cat_tag*(par_tag_delta_p0_ + par_tag_delta_p1_*(par_tag_eta_-par_tag_meaneta_))))*par_S;
+        return type_coeff_*(cat_tag_*(1.0 - 2.0*par_omega_) - par_prod_asym_*(1.0 - cat_tag_*(par_tag_delta_p0_ + par_tag_delta_p1_*(par_tag_eta_-par_tag_meaneta_))))*par_S_ ;
       }
-      else return type_coeff_*cat_tag*(1.0 - 2.0*(par_tag_p1_*(par_tag_eta_-par_tag_meaneta_) + par_tag_p0_))*par_S;
+      else return type_coeff_*cat_tag_*(1.0 - 2.0*(par_tag_p1_*(par_tag_eta_-par_tag_meaneta_) + par_tag_p0_))*par_S_ ;
     } else {
-//      const int tag = cat_tag;
-//      double coeff_sin = type_coeff_*tag*(1.0 - 2.0*par_omega)*par_S;
-//      
-      //std::cout << "FunctionCoeffSin::evaluate(): " << coeff_sin << std::endl;
-      
-      return type_coeff_*cat_tag*(1.0 - 2.0*par_omega)*par_S ;
+      if (tagging_asymmetries_) {
+        return type_coeff_*(cat_tag_*(1.0 - par_omega_Bd_ - par_omega_Bdb_) - par_prod_asym_*(1.0 - cat_tag_*(par_omega_Bd_ - par_omega_Bdb_)))*par_S_ ;
+      }
+      else {
+//        const int tag = cat_tag;
+//        double coeff_sin = type_coeff_*tag*(1.0 - 2.0*par_omega)*par_S;
+
+        //std::cout << "FunctionCoeffSin::evaluate(): " << coeff_sin << std::endl;
+        
+        return type_coeff_*cat_tag_*(1.0 - 2.0*par_omega_)*par_S_ ;
+      }
     }
   }
 

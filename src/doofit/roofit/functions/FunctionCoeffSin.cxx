@@ -24,33 +24,53 @@ long long FunctionCoeffSin::num_calls_evaluate_ = 0;
 long long FunctionCoeffSin::num_calls_integral_ = 0;
 
 
-FunctionCoeffSin::FunctionCoeffSin()
-: type_coeff_(kCType),
-per_event_tagging_(false),
-tagging_asymmetries_(false),
-const1_(0.0),
-const2_(0.0)
-{
+FunctionCoeffSin::FunctionCoeffSin() :
+  type_coeff_(kCType),
+  per_event_tagging_(false),
+  tagging_asymmetries_(false),
+  const1_(0.0),
+  const2_(0.0)
+  {
+  }
+
+FunctionCoeffSin::FunctionCoeffSin(std::string name,
+                                   RooAbsReal& _par_S,
+                                   RooAbsReal& _par_omega,
+                                   RooAbsCategory& _cat_tag,
+                                   CoeffType type_coeff) :
+  RooAbsReal(name.c_str(), name.c_str()),
+  par_S_("par_S_","par_S_",this,_par_S),
+  par_omega_("par_omega_","par_omega_",this,_par_omega),
+  cat_tag_("cat_tag_","cat_tag_",this,_cat_tag),
+  type_coeff_(type_coeff),
+  per_event_tagging_(false),
+  tagging_asymmetries_(false),
+  const1_(0.0),
+  const2_(0.0)
+  {
+  } 
+
+FunctionCoeffSin::FunctionCoeffSin(std::string name,
+                                   RooAbsReal& _par_S,
+                                   RooAbsReal& _par_omega_Bd,
+                                   RooAbsReal& _par_omega_Bdb,
+                                   RooAbsCategory& _cat_tag,
+                                   RooAbsReal& _par_prod_asym,
+                                   CoeffType type_coeff) :
+  RooAbsReal(name.c_str(), name.c_str()),
+  par_S_("par_S_","par_S_",this,_par_S),
+  par_omega_Bd_("par_omega_Bd_","par_omega_Bd_",this,_par_omega_Bd),
+  par_omega_Bdb_("par_omega_Bdb_","par_omega_Bdb_",this,_par_omega_Bdb),
+  cat_tag_("cat_tag_","cat_tag_",this,_cat_tag),
+  par_prod_asym_("par_prod_asym_","par_prod_asym_",this,_par_prod_asym),
+  type_coeff_(type_coeff),
+  per_event_tagging_(false),
+  tagging_asymmetries_(true),
+  const1_(0.0),
+  const2_(0.0)
+  {
+  }
   
-}
-
- FunctionCoeffSin::FunctionCoeffSin(std::string name,
-                                    RooAbsReal& _par_S,
-                                    RooAbsReal& _par_omega,
-                                    RooAbsCategory& _cat_tag,
-                                    CoeffType type_coeff) :
-   RooAbsReal(name.c_str(), name.c_str()),
-   par_S("par_S","par_S",this,_par_S),
-   par_omega("par_omega","par_omega",this,_par_omega),
-   cat_tag("cat_tag","cat_tag",this,_cat_tag),
-   type_coeff_(type_coeff),
-   per_event_tagging_(false),
-   tagging_asymmetries_(false),
-   const1_(0.0),
-   const2_(0.0)
- {
- } 
-
 FunctionCoeffSin::FunctionCoeffSin(std::string name,
                                    RooAbsReal& _par_S,
                                    RooAbsReal& _par_tag_p1,
@@ -59,43 +79,43 @@ FunctionCoeffSin::FunctionCoeffSin(std::string name,
                                    RooAbsReal& _par_tag_eta,
                                    RooAbsCategory& _cat_tag,
                                    CoeffType type_coeff) :
-RooAbsReal(name.c_str(), name.c_str()),
-par_S("par_S","par_S",this,_par_S),
-cat_tag("cat_tag","cat_tag",this,_cat_tag),
-type_coeff_(type_coeff),
-par_tag_p1_("par_tag_p1_","par_tag_p1_",this,_par_tag_p1),
-par_tag_p0_("par_tag_p0_","par_tag_p0_",this,_par_tag_p0),
-par_tag_meaneta_("par_tag_meaneta_","par_tag_meaneta_",this,_par_tag_meaneta),
-par_tag_eta_("par_tag_eta_","par_tag_eta_",this,_par_tag_eta),
-per_event_tagging_(true),
-tagging_asymmetries_(false),
-const1_(type_coeff_*(1.0 + 2.0*par_tag_p1_*par_tag_meaneta_ - 2.0*par_tag_p0_)),
-const2_(-2.0*type_coeff_*par_tag_p1_)
- {
- }
+  RooAbsReal(name.c_str(), name.c_str()),
+  par_S_("par_S_","par_S_",this,_par_S),
+  cat_tag_("cat_tag_","cat_tag_",this,_cat_tag),
+  type_coeff_(type_coeff),
+  par_tag_p1_("par_tag_p1_","par_tag_p1_",this,_par_tag_p1),
+  par_tag_p0_("par_tag_p0_","par_tag_p0_",this,_par_tag_p0),
+  par_tag_meaneta_("par_tag_meaneta_","par_tag_meaneta_",this,_par_tag_meaneta),
+  par_tag_eta_("par_tag_eta_","par_tag_eta_",this,_par_tag_eta),
+  per_event_tagging_(true),
+  tagging_asymmetries_(false),
+  const1_(type_coeff_*(1.0 + 2.0*par_tag_p1_*par_tag_meaneta_ - 2.0*par_tag_p0_)),
+  const2_(-2.0*type_coeff_*par_tag_p1_)
+  {
+  }
 
 FunctionCoeffSin::FunctionCoeffSin(std::string name,
-                                     RooAbsReal& _par_S,
-                                     RooAbsReal& _par_omega,
-                                     RooAbsReal& _par_tag_meaneta,
-                                     RooAbsReal& _par_tag_delta_p1,
-                                     RooAbsReal& _par_tag_delta_p0,
-                                     RooAbsReal& _par_prod_asym,
-                                     RooAbsReal& _par_tag_eta,
-                                     RooAbsCategory& _cat_tag,
-                                     CoeffType type_coeff) :
+                                   RooAbsReal& _par_S,
+                                   RooAbsReal& _par_omega,
+                                   RooAbsReal& _par_tag_meaneta,
+                                   RooAbsReal& _par_tag_delta_p1,
+                                   RooAbsReal& _par_tag_delta_p0,
+                                   RooAbsReal& _par_prod_asym,
+                                   RooAbsReal& _par_tag_eta,
+                                   RooAbsCategory& _cat_tag,
+                                   CoeffType type_coeff) :
   RooAbsReal(name.c_str(), name.c_str()),
-  par_S("par_S","par_S",this,_par_S),
-  cat_tag("cat_tag","cat_tag",this,_cat_tag),
+  par_S_("par_S_","par_S_",this,_par_S),
+  cat_tag_("cat_tag_","cat_tag_",this,_cat_tag),
   type_coeff_(type_coeff),
-  par_omega("par_omega","par_omega",this,_par_omega),
+  par_omega_("par_omega_","par_omega_",this,_par_omega),
   par_tag_meaneta_("par_tag_meaneta_","par_tag_meaneta_",this,_par_tag_meaneta),
   par_tag_delta_p1_("par_tag_delta_p1_","par_tag_delta_p1_",this,_par_tag_delta_p1),
   par_tag_delta_p0_("par_tag_delta_p0_","par_tag_delta_p0_",this,_par_tag_delta_p0),
   par_prod_asym_("par_prod_asym_","par_prod_asym_",this,_par_prod_asym),
   par_tag_eta_("par_tag_eta_","par_tag_eta_",this,_par_tag_eta),
   per_event_tagging_(true),
-  tagging_asymmetries_(false),
+  tagging_asymmetries_(true),
   const1_(0.0),
   const2_(0.0)
   {
@@ -103,9 +123,11 @@ FunctionCoeffSin::FunctionCoeffSin(std::string name,
 
 FunctionCoeffSin::FunctionCoeffSin(const FunctionCoeffSin& other, const char* name) :
   RooAbsReal(other,name),
-  par_S("par_S",this,other.par_S),
-  par_omega("par_omega",this,other.par_omega),
-  cat_tag("cat_tag",this,other.cat_tag),
+  par_S_("par_S_",this,other.par_S_),
+  par_omega_("par_omega_",this,other.par_omega_),
+  par_omega_Bd_("par_omega_Bd_",this,other.par_omega_Bd_),
+  par_omega_Bdb_("par_omega_Bdb_",this,other.par_omega_Bdb_),
+  cat_tag_("cat_tag_",this,other.cat_tag_),
   type_coeff_(other.type_coeff_),
   par_tag_p1_("par_tag_p1_",this,other.par_tag_p1_),
   par_tag_p0_("par_tag_p0_",this,other.par_tag_p0_),
@@ -132,10 +154,10 @@ Int_t FunctionCoeffSin::getAnalyticalIntegral(RooArgSet& allVars,
   if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
   #endif
   
-  matchArgs(allVars, analVars, cat_tag);
+  matchArgs(allVars, analVars, cat_tag_);
   if (per_event_tagging_) { matchArgs(allVars, analVars, par_tag_eta_); }
   
-  if (analVars.contains(cat_tag.arg())) {
+  if (analVars.contains(cat_tag_.arg())) {
     return 1;
   }
   
@@ -154,7 +176,7 @@ Int_t FunctionCoeffSin::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& a
   if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
   #endif
   
-  //if (matchArgs(allVars, analVars, cat_tag)) return 1;
+  //if (matchArgs(allVars, analVars, cat_tag_)) return 1;
   
   return 0;
 }

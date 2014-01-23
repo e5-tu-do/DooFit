@@ -19,7 +19,14 @@ namespace functions {
 
 class FunctionCoeffCosh : public RooAbsReal {
 public:
-  FunctionCoeffCosh() {} ;
+  FunctionCoeffCosh();
+  
+  FunctionCoeffCosh(const char *name, const char *title,
+                    RooAbsReal& _par_tag_omega_Bd,
+                    RooAbsReal& _par_tag_omega_Bdb,
+                    RooAbsReal& _par_prod_asym,
+                    RooAbsCategory& _cat_tag);
+  
   FunctionCoeffCosh(const char *name, const char *title,
                     RooAbsReal& _par_tag_omega,
                     RooAbsReal& _par_tag_meaneta,
@@ -28,6 +35,7 @@ public:
                     RooAbsReal& _par_tag_eta,
                     RooAbsReal& _par_prod_asym,
                     RooAbsCategory& _cat_tag);
+  
   FunctionCoeffCosh(const FunctionCoeffCosh& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new FunctionCoeffCosh(*this,newname); }
   inline virtual ~FunctionCoeffCosh() {
@@ -39,6 +47,8 @@ public:
 
 protected:
 
+  RooRealProxy par_tag_omega_Bd ;
+  RooRealProxy par_tag_omega_Bdb ;
   RooRealProxy par_tag_omega ;
   RooRealProxy par_tag_meaneta ;
   RooRealProxy par_tag_delta_p0 ;
@@ -46,6 +56,8 @@ protected:
   RooRealProxy par_tag_eta ;
   RooRealProxy par_prod_asym ;
   RooCategoryProxy cat_tag ;
+  
+  const bool tagging_asymmetries_ ;
   
   static long long num_calls_evaluate_;
   static long long num_calls_integral_;
@@ -56,9 +68,15 @@ protected:
     #endif
     // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
     
-    //std::cout << 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega) << std::endl;
-    
-    return 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega);
+    if (tagging_asymmetries_) {
+      //std::cout << 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega) << std::endl;
+      
+      return 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega);
+    }
+    else {
+      //std::cout << 1.0 - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb) << std::endl;
+      return 1.0 - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb);
+    }
   }
 
   virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,
