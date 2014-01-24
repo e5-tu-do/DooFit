@@ -46,6 +46,28 @@ FunctionTaggingCalib::FunctionTaggingCalib(const char *name, const char *title,
   }
 
 FunctionTaggingCalib::FunctionTaggingCalib(const char *name, const char *title,
+                                           RooAbsCategory& _cat_tag,
+                                           RooAbsReal& _par_tag_eta,
+                                           RooAbsReal& _par_tag_p0,
+                                           RooAbsReal& _par_tag_p1,
+                                           RooAbsReal& _par_tag_delta_p0,
+                                           RooAbsReal& _par_tag_delta_p1,
+                                           RooAbsReal& _par_tag_meaneta) :
+  RooAbsReal(name,title),
+  cat_tag("cat_tag","cat_tag",this,_cat_tag),
+  par_tag_eta("par_tag_eta","par_tag_eta",this,_par_tag_eta),
+  par_tag_p0("par_tag_p0","par_tag_p0",this,_par_tag_p0),
+  par_tag_p1("par_tag_p1","par_tag_p1",this,_par_tag_p1),
+  par_tag_delta_p0("par_tag_delta_p0","par_tag_delta_p0",this,_par_tag_delta_p0),
+  par_tag_delta_p1("par_tag_delta_p1","par_tag_delta_p1",this,_par_tag_delta_p1),
+  par_tag_meaneta("par_tag_meaneta","par_tag_meaneta",this,_par_tag_meaneta),
+  tagging_asymmetries(true),
+  tagging_combination(false),
+  type_tag(kBdType)
+  {
+  }
+  
+FunctionTaggingCalib::FunctionTaggingCalib(const char *name, const char *title,
                                            RooAbsCategory& _cat_tag_OS,
                                            RooAbsReal& _par_tag_p0_OS,
                                            RooAbsReal& _par_tag_p1_OS,
@@ -130,6 +152,8 @@ FunctionTaggingCalib::FunctionTaggingCalib(const FunctionTaggingCalib& other, co
   par_tag_eta("par_tag_eta",this,other.par_tag_eta),
   par_tag_p0("par_tag_p0",this,other.par_tag_p0),
   par_tag_p1("par_tag_p1",this,other.par_tag_p1),
+  par_tag_delta_p0("par_tag_delta_p0",this,other.par_tag_delta_p0),
+  par_tag_delta_p1("par_tag_delta_p1",this,other.par_tag_delta_p1),
   par_tag_meaneta("par_tag_meaneta",this,other.par_tag_meaneta),
   type_tag(other.type_tag),
   tagging_asymmetries(other.tagging_asymmetries),

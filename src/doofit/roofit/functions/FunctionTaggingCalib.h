@@ -34,6 +34,15 @@ public:
                        RooAbsReal& _par_tag_meaneta);
   
   FunctionTaggingCalib(const char *name, const char *title,
+                       RooAbsCategory& _cat_tag,
+                       RooAbsReal& _par_tag_eta,
+                       RooAbsReal& _par_tag_p0,
+                       RooAbsReal& _par_tag_p1,
+                       RooAbsReal& _par_tag_delta_p0,
+                       RooAbsReal& _par_tag_delta_p1,
+                       RooAbsReal& _par_tag_meaneta);
+  
+  FunctionTaggingCalib(const char *name, const char *title,
                        RooAbsCategory& _cat_tag_OS,
                        RooAbsReal& _par_tag_p0_OS,
                        RooAbsReal& _par_tag_p1_OS,
@@ -77,6 +86,8 @@ protected:
   RooRealProxy par_tag_p1 ;
   RooRealProxy par_tag_meaneta ;
   RooRealProxy par_tag_eta ;
+  RooRealProxy par_tag_delta_p0 ;
+  RooRealProxy par_tag_delta_p1 ;
   RooRealProxy par_tag_p0_OS ;
   RooRealProxy par_tag_p1_OS ;
   RooRealProxy par_tag_meaneta_OS ;
@@ -113,7 +124,7 @@ protected:
       Double_t omega_OS;
       Double_t omega_SS;
       if (tagging_asymmetries) {
-        omega_OS = par_tag_p0_OS + par_tag_meaneta_OS + type_tag*par_tag_delta_p0_OS + (par_tag_p1_OS + type_tag*par_tag_delta_p1_OS)*(par_tag_eta_OS - par_tag_meaneta_OS);
+        omega_OS = par_tag_p0_OS + par_tag_meaneta_OS + 0.5*type_tag*par_tag_delta_p0_OS + (par_tag_p1_OS + 0.5*type_tag*par_tag_delta_p1_OS)*(par_tag_eta_OS - par_tag_meaneta_OS);
         omega_SS = par_tag_p0_SS + 0.5*type_tag*par_tag_delta_p0_SS + (par_tag_p1_SS + 0.5*type_tag*par_tag_delta_p1_SS)*(par_tag_eta_SS-par_tag_meaneta_SS);
       }
       else {
@@ -131,10 +142,18 @@ protected:
       }
     }
     else {
-      if (par_tag_p0 < 0.2) {
-        return  par_tag_p0 + par_tag_meaneta + par_tag_p1 * (par_tag_eta - par_tag_meaneta);
+      if (tagging_asymmetries) {
+        if (par_tag_p0 < 0.2) {
+          return  par_tag_p0 + par_tag_meaneta + 0.5*par_tag_delta_p0 + (par_tag_p1 + 0.5*par_tag_delta_p1) * (par_tag_eta - par_tag_meaneta);
+        }
+        else return par_tag_p0 + 0.5*par_tag_delta_p0 + (par_tag_p1 + 0.5*par_tag_delta_p1) * (par_tag_eta - par_tag_meaneta);
       }
-      else return par_tag_p0 + par_tag_p1 * (par_tag_eta - par_tag_meaneta);
+      else {
+        if (par_tag_p0 < 0.2) {
+          return  par_tag_p0 + par_tag_meaneta + par_tag_p1 * (par_tag_eta - par_tag_meaneta);
+        }
+        else return par_tag_p0 + par_tag_p1 * (par_tag_eta - par_tag_meaneta);
+      }
     }
   }
 
