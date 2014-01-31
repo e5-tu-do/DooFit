@@ -74,8 +74,8 @@ protected:
       return 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega);
     }
     else {
-      //std::cout << 1.0 - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb) << std::endl;
-      return 1.0 - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb);
+      //std::cout << 1.0 - cat_tag*(par_tag_omega_Bd - par_tag_omega_Bdb) - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb) << std::endl;
+      return 1.0 - cat_tag*(par_tag_omega_Bd - par_tag_omega_Bdb) - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb);
     }
   }
 
