@@ -132,13 +132,13 @@ protected:
         omega_SS = par_tag_p0_SS + par_tag_p1_SS*(par_tag_eta_SS - par_tag_meaneta_SS);
       }
       if (cat_tag_OS == cat_tag_SS) {
-        return omega_OS*omega_SS/(omega_OS*omega_SS + (1-omega_OS)*(1-omega_SS));
+        return omega_OS*omega_SS/(omega_OS*omega_SS + (1.0-omega_OS)*(1.0-omega_SS));
       }
       else {
-        if (omega_SS >= omega_OS) {
-          return omega_OS*(1-omega_SS)/(omega_OS*(1-omega_SS) + (1-omega_OS)*omega_SS);
+        if ((par_tag_p0_SS + par_tag_p1_SS*(par_tag_eta_SS - par_tag_meaneta_SS)) >= (par_tag_p0_OS + par_tag_meaneta_OS + par_tag_p1_OS*(par_tag_eta_OS - par_tag_meaneta_OS))) {
+          return omega_OS*(1-omega_SS)/(omega_OS*(1.0-omega_SS) + (1.0-omega_OS)*omega_SS);
         }
-        else return (1-omega_OS)*omega_SS/(omega_OS*(1-omega_SS) + (1-omega_OS)*omega_SS);
+        else return (1-omega_OS)*omega_SS/(omega_OS*(1.0-omega_SS) + (1.0-omega_OS)*omega_SS);
       }
     }
     else {
