@@ -27,14 +27,12 @@ public:
   FunctionTaggingCalib() ;
   
   FunctionTaggingCalib(const char *name, const char *title,
-                       RooAbsCategory& _cat_tag,
                        RooAbsReal& _par_tag_eta,
                        RooAbsReal& _par_tag_p0,
                        RooAbsReal& _par_tag_p1,
                        RooAbsReal& _par_tag_meaneta);
   
   FunctionTaggingCalib(const char *name, const char *title,
-                       RooAbsCategory& _cat_tag,
                        RooAbsReal& _par_tag_eta,
                        RooAbsReal& _par_tag_p0,
                        RooAbsReal& _par_tag_p1,
@@ -101,7 +99,6 @@ protected:
   RooRealProxy par_tag_delta_p0_SS ;
   RooRealProxy par_tag_delta_p1_SS ;
   
-  RooCategoryProxy cat_tag ;
   RooCategoryProxy cat_tag_OS ;
   RooCategoryProxy cat_tag_SS ;
   

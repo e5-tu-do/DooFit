@@ -28,13 +28,11 @@ FunctionTaggingCalib::FunctionTaggingCalib() :
   }
   
 FunctionTaggingCalib::FunctionTaggingCalib(const char *name, const char *title,
-                                           RooAbsCategory& _cat_tag,
                                            RooAbsReal& _par_tag_eta,
                                            RooAbsReal& _par_tag_p0,
                                            RooAbsReal& _par_tag_p1,
                                            RooAbsReal& _par_tag_meaneta) :
   RooAbsReal(name,title),
-  cat_tag("cat_tag","cat_tag",this,_cat_tag),
   par_tag_eta("par_tag_eta","par_tag_eta",this,_par_tag_eta),
   par_tag_p0("par_tag_p0","par_tag_p0",this,_par_tag_p0),
   par_tag_p1("par_tag_p1","par_tag_p1",this,_par_tag_p1),
@@ -46,7 +44,6 @@ FunctionTaggingCalib::FunctionTaggingCalib(const char *name, const char *title,
   }
 
 FunctionTaggingCalib::FunctionTaggingCalib(const char *name, const char *title,
-                                           RooAbsCategory& _cat_tag,
                                            RooAbsReal& _par_tag_eta,
                                            RooAbsReal& _par_tag_p0,
                                            RooAbsReal& _par_tag_p1,
@@ -54,7 +51,6 @@ FunctionTaggingCalib::FunctionTaggingCalib(const char *name, const char *title,
                                            RooAbsReal& _par_tag_delta_p1,
                                            RooAbsReal& _par_tag_meaneta) :
   RooAbsReal(name,title),
-  cat_tag("cat_tag","cat_tag",this,_cat_tag),
   par_tag_eta("par_tag_eta","par_tag_eta",this,_par_tag_eta),
   par_tag_p0("par_tag_p0","par_tag_p0",this,_par_tag_p0),
   par_tag_p1("par_tag_p1","par_tag_p1",this,_par_tag_p1),
@@ -148,7 +144,6 @@ FunctionTaggingCalib::FunctionTaggingCalib(const FunctionTaggingCalib& other, co
   par_tag_eta_SS("par_tag_eta_SS",this,other.par_tag_eta_SS),
   par_tag_delta_p0_SS("par_tag_delta_p0_SS",this,other.par_tag_delta_p0_SS),
   par_tag_delta_p1_SS("par_tag_delta_p1_SS",this,other.par_tag_delta_p1_SS),
-  cat_tag("cat_tag",this,other.cat_tag),
   par_tag_eta("par_tag_eta",this,other.par_tag_eta),
   par_tag_p0("par_tag_p0",this,other.par_tag_p0),
   par_tag_p1("par_tag_p1",this,other.par_tag_p1),

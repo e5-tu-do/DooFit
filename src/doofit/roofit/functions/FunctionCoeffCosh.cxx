@@ -21,7 +21,8 @@ namespace roofit {
 namespace functions {
 
 FunctionCoeffCosh::FunctionCoeffCosh() :
-  tagging_asymmetries_(false)
+  tagging_asymmetries_(false),
+  combined_tag_(false)
   {
   }
   
@@ -35,10 +36,26 @@ FunctionCoeffCosh::FunctionCoeffCosh(const char *name, const char *title,
   par_tag_omega_Bdb("par_tag_omega_Bdb","par_tag_omega_Bdb",this,_par_tag_omega_Bdb),
   par_prod_asym("par_prod_asym","par_prod_asym",this,_par_prod_asym),
   cat_tag("cat_tag","cat_tag",this,_cat_tag),
-  tagging_asymmetries_(false)
+  tagging_asymmetries_(false),
+  combined_tag_(false)
   {
   }
-  
+
+FunctionCoeffCosh::FunctionCoeffCosh(const char *name, const char *title,
+                                     RooAbsReal& _par_tag_omega_Bd,
+                                     RooAbsReal& _par_tag_omega_Bdb,
+                                     RooAbsReal& _par_prod_asym,
+                                     RooAbsReal& _par_tag) :
+  RooAbsReal(name,title),
+  par_tag_omega_Bd("par_tag_omega_Bd","par_tag_omega_Bd",this,_par_tag_omega_Bd),
+  par_tag_omega_Bdb("par_tag_omega_Bdb","par_tag_omega_Bdb",this,_par_tag_omega_Bdb),
+  par_prod_asym("par_prod_asym","par_prod_asym",this,_par_prod_asym),
+  par_tag("par_tag","par_tag",this,_par_tag),
+  tagging_asymmetries_(false),
+  combined_tag_(true)
+  {
+  }
+
 FunctionCoeffCosh::FunctionCoeffCosh(const char *name, const char *title,
                                      RooAbsReal& _par_tag_omega,
                                      RooAbsReal& _par_tag_meaneta,
@@ -55,7 +72,8 @@ FunctionCoeffCosh::FunctionCoeffCosh(const char *name, const char *title,
   par_tag_eta("par_tag_eta","par_tag_eta",this,_par_tag_eta),
   par_prod_asym("par_prod_asym","par_prod_asym",this,_par_prod_asym),
   cat_tag("cat_tag","cat_tag",this,_cat_tag),
-  tagging_asymmetries_(true)
+  tagging_asymmetries_(true),
+  combined_tag_(false)
   {
   }
 
@@ -71,7 +89,9 @@ FunctionCoeffCosh::FunctionCoeffCosh(const FunctionCoeffCosh& other, const char*
   par_tag_eta("par_tag_eta",this,other.par_tag_eta),
   par_prod_asym("par_prod_asym",this,other.par_prod_asym),
   cat_tag("cat_tag",this,other.cat_tag),
-  tagging_asymmetries_(other.tagging_asymmetries_)
+  par_tag("par_tag",this,other.par_tag),
+  tagging_asymmetries_(other.tagging_asymmetries_),
+  combined_tag_(other.combined_tag_)
  {
  } 
 

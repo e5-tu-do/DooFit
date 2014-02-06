@@ -44,6 +44,15 @@ public:
                    RooAbsCategory& _cat_tag,
                    RooAbsReal& _par_prod_asym,
                    CoeffType type_coeff);
+
+  FunctionCoeffSin(std::string name,
+                   RooAbsReal& _par_S,
+                   RooAbsReal& _par_omega_Bd,
+                   RooAbsReal& _par_omega_Bdb,
+                   RooAbsReal& _par_tag,
+                   RooAbsReal& _par_prod_asym,
+                   CoeffType type_coeff);
+
   
   FunctionCoeffSin(std::string name,
                    RooAbsReal& _par_S,
@@ -84,6 +93,7 @@ protected:
   RooRealProxy par_omega_Bd_ ;
   RooRealProxy par_omega_Bdb_ ;
   
+  RooRealProxy par_tag_ ;
   RooRealProxy par_tag_p1_ ;
   RooRealProxy par_tag_p0_ ;
   RooRealProxy par_tag_meaneta_ ;
@@ -95,6 +105,7 @@ protected:
   
   const bool per_event_tagging_ ;
   const bool tagging_asymmetries_ ;
+  const bool combined_tag_ ;
   
   const double const1_ ;
   const double const2_ ;
@@ -110,29 +121,47 @@ protected:
     // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
 //    ++n_calls;
     // @0*(1-2*@2)*@1
-    
-    if (per_event_tagging_) {
-//      const int tag = cat_tag;
-//      double coeff_sin = type_coeff_*cat_tag*(1.0 - 2.0*(par_tag_p1_*(par_tag_eta_-par_tag_meaneta_) + par_tag_p0_))*par_S;
-      
-      //std::cout << "FunctionCoeffSin::evaluate(): eta = " << par_tag_eta_ << std::endl;
-      
-      //return cat_tag*par_S*(const2_*par_tag_eta_- + const1_);
-      if (tagging_asymmetries_) {
-        return type_coeff_*(cat_tag_*(1.0 - 2.0*par_omega_) - par_prod_asym_*(1.0 - cat_tag_*(par_tag_delta_p0_ + par_tag_delta_p1_*(par_tag_eta_-par_tag_meaneta_))))*par_S_ ;
-      }
-      else return type_coeff_*cat_tag_*(1.0 - 2.0*(par_tag_p1_*(par_tag_eta_-par_tag_meaneta_) + par_tag_p0_))*par_S_ ;
-    } else {
-      if (tagging_asymmetries_) {
-        return type_coeff_*(cat_tag_*(1.0 - par_omega_Bd_ - par_omega_Bdb_) - par_prod_asym_*(1.0 - cat_tag_*(par_omega_Bd_ - par_omega_Bdb_)))*par_S_ ;
+    if (combined_tag_) {
+      if (per_event_tagging_) {
+        if (tagging_asymmetries_) {
+          return type_coeff_*(par_tag_*(1.0 - 2.0*par_omega_) - par_prod_asym_*(1.0 - par_tag_*(par_tag_delta_p0_ + par_tag_delta_p1_*(par_tag_eta_-par_tag_meaneta_))))*par_S_ ;
+        }
+        else return type_coeff_*par_tag_*(1.0 - 2.0*(par_tag_p1_*(par_tag_eta_-par_tag_meaneta_) + par_tag_p0_))*par_S_ ;
       }
       else {
-//        const int tag = cat_tag;
-//        double coeff_sin = type_coeff_*tag*(1.0 - 2.0*par_omega)*par_S;
-
-        //std::cout << "FunctionCoeffSin::evaluate(): " << coeff_sin << std::endl;
+        if (tagging_asymmetries_) {
+          return type_coeff_*(par_tag_*(1.0 - par_omega_Bd_ - par_omega_Bdb_) - par_prod_asym_*(1.0 - par_tag_*(par_omega_Bd_ - par_omega_Bdb_)))*par_S_ ;
+        }
+        else {
+          return type_coeff_*par_tag_*(1.0 - 2.0*par_omega_)*par_S_ ;
+        }
+      }
+    }
+    else {
+      if (per_event_tagging_) {
+  //      const int tag = cat_tag;
+  //      double coeff_sin = type_coeff_*cat_tag*(1.0 - 2.0*(par_tag_p1_*(par_tag_eta_-par_tag_meaneta_) + par_tag_p0_))*par_S;
         
-        return type_coeff_*cat_tag_*(1.0 - 2.0*par_omega_)*par_S_ ;
+        //std::cout << "FunctionCoeffSin::evaluate(): eta = " << par_tag_eta_ << std::endl;
+        
+        //return cat_tag*par_S*(const2_*par_tag_eta_- + const1_);
+        if (tagging_asymmetries_) {
+          return type_coeff_*(cat_tag_*(1.0 - 2.0*par_omega_) - par_prod_asym_*(1.0 - cat_tag_*(par_tag_delta_p0_ + par_tag_delta_p1_*(par_tag_eta_-par_tag_meaneta_))))*par_S_ ;
+        }
+        else return type_coeff_*cat_tag_*(1.0 - 2.0*(par_tag_p1_*(par_tag_eta_-par_tag_meaneta_) + par_tag_p0_))*par_S_ ;
+      }
+      else {
+        if (tagging_asymmetries_) {
+          return type_coeff_*(cat_tag_*(1.0 - par_omega_Bd_ - par_omega_Bdb_) - par_prod_asym_*(1.0 - cat_tag_*(par_omega_Bd_ - par_omega_Bdb_)))*par_S_ ;
+        }
+        else {
+  //        const int tag = cat_tag;
+  //        double coeff_sin = type_coeff_*tag*(1.0 - 2.0*par_omega)*par_S;
+
+          //std::cout << "FunctionCoeffSin::evaluate(): " << coeff_sin << std::endl;
+          
+          return type_coeff_*cat_tag_*(1.0 - 2.0*par_omega_)*par_S_ ;
+        }
       }
     }
   }

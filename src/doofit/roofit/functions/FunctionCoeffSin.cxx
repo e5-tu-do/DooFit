@@ -28,6 +28,7 @@ FunctionCoeffSin::FunctionCoeffSin() :
   type_coeff_(kCType),
   per_event_tagging_(false),
   tagging_asymmetries_(false),
+  combined_tag_(false),
   const1_(0.0),
   const2_(0.0)
   {
@@ -45,6 +46,7 @@ FunctionCoeffSin::FunctionCoeffSin(std::string name,
   type_coeff_(type_coeff),
   per_event_tagging_(false),
   tagging_asymmetries_(false),
+  combined_tag_(false),
   const1_(0.0),
   const2_(0.0)
   {
@@ -66,6 +68,29 @@ FunctionCoeffSin::FunctionCoeffSin(std::string name,
   type_coeff_(type_coeff),
   per_event_tagging_(false),
   tagging_asymmetries_(true),
+  combined_tag_(false),
+  const1_(0.0),
+  const2_(0.0)
+  {
+  }
+
+FunctionCoeffSin::FunctionCoeffSin(std::string name,
+                                   RooAbsReal& _par_S,
+                                   RooAbsReal& _par_omega_Bd,
+                                   RooAbsReal& _par_omega_Bdb,
+                                   RooAbsReal& _par_tag,
+                                   RooAbsReal& _par_prod_asym,
+                                   CoeffType type_coeff) :
+  RooAbsReal(name.c_str(), name.c_str()),
+  par_S_("par_S_","par_S_",this,_par_S),
+  par_omega_Bd_("par_omega_Bd_","par_omega_Bd_",this,_par_omega_Bd),
+  par_omega_Bdb_("par_omega_Bdb_","par_omega_Bdb_",this,_par_omega_Bdb),
+  par_tag_("par_tag_","par_tag_",this,_par_tag),
+  par_prod_asym_("par_prod_asym_","par_prod_asym_",this,_par_prod_asym),
+  type_coeff_(type_coeff),
+  per_event_tagging_(false),
+  tagging_asymmetries_(true),
+  combined_tag_(true),
   const1_(0.0),
   const2_(0.0)
   {
@@ -89,6 +114,7 @@ FunctionCoeffSin::FunctionCoeffSin(std::string name,
   par_tag_eta_("par_tag_eta_","par_tag_eta_",this,_par_tag_eta),
   per_event_tagging_(true),
   tagging_asymmetries_(false),
+  combined_tag_(false),
   const1_(type_coeff_*(1.0 + 2.0*par_tag_p1_*par_tag_meaneta_ - 2.0*par_tag_p0_)),
   const2_(-2.0*type_coeff_*par_tag_p1_)
   {
@@ -116,6 +142,7 @@ FunctionCoeffSin::FunctionCoeffSin(std::string name,
   par_tag_eta_("par_tag_eta_","par_tag_eta_",this,_par_tag_eta),
   per_event_tagging_(true),
   tagging_asymmetries_(true),
+  combined_tag_(false),
   const1_(0.0),
   const2_(0.0)
   {
@@ -138,6 +165,7 @@ FunctionCoeffSin::FunctionCoeffSin(const FunctionCoeffSin& other, const char* na
   par_prod_asym_("par_prod_asym_",this,other.par_prod_asym_),
   per_event_tagging_(other.per_event_tagging_),
   tagging_asymmetries_(other.tagging_asymmetries_),
+  combined_tag_(other.combined_tag_),
   const1_(other.const1_),
   const2_(other.const2_)
   {

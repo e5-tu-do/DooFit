@@ -28,6 +28,13 @@ public:
                     RooAbsCategory& _cat_tag);
   
   FunctionCoeffCosh(const char *name, const char *title,
+                    RooAbsReal& _par_tag_omega_Bd,
+                    RooAbsReal& _par_tag_omega_Bdb,
+                    RooAbsReal& _par_prod_asym,
+                    RooAbsReal& _par_tag);
+
+  
+  FunctionCoeffCosh(const char *name, const char *title,
                     RooAbsReal& _par_tag_omega,
                     RooAbsReal& _par_tag_meaneta,
                     RooAbsReal& _par_tag_delta_p0,
@@ -55,9 +62,11 @@ protected:
   RooRealProxy par_tag_delta_p1 ;
   RooRealProxy par_tag_eta ;
   RooRealProxy par_prod_asym ;
+  RooRealProxy par_tag ;
   RooCategoryProxy cat_tag ;
   
   const bool tagging_asymmetries_ ;
+  const bool combined_tag_ ;
   
   static long long num_calls_evaluate_;
   static long long num_calls_integral_;
@@ -67,15 +76,19 @@ protected:
     ++num_calls_evaluate_;
     #endif
     // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
-    
-    if (tagging_asymmetries_) {
-      //std::cout << 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega) << std::endl;
-      
-      return 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega);
+    if (combined_tag_) {
+      return 1.0 - par_tag*(par_tag_omega_Bd - par_tag_omega_Bdb) - par_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb);
     }
     else {
-      //std::cout << 1.0 - cat_tag*(par_tag_omega_Bd - par_tag_omega_Bdb) - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb) << std::endl;
-      return 1.0 - cat_tag*(par_tag_omega_Bd - par_tag_omega_Bdb) - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb);
+      if (tagging_asymmetries_) {
+        //std::cout << 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega) << std::endl;
+        
+        return 1.0 - cat_tag*(par_tag_delta_p0+par_tag_delta_p1*(par_tag_eta-par_tag_meaneta)) - cat_tag*par_prod_asym*(1.0 - 2.0*par_tag_omega);
+      }
+      else {
+        //std::cout << 1.0 - cat_tag*(par_tag_omega_Bd - par_tag_omega_Bdb) - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb) << std::endl;
+        return 1.0 - cat_tag*(par_tag_omega_Bd - par_tag_omega_Bdb) - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb);
+      }
     }
   }
 
