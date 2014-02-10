@@ -48,10 +48,22 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
   TList* data_split = data.split(sim_cat);
   std::string plot_name;
   
+//  const RooSuperCategory* super_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
+//  if (super_cat != NULL) {
+//    RooLinkedListIter* it  = (RooLinkedListIter*)super_cat->inputCatList().createIterator();
+//    RooAbsArg*         arg = NULL;
+//    
+//    while ((arg=(RooAbsArg*)it->Next())) {
+//      arg->Print();
+//    }
+//    delete it;
+//
+//  }
+  
 //  TCanvas c1("c1","c1",900,900);
 //  TLatex label(0.5, 0.5, "Bla");
 //  label.Draw();
-//  c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots.pdf").c_str());
+//  c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
   
   RooCatType* sim_cat_type = NULL;
   TIterator* sim_cat_type_iter = sim_cat.typeIterator();
@@ -60,6 +72,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooAbsPdf& sub_pdf = *(pdf.getPdf(sim_cat_type->GetName()));
     if (&sub_pdf != NULL) {
       RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
+      
       if (&sub_data == NULL) {
         serr << "PlotSimultaneous::PlotHandler(...): sub dataset for category " << sim_cat_type->GetName() << " empty. Will not plot. " << endmsg;
       } else {
@@ -130,7 +143,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         label.SetTextAlign(13);
         label.SetFillColor(0);
         label.Draw();
-        c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots.pdf").c_str());
+        c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
         
         plot.PlotHandler(sc_y, suffix);
         
@@ -157,7 +170,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     label.SetTextAlign(13);
     label.SetFillColor(0);
     label.Draw();
-    c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots.pdf").c_str());
+    c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
     
     //  plot_name = std::string(dimension_.GetName()) + "_summed";
     plot_name = plot_name_ + "_summed";

@@ -41,6 +41,9 @@ class RooHistPdf;
 class RooAbsHiddenReal;
 class RooUnblindUniform;
 class RooLognormal;
+class RooGaussEfficiencyModel;
+class RooAbsGaussModelEfficiency;
+class RooEffResAddModel;
 
 /** @class doofit::builder::EasyPdf
  *  @brief Easy PDF and variable building without the clutter
@@ -904,6 +907,95 @@ class EasyPdf {
   RooAddModel& AddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs);
   ///@}
   
+  /** @name Gaussian efficiency resolution PDFs
+   *  PDF definitions of models based on RooGaussEfficiencyModel
+   */
+  ///@{
+  /**
+   *  @brief Add and access a RooGaussEfficiencyModel
+   *
+   *  Request a RooGaussEfficiencyModel by a specified name. If the PDF does not
+   *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param eff the efficiency to use
+   *  @param mean mean or bias of resolution
+   *  @param sigma width of resolution
+   *  @return the appropriate PDF
+   */
+  RooGaussEfficiencyModel& GaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma);
+  
+  /**
+   *  @brief Add and access a double RooGaussEfficiencyModel
+   *
+   *  Request a double RooGaussEfficiencyModel by a specified name. If the PDF 
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and 
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param eff the efficiency to use
+   *  @param mean mean or bias of resolution
+   *  @param sigma1 width of first Gaussian
+   *  @param sigma2 width of second Gaussian
+   *  @param fraction fraction of first Gaussian
+   *  @return the appropriate PDF
+   */
+  RooEffResAddModel& DoubleGaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& fraction);
+  
+  /**
+   *  @brief Add and access a per-event RooGaussEfficiencyModel
+   *
+   *  Request a RooGaussEfficiencyModel by a specified name. If the PDF does not
+   *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param eff the efficiency to use
+   *  @param mean mean or bias of resolution
+   *  @param error the per-event resolution estimate
+   *  @param scale_error scale factor for error
+   *  @return the appropriate PDF
+   */
+  RooGaussEfficiencyModel& GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal &scale_error);
+  
+  /**
+   *  @brief Add and access a double per-event RooGaussEfficiencyModel
+   *
+   *  Request a double RooGaussEfficiencyModel by a specified name. If the PDF 
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and 
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param eff the efficiency to use
+   *  @param mean mean or bias of resolution
+   *  @param error the per-event resolution estimate
+   *  @param scale_error1 scale first factor for error
+   *  @param scale_error2 scale second factor for error
+   *  @param fraction fraction of first Gaussian
+   *  @return the appropriate PDF
+   */
+  RooEffResAddModel& DoubleGaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& fraction);
+
+  /**
+   *  @brief Add and access an added efficiency resolution PDF with supplied coefficients
+   *
+   *  Request a RooEffResAddModel by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param pdfs RooArgList of PDFs to add
+   *  @param coefs RooArgList of coefficients to use
+   *  @return the appropriate PDF
+   */
+  RooEffResAddModel& EffResAddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs);
+  ///@}
+  
 
   /** @name Acceptance functions 
    *  RooFormulaVar definitions of Acceptance functions
@@ -1089,6 +1181,20 @@ class EasyPdf {
   template <class PdfType>
   PdfType& AddPdfToStore(PdfType* pdf);
 
+  /**
+   *  @brief Add and access a given RooAbsReal
+   *
+   *  Templated function to add a given RooAbsReal pointer to the internal store
+   *  (and workspace if necessary) and return this RooAbsReal afterwards.
+   *  If a RooAbsReal with same name already exists, an exception 
+   *  ObjectExistsException is thrown.
+   *
+   *  @param real the RooAbsReal to add
+   *  @return the added real
+   */
+  template <class RealType>
+  RealType& AddRealToStore(RealType* real);
+  
   /** @name PDF access
    *  Access to already defined PDFs
    */
@@ -1159,6 +1265,11 @@ class EasyPdf {
   std::map<std::string,RooAbsHiddenReal*> hidden_reals_;
   
   /**
+   *  @brief Container for all manually added RooAbsReal
+   */
+  std::map<std::string,RooAbsReal*> external_reals_;
+  
+  /**
    *  @brief Container for all generated RooAbsPdfs
    */
   std::map<std::string,RooAbsPdf*> pdfs_;
@@ -1207,6 +1318,23 @@ PdfType& EasyPdf::AddPdfToStore(PdfType* pdf) {
       pdfs_[name] = pdf = dynamic_cast<PdfType*>(ws_->pdf(name.c_str()));
     }
     return *pdf;
+  }
+}
+  
+template <class RealType>
+RealType& EasyPdf::AddRealToStore(RealType* real) {
+  std::string name = real->GetName();
+  if (external_reals_.count(name) == 1) {
+    throw ObjectExistsException();
+  } else {
+    if (ws_ == NULL) {
+      external_reals_[name] = real;
+    } else {
+      ws_->import(*real, RooFit::Silence());
+      delete real;
+      external_reals_[name] = real = dynamic_cast<RealType*>(ws_->function(name.c_str()));
+    }
+    return *real;
   }
 }
 

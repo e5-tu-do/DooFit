@@ -100,17 +100,34 @@ def create_single_job(proto_script, settings_dict, jobs_dir, num_iterations, min
 
 ## Generate all job files and the submit script
 #
-def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_iterations_per_job, walltime, num_cpu, min_seed):
+def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_job, walltime, num_cpu):
   jobs_dir = os.path.realpath(os.path.abspath(os.path.expanduser(jobs_dir)))
+  min_id = 0
+  job_base_name = options.basename
+  min_seed = options.minseed
+  if job_base_name == "pbs_job":
+    job_base_name = os.path.basename(jobs_dir)
+  if os.path.isfile(os.path.join(jobs_dir,'max_seed')):
+    with open(os.path.join(jobs_dir,'max_seed')) as f:
+      min_seed = int(f.read())+1
+      print "File max_seed existing. Starting from seed " + str(min_seed)
+  if os.path.isfile(os.path.join(jobs_dir,'max_id')):
+    with open(os.path.join(jobs_dir,'max_id')) as f:
+      min_id = int(f.read())+1
+      print "File max_id existing. Starting from id " + str(min_id)
+  if os.path.isfile(os.path.join(jobs_dir,'basename')):
+    with open(os.path.join(jobs_dir,'basename')) as f:
+      job_base_name = f.read().strip()
+      print "File basename existing. Using basename " + job_base_name
   submit_file_name = os.path.join(jobs_dir,'submit_' + job_base_name + '.sh')
   submit_file = open(submit_file_name, 'w')
   submit_file.writelines('#!/bin/sh\n')
   scan2_value = options.scan2start
-  job_index  = 0
+  job_index  = min_id
   while scan2_value <= options.scan2end:
     scan1_value = options.scan1start
     while scan1_value <= options.scan1end:
-      for i in range(0,num_jobs):
+      for i in range(min_id,min_id+num_jobs):
         settings_dict = {
           'job_name'   : job_base_name + '_' + str(job_index),
           'out_file'   : os.path.join(jobs_dir,'o_' + job_base_name + '_' + str(job_index) + '.log'),
@@ -130,25 +147,34 @@ def create_jobs(options, proto_script, job_base_name, jobs_dir, num_jobs, num_it
           'parametern' : options.parametern
           }
         min_seed = create_single_job(proto_script, settings_dict, jobs_dir, num_iterations_per_job, min_seed)
-        submit_file.writelines('qsub ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
+        submit_file.writelines('qsub -q ' + options.queue + ' ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
         job_index += 1
       scan1_value += options.scan1increment*options.scan1perjob
     scan2_value += options.scan2increment*options.scan2perjob
   control_file_name = os.path.join(jobs_dir,'control_' + job_base_name + '')
   control_file = open(control_file_name, 'w')
   control_file.writelines(os.path.join(jobs_dir,job_base_name + '_*.sh'))
-  maxseed_file_name = os.path.join(jobs_dir,'maxseed_' + job_base_name + '')
-  maxseed_file = open(control_file_name, 'w')
+  maxseed_file_name = os.path.join(jobs_dir,'max_seed')
+  maxseed_file = open(maxseed_file_name, 'w')
   maxseed_file.writelines(str(min_seed-1)+'\n')
-  print 'Jobs successfully created. Maximum seed used: ' + str(min_seed-1)
+  maxid_file_name = os.path.join(jobs_dir,'max_id')
+  maxid_file = open(maxid_file_name, 'w')
+  maxid_file.writelines(str(job_index-1)+'\n')
+  basename_file_name = os.path.join(jobs_dir,'basename')
+  basename_file = open(basename_file_name, 'w')
+  basename_file.writelines(job_base_name)
+  print 'Jobs successfully created. Maximum seed used: ' + str(min_seed-1) + ", maximum job id used: " + str(job_index-1)
   print 'Submit jobs via this command:'
   print 'sh ' + submit_file_name
 
 if __name__ == "__main__":
   usage = """
- %prog proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu min_seed
+ %prog proto_script jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu
     """
-  parser = OptionParser(usage, version="0.1")
+  parser = OptionParser(usage, version="1.0")
+  parser.add_option("-q", "--queue", action="store", type="string", dest="queue", default="default", help="PBS queue to use")
+  parser.add_option("-b", "--basename", action="store", type="string", dest="basename", default="pbs_job", help="PBS job base name")
+  parser.add_option("-s", "--minseed", action="store", type="int", dest="minseed", default=1, help="Minimal seed to use")
   parser.add_option("", "--scan1-start", action="store", type="float", dest="scan1start", default=0.0, help="Start value of scan parameter 1")
   parser.add_option("", "--scan1-end", action="store", type="float", dest="scan1end", default=0.0, help="End value of scan parameter 1")
   parser.add_option("", "--scan1-increment", action="store", type="float", dest="scan1increment", default=1.0, help="Increment value of scan parameter 1")
@@ -159,7 +185,7 @@ if __name__ == "__main__":
   parser.add_option("", "--scan2-per-job", action="store", type="float", dest="scan2perjob", default=1.0, help="Number of scan points per job (default 1) for scan parameter 2")
   parser.add_option("-n", "--parameter-n", action="store", type="int", dest="parametern", default=0, help="Additional arbitrary parameter n (e.g. number of toys)")
   (options, args) = parser.parse_args()
-  if len(args) < 8:
-    print 'Usage: ' + sys.argv[0] + ' proto_script job_base_name jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu min_seed'
+  if len(args) < 6:
+    print 'Usage: ' + sys.argv[0] + ' proto_script jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu'
     sys.exit(1)
-  create_jobs(options, args[0], args[1], args[2], int(args[3]), int(args[4]), args[5], int(args[6]), int(args[7]))
+  create_jobs(options, args[0], args[1], int(args[2]), int(args[3]), args[4], int(args[5]))

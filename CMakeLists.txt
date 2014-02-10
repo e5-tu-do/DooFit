@@ -7,7 +7,7 @@
 #
 
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -pg" CACHE STRING "Debug options." FORCE)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "Debug options." FORCE)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" CACHE STRING "Debug options." FORCE)
 
 SET(CMAKE_BUILD_TYPE Profiling)
 SET(CMAKE_CXX_FLAGS_PROFILING "-O3 -pg" CACHE STRING "Debug options." FORCE)
@@ -19,6 +19,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{DOOCORESYS}/cmake/Modules/")
 
 set(BASEPATH "${CMAKE_SOURCE_DIR}/src")
 include_directories(${BASEPATH})
+include_directories("${BASEPATH}/lhcb")
 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
@@ -56,3 +57,4 @@ add_subdirectory(src)
 add_subdirectory(python)
 add_subdirectory(TestWiese)
 add_subdirectory(main)
+#add_subdirectory(scripts)

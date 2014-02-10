@@ -1,0 +1,18 @@
+#!/bin/bash
+
+source /lhcb/software/tu-dortmund/LHCbSoftwareSetup.sh > /dev/null 2>&1
+export PATH=$PATH:/usr/local/bin
+
+rvers=""
+dvvers=""
+for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
+do
+  rver=`bash PrintRootVersionForDVVersion $ver`
+  if [[ ! $rvers =~ $rver ]]; then
+    rvers="$rvers $rver"
+    dvvers="$dvvers $ver"
+    echo -n " $ver"
+  fi
+done
+
+#echo $dvvers

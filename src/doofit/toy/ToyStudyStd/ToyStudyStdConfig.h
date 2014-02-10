@@ -117,6 +117,18 @@ namespace toy {
      *  @return current value of parameter_genvalue_read_file_
      */
     const std::string& parameter_genvalue_read_file() const {return parameter_genvalue_read_file_;}
+    
+    /**
+     *  @brief Getter for minimum acceptable covariance matrix quality for fit results
+     *
+     *  When evaluating toy fit results, a check for the covariance matrix
+     *  quality is made berforehand. Only results with a minimum quality of
+     *  min_acceptable_cov_matrix_quality will be accepted for evaluation.
+     *  See RooFitResult::covQual() for reference.
+     *
+     *  @return current value of min_acceptable_cov_matrix_quality_
+     */
+    int min_acceptable_cov_matrix_quality() const  { return min_acceptable_cov_matrix_quality_; }
     ///@}
 
     /** @name Setter actual options
@@ -239,6 +251,18 @@ namespace toy {
     void set_parameter_genvalue_read_file(const std::string& parameter_genvalue_read_file) {parameter_genvalue_read_file_ = parameter_genvalue_read_file;}
     
     /**
+     *  @brief Setter for minimum acceptable covariance matrix quality for fit results
+     *
+     *  When evaluating toy fit results, a check for the covariance matrix 
+     *  quality is made berforehand. Only results with a minimum quality of 
+     *  min_acceptable_cov_matrix_quality will be accepted for evaluation. 
+     *  See RooFitResult::covQual() for reference.
+     *
+     *  @param min_acceptable_cov_matrix_quality new value for min_acceptable_cov_matrix_quality_
+     */
+    void set_min_acceptable_cov_matrix_quality(int min_acceptable_cov_matrix_quality) {min_acceptable_cov_matrix_quality_ = min_acceptable_cov_matrix_quality;}
+    
+    /**
      *  @brief Adder for file names and tree names to read fit result from
      *
      *  @param result_file_tree new file and tree name to add to read_results_filename_treename_
@@ -346,6 +370,11 @@ namespace toy {
      *  @brief File to read generation values of parameters from before pull calculation
      */
     std::string parameter_genvalue_read_file_;
+    
+    /**
+     *  @brief Minimum acceptable covariance matrix quality for fit results
+     */
+    int min_acceptable_cov_matrix_quality_;
     ///@}
   };
 } // namespace toy
