@@ -990,9 +990,6 @@ class EasyPdf {
    *
    *  P(x) = fraction * Decay(t,tau1) + (1-fraction) * Decay(t,tau2)
    *
-   *  with sigma2 = scale*sigma as automatically generated formula. If the name
-   *  of sigma2 is not supplied, it will be generated automatically.
-   *
    *  @param name name of the PDF
    *  @param t t variable
    *  @param tau1 lifetime 1
@@ -1003,6 +1000,29 @@ class EasyPdf {
    */
   RooAddPdf& DoubleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& fraction, const RooResolutionModel& model);
   
+  /**
+   *  @brief Add and access a triple Decay PDF
+   *
+   *  Request a triple Decay as RooAddPdf by a specified name. If the PDF
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The PDF is modelled as
+   *
+   *  P(x) = fraction1 * Decay(t,tau1) + (1-fraction1) * frac_rec2 * Decay(t,tau2) + (1 - fraction1 - ((1-fraction1) * frac_rec2)) * Decay(t,tau3)
+   *
+   *  @param name name of the PDF
+   *  @param t t variable
+   *  @param tau1 lifetime 1
+   *  @param tau2 lifetime 2
+   *  @param tau3 lifetime 3
+   *  @param fraction1 fraction of first Decay
+   *  @param frac_rec2 recursive fraction of second Decay
+   *  @param model the resolution model to use
+   *  @return the appropriate PDF
+   */
+  RooAddPdf& TripleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& tau3, RooAbsReal& fraction1, RooAbsReal& frac_rec2, const RooResolutionModel& model);
+
   /**
    *  @brief Add and access a RooBDecay PDF
    *
