@@ -653,6 +653,16 @@ RooAddPdf& doofit::builder::EasyPdf::DoubleDecay(const std::string& name, RooRea
              RooArgList(fraction));
 }
 
+RooAddPdf& doofit::builder::EasyPdf::TripleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& tau3, RooAbsReal& fraction1, RooAbsReal& frac_rec2, const RooResolutionModel& model) {
+  std::string fraction2_name = name+"_fraction2";
+
+  Formula(fraction2_name, "(1-@0)*@1", RooArgList(fraction1,frac_rec2));
+  return Add(name, RooArgList(Decay("p1_"+name, t, tau1, model),
+                              Decay("p2_"+name, t, tau2, model),
+                              Decay("p3_"+name, t, tau3, model)),
+             RooArgList(fraction1,Formula(fraction2_name)));
+}
+
 RooBDecay& doofit::builder::EasyPdf::BDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau, RooAbsReal& dgamma, RooAbsReal& coef_cosh, RooAbsReal& coef_sinh, RooAbsReal& coef_cos, RooAbsReal& coef_sin, RooAbsReal& dm, const RooResolutionModel& model) {
   return AddPdfToStore<RooBDecay>(new RooBDecay(name.c_str(), name.c_str(), t, tau, dgamma,
                                                 coef_cosh, coef_sinh, coef_cos, coef_sin, dm, model,
