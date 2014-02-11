@@ -408,6 +408,17 @@ class EasyPdf {
    *  @return whether the variable already exists
    */
   bool PdfExists(const std::string& name);
+  
+  /**
+   *  @brief Check if binning exists
+   *
+   *  Check if a binning exists by a specified name. If it does exist in this
+   *  EasyPdf pool of binnings, true is returned, otherwise false.
+   *
+   *  @param name name of the binning
+   *  @return whether the binning already exists
+   */
+  bool BinningExists(const std::string& name);
   ///@}
   
   /** @name Basic PDFs
