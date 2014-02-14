@@ -14,7 +14,6 @@
 #include "RooDataSet.h"
 #include "RooLinkedListIter.h"
 #include "RooRealVar.h"
-#include "RooLinkedListIter.h"
 #include "RooArgList.h"
 #include "RooFitResult.h"
 
@@ -62,7 +61,8 @@ SPlotFit2::SPlotFit2() :
   sweighted_data_map_(),
   sweighted_hist_map_(),
   use_minos_(true),
-  easyfitter_(NULL)
+  easyfitter_(NULL),
+  starting_values_("")
 {
   
 }
@@ -82,7 +82,8 @@ SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
   sweighted_data_map_(),
   sweighted_hist_map_(),
   use_minos_(true),
-  easyfitter_(NULL)
+  easyfitter_(NULL),
+  starting_values_("")
 {
 //  pdf_->Print("v");
 //  yields_.Print();
@@ -104,7 +105,8 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector
   sweighted_data_map_(),
   sweighted_hist_map_(),
   use_minos_(true),
-  easyfitter_(NULL)
+  easyfitter_(NULL),
+  starting_values_("")
 {
   RooArgList pdfs_list;
   
@@ -212,6 +214,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
     }
     
     //=========================================================================
+    pdf_->getParameters(*input_data_)->readFromFile(starting_values_);
     // fit discriminating pdf
     RooFitResult* fit_result = pdf_->fitTo(*input_data_, fitting_args);
     fit_result->Print("v");
@@ -293,7 +296,7 @@ RooDataSet* SPlotFit2::GetSwDataSet(const std::string& comp_name){
 void SPlotFit2::WriteParametersFile(std::string filename) {
   parameters_->writeToFile(filename.c_str());
 }
-  
+
 } //namespace splot
 } //namespace fitter
 } //namespace doofit

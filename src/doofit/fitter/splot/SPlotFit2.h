@@ -134,6 +134,8 @@ class SPlotFit2{
   void set_disc_pdfs(const std::map<std::string,RooArgSet>& disc_pdfs){ disc_pdfs_ = disc_pdfs; }
   void set_cont_pdfs(const std::map<std::string,RooArgSet>& cont_pdfs){ cont_pdfs_ = cont_pdfs; }
   
+  void set_startingvalues(TString startingvalues){ starting_values_ = startingvalues; }
+  
   RooAbsPdf* get_pdf_disc_full(){return pdf_;}
   RooAbsPdf* get_pdf_cont(const std::string& comp_name){ return cont_pdfs_prod_[comp_name];}
   const RooArgList& cont_vars() const {return cont_vars_;}
@@ -168,7 +170,7 @@ class SPlotFit2{
   RooArgList yields_;
   
   /**
-   *  @brief Parameter set after fit
+   *  @brief Parameter set
    */
   RooArgSet* parameters_;
   
@@ -189,6 +191,8 @@ class SPlotFit2{
   std::map<std::string,RooDataHist*>  sweighted_hist_map_; //< maps component name to sweighted datahist
   
   bool use_minos_;
+  
+  TString starting_values_;
   
   doofit::fitter::easyfit::EasyFit* easyfitter_;
 };
