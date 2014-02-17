@@ -33,6 +33,8 @@
 #include "RooUnblindUniform.h"
 #include "RooLognormal.h" 
 #include "RooConstVar.h"
+#include "RooAbsBinning.h"
+#include "RooBinning.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -92,6 +94,10 @@ void doofit::builder::EasyPdf::PurgeAllObjects() {
          it != hists_.end(); ++it) {
       delete *it;
     }
+    for (std::map<std::string,RooAbsBinning*>::iterator it = binnings_.begin();
+         it != binnings_.end(); ++it) {
+      delete it->second;
+    }
   }
   
   pdfs_.clear();
@@ -103,6 +109,7 @@ void doofit::builder::EasyPdf::PurgeAllObjects() {
   formulas_.clear();
   hists_.clear();
   variable_sets_.clear();
+  binnings_.clear();
 }
 
 RooAbsReal& doofit::builder::EasyPdf::Real(const std::string &name) {
@@ -135,6 +142,14 @@ bool doofit::builder::EasyPdf::RealExists(const std::string &name) {
 
 bool doofit::builder::EasyPdf::PdfExists(const std::string &name) {
   if (pdfs_.count(name) == 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool doofit::builder::EasyPdf::BinningExists(const std::string &name) {
+  if (binnings_.count(name) == 1) {
     return true;
   } else {
     return false;
@@ -714,4 +729,29 @@ RooResolutionModel& doofit::builder::EasyPdf::Model(const std::string &name) {
     serr << "EasyPdf::Model(const std::string&): Requested model " << name << " not existing." << endmsg;
     throw ObjectNotExistingException();
   }
+}
+
+RooAbsBinning& doofit::builder::EasyPdf::Binning(const std::string &name) {
+  if (binnings_.count(name) == 1) {
+    return *binnings_[name];
+  } else {
+    RooBinning* temp_binning = new RooBinning(-RooNumber::infinity(), RooNumber::infinity(), name.c_str());
+    if (ws_ == NULL) {
+      binnings_[name] = temp_binning;
+    } else {
+      swarn << "EasyPdf::Binning(const std::string&): Cannot import binning to RooWorkspace, will store internally." << endmsg;
+      binnings_[name] = temp_binning;
+    }
+    return *temp_binning;
+  }
+}
+
+RooBinning& doofit::builder::EasyPdf::Binning(const std::string& name, std::vector<double> boundaries) {
+  RooBinning* binning = new RooBinning(boundaries.front(), boundaries.back(), name.c_str());
+  
+  for (auto b : boundaries) {
+    binning->addBoundary(b);
+  }
+  
+  return AddBinningToStore<RooBinning>(binning);
 }

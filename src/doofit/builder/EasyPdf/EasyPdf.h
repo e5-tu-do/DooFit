@@ -14,6 +14,9 @@
 #include "RooArgSet.h"
 #include "RooArgList.h"
 
+// from DooCore
+#include "doocore/io/MsgStream.h"
+
 // forward declarations
 class RooRealVar;
 class RooAbsCategoryLValue;
@@ -44,6 +47,8 @@ class RooLognormal;
 class RooGaussEfficiencyModel;
 class RooAbsGaussModelEfficiency;
 class RooEffResAddModel;
+class RooAbsBinning;
+class RooBinning;
 
 /** @class doofit::builder::EasyPdf
  *  @brief Easy PDF and variable building without the clutter
@@ -403,6 +408,17 @@ class EasyPdf {
    *  @return whether the variable already exists
    */
   bool PdfExists(const std::string& name);
+  
+  /**
+   *  @brief Check if binning exists
+   *
+   *  Check if a binning exists by a specified name. If it does exist in this
+   *  EasyPdf pool of binnings, true is returned, otherwise false.
+   *
+   *  @param name name of the binning
+   *  @return whether the binning already exists
+   */
+  bool BinningExists(const std::string& name);
   ///@}
   
   /** @name Basic PDFs
@@ -1195,6 +1211,19 @@ class EasyPdf {
   template <class RealType>
   RealType& AddRealToStore(RealType* real);
   
+  /**
+   *  @brief Add and access a given RooAbsBinning
+   *
+   *  Templated function to add a given binning pointer to the internal store
+   *  and return it afterwards. If a RooAbsBinning with same name already 
+   *  exists, an exception ObjectExistsException is thrown.
+   *
+   *  @param binning the RooAbsBinning to add
+   *  @return the added binning
+   */
+  template <class BinningType>
+  BinningType& AddBinningToStore(BinningType* binning);
+  
   /** @name PDF access
    *  Access to already defined PDFs
    */
@@ -1222,6 +1251,40 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooResolutionModel& Model(const std::string& name);
+  ///@}
+  
+  /** @name Binning creation and access
+   *  Create different RooAbsBinnings and access them
+   */
+  ///@{
+  /**
+   *  @brief Add or access RooAbsBinning
+   *
+   *  Request a RooAbsBinning by a specified name. If the binning does not yet
+   *  exist in this EasyPdf pool of binnings, a new RooBinning with min=-inf and
+   *  max=+inf is created and returned. Otherwise the previously defined 
+   *  RooAbsBinning will be returned from the pool.
+   *
+   *  @param name name of the binning
+   *  @return the binning as RooAbsBinning (cast may be necessary)
+   */
+  RooAbsBinning& Binning(const std::string& name);
+  
+  /**
+   *  @brief Add and access RooBinning based on vector of bin boundaries
+   *
+   *  Add a new RooBinning with given name and boundaries as specified in a
+   *  vector. The binning minimum and maximum will be set to the first and last
+   *  entry of the vector. After creation, the binning is returned.
+   *
+   *  If a RooAbsBinning with same name already exists, an exception
+   *  ObjectExistsException is thrown.
+   *
+   *  @param name name of the binning
+   *  @param boundaries vector with boundaries
+   *  @return the binning as RooBinning
+   */
+  RooBinning& Binning(const std::string& name, std::vector<double> boundaries);
   ///@}
   
  protected:
@@ -1278,6 +1341,11 @@ class EasyPdf {
    *  @brief Container for all cloned RooDataHists
    */
   std::vector<RooDataHist*> hists_;
+  
+  /**
+   *  @brief Container for all generated RooAbsBinning
+   */
+  std::map<std::string,RooAbsBinning*> binnings_;
   
   /**
    *  @brief RooWorkspace for all objects
@@ -1338,6 +1406,23 @@ RealType& EasyPdf::AddRealToStore(RealType* real) {
   }
 }
 
+template <class BinningType>
+BinningType& EasyPdf::AddBinningToStore(BinningType* binning) {
+  std::string name = binning->GetName();
+  if (binnings_.count(name) == 1) {
+    throw ObjectExistsException();
+  } else {
+    if (ws_ == NULL) {
+      binnings_[name] = binning;
+    } else {
+      doocore::io::swarn << "EasyPdf::AddBinningToStore(...): Cannot import binning to RooWorkspace, will store internally." << doocore::io::endmsg;
+      binnings_[name] = binning;
+    }
+    return *binning;
+  }
+}
+
+  
 } // namespace builder
 } // namespace doofit
 
