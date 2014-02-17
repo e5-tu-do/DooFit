@@ -14,6 +14,9 @@
 #include "RooArgSet.h"
 #include "RooArgList.h"
 
+// from DooCore
+#include "doocore/io/MsgStream.h"
+
 // forward declarations
 class RooRealVar;
 class RooAbsCategoryLValue;
@@ -37,6 +40,15 @@ class RooBDecay;
 class RooSimultaneous;
 class RooSuperCategory;
 class RooKeysPdf;
+class RooHistPdf;
+class RooAbsHiddenReal;
+class RooUnblindUniform;
+class RooLognormal;
+class RooGaussEfficiencyModel;
+class RooAbsGaussModelEfficiency;
+class RooEffResAddModel;
+class RooAbsBinning;
+class RooBinning;
 
 /** @class doofit::builder::EasyPdf
  *  @brief Easy PDF and variable building without the clutter
@@ -115,18 +127,28 @@ class EasyPdf {
    */
   ~EasyPdf();
   
+  /**
+   *  @brief Clean up all internally stored objects
+   *
+   *  Upon destruction or sometimes on users' demand it is necessary to delete
+   *  all internally stored objects. This function takes care of that. In
+   *  workspace mode, the user has to take care of emptying the workspace.
+   */
+  void PurgeAllObjects();
+  
   /** @name Variable access and creation
    *  Functions to access and/or create variables (real, formula, categories)
    */
   ///@{
   /**
-   *  @brief Add or access real based variable (RooRealVar or RooFormulaVar)
+   *  @brief Add or access real based variable (RooRealVar, RooFormulaVar, RooAbsHiddenReal (blinded params))
    *
    *  Request a RooAbsReal by a specified name. If the variable/formula does not 
    *  yet exist in this EasyPdf pool of variables or formulas, it is created as 
    *  a RooRealVar and returned.
    *  Otherwise it will be returned from the pool. Variables take preference 
-   *  over formulas in case of duplicate entries.
+   *  over formulas taking preference over hidden reals (blinded parameters) 
+   *  in case of duplicate entries.
    *
    *  @param name name of the RooAbsReal
    *  @return the appropriate RooAbsReal
@@ -173,6 +195,22 @@ class EasyPdf {
                          const RooArgList& dependents);
   
   /**
+   *  @brief Add and access a RooUnblindUniform
+   *
+   *  Request a RooUnblindUniform by a specified name. If the parameter does not
+   *  yet exist in this EasyPdf pool of hidden reals, it is created and 
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the RooUnblindUniform
+   *  @param blind_string the blinding string to use
+   *  @param scale the blinding scale to use
+   *  @param blind_value the parameter to blind
+   *  @return the appropriate RooUnblindUniform
+   */
+  RooUnblindUniform& UnblindUniform(const std::string& name, const std::string& blind_string,
+                                    double scale, RooAbsReal& blind_value);
+  
+  /**
    *  @brief Add and access RooSuperCategory
    *
    *  Request a RooSuperCategory by a specified name. If the category does not 
@@ -199,6 +237,18 @@ class EasyPdf {
   RooFormulaVar& Formula(const std::string& name);
   
   /**
+   *  @brief Access RooAbsHiddenReal (i.e. blinded parameters)
+   *
+   *  Request a RooAbsHiddenReal by a specified name. If the hidden real does 
+   *  exist in this EasyPdf pool of hidden reals, it is returned.
+   *  Otherwise an exception ObjectNotExistingException is thrown.
+   *
+   *  @param name name of the RooAbsHiddenReal
+   *  @return the appropriate RooAbsHiddenReal
+   */
+  RooAbsHiddenReal& HiddenReal(const std::string& name);
+  
+  /**
    *  @brief Add or access RooSuperCategory
    *
    *  Request a RooSuperCategory by a specified name. If the category does exist
@@ -209,6 +259,21 @@ class EasyPdf {
    *  @return the appropriate RooSuperCategory
    */
   RooSuperCategory& SuperCat(const std::string& name);
+  
+  /**
+   *  @brief Add or access a fraction based on recursive fractions
+   *
+   *  This helper function defines a regular fraction as RooFormulaVar based on
+   *  a supplied list of recursive fractions (as RooArgList). In this list the 
+   *  fractions are ordered as fraction1, recursive_fraction2, 
+   *  recursive_fraction3 and so on. The number of supplied fractions is handled
+   *  automatically.
+   *
+   *  @param name of the fraction to define
+   *  @param recursive_fractions list of recursive fractions
+   *  @return the fraction as formula to use in added PDFs.
+   */
+  RooFormulaVar& RecursiveFraction(const std::string& name, const RooArgList& recursive_fractions);
   ///@}
 
   /** @name Item title and unit manipulation
@@ -317,12 +382,12 @@ class EasyPdf {
   RooArgSet AllVars();
   ///@}
   
-  /** @name Variable existency check
+  /** @name Object existency check
    *  Functions to test existence of variables
    */
   ///@{
   /**
-   *  @brief Check if real based variable exists (RooRealVar or RooFormulaVar)
+   *  @brief Check if real based variable exists (RooRealVar or RooFormulaVar, RooAbsHiddenReal (blinded params))
    *
    *  Check if a RooAbsReal exists by a specified name. If the variable/formula 
    *  does exist in this EasyPdf pool of variables or formulas, true is returned,
@@ -332,6 +397,28 @@ class EasyPdf {
    *  @return whether the variable already exists
    */
   bool RealExists(const std::string& name);
+  
+  /**
+   *  @brief Check if PDF exists
+   *
+   *  Check if a PDF exists by a specified name. If it does exist in this 
+   *  EasyPdf pool of variables or formulas, true is returned, otherwise false.
+   *
+   *  @param name name of the RooAbsPdf
+   *  @return whether the variable already exists
+   */
+  bool PdfExists(const std::string& name);
+  
+  /**
+   *  @brief Check if binning exists
+   *
+   *  Check if a binning exists by a specified name. If it does exist in this
+   *  EasyPdf pool of binnings, true is returned, otherwise false.
+   *
+   *  @param name name of the binning
+   *  @return whether the binning already exists
+   */
+  bool BinningExists(const std::string& name);
   ///@}
   
   /** @name Basic PDFs
@@ -400,6 +487,39 @@ class EasyPdf {
   RooDecay& Decay(const std::string& name, RooRealVar& t, RooAbsReal& tau, const RooResolutionModel& model);
   
   /**
+   *  @brief Add and access a lognormal PDF
+   *
+   *  Request a RooLognormal by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param m1 median of the first distribution
+   *  @param k1 first shape parameter
+   *  @param m2 median of the second distribution
+   *  @param k2 second shape parameter
+   *  @return the appropriate PDF
+   */
+  RooLognormal& Lognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m, RooAbsReal& k);
+  
+  /**
+   *  @brief Add and access a double lognormal PDF
+   *
+   *  Request a double RooLognormal by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param m median of the distribution
+   *  @param k shape parameter
+   *  @param fraction fraction of first Gaussian
+   *  @return the appropriate PDF
+   */
+  RooAddPdf& DoubleLognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m1, RooAbsReal& k1, RooAbsReal& m2, RooAbsReal& k2, RooAbsReal& fraction);
+
+  /**
    *  @brief Add and access a simultaneous PDF
    *
    *  Request a RooSimultaneous by a specified name. If the PDF does not yet
@@ -443,6 +563,27 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooProdPdf& Product(const std::string& name, const RooArgList& pdfs);
+  
+  /**
+   *  @brief Add and access an product PDF with RooCmdArg support
+   *
+   *  Request a RooProdPdf by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param pdfs RooArgList of factor PDFs
+   *  @param arg1 RooCmdArg
+   *  @param arg2 RooCmdArg
+   *  @param arg3 RooCmdArg
+   *  @param arg4 RooCmdArg
+   *  @param arg5 RooCmdArg
+   *  @param arg6 RooCmdArg
+   *  @param arg7 RooCmdArg
+   *  @param arg8 RooCmdArg
+   *  @return the appropriate PDF
+   */
+  RooProdPdf& Product(const std::string& name, const RooArgList& pdfs, const RooCmdArg& arg1, const RooCmdArg& arg2 = RooCmdArg(), const RooCmdArg& arg3 = RooCmdArg(), const RooCmdArg& arg4 = RooCmdArg(), const RooCmdArg& arg5 = RooCmdArg(), const RooCmdArg& arg6 = RooCmdArg(), const RooCmdArg& arg7 = RooCmdArg(), const RooCmdArg& arg8 = RooCmdArg());
   
   /**
    *  @brief Add and access an extended PDF
@@ -782,6 +923,112 @@ class EasyPdf {
   RooAddModel& AddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs);
   ///@}
   
+  /** @name Gaussian efficiency resolution PDFs
+   *  PDF definitions of models based on RooGaussEfficiencyModel
+   */
+  ///@{
+  /**
+   *  @brief Add and access a RooGaussEfficiencyModel
+   *
+   *  Request a RooGaussEfficiencyModel by a specified name. If the PDF does not
+   *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param eff the efficiency to use
+   *  @param mean mean or bias of resolution
+   *  @param sigma width of resolution
+   *  @return the appropriate PDF
+   */
+  RooGaussEfficiencyModel& GaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma);
+  
+  /**
+   *  @brief Add and access a double RooGaussEfficiencyModel
+   *
+   *  Request a double RooGaussEfficiencyModel by a specified name. If the PDF 
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and 
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param eff the efficiency to use
+   *  @param mean mean or bias of resolution
+   *  @param sigma1 width of first Gaussian
+   *  @param sigma2 width of second Gaussian
+   *  @param fraction fraction of first Gaussian
+   *  @return the appropriate PDF
+   */
+  RooEffResAddModel& DoubleGaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& fraction);
+  
+  /**
+   *  @brief Add and access a per-event RooGaussEfficiencyModel
+   *
+   *  Request a RooGaussEfficiencyModel by a specified name. If the PDF does not
+   *  yet exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param eff the efficiency to use
+   *  @param mean mean or bias of resolution
+   *  @param error the per-event resolution estimate
+   *  @param scale_error scale factor for error
+   *  @return the appropriate PDF
+   */
+  RooGaussEfficiencyModel& GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal &scale_error);
+  
+  /**
+   *  @brief Add and access a double per-event RooGaussEfficiencyModel
+   *
+   *  Request a double RooGaussEfficiencyModel by a specified name. If the PDF 
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and 
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param eff the efficiency to use
+   *  @param mean mean or bias of resolution
+   *  @param error the per-event resolution estimate
+   *  @param scale_error1 scale first factor for error
+   *  @param scale_error2 scale second factor for error
+   *  @param fraction fraction of first Gaussian
+   *  @return the appropriate PDF
+   */
+  RooEffResAddModel& DoubleGaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& fraction);
+
+  /**
+   *  @brief Add and access an added efficiency resolution PDF with supplied coefficients
+   *
+   *  Request a RooEffResAddModel by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param pdfs RooArgList of PDFs to add
+   *  @param coefs RooArgList of coefficients to use
+   *  @return the appropriate PDF
+   */
+  RooEffResAddModel& EffResAddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs);
+  ///@}
+  
+
+  /** @name Acceptance functions 
+   *  RooFormulaVar definitions of Acceptance functions
+   */
+  ///@{
+  /**
+   *  @brief Add and access an Atan acceptance with 2 slope parameters
+   */
+  RooFormulaVar& AtanAcceptance(const std::string& name, RooRealVar& x, RooAbsReal& slope_a, RooAbsReal& slope_b);
+
+  /**
+   *  @brief Add and access an Atan acceptance with 2 slope parameters and beta effect
+   */
+  RooFormulaVar& AtanAcceptanceIncludingBeta(const std::string& name, RooRealVar& x, RooAbsReal& slope_a, RooAbsReal& slope_b, RooAbsReal& beta);
+  ///@}
+
+
   /** @name Higher level PDFs
    *  PDF definitions of non-trivial PDFs
    */
@@ -851,9 +1098,6 @@ class EasyPdf {
    *
    *  P(x) = fraction * Decay(t,tau1) + (1-fraction) * Decay(t,tau2)
    *
-   *  with sigma2 = scale*sigma as automatically generated formula. If the name
-   *  of sigma2 is not supplied, it will be generated automatically.
-   *
    *  @param name name of the PDF
    *  @param t t variable
    *  @param tau1 lifetime 1
@@ -864,6 +1108,29 @@ class EasyPdf {
    */
   RooAddPdf& DoubleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& fraction, const RooResolutionModel& model);
   
+  /**
+   *  @brief Add and access a triple Decay PDF
+   *
+   *  Request a triple Decay as RooAddPdf by a specified name. If the PDF
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The PDF is modelled as
+   *
+   *  P(x) = fraction1 * Decay(t,tau1) + (1-fraction1) * frac_rec2 * Decay(t,tau2) + (1 - fraction1 - ((1-fraction1) * frac_rec2)) * Decay(t,tau3)
+   *
+   *  @param name name of the PDF
+   *  @param t t variable
+   *  @param tau1 lifetime 1
+   *  @param tau2 lifetime 2
+   *  @param tau3 lifetime 3
+   *  @param fraction1 fraction of first Decay
+   *  @param frac_rec2 recursive fraction of second Decay
+   *  @param model the resolution model to use
+   *  @return the appropriate PDF
+   */
+  RooAddPdf& TripleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& tau3, RooAbsReal& fraction1, RooAbsReal& frac_rec2, const RooResolutionModel& model);
+
   /**
    *  @brief Add and access a RooBDecay PDF
    *
@@ -899,6 +1166,21 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooKeysPdf& KeysPdf(const std::string& name, const std::string& file_name, const std::string& ws_name, const std::string& pdf_name_on_ws);
+  
+  /**
+   *  @brief Add and access a RooHistPdf from a RooDataHist in a file
+   *
+   *  Request a RooHistPdf by a specified name. If the PDF does not yet exist in
+   *  this EasyPdf pool of PDFs, it is created and returned. Otherwise an
+   *  exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param vars set of variables to use
+   *  @param file_name name of TFile containing the RooDataHist to use for creation
+   *  @param hist_name name of RooDataHist in TFile containing the histogrammed data
+   *  @return the appropriate PDF
+   */
+  RooHistPdf& HistPdf(const std::string& name, const RooArgSet& vars, const std::string& file_name, const std::string& hist_name);
   ///@}
   
   /**
@@ -915,6 +1197,33 @@ class EasyPdf {
   template <class PdfType>
   PdfType& AddPdfToStore(PdfType* pdf);
 
+  /**
+   *  @brief Add and access a given RooAbsReal
+   *
+   *  Templated function to add a given RooAbsReal pointer to the internal store
+   *  (and workspace if necessary) and return this RooAbsReal afterwards.
+   *  If a RooAbsReal with same name already exists, an exception 
+   *  ObjectExistsException is thrown.
+   *
+   *  @param real the RooAbsReal to add
+   *  @return the added real
+   */
+  template <class RealType>
+  RealType& AddRealToStore(RealType* real);
+  
+  /**
+   *  @brief Add and access a given RooAbsBinning
+   *
+   *  Templated function to add a given binning pointer to the internal store
+   *  and return it afterwards. If a RooAbsBinning with same name already 
+   *  exists, an exception ObjectExistsException is thrown.
+   *
+   *  @param binning the RooAbsBinning to add
+   *  @return the added binning
+   */
+  template <class BinningType>
+  BinningType& AddBinningToStore(BinningType* binning);
+  
   /** @name PDF access
    *  Access to already defined PDFs
    */
@@ -942,6 +1251,40 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooResolutionModel& Model(const std::string& name);
+  ///@}
+  
+  /** @name Binning creation and access
+   *  Create different RooAbsBinnings and access them
+   */
+  ///@{
+  /**
+   *  @brief Add or access RooAbsBinning
+   *
+   *  Request a RooAbsBinning by a specified name. If the binning does not yet
+   *  exist in this EasyPdf pool of binnings, a new RooBinning with min=-inf and
+   *  max=+inf is created and returned. Otherwise the previously defined 
+   *  RooAbsBinning will be returned from the pool.
+   *
+   *  @param name name of the binning
+   *  @return the binning as RooAbsBinning (cast may be necessary)
+   */
+  RooAbsBinning& Binning(const std::string& name);
+  
+  /**
+   *  @brief Add and access RooBinning based on vector of bin boundaries
+   *
+   *  Add a new RooBinning with given name and boundaries as specified in a
+   *  vector. The binning minimum and maximum will be set to the first and last
+   *  entry of the vector. After creation, the binning is returned.
+   *
+   *  If a RooAbsBinning with same name already exists, an exception
+   *  ObjectExistsException is thrown.
+   *
+   *  @param name name of the binning
+   *  @param boundaries vector with boundaries
+   *  @return the binning as RooBinning
+   */
+  RooBinning& Binning(const std::string& name, std::vector<double> boundaries);
   ///@}
   
  protected:
@@ -980,9 +1323,29 @@ class EasyPdf {
   std::map<std::string,RooFormulaVar*> formulas_;
   
   /**
+   *  @brief Container for all generated RooAbsHiddenReal
+   */
+  std::map<std::string,RooAbsHiddenReal*> hidden_reals_;
+  
+  /**
+   *  @brief Container for all manually added RooAbsReal
+   */
+  std::map<std::string,RooAbsReal*> external_reals_;
+  
+  /**
    *  @brief Container for all generated RooAbsPdfs
    */
   std::map<std::string,RooAbsPdf*> pdfs_;
+  
+  /**
+   *  @brief Container for all cloned RooDataHists
+   */
+  std::vector<RooDataHist*> hists_;
+  
+  /**
+   *  @brief Container for all generated RooAbsBinning
+   */
+  std::map<std::string,RooAbsBinning*> binnings_;
   
   /**
    *  @brief RooWorkspace for all objects
@@ -999,14 +1362,14 @@ class EasyPdf {
  *  \brief Exception for objects with same name already existing
  */
 struct ObjectExistsException: public virtual boost::exception, public virtual std::exception { 
-  virtual const char* what() const throw() { return "PDF with same name already existing"; }
+  virtual const char* what() const throw() { return "Object with same name already existing"; }
 };
 
 /** \struct ObjectNotExistingException
  *  \brief Exception for PDF with given name not existing
  */
 struct ObjectNotExistingException: public virtual boost::exception, public virtual std::exception { 
-  virtual const char* what() const throw() { return "PDF with supplied name not existing"; }
+  virtual const char* what() const throw() { return "Object with supplied name not existing"; }
 };
 
 template <class PdfType>
@@ -1025,7 +1388,41 @@ PdfType& EasyPdf::AddPdfToStore(PdfType* pdf) {
     return *pdf;
   }
 }
+  
+template <class RealType>
+RealType& EasyPdf::AddRealToStore(RealType* real) {
+  std::string name = real->GetName();
+  if (external_reals_.count(name) == 1) {
+    throw ObjectExistsException();
+  } else {
+    if (ws_ == NULL) {
+      external_reals_[name] = real;
+    } else {
+      ws_->import(*real, RooFit::Silence());
+      delete real;
+      external_reals_[name] = real = dynamic_cast<RealType*>(ws_->function(name.c_str()));
+    }
+    return *real;
+  }
+}
 
+template <class BinningType>
+BinningType& EasyPdf::AddBinningToStore(BinningType* binning) {
+  std::string name = binning->GetName();
+  if (binnings_.count(name) == 1) {
+    throw ObjectExistsException();
+  } else {
+    if (ws_ == NULL) {
+      binnings_[name] = binning;
+    } else {
+      doocore::io::swarn << "EasyPdf::AddBinningToStore(...): Cannot import binning to RooWorkspace, will store internally." << doocore::io::endmsg;
+      binnings_[name] = binning;
+    }
+    return *binning;
+  }
+}
+
+  
 } // namespace builder
 } // namespace doofit
 

@@ -21,8 +21,11 @@
 #include "RooAbsArg.h"
 #include "RooWorkspace.h"
 
-// from project
+// from DooFit
 #include "doocore/io/MsgStream.h"
+
+// from project
+#include "doofit/builder/EasyPdf/EasyPdf.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -36,6 +39,7 @@ namespace toy {
   expected_yield_(0),
   argset_generation_observables_(NULL),
   workspace_(NULL),
+  easypdf_(NULL),
   generation_pdf_workspace_(""),
   argset_generation_observables_workspace_(""),
   random_seed_(0),
@@ -51,6 +55,7 @@ namespace toy {
   expected_yield_(0),
   argset_generation_observables_(NULL),
   workspace_(NULL),
+  easypdf_(NULL),
   generation_pdf_workspace_(""),
   argset_generation_observables_workspace_(""),
   random_seed_(0),
@@ -66,6 +71,9 @@ namespace toy {
       }
       ws_file_->Close();
       delete ws_file_;
+    }
+    if (argset_generation_observables_ != NULL) {
+      delete argset_generation_observables_;
     }
   }
   
@@ -103,6 +111,13 @@ namespace toy {
   RooAbsPdf* ToyFactoryStdConfig::generation_pdf() const {
     if (generation_pdf_) { 
       return generation_pdf_;
+    } else if (generation_pdf_workspace_.length() > 0 && easypdf()) {
+      try {
+        return &easypdf()->Pdf(generation_pdf_workspace_);
+      } catch (doofit::builder::ObjectNotExistingException e) {
+        serr << "Requested PDF " << generation_pdf_workspace_ << " does not exist on set EasyPdf builder. " << endmsg;
+        throw PdfNotSetException();
+      }
     } else if (generation_pdf_workspace_.length() > 0 && workspace() && workspace()->pdf(generation_pdf_workspace_.c_str())) {
       return workspace()->pdf(generation_pdf_workspace_.c_str());
     } else {
@@ -113,6 +128,14 @@ namespace toy {
   const RooArgSet* ToyFactoryStdConfig::argset_generation_observables() const {
     if (argset_generation_observables_) { 
       return argset_generation_observables_;
+    } else if (argset_generation_observables_workspace_.length() > 0 && easypdf()) {
+      try {
+        argset_generation_observables_ = new RooArgSet(easypdf()->Set(argset_generation_observables_workspace_));
+        return argset_generation_observables_;
+      } catch (doofit::builder::ObjectNotExistingException e) {
+        serr << "Requested argument set " << argset_generation_observables_workspace_ << " does not exist on set EasyPdf builder. " << endmsg;
+        throw ArgSetNotSetException();
+      }
     } else if (argset_generation_observables_workspace_.length() > 0 && workspace() && workspace()->set(argset_generation_observables_workspace_.c_str())) {
       return workspace()->set(argset_generation_observables_workspace_.c_str());
     } else {
@@ -217,18 +240,29 @@ namespace toy {
       }
       scfg << endmsg;
       delete arg_it;
+    } else {
+      scfg << "(not set)" << endmsg;
+    }
+    
+    scfg << "EasyPdf:                   ";
+    if (easypdf()) {
+      scfg << "(is set)" << endmsg;
+    } else {
+      scfg << "(is not set)" << endmsg;
     }
     
     scfg << "Workspace:                 ";
     if (workspace()) {
       scfg << "(is set)" << endmsg;
-      
-      scfg << " PDF name (workspace):     " << generation_pdf_workspace_ << endmsg;
-      scfg << " Argset name observables (workspace):       " << argset_generation_observables_workspace_ << endmsg;
-      scfg << " Argset name constraining PDFs (workspace): " << argset_constraining_pdfs_workspace_ << endmsg;
     } else {
       scfg << "(is not set)" << endmsg;
     }
+    
+    if (easypdf() || workspace()) {
+      scfg << " PDF name (workspace):     " << generation_pdf_workspace_ << endmsg;
+      scfg << " Argset name observables (workspace):       " << argset_generation_observables_workspace_ << endmsg;
+      scfg << " Argset name constraining PDFs (workspace): " << argset_constraining_pdfs_workspace_ << endmsg;
+    } 
 
     if (workspace_filename_name_.first().length() > 0) {
       scfg << "Workspace from file:       " << workspace_filename_name_ << endmsg;

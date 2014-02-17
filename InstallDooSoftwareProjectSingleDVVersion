@@ -5,6 +5,7 @@ module=$1
 dv_version=$2
 base_dir=$3
 expected_args=3
+# set number of CPUs (not used currently)
 num_cpu=$((`cat /proc/cpuinfo | grep processor | wc -l` / 2))
 
 if [ $# -ne $expected_args ]
@@ -26,7 +27,8 @@ cd /tmp/$uuid
 echo "Starting build"
 echo
 
-cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir && make VERBOSE="" -j $num_cpu
+#cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir && make VERBOSE="" -j $num_cpu
+cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir -DCMAKE_BUILD_TYPE=Release && make VERBOSE=""
 rc=$?
 if [[ $rc != 0 ]] ; then
   make VERBOSE=""
@@ -45,9 +47,9 @@ fi
 echo 
 echo "Deleting old version and installing new."
 echo
-sudo rm -rf $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
-sudo mkdir -p $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
-sudo make install
+rm -rf $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
+mkdir -p $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
+make install
 cd /
 rm -rf /tmp/$uuid
 

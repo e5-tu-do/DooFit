@@ -28,6 +28,13 @@
 #include "RooCBShape.h"
 #include "RooSuperCategory.h"
 #include "RooKeysPdf.h"
+#include "RooHistPdf.h"
+#include "RooDataHist.h"
+#include "RooUnblindUniform.h"
+#include "RooLognormal.h" 
+#include "RooConstVar.h"
+#include "RooAbsBinning.h"
+#include "RooBinning.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -35,6 +42,9 @@
 
 // from project
 #include "doofit/config/CommaSeparatedList.h"
+#include "P2VV/RooAbsGaussModelEfficiency.h"
+#include "P2VV/RooGaussEfficiencyModel.h"
+#include "P2VV/RooEffResAddModel.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -45,14 +55,31 @@ doofit::builder::EasyPdf::EasyPdf(RooWorkspace* ws)
 {}
 
 doofit::builder::EasyPdf::~EasyPdf() {
+  PurgeAllObjects();
+}
+
+void doofit::builder::EasyPdf::PurgeAllObjects() {
   if (ws_ == NULL) {
     // if no workspace is to be used, delete all elements
     for (std::map<std::string,RooAbsPdf*>::iterator it = pdfs_.begin();
          it != pdfs_.end(); ++it) {
+      //      sdebug << "deleting " << it->second->GetName() << endmsg;
+      delete it->second;
+    }
+    for (std::map<std::string,RooAbsReal*>::iterator it = external_reals_.begin();
+         it != external_reals_.end(); ++it) {
+      delete it->second;
+    }
+    for (std::map<std::string,RooAbsHiddenReal*>::iterator it = hidden_reals_.begin();
+         it != hidden_reals_.end(); ++it) {
       delete it->second;
     }
     for (std::map<std::string,RooRealVar*>::iterator it = vars_.begin();
          it != vars_.end(); ++it) {
+      delete it->second;
+    }
+    for (std::map<std::string,RooSuperCategory*>::iterator it = supercats_.begin();
+         it != supercats_.end(); ++it) {
       delete it->second;
     }
     for (std::map<std::string,RooCategory*>::iterator it = cats_.begin();
@@ -63,7 +90,26 @@ doofit::builder::EasyPdf::~EasyPdf() {
          it != formulas_.end(); ++it) {
       delete it->second;
     }
+    for (std::vector<RooDataHist*>::iterator it = hists_.begin();
+         it != hists_.end(); ++it) {
+      delete *it;
+    }
+    for (std::map<std::string,RooAbsBinning*>::iterator it = binnings_.begin();
+         it != binnings_.end(); ++it) {
+      delete it->second;
+    }
   }
+  
+  pdfs_.clear();
+  external_reals_.clear();
+  hidden_reals_.clear();
+  vars_.clear();
+  supercats_.clear();
+  cats_.clear();
+  formulas_.clear();
+  hists_.clear();
+  variable_sets_.clear();
+  binnings_.clear();
 }
 
 RooAbsReal& doofit::builder::EasyPdf::Real(const std::string &name) {
@@ -71,6 +117,10 @@ RooAbsReal& doofit::builder::EasyPdf::Real(const std::string &name) {
     return *vars_[name];
   } else if (formulas_.count(name) == 1) {
     return *formulas_[name];
+  } else if (hidden_reals_.count(name) == 1) {
+    return *hidden_reals_[name];
+  } else if (external_reals_.count(name) == 1) {
+    return *external_reals_[name];
   } else {
     return Var(name);
   }
@@ -80,6 +130,26 @@ bool doofit::builder::EasyPdf::RealExists(const std::string &name) {
   if (vars_.count(name) == 1) {
     return true;
   } else if (formulas_.count(name) == 1) {
+    return true;
+  } else if (hidden_reals_.count(name) == 1) {
+    return true;
+  } else if (external_reals_.count(name) == 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool doofit::builder::EasyPdf::PdfExists(const std::string &name) {
+  if (pdfs_.count(name) == 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool doofit::builder::EasyPdf::BinningExists(const std::string &name) {
+  if (binnings_.count(name) == 1) {
     return true;
   } else {
     return false;
@@ -152,9 +222,38 @@ RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name, const 
   }
 }
 
+RooUnblindUniform& doofit::builder::EasyPdf::UnblindUniform(const std::string& name,
+                                                            const std::string& blind_string,
+                                                            double scale,
+                                                            RooAbsReal& blind_value) {
+  if (hidden_reals_.count(name) == 1) {
+    throw ObjectExistsException();
+  } else {
+    RooUnblindUniform* temp_unblind = new RooUnblindUniform(name.c_str(), name.c_str(),
+                                                            blind_string.c_str(),
+                                                            scale, blind_value);
+    if (ws_ == NULL) {
+      hidden_reals_[name] = temp_unblind;
+    } else {
+      ws_->import(*temp_unblind, Silence());
+      delete temp_unblind;
+      hidden_reals_[name] = temp_unblind = dynamic_cast<RooUnblindUniform*>(ws_->obj(name.c_str()));
+    }
+    return *temp_unblind;
+  }
+}
+
 RooFormulaVar& doofit::builder::EasyPdf::Formula(const std::string& name) {
   if (formulas_.count(name) == 1) {
     return *formulas_[name];
+  } else {
+    throw ObjectNotExistingException();
+  }
+}
+
+RooAbsHiddenReal& doofit::builder::EasyPdf::HiddenReal(const std::string& name) {
+  if (hidden_reals_.count(name) == 1) {
+    return *hidden_reals_[name];
   } else {
     throw ObjectNotExistingException();
   }
@@ -299,6 +398,18 @@ RooDecay& doofit::builder::EasyPdf::Decay(const std::string& name, RooRealVar& t
   return AddPdfToStore<RooDecay>(new RooDecay(name.c_str(), name.c_str(), t, tau, model, RooDecay::SingleSided));
 }
 
+RooLognormal& doofit::builder::EasyPdf::Lognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m, RooAbsReal& k) {
+  return AddPdfToStore<RooLognormal>(new RooLognormal(name.c_str(), name.c_str(), x, m, k));
+}
+
+RooAddPdf& doofit::builder::EasyPdf::DoubleLognormal(const std::string& name, RooAbsReal& x, RooAbsReal& m1, RooAbsReal& k1, RooAbsReal& m2, RooAbsReal& k2, RooAbsReal& fraction) {
+  //return AddPdfToStore<RooLognormal>(new RooLognormal(name.c_str(), name.c_str(), x, m, k));
+  
+  return Add(name, RooArgList(Lognormal("p1_"+name,x,m1,k1),
+                              Lognormal("p2_"+name,x,m2,k2)),
+             RooArgList(fraction));
+}
+
 RooSimultaneous& doofit::builder::EasyPdf::Simultaneous(const std::string& name, RooAbsCategoryLValue& category) {
   return AddPdfToStore<RooSimultaneous>(new RooSimultaneous(name.c_str(), name.c_str(), category));
 }
@@ -310,6 +421,11 @@ RooSimultaneous& doofit::builder::EasyPdf::Simultaneous(const std::string& name,
 RooProdPdf& doofit::builder::EasyPdf::Product(const std::string& name, const RooArgList& pdfs) {
   return AddPdfToStore<RooProdPdf>(new RooProdPdf(name.c_str(), name.c_str(), pdfs));
 }
+
+RooProdPdf& doofit::builder::EasyPdf::Product(const std::string& name, const RooArgList& pdfs, const RooCmdArg& arg1, const RooCmdArg& arg2, const RooCmdArg& arg3, const RooCmdArg& arg4, const RooCmdArg& arg5, const RooCmdArg& arg6, const RooCmdArg& arg7, const RooCmdArg& arg8) {
+  return AddPdfToStore<RooProdPdf>(new RooProdPdf(name.c_str(), name.c_str(), pdfs, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
+}
+
 
 RooExtendPdf& doofit::builder::EasyPdf::Extend(const std::string& name, const RooAbsPdf& pdf, const RooAbsReal& yield) {
   return AddPdfToStore<RooExtendPdf>(new RooExtendPdf(name.c_str(), name.c_str(), pdf, yield));
@@ -478,6 +594,38 @@ RooAddModel& doofit::builder::EasyPdf::AddModel(const std::string& name, const R
   return AddPdfToStore<RooAddModel>(new RooAddModel(name.c_str(), name.c_str(), pdfs, coefs));
 }
 
+RooGaussEfficiencyModel& doofit::builder::EasyPdf::GaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma) {
+  return AddPdfToStore<RooGaussEfficiencyModel>(new RooGaussEfficiencyModel(name.c_str(), name.c_str(), x, eff, mean, sigma));
+}
+
+RooEffResAddModel& doofit::builder::EasyPdf::DoubleGaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& fraction) {
+  return EffResAddModel(name,
+                        RooArgList(GaussEfficiencyModel("p1_"+name,x,eff,mean,sigma1),
+                                   GaussEfficiencyModel("p2_"+name,x,eff,mean,sigma2)),
+                  RooArgList(fraction));
+}
+
+RooGaussEfficiencyModel& doofit::builder::EasyPdf::GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal &scale_error) {
+  return AddPdfToStore<RooGaussEfficiencyModel>(new RooGaussEfficiencyModel(name.c_str(), name.c_str(), x, eff, mean, error, RooConst(1.0), scale_error));
+}
+
+RooEffResAddModel& doofit::builder::EasyPdf::DoubleGaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& fraction) {
+  return EffResAddModel(name,
+                        RooArgList(GaussEfficiencyModelPerEvent("p1_"+name,
+                                                                x,eff,mean,
+                                                                error,
+                                                                scale_error1),
+                                   GaussEfficiencyModelPerEvent("p2_"+name,
+                                                                x,eff,mean,
+                                                                error,
+                                                                scale_error2)),
+                        RooArgList(fraction));
+}
+
+RooEffResAddModel& doofit::builder::EasyPdf::EffResAddModel(const std::string& name, const RooArgList& pdfs, const RooArgList& coefs) {
+  return AddPdfToStore<RooEffResAddModel>(new RooEffResAddModel(name.c_str(), name.c_str(), pdfs, coefs));
+}
+
 RooAddPdf& doofit::builder::EasyPdf::DoubleGaussianScaled(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& scale, RooAbsReal& fraction, std::string sigma2_name) {
   if (sigma2_name.length() == 0) {
     sigma2_name = name+"_sigma2";
@@ -506,10 +654,28 @@ RooAddPdf& doofit::builder::EasyPdf::TripleGaussianScaled(const std::string& nam
              RooArgList(fraction1,Formula(fraction2_name)));
 }
 
+RooFormulaVar& doofit::builder::EasyPdf::AtanAcceptance(const std::string& name, RooRealVar& x, RooAbsReal& slope_a, RooAbsReal& slope_b) {
+  return Formula(name, "(atan(@0*exp(@1*@0+@2)))/1.570796327", RooArgList(x, slope_a, slope_b));
+}
+
+RooFormulaVar& doofit::builder::EasyPdf::AtanAcceptanceIncludingBeta(const std::string& name, RooRealVar& x, RooAbsReal& slope_a, RooAbsReal& slope_b, RooAbsReal& beta) {
+  return Formula(name, "(atan(@0*exp(@1*@0+@2)))*(1-@3*@0)/1.570796327", RooArgList(x, slope_a, slope_b, beta));
+}
+
 RooAddPdf& doofit::builder::EasyPdf::DoubleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& fraction, const RooResolutionModel& model) {
   return Add(name, RooArgList(Decay("p1_"+name, t, tau1, model),
                               Decay("p2_"+name, t, tau2, model)),
              RooArgList(fraction));
+}
+
+RooAddPdf& doofit::builder::EasyPdf::TripleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& tau3, RooAbsReal& fraction1, RooAbsReal& frac_rec2, const RooResolutionModel& model) {
+  std::string fraction2_name = name+"_fraction2";
+
+  Formula(fraction2_name, "(1-@0)*@1", RooArgList(fraction1,frac_rec2));
+  return Add(name, RooArgList(Decay("p1_"+name, t, tau1, model),
+                              Decay("p2_"+name, t, tau2, model),
+                              Decay("p3_"+name, t, tau3, model)),
+             RooArgList(fraction1,Formula(fraction2_name)));
 }
 
 RooBDecay& doofit::builder::EasyPdf::BDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau, RooAbsReal& dgamma, RooAbsReal& coef_cosh, RooAbsReal& coef_sinh, RooAbsReal& coef_cos, RooAbsReal& coef_sin, RooAbsReal& dm, const RooResolutionModel& model) {
@@ -524,6 +690,22 @@ RooKeysPdf& doofit::builder::EasyPdf::KeysPdf(const std::string& name, const std
   RooKeysPdf* temp_pdf = dynamic_cast<RooKeysPdf*>(ws->pdf(pdf_name_on_ws.c_str()));
   
   return AddPdfToStore<RooKeysPdf>(dynamic_cast<RooKeysPdf*>(temp_pdf->cloneTree(name.c_str())));
+}
+
+RooHistPdf& doofit::builder::EasyPdf::HistPdf(const std::string& name, const RooArgSet& vars, const std::string& file_name, const std::string& hist_name) {
+  TFile file(file_name.c_str());
+  RooDataHist* hist       = dynamic_cast<RooDataHist*>(file.Get(hist_name.c_str()));
+  std::string name_hist_clone = hist_name + "_clone";
+
+  if (hist == NULL) {
+    serr << "Cannot load RooDataHist " << hist_name << " from file " << file_name << endmsg;
+    throw ObjectNotExistingException();
+  }
+  
+  RooDataHist* hist_clone = dynamic_cast<RooDataHist*>(hist->Clone(name_hist_clone.c_str()));
+  hists_.push_back(hist_clone);
+  
+  return AddPdfToStore<RooHistPdf>(new RooHistPdf(name.c_str(), name.c_str(), vars, *hist_clone));
 }
 
 RooAbsPdf& doofit::builder::EasyPdf::Pdf(const std::string &name) {
@@ -544,6 +726,32 @@ RooResolutionModel& doofit::builder::EasyPdf::Model(const std::string &name) {
       throw ObjectNotExistingException();
     }
   } else {
+    serr << "EasyPdf::Model(const std::string&): Requested model " << name << " not existing." << endmsg;
     throw ObjectNotExistingException();
   }
+}
+
+RooAbsBinning& doofit::builder::EasyPdf::Binning(const std::string &name) {
+  if (binnings_.count(name) == 1) {
+    return *binnings_[name];
+  } else {
+    RooBinning* temp_binning = new RooBinning(-RooNumber::infinity(), RooNumber::infinity(), name.c_str());
+    if (ws_ == NULL) {
+      binnings_[name] = temp_binning;
+    } else {
+      swarn << "EasyPdf::Binning(const std::string&): Cannot import binning to RooWorkspace, will store internally." << endmsg;
+      binnings_[name] = temp_binning;
+    }
+    return *temp_binning;
+  }
+}
+
+RooBinning& doofit::builder::EasyPdf::Binning(const std::string& name, std::vector<double> boundaries) {
+  RooBinning* binning = new RooBinning(boundaries.front(), boundaries.back(), name.c_str());
+  
+  for (auto b : boundaries) {
+    binning->addBoundary(b);
+  }
+  
+  return AddBinningToStore<RooBinning>(binning);
 }

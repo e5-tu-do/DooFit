@@ -2,6 +2,7 @@
 #define TOYSTUDYSTD_h
 
 // STL
+#include <tuple>
 
 // BOOST
 #include <boost/thread.hpp>
@@ -9,8 +10,8 @@
 // ROOT
 
 // from RooFit
-#include "RooArgSet.h"
 #include "RooFitResult.h"
+#include "RooArgSet.h"
 
 // from project
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
@@ -21,6 +22,7 @@
 class RooFitResult;
 class RooDataSet;
 class RooRealVar;
+class TStopwatch;
 
 namespace doofit {
   namespace config {
@@ -28,11 +30,15 @@ namespace doofit {
   }
   
 namespace toy {
+  
+  typedef std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> FitResultContainer;
+  
+  
   /** @class ToyStudyStd
    *  @brief Standard toy study for DooFit to help conduct and evaluate mass toy fits
    *
    *  This class is designed to assist in both conducting mass toy fits as well 
-   *  evaluating results from these fits. It's design is not to conduct the 
+   *  evaluating results from these fits. It's design is not to conduct the
    *  generation or actual fit itself. Other modules like ToyFactoryStd and
    *  fitter modules are well suited for that.
    *
@@ -119,9 +125,13 @@ namespace toy {
      *
      *  @param fit_result1 first RooFitResult to save
      *  @param fit_result2 second RooFitResult to save (optional)
+     *  @param stopwatch1 first stop watch to save fit times (optional)
+     *  @param stopwatch2 second stop watch to save fit times (optional)
      */
-    void StoreFitResult(RooFitResult* fit_result1, 
-                        RooFitResult* fit_result2=NULL);
+    void StoreFitResult(const RooFitResult* fit_result1, 
+                        const RooFitResult* fit_result2=NULL,
+                        TStopwatch* stopwatch1=NULL,
+                        TStopwatch* stopwatch2=NULL);
     
     /**
      *  @brief End the save fit result worker thread and wait for it to save everything
@@ -159,7 +169,7 @@ namespace toy {
      *  @brief Get a read in fit result (pair)
      *
      *  While the fit result reader is reading in fit results in the background
-     *  this function will get one of these fit result (or fit result pairs if 
+     *  this function will get one of these fit results (or fit result pairs if
      *  two results are to be read in simultaneously). Null pointers are 
      *  returned if no more fit results are available.
      *
@@ -167,9 +177,9 @@ namespace toy {
      *  results. The caller needs to release these via 
      *  ToyStudyStd::ReleaseFitResult()
      *
-     *  @return pair of fit results that have been read in
+     *  @return tuple of fit results and respective fit times (CPU and real)
      */
-    std::pair<RooFitResult*, RooFitResult*> GetFitResult();
+    FitResultContainer GetFitResult();
     /**
      *  @brief Release a fit result (pair) for deletion
      *
@@ -178,9 +188,9 @@ namespace toy {
      *  two results are to be read in simultaneously) for deletion as apparently
      *  RooFit's constructor/destructor methods are not thread-safe.
      *
-     *  @param fit_results pair of fit results to release
+     *  @param fit_results tuple of fit results and respective fit times (CPU and real) to release
      */
-    void ReleaseFitResult(std::pair<RooFitResult*, RooFitResult*> fit_results);
+    void ReleaseFitResult(FitResultContainer fit_results);
     /**
      *  @brief Evaluate read in fit results
      *
@@ -228,7 +238,8 @@ namespace toy {
      *
      *  @todo enhance this to be able to work with asymmetric errors if available
      */
-    RooArgSet BuildEvaluationArgSet(const RooFitResult& fit_result);
+    RooArgSet BuildEvaluationArgSet(FitResultContainer fit_results);
+
     /**
      *  @brief Evaluate fit result quality
      *
@@ -239,6 +250,19 @@ namespace toy {
      *  @return true if fit result is okay, false if not
      */
     bool FitResultOkay(const RooFitResult& fit_result) const;
+    
+    /**
+     *  @brief Check if fit result has (nearly) no varied parameters
+     *
+     *  For a given fit result evaluate the fit quality in terms of parameter
+     *  variation. If more than 80% of non-fixed parameters have not been varied
+     *  the fit result is to be neglected.
+     *
+     *  @param fit_result RooFitResult to use for evaluation
+     *  @return true if fit result is problematic, false if not
+     */
+    bool FitResultNotVariedParameterSet(const RooFitResult& fit_result) const;
+
     /**
      *  @brief Copy an existing RooRealVar into a new RooRealVar
      *
@@ -316,19 +340,11 @@ namespace toy {
     /**
      *  \brief Container for read in and active fit results
      */
-    std::vector<RooFitResult*> fit_results_;
+    std::vector<FitResultContainer> fit_results_;
     /**
      *  \brief Container for all ever read in fit results
      */
-    std::vector<RooFitResult*> fit_results_bookkeep_;
-    /**
-     *  \brief Container for read in and active second fit results
-     */
-    std::vector<RooFitResult*> fit_results2_;
-    /**
-     *  \brief Container for all ever read in second fit results
-     */
-    std::vector<RooFitResult*> fit_results2_bookkeep_;
+    std::vector<FitResultContainer> fit_results_bookkeep_;
     /**
      *  \brief RooDataSet for all evaluated parameters, their pulls and so on
      */
@@ -365,7 +381,7 @@ namespace toy {
     /**
      *  @brief State variable determining if this class is still accepting fit results
      *
-     *  This variable will be set to true upon construction and false upon 
+     *  This variable will be set to true upon construction and false upon
      *  destruction to allow the saving thread to finish properly.
      * 
      */
@@ -373,7 +389,7 @@ namespace toy {
     /**
      *  @brief Thread-safe queue for fit results to save
      */
-    doocore::lutils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_save_queue_;
+    doocore::lutils::concurrent_queue<FitResultContainer > fit_results_save_queue_;
     ///@}
     
     /** @name Reader worker members
@@ -395,11 +411,11 @@ namespace toy {
     /**
      *  @brief Thread-safe queue for fit results to read in
      */
-    doocore::lutils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_read_queue_;
+    doocore::lutils::concurrent_queue<FitResultContainer > fit_results_read_queue_;
     /**
      *  @brief Thread-safe queue for fit results to delete
      */
-    doocore::lutils::concurrent_queue<std::pair<RooFitResult*,RooFitResult*> > fit_results_release_queue_;
+    doocore::lutils::concurrent_queue<FitResultContainer > fit_results_release_queue_;
     ///@}
   };
   

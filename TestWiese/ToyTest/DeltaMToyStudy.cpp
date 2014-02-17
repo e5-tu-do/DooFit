@@ -31,12 +31,6 @@
 // from Project
 #include "doofit/config/CommonConfig.h"
 
-#include "doofit/builder/BuilderStd/BuilderStd.h"
-#include "doofit/builder/BuilderStd/BuilderStdConfig.h"
-
-#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdMass.h"
-#include "doofit/pdf2ws/pdf2wsstd/Pdf2WsStdCommonFuncs.h"
-
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStd.h"
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
 

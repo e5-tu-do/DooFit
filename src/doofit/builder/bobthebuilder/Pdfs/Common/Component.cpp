@@ -43,7 +43,7 @@ Component::~Component(){
 }
 
 void Component::Initialize( const ptree::value_type& tree_component_head, 
-                            const map< string, shared_ptr<AbsDimension> >& map_dimensions, 
+                            const map< string, boost::shared_ptr<AbsDimension> >& map_dimensions, 
                             const string& subpdffull_id)
 {
   subpdffull_id_ = subpdffull_id;
@@ -93,7 +93,7 @@ void Component::Initialize( const ptree::value_type& tree_component_head,
 
 void Component::CreateDimPdfs(const ptree& tree_compdimensions){
   // loop over all known dimensions, search for entry in property_tree, initialize pdfs.
-  map< string, shared_ptr<AbsDimension> >::const_iterator dim_it;
+  map< string, boost::shared_ptr<AbsDimension> >::const_iterator dim_it;
   
   BOOST_FOREACH( ptree::value_type tree_compdim_head, tree_compdimensions){
     string dim_name = tree_compdim_head.first;
@@ -108,10 +108,10 @@ void Component::CreateDimPdfs(const ptree& tree_compdimensions){
     string dim_id = (*dim_it).second->dim_id();
     
     // delegate the pdf building
-    shared_ptr<AbsPdf> pdf_temp = (*dim_it).second->CreatePdf(pdf_type);
+    boost::shared_ptr<AbsPdf> pdf_temp = (*dim_it).second->CreatePdf(pdf_type);
     
-    pair<map<string,shared_ptr<AbsPdf> >::iterator,bool> ret;
-    ret = map_dimpdfs_.insert( pair< string, shared_ptr<AbsPdf> >( dim_name, pdf_temp ) ) ;
+    pair<map<string,boost::shared_ptr<AbsPdf> >::iterator,bool> ret;
+    ret = map_dimpdfs_.insert( pair< string, boost::shared_ptr<AbsPdf> >( dim_name, pdf_temp ) ) ;
     // Check if key exists twice in map_subpdfs_
     if ( ret.second == false ){
       cout << "Component: Tried to insert pdf for dimension '" << dim_name << "' to map_dimpdfs_ twice." << endl;
