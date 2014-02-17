@@ -79,7 +79,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         double min,max;
         RooRealVar var(dynamic_cast<const RooRealVar&>(dimension_));
         sub_data.getRange(var, min, max);
-        sdebug << "Range: " << min << "," << max << endmsg;
+        //sdebug << "Range: " << min << "," << max << endmsg;
         
         //plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
         plot_name = plot_name_ + "_" + sim_cat_type->GetName();
