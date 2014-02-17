@@ -174,7 +174,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     //dataset_reduced = dataset->reduce(cut_range_arg);
     dataset_reduced = dataset->reduce(CutRange(plot_range_.c_str()));
         
-    sdebug << "Created reduced dataset with " << dataset_reduced->numEntries() << " (original dataset has " << dataset->numEntries() << ")" << endmsg;
+    //sdebug << "Created reduced dataset with " << dataset_reduced->numEntries() << " (original dataset has " << dataset->numEntries() << ")" << endmsg;
   }
 
   RooPlot* plot_frame = dimension_.frame(range_arg);
@@ -183,7 +183,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   
   if (dataset_reduced != NULL) {
     if (dataset_reduced->isWeighted()) {
-      sdebug << "Spotted a weighted dataset, setting SumW2 errors." << endmsg;
+      //sdebug << "Spotted a weighted dataset, setting SumW2 errors." << endmsg;
       weight_arg = DataError(RooAbsData::SumW2);
     }
     
