@@ -11,7 +11,7 @@ then
   exit 2
 fi
 
-source /lhcb/software/tu-dortmund/LHCbSoftwareSetup.sh > /dev/null 2>&1
+source /lhcbsoft/LHCbSoftwareSetup.sh > /dev/null 2>&1
 
 for ver in $dv_versions
 do
