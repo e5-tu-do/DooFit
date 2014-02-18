@@ -21,6 +21,7 @@
 #include "RooPlot.h"
 #include "RooHist.h"
 #include "RooBinning.h"
+#include <RooMsgService.h>
 
 // from Project
 #include "doocore/io/MsgStream.h"
@@ -187,11 +188,13 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
       weight_arg = DataError(RooAbsData::SumW2);
     }
     
+    RooMsgService::instance().setStreamStatus(1, false);
     if (binning != NULL) {
       dataset_reduced->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
     } else {
       dataset_reduced->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
     }
+    RooMsgService::instance().setStreamStatus(1, true);
   } else {
     for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
          it != datasets_.end(); ++it) {
@@ -200,11 +203,13 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
         weight_arg = DataError(RooAbsData::SumW2);
       }
       
+      RooMsgService::instance().setStreamStatus(1, false);
       if (binning != NULL) {
         (*it)->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
       } else {
         (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
       }
+      RooMsgService::instance().setStreamStatus(1, true);
     }
   }
   
@@ -265,17 +270,21 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
       if (it->getSize() > 0) {
         //sinfo << "Plotting component " << it->first()->GetName() << endmsg;
         RooMsgService::instance().setStreamStatus(1, false);
+        RooMsgService::instance().setStreamStatus(0, false);
         pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
 //        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
         RooMsgService::instance().setStreamStatus(1, true);
+        RooMsgService::instance().setStreamStatus(0, true);
         ++i;
       }
     }
     
     RooMsgService::instance().setStreamStatus(1, false);
+    RooMsgService::instance().setStreamStatus(0, false);
     pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
 //    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
     RooMsgService::instance().setStreamStatus(1, true);
+    RooMsgService::instance().setStreamStatus(0, true);
     
     // =10^(ln(11)/ln(10)-0.5)
     //plot_frame_pull->SetMinimum(0.5);
