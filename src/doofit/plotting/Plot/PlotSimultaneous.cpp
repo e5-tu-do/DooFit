@@ -78,12 +78,12 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           }
         }
         
-        sdebug << "Cut string: " << cut_string << endmsg;
+        //sdebug << "Cut string: " << cut_string << endmsg;
         
         delete it;
       } else if (std_cat != NULL) {
         cut_string = std::string(std_cat->GetName()) + "==" + std::to_string(std_cat->getIndex());
-        sdebug << "Cut string: " << cut_string << endmsg;
+        //sdebug << "Cut string: " << cut_string << endmsg;
       }
 
       RooAbsData* sub_data2 = data_nonconst_fucking_roofit.reduce(Cut(cut_string.c_str()));
@@ -254,11 +254,11 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     }
   }
   
-  TIter next(data_split);
-  TObject *obj = NULL;
-  while ((obj = next())) {
-    delete obj;
-  }
+//  TIter next(data_split);
+//  TObject *obj = NULL;
+//  while ((obj = next())) {
+//    delete obj;
+//  }
 }
   
 } // namespace plotting
