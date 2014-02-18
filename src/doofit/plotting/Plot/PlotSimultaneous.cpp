@@ -20,6 +20,7 @@
 #include "RooCatType.h"
 #include "RooDataHist.h"
 #include "RooSuperCategory.h"
+#include "RooCategory.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -48,17 +49,32 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
   TList* data_split = data.split(sim_cat);
   std::string plot_name;
   
-//  const RooSuperCategory* super_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
-//  if (super_cat != NULL) {
-//    RooLinkedListIter* it  = (RooLinkedListIter*)super_cat->inputCatList().createIterator();
-//    RooAbsArg*         arg = NULL;
-//    
-//    while ((arg=(RooAbsArg*)it->Next())) {
-//      arg->Print();
-//    }
-//    delete it;
-//
-//  }
+  std::string cut_string = "";
+  const RooSuperCategory* super_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
+  const RooCategory* std_cat        = dynamic_cast<const RooCategory*>(&sim_cat);
+  if (super_cat != NULL) {
+    RooLinkedListIter* it  = (RooLinkedListIter*)super_cat->inputCatList().createIterator();
+    RooAbsArg*         arg = NULL;
+    
+    while ((arg=(RooAbsArg*)it->Next())) {
+      arg->Print();
+      
+      RooCategory* cat = dynamic_cast<RooCategory*>(arg);
+      if (cat != NULL) {
+        if (cut_string.length() > 0) cut_string = cut_string + "&&";
+        cut_string = cut_string + cat->GetName() + "==" + std::to_string(cat->getIndex());
+        sdebug << cat->GetName() << "==" << cat->getIndex() << endmsg;
+      } else {
+        serr << "Error in PlotSimultaneous::PlotHandler(...): Cannot handle category component " << arg->GetName() << endmsg;
+      }
+    }
+    
+    sdebug << "Cut string: " << cut_string << endmsg;
+    
+    delete it;
+  } else if (std_cat != NULL) {
+    
+  }
   
 //  TCanvas c1("c1","c1",900,900);
 //  TLatex label(0.5, 0.5, "Bla");
