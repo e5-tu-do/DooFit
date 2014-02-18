@@ -45,8 +45,9 @@ PlotSimultaneous::PlotSimultaneous(const PlotConfig& cfg_plot, const RooAbsRealL
 void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
   const RooSimultaneous& pdf = *dynamic_cast<const RooSimultaneous*>(pdf_);
   const RooAbsData& data     = *datasets_.front();
+  RooAbsData& data_nonconst_fucking_roofit = const_cast<RooAbsData&>(data);
   RooAbsCategoryLValue& sim_cat = const_cast<RooAbsCategoryLValue&>(pdf.indexCat());
-  TList* data_split = data.split(sim_cat);
+  //TList* data_split = data.split(sim_cat);
   std::string plot_name;
   
   RooCatType* sim_cat_type = NULL;
@@ -55,7 +56,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
   while((sim_cat_type=dynamic_cast<RooCatType*>(sim_cat_type_iter->Next()))) {
     RooAbsPdf& sub_pdf = *(pdf.getPdf(sim_cat_type->GetName()));
     if (&sub_pdf != NULL) {
-      RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
+      //RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
       
       
       sim_cat.setIndex(sim_cat_type->getVal());
@@ -85,9 +86,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         sdebug << "Cut string: " << cut_string << endmsg;
       }
 
-      RooAbsData& sub_data2 = data.reduce(Cut(cut_string.c_str()));
-      sub_data.Print();
-      sub_data2.Print();
+      RooAbsData* sub_data2 = data_nonconst_fucking_roofit.reduce(Cut(cut_string.c_str()));
+      RooAbsData& sub_data = *sub_data2;
       
       if (&sub_data == NULL) {
         serr << "PlotSimultaneous::PlotHandler(...): sub dataset for category " << sim_cat_type->GetName() << " empty. Will not plot. " << endmsg;
@@ -170,6 +170,10 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         }
         
         ++num_slices;
+      }
+      
+      if (sub_data2 != NULL) {
+        delete sub_data2;
       }
     }
   }
