@@ -45,41 +45,9 @@ PlotSimultaneous::PlotSimultaneous(const PlotConfig& cfg_plot, const RooAbsRealL
 void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
   const RooSimultaneous& pdf = *dynamic_cast<const RooSimultaneous*>(pdf_);
   const RooAbsData& data     = *datasets_.front();
-    const RooAbsCategoryLValue& sim_cat = pdf.indexCat();
+  RooAbsCategoryLValue& sim_cat = const_cast<RooAbsCategoryLValue&>(pdf.indexCat());
   TList* data_split = data.split(sim_cat);
   std::string plot_name;
-  
-  std::string cut_string = "";
-  const RooSuperCategory* super_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
-  const RooCategory* std_cat        = dynamic_cast<const RooCategory*>(&sim_cat);
-  if (super_cat != NULL) {
-    RooLinkedListIter* it  = (RooLinkedListIter*)super_cat->inputCatList().createIterator();
-    RooAbsArg*         arg = NULL;
-    
-    while ((arg=(RooAbsArg*)it->Next())) {
-      arg->Print();
-      
-      RooCategory* cat = dynamic_cast<RooCategory*>(arg);
-      if (cat != NULL) {
-        if (cut_string.length() > 0) cut_string = cut_string + "&&";
-        cut_string = cut_string + cat->GetName() + "==" + std::to_string(cat->getIndex());
-        sdebug << cat->GetName() << "==" << cat->getIndex() << endmsg;
-      } else {
-        serr << "Error in PlotSimultaneous::PlotHandler(...): Cannot handle category component " << arg->GetName() << endmsg;
-      }
-    }
-    
-    sdebug << "Cut string: " << cut_string << endmsg;
-    
-    delete it;
-  } else if (std_cat != NULL) {
-    
-  }
-  
-//  TCanvas c1("c1","c1",900,900);
-//  TLatex label(0.5, 0.5, "Bla");
-//  label.Draw();
-//  c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
   
   RooCatType* sim_cat_type = NULL;
   TIterator* sim_cat_type_iter = sim_cat.typeIterator();
@@ -88,6 +56,38 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooAbsPdf& sub_pdf = *(pdf.getPdf(sim_cat_type->GetName()));
     if (&sub_pdf != NULL) {
       RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
+      
+      
+      sim_cat.setIndex(sim_cat_type->getVal());
+      
+      std::string cut_string = "";
+      const RooSuperCategory* super_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
+      const RooCategory* std_cat        = dynamic_cast<const RooCategory*>(&sim_cat);
+      if (super_cat != NULL) {
+        RooLinkedListIter* it  = (RooLinkedListIter*)super_cat->inputCatList().createIterator();
+        RooAbsArg*         arg = NULL;
+        
+        while ((arg=(RooAbsArg*)it->Next())) {
+          RooCategory* cat = dynamic_cast<RooCategory*>(arg);
+          if (cat != NULL) {
+            if (cut_string.length() > 0) cut_string = cut_string + "&&";
+            cut_string = cut_string + cat->GetName() + "==" + std::to_string(cat->getIndex());
+          } else {
+            serr << "Error in PlotSimultaneous::PlotHandler(...): Cannot handle category component " << arg->GetName() << endmsg;
+          }
+        }
+        
+        sdebug << "Cut string: " << cut_string << endmsg;
+        
+        delete it;
+      } else if (std_cat != NULL) {
+        cut_string = std::string(std_cat->GetName()) + "==" + std::to_string(std_cat->getIndex());
+        sdebug << "Cut string: " << cut_string << endmsg;
+      }
+
+      RooAbsData& sub_data2 = data.reduce(Cut(cut_string.c_str()));
+      sub_data.Print();
+      sub_data2.Print();
       
       if (&sub_data == NULL) {
         serr << "PlotSimultaneous::PlotHandler(...): sub dataset for category " << sim_cat_type->GetName() << " empty. Will not plot. " << endmsg;
