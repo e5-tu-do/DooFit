@@ -33,6 +33,7 @@ namespace plotting {
 PlotConfig::PlotConfig(const std::string& name)
 : config::AbsConfig(name),
   plot_directory_("Plot"),
+  num_cpu_(1),
   plot_stack_open_(false),
   plot_stack_canvas_(NULL),
   plot_appendix_("")
@@ -65,6 +66,7 @@ void PlotConfig::DefineOptions() {
   po::options_description* generation = new po::options_description("Plot style options");
   
   generation->add_options()
+  (GetOptionString("num_cpu").c_str(), po::value<int>(&num_cpu_)->default_value(1),"Number of CPUs for plotting")
   (GetOptionString("pdf_linecolors").c_str(), po::value<config::CommaSeparatedList<int> >(&pdf_linecolor_map_),"Line colors for plotted PDFs (comma-separated as col1,col2,...)")
   (GetOptionString("pdf_linestyles").c_str(), po::value<config::CommaSeparatedList<int> >(&pdf_linestyle_map_),"Line styles for plotted PDFs (comma-separated as style1,style2,...)")
   (GetOptionString("plot_directory").c_str(), po::value<std::string>(&plot_directory_)->default_value("Plot"),"Output directory for plots")
@@ -76,6 +78,7 @@ void PlotConfig::DefineOptions() {
 void PlotConfig::LoadOptions() {}
   
 void PlotConfig::PrintOptions() const {
+  scfg << "Number of CPUs: " << num_cpu_ << endmsg;
   scfg << "PDF line colors: " << pdf_linecolor_map_ << endmsg;
   scfg << "PDF line styles: " << pdf_linestyle_map_ << endmsg;
   scfg << "Plot output directory: " << plot_directory() << endmsg;
