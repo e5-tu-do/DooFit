@@ -128,7 +128,6 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
               
               sinfo << " Binned projection is requested. Will generate a binned dataset to accelerate projection." << endmsg;
 
-
               data_reduced = sub_data.reduce(*set_project);
               std::string name_data_hist = std::string(sub_data.GetName()) + "_hist" + sim_cat_type->GetName();
               data_project = new RooDataHist(name_data_hist.c_str(), "binned projection dataset", *data_reduced->get(), *data_reduced);
