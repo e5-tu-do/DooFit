@@ -6,6 +6,9 @@
 #include <set>
 #include <string>
 
+// from ROOT
+#include "TStopwatch.h"
+
 // from RooFit
 #include "RooArgSet.h"
 #include "RooCmdArg.h"
@@ -17,13 +20,9 @@ class RooAbsPdf;
 class RooFitResult;
 class RooWorkspace;
 
-
-
-
 /** @namespace doofit::fitter::easyfit 
  *  @brief Namespace for the EasyFit framework. 
  */
-
 
 /** @class doofit::fitter::easyfit::EasyFit
  *  @brief Class to handle a single fit of a RooAbsPdf to a RooDataSet. 
@@ -53,7 +52,19 @@ class EasyFit
 
   void Fit() { PrepareFit(); ExecuteFit(); FinalizeFit();}
   const RooFitResult* GetFitResult();
-
+  
+  /**
+   *  @brief Get timing information from fit
+   *
+   *  Return consumed fit time as std::pair<double, double> with real wall time
+   *  and cpu time. The latter will be misleading in a multi-core fit as the 
+   *  standard utilities only count the CPU time of the mother process and not
+   *  its children.
+   *
+   *  @return timing information as pair containing real (first) and CPU (second) time
+   */
+  std::pair<double, double> FitTime() const;
+  
   /** @name FitOptionSetters
    *
    *  Function to set fit control options as documented in @ref LogLLOptions,
@@ -238,6 +249,16 @@ class EasyFit
   std::map<std::string,RooCmdArg> fc_map_; ///< Intermediate map to save RooCmdArg that are parsed from the fit options. 
   RooLinkedList fc_linklist_; ///< RooLinkedList containing the RooCmdArg of the @fc_map_ to be given to the fitTo statement.
 
+  /**
+   *  @brief Total CPU time consumed by fit (in ms)
+   */
+  double time_cpu_;
+  
+  /**
+   *  @brief Total real time consumed during fit (in ms)
+   */
+  double time_real_;
+  
   /** @name LogLLOptions
    *  
    *  These members are used to control RooFit's -log(L) construction. 

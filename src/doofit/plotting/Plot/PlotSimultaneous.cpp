@@ -20,6 +20,7 @@
 #include "RooCatType.h"
 #include "RooDataHist.h"
 #include "RooSuperCategory.h"
+#include "RooCategory.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -44,26 +45,10 @@ PlotSimultaneous::PlotSimultaneous(const PlotConfig& cfg_plot, const RooAbsRealL
 void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
   const RooSimultaneous& pdf = *dynamic_cast<const RooSimultaneous*>(pdf_);
   const RooAbsData& data     = *datasets_.front();
-    const RooAbsCategoryLValue& sim_cat = pdf.indexCat();
-  TList* data_split = data.split(sim_cat);
+  RooAbsData& data_nonconst_fucking_roofit = const_cast<RooAbsData&>(data);
+  RooAbsCategoryLValue& sim_cat = const_cast<RooAbsCategoryLValue&>(pdf.indexCat());
+  //TList* data_split = data.split(sim_cat);
   std::string plot_name;
-  
-//  const RooSuperCategory* super_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
-//  if (super_cat != NULL) {
-//    RooLinkedListIter* it  = (RooLinkedListIter*)super_cat->inputCatList().createIterator();
-//    RooAbsArg*         arg = NULL;
-//    
-//    while ((arg=(RooAbsArg*)it->Next())) {
-//      arg->Print();
-//    }
-//    delete it;
-//
-//  }
-  
-//  TCanvas c1("c1","c1",900,900);
-//  TLatex label(0.5, 0.5, "Bla");
-//  label.Draw();
-//  c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
   
   RooCatType* sim_cat_type = NULL;
   TIterator* sim_cat_type_iter = sim_cat.typeIterator();
@@ -71,7 +56,38 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
   while((sim_cat_type=dynamic_cast<RooCatType*>(sim_cat_type_iter->Next()))) {
     RooAbsPdf& sub_pdf = *(pdf.getPdf(sim_cat_type->GetName()));
     if (&sub_pdf != NULL) {
-      RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
+      //RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
+      
+      
+      sim_cat.setIndex(sim_cat_type->getVal());
+      
+      std::string cut_string = "";
+      const RooSuperCategory* super_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
+      const RooCategory* std_cat        = dynamic_cast<const RooCategory*>(&sim_cat);
+      if (super_cat != NULL) {
+        RooLinkedListIter* it  = (RooLinkedListIter*)super_cat->inputCatList().createIterator();
+        RooAbsArg*         arg = NULL;
+        
+        while ((arg=(RooAbsArg*)it->Next())) {
+          RooCategory* cat = dynamic_cast<RooCategory*>(arg);
+          if (cat != NULL) {
+            if (cut_string.length() > 0) cut_string = cut_string + "&&";
+            cut_string = cut_string + cat->GetName() + "==" + std::to_string(cat->getIndex());
+          } else {
+            serr << "Error in PlotSimultaneous::PlotHandler(...): Cannot handle category component " << arg->GetName() << endmsg;
+          }
+        }
+        
+        //sdebug << "Cut string: " << cut_string << endmsg;
+        
+        delete it;
+      } else if (std_cat != NULL) {
+        cut_string = std::string(std_cat->GetName()) + "==" + std::to_string(std_cat->getIndex());
+        //sdebug << "Cut string: " << cut_string << endmsg;
+      }
+
+      RooAbsData* sub_data2 = data_nonconst_fucking_roofit.reduce(Cut(cut_string.c_str()));
+      RooAbsData& sub_data = *sub_data2;
       
       if (&sub_data == NULL) {
         serr << "PlotSimultaneous::PlotHandler(...): sub dataset for category " << sim_cat_type->GetName() << " empty. Will not plot. " << endmsg;
@@ -111,7 +127,6 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
               set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
               
               sinfo << " Binned projection is requested. Will generate a binned dataset to accelerate projection." << endmsg;
-
 
               data_reduced = sub_data.reduce(*set_project);
               std::string name_data_hist = std::string(sub_data.GetName()) + "_hist" + sim_cat_type->GetName();
@@ -154,6 +169,10 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         }
         
         ++num_slices;
+      }
+      
+      if (sub_data2 != NULL) {
+        delete sub_data2;
       }
     }
   }
@@ -234,11 +253,11 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     }
   }
   
-  TIter next(data_split);
-  TObject *obj = NULL;
-  while ((obj = next())) {
-    delete obj;
-  }
+//  TIter next(data_split);
+//  TObject *obj = NULL;
+//  while ((obj = next())) {
+//    delete obj;
+//  }
 }
   
 } // namespace plotting

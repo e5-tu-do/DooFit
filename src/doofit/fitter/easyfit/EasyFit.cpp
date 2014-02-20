@@ -1,6 +1,8 @@
 #include "EasyFit.h"
 
-// from STL
+// from STL + friends
+#include <chrono>
+#include <ctime>
 
 // from boost
 #include <boost/foreach.hpp>
@@ -20,6 +22,7 @@ using std::string;
 using std::cout;
 using std::endl;
 using std::map;
+using doocore::io::sinfo;
 using doocore::io::serr;
 using doocore::io::endmsg;
 
@@ -38,6 +41,8 @@ EasyFit::EasyFit(const string& fit_name)
     , minimizer_combs_()
     , fc_map_()
     , fc_linklist_()
+    , time_cpu_(0.0)
+    , time_real_(0.0)
     , fc_num_cpu_(1)
     , fc_num_cpu_strategy_(0)
     , fc_extended_(false)
@@ -172,7 +177,17 @@ void EasyFit::ExecuteFit() {
          << ", Pdf and Data ready: " << PdfAndDataReady()
          << "." << endmsg;
   } else {
+    std::clock_t c_start = std::clock();
+    auto t_start = std::chrono::high_resolution_clock::now();
+    
     fit_result_ = pdf_->fitTo(*data_,fc_linklist_);
+    
+    std::clock_t c_end = std::clock();
+    auto t_end = std::chrono::high_resolution_clock::now();
+    
+    time_real_ = std::chrono::duration_cast<std::chrono::milliseconds>(t_end - t_start).count();
+    time_cpu_  = 1000.0 * (c_end-c_start) / CLOCKS_PER_SEC;
+    
     fitted_ = true;
   }
 }
@@ -205,6 +220,22 @@ const RooFitResult* EasyFit::GetFitResult() {
   }
 }
 
+std::pair<double,double> EasyFit::FitTime() const {
+  if (!prepared_ || !fitted_ || !finalized_ || fit_result_ == NULL){
+    // something went wrong
+    serr << "Cannot get the FitTime for Fit " << fit_name_ << ". Fit is in inappropriate state: " << endmsg;
+    serr << "  Prepared: "  << prepared_ 
+         << ", Fitted: "    << fitted_ 
+         << ", Finalized: " << finalized_ 
+         << "." << endmsg;
+
+    return std::make_pair(0.0,0.0);
+  } else {
+    return std::make_pair(time_real_, time_cpu_);
+  }
+}
+
+  
 bool EasyFit::PdfAndDataReady() {
   return (pdf_ != NULL && data_ != NULL);
 }
