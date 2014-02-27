@@ -20,12 +20,12 @@ namespace doofit {
 namespace roofit {
 namespace functions {
 
- SimpleSignedTaggedCPCoefficient::SimpleSignedTaggedCPCoefficient(const char *name, const char *title, 
+ SimpleSignedTaggedCPCoefficient::SimpleSignedTaggedCPCoefficient(std::string name, 
                         RooAbsReal& _mistag_,
                         RooAbsReal& _coeff_,
                         RooAbsReal& _sign_,
                         RooAbsCategory& _tag_) :
-   RooAbsReal(name,title), 
+   RooAbsReal(name.c_str(),name.c_str()), 
    mistag_("mistag_","mistag_",this,_mistag_),
    coeff_("coeff_","coeff_",this,_coeff_),
    sign_("sign_","sign_",this,_sign_),

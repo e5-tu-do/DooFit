@@ -20,7 +20,7 @@ namespace functions {
 class SimpleSignedTaggedCPCoefficient : public RooAbsReal {
 public:
   SimpleSignedTaggedCPCoefficient() {} ; 
-  SimpleSignedTaggedCPCoefficient(const char *name, const char *title,
+  SimpleSignedTaggedCPCoefficient(std::string name,
 	      RooAbsReal& _mistag_,
 	      RooAbsReal& _coeff_,
 	      RooAbsReal& _sign_,
