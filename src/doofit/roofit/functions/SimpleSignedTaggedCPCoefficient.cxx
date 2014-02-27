@@ -8,19 +8,19 @@
 
 #include "Riostream.h" 
 
-#include "FunctionSimpleSignedTaggedCPCoefficient.h" 
+#include "SimpleSignedTaggedCPCoefficient.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::FunctionSimpleSignedTaggedCPCoefficient) 
+ClassImp(doofit::roofit::functions::SimpleSignedTaggedCPCoefficient) 
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 
- FunctionSimpleSignedTaggedCPCoefficient::FunctionSimpleSignedTaggedCPCoefficient(const char *name, const char *title, 
+ SimpleSignedTaggedCPCoefficient::SimpleSignedTaggedCPCoefficient(const char *name, const char *title, 
                         RooAbsReal& _mistag_,
                         RooAbsReal& _coeff_,
                         RooAbsReal& _sign_,
@@ -34,7 +34,7 @@ namespace functions {
  } 
 
 
- FunctionSimpleSignedTaggedCPCoefficient::FunctionSimpleSignedTaggedCPCoefficient(const FunctionSimpleSignedTaggedCPCoefficient& other, const char* name) :  
+ SimpleSignedTaggedCPCoefficient::SimpleSignedTaggedCPCoefficient(const SimpleSignedTaggedCPCoefficient& other, const char* name) :  
    RooAbsReal(other,name), 
    mistag_("mistag_",this,other.mistag_),
    coeff_("coeff_",this,other.coeff_),
@@ -45,7 +45,7 @@ namespace functions {
 
 
 
- Double_t FunctionSimpleSignedTaggedCPCoefficient::evaluate() const 
+ Double_t SimpleSignedTaggedCPCoefficient::evaluate() const 
  { 
    // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE 
    return sign_ * tag_ * (1.0 - 2.0 * mistag_) * coeff_ ; 
@@ -53,14 +53,14 @@ namespace functions {
 
 
 
- Int_t FunctionSimpleSignedTaggedCPCoefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
+ Int_t SimpleSignedTaggedCPCoefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
  { 
    // LIST HERE OVER WHICH VARIABLES ANALYTICAL INTEGRATION IS SUPPORTED, 
    // ASSIGN A NUMERIC CODE FOR EACH SUPPORTED (SET OF) PARAMETERS 
    // THE EXAMPLE BELOW ASSIGNS CODE 1 TO INTEGRATION OVER VARIABLE X
    // YOU CAN ALSO IMPLEMENT MORE THAN ONE ANALYTICAL INTEGRAL BY REPEATING THE matchArgs 
    // EXPRESSION MULTIPLE TIMES
-   std::cout << "FunctionSimpleSignedTaggedCPCoefficient::getAnalyticalIntegral call" << std::endl;
+   std::cout << "SimpleSignedTaggedCPCoefficient::getAnalyticalIntegral call" << std::endl;
    std::cout << "analVars" << std::endl;   
    analVars.Print();
    std::cout << "allVars" << std::endl;
@@ -70,12 +70,12 @@ namespace functions {
 
 
 
- Double_t FunctionSimpleSignedTaggedCPCoefficient::analyticalIntegral(Int_t code, const char* rangeName) const  
+ Double_t SimpleSignedTaggedCPCoefficient::analyticalIntegral(Int_t code, const char* rangeName) const  
  { 
    // RETURN ANALYTICAL INTEGRAL DEFINED BY RETURN CODE ASSIGNED BY getAnalyticalIntegral
    // THE MEMBER FUNCTION x.min(rangeName) AND x.max(rangeName) WILL RETURN THE INTEGRATION
    // BOUNDARIES FOR EACH OBSERVABLE x
-   std::cout << "FunctionSimpleSignedTaggedCPCoefficient::analyticalIntegral call" << std::endl;
+   std::cout << "SimpleSignedTaggedCPCoefficient::analyticalIntegral call" << std::endl;
    // assert(code==1) ; 
    // return (x.max(rangeName)-x.min(rangeName)) ; 
    return 0 ; 
