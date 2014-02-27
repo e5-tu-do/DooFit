@@ -1,7 +1,8 @@
 
 root_generate_dictionaries_local(dfFunctionsDict FunctionCoeffSin.h FunctionCoeffCosh.h FunctionTaggingCombo.h
 FunctionCoeffSinh.h FunctionProduct.h FunctionScaleWithOffset.h FunctionTauCorrection.h FunctionTaggingCalib.h
-FunctionAtanIncludingBeta.h FunctionAtan.h FunctionSum.h)
+FunctionAtanIncludingBeta.h FunctionAtan.h FunctionSum.h
+FunctionSimpleSignedCoefficient.h)
 
 add_library(dfFunctions SHARED 
 FunctionCoeffSin.h FunctionCoeffSin.cxx FunctionCoeffSin_dict.h FunctionCoeffSin_dict.cc
@@ -14,7 +15,9 @@ FunctionTauCorrection.h FunctionTauCorrection.cxx FunctionTauCorrection_dict.h F
 FunctionTaggingCalib.h FunctionTaggingCalib.cxx FunctionTaggingCalib_dict.h FunctionTaggingCalib_dict.cc
 FunctionTaggingCombo.h FunctionTaggingCombo.cxx FunctionTaggingCombo_dict.h FunctionTaggingCombo_dict.cc
 FunctionAtanIncludingBeta.h FunctionAtanIncludingBeta.cxx FunctionAtanIncludingBeta_dict.h FunctionAtanIncludingBeta_dict.cc
-FunctionAtan.h FunctionAtan.cxx FunctionAtan_dict.h FunctionAtan_dict.cc)
+FunctionAtan.h FunctionAtan.cxx FunctionAtan_dict.h FunctionAtan_dict.cc
+FunctionSimpleSignedCoefficient.h FunctionSimpleSignedCoefficient.cxx
+FunctionSimpleSignedCoefficient_dict.h FunctionSimpleSignedCoefficient_dict.cc)
 
 target_link_libraries(dfFunctions ${ALL_LIBRARIES})
 
@@ -23,6 +26,7 @@ add_dependencies(dfFunctions dfFunctionsDict)
 
 install(TARGETS dfFunctions DESTINATION lib)
 install(FILES FunctionCoeffSin.h FunctionCoeffSinh.h FunctionProduct.h FunctionCoeffCosh.h FunctionTaggingCombo.h FunctionSum.h
-FunctionScaleWithOffset.h FunctionAtanIncludingBeta.h FunctionAtan.h FunctionTauCorrection.h FunctionTaggingCalib.h
+FunctionScaleWithOffset.h FunctionAtanIncludingBeta.h FunctionAtan.h
+FunctionTauCorrection.h FunctionTaggingCalib.h
+FunctionSimpleSignedCoefficient.h
 DESTINATION include/doofit/roofit/functions)
-
