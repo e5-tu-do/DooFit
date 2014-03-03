@@ -60,7 +60,7 @@ namespace functions {
    // THE EXAMPLE BELOW ASSIGNS CODE 1 TO INTEGRATION OVER VARIABLE X
    // YOU CAN ALSO IMPLEMENT MORE THAN ONE ANALYTICAL INTEGRAL BY REPEATING THE matchArgs 
    // EXPRESSION MULTIPLE TIMES
-   std::cout << "SingleMistagCalibration::getAnalyticalIntegral call" << std::endl;   
+   // std::cout << "SingleMistagCalibration::getAnalyticalIntegral call" << std::endl;   
    // if (matchArgs(allVars,analVars,x)) return 1 ; 
    return 0 ; 
  } 
@@ -72,7 +72,7 @@ namespace functions {
    // RETURN ANALYTICAL INTEGRAL DEFINED BY RETURN CODE ASSIGNED BY getAnalyticalIntegral
    // THE MEMBER FUNCTION x.min(rangeName) AND x.max(rangeName) WILL RETURN THE INTEGRATION
    // BOUNDARIES FOR EACH OBSERVABLE x
-   std::cout << "SingleMistagCalibration::analyticalIntegral call" << std::endl;
+   // std::cout << "SingleMistagCalibration::analyticalIntegral call" << std::endl;
    // assert(code==1) ; 
    // return (x.max(rangeName)-x.min(rangeName)) ; 
    return 0 ; 
