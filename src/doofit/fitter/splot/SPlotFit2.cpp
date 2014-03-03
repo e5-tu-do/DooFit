@@ -32,6 +32,7 @@
 #include <doocore/io/MsgStream.h>
 
 // from Project
+#include "doofit/fitter/easyfit/EasyFit.h"
 
 using std::cout;
 using std::endl;
@@ -45,6 +46,27 @@ using namespace doocore::io;
 namespace doofit {
 namespace fitter {
 namespace splot {
+  
+SPlotFit2::SPlotFit2(doofit::fitter::easyfit::EasyFit& easyfit, RooDataSet& data, RooArgSet yields) :
+  pdf_(NULL),
+  pdf_owned_(false),
+  yields_(yields),
+  parameters_(NULL),
+  num_cpu_(1),
+  input_data_(&data),
+  disc_vars_(),
+  cont_vars_(),
+  disc_pdfs_(),
+  cont_pdfs_(),
+  disc_pdfs_extend_(),
+  sweighted_data_map_(),
+  sweighted_hist_map_(),
+  use_minos_(true),
+  easyfitter_(&easyfit)
+{
+  
+}
+
   
 SPlotFit2::SPlotFit2() :
   pdf_(NULL),
@@ -64,7 +86,7 @@ SPlotFit2::SPlotFit2() :
   easyfitter_(NULL),
   starting_values_("")
 {
-  
+  swarn << "SPlotFit2::SPlotFit2(): Using deprecated constructor without EasyFit. This functionality will go away in a future version. Please switch to EasyFit ASAP!" << endmsg;
 }
   
 SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
@@ -85,9 +107,7 @@ SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
   easyfitter_(NULL),
   starting_values_("")
 {
-//  pdf_->Print("v");
-//  yields_.Print();
-//  input_data_->Print();
+  swarn << "SPlotFit2::SPlotFit2(RooAbsPdf&, RooDataSet&, RooArgSet): Using deprecated constructor without EasyFit. This functionality will go away in a future version. Please switch to EasyFit ASAP!" << endmsg;
 }
 
 SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector<RooRealVar*> yields) :
@@ -108,6 +128,8 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector
   easyfitter_(NULL),
   starting_values_("")
 {
+  swarn << "SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*>, RooDataSet&, std::vector<RooRealVar*>): Using deprecated constructor without EasyFit. This functionality will go away in a future version. Please switch to EasyFit ASAP!" << endmsg;
+
   RooArgList pdfs_list;
   
   if (yields.size() != pdfs.size()) {
@@ -155,6 +177,8 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
   use_minos_(true),
   easyfitter_(NULL)
 {
+  swarn << "SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*>): Using deprecated constructor without EasyFit. This functionality will go away in a future version. Please switch to EasyFit ASAP!" << endmsg;
+  
   RooArgList pdfs_list;
   for (std::vector<RooAbsPdf*>::const_iterator it = pdfs.begin();
        it != pdfs.end(); ++it) {
@@ -192,7 +216,8 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
       serr << "Error in SPlotFit2::Fit(RooLinkedList*): Fit result not available." << endmsg;
     }
   } else {
-    swarn << "SPlotFit2::Fit(): Not using EasyFit for fitting! This might be deprecated in the near future." << endmsg;
+    swarn << "SPlotFit2::Fit(): Not using EasyFit for fitting! This will be deprecated in the near future." << endmsg;
+    swarn << "SPlotFit2::Fit(): Seriously, switch to EasyFit ASAP! It's much good and beautiful." << endmsg;
     
     RooLinkedList fitting_args;
     fitting_args.Add((TObject*)(new RooCmdArg(NumCPU(num_cpu_))));

@@ -41,9 +41,22 @@ namespace splot {
 class SPlotFit2{
  public:
   /**
-   *  @brief Constructor based on a given PDF and dataset
+   *  @brief Constructor based on a given EasyFit fitter, dataset anbd yields
    *
-   *  Based on a given PDF which needs to be extended, yields and a dataset, the 
+   *  Based on a given EasyFit (assumed to contain an extended PDF), a dataset
+   *  and yields, the SPlotFit2 is initialized to use this PDF as discriminating
+   *  PDF and all components to generate individual sweights.
+   *
+   *  @param easyfit the EasyFit to use for discrimination
+   *  @param data the dataset to fit on
+   *  @param yields yields for extended components to generate sweights for
+   */
+  SPlotFit2(doofit::fitter::easyfit::EasyFit& easyfit, RooDataSet& data, RooArgSet yields);
+
+  /**
+   *  @brief DEPRECATED: Constructor based on a given PDF and dataset
+   *
+   *  Based on a given PDF which has to be extended, yields and a dataset, the
    *  SPlotFit2 is initialized to use this PDF as discriminating PDF and all 
    *  components to generate individual sweights.
    *
@@ -54,7 +67,7 @@ class SPlotFit2{
   SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields);
   
   /**
-   *  @brief Constructor based on a set of PDFs and dataset
+   *  @brief DEPRECATED: Constructor based on a set of PDFs and dataset
    *
    *  Based on a given vector of PDFs and a dataset, the SPlotFit2 is 
    *  initialized. It will generate a RooAddPdf based on the supplied PDFs and 
@@ -67,7 +80,7 @@ class SPlotFit2{
   SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector<RooRealVar*> yields=std::vector<RooRealVar*>());
   
   /**
-   *  @brief Constructor based on a set of PDFs
+   *  @brief DEPRECATED: Constructor based on a set of PDFs
    *
    *  Based on a given vector of PDFs, the SPlotFit2 is initialized. It will 
    *  generate a RooAddPdf based on the supplied PDFs and
@@ -77,7 +90,11 @@ class SPlotFit2{
    */
   SPlotFit2(std::vector<RooAbsPdf*> pdfs);
   
+  /**
+   *  @brief DEPRECATED: Default constructor
+   */
   SPlotFit2();
+  
   ~SPlotFit2();
   
   /**
