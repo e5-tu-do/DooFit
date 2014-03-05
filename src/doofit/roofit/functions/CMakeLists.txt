@@ -12,7 +12,8 @@ FunctionAtanIncludingBeta.h
 FunctionAtan.h 
 FunctionSum.h
 SimpleSignedTaggedCPCoefficient.h 
-SingleMistagCalibrationNoAsymmetries.h)
+SingleMistagCalibrationNoAsymmetries.h
+TwoTaggerMistagCombination.h)
 
 add_library(dfFunctions SHARED 
 FunctionCoeffSin.h FunctionCoeffSin.cxx FunctionCoeffSin_dict.h FunctionCoeffSin_dict.cc
@@ -27,7 +28,8 @@ FunctionTaggingCombo.h FunctionTaggingCombo.cxx FunctionTaggingCombo_dict.h Func
 FunctionAtanIncludingBeta.h FunctionAtanIncludingBeta.cxx FunctionAtanIncludingBeta_dict.h FunctionAtanIncludingBeta_dict.cc
 FunctionAtan.h FunctionAtan.cxx FunctionAtan_dict.h FunctionAtan_dict.cc
 SimpleSignedTaggedCPCoefficient.h SimpleSignedTaggedCPCoefficient.cxx SimpleSignedTaggedCPCoefficient_dict.h SimpleSignedTaggedCPCoefficient_dict.cc
-SingleMistagCalibrationNoAsymmetries.h SingleMistagCalibrationNoAsymmetries.cxx SingleMistagCalibrationNoAsymmetries_dict.h SingleMistagCalibrationNoAsymmetries_dict.cc)
+SingleMistagCalibrationNoAsymmetries.h SingleMistagCalibrationNoAsymmetries.cxx SingleMistagCalibrationNoAsymmetries_dict.h SingleMistagCalibrationNoAsymmetries_dict.cc
+TwoTaggerMistagCombination.h TwoTaggerMistagCombination.cxx TwoTaggerMistagCombination_dict.h TwoTaggerMistagCombination_dict.cc)
 
 target_link_libraries(dfFunctions ${ALL_LIBRARIES})
 
@@ -49,4 +51,5 @@ FunctionTauCorrection.h
 FunctionTaggingCalib.h
 SimpleSignedTaggedCPCoefficient.h
 SingleMistagCalibrationNoAsymmetries.h
+TwoTaggerMistagCombination.h
 DESTINATION include/doofit/roofit/functions)
