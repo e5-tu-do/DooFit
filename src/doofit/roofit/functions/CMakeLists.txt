@@ -1,8 +1,18 @@
 
-root_generate_dictionaries_local(dfFunctionsDict FunctionCoeffSin.h FunctionCoeffCosh.h FunctionTaggingCombo.h
-FunctionCoeffSinh.h FunctionProduct.h FunctionScaleWithOffset.h FunctionTauCorrection.h FunctionTaggingCalib.h
-FunctionAtanIncludingBeta.h FunctionAtan.h FunctionSum.h
-SimpleSignedTaggedCPCoefficient.h SingleMistagCalibration.h)
+root_generate_dictionaries_local(dfFunctionsDict 
+FunctionCoeffSin.h 
+FunctionCoeffCosh.h 
+FunctionTaggingCombo.h
+FunctionCoeffSinh.h 
+FunctionProduct.h 
+FunctionScaleWithOffset.h 
+FunctionTauCorrection.h 
+FunctionTaggingCalib.h
+FunctionAtanIncludingBeta.h 
+FunctionAtan.h 
+FunctionSum.h
+SimpleSignedTaggedCPCoefficient.h 
+SingleMistagCalibrationNoAsymmetries.h)
 
 add_library(dfFunctions SHARED 
 FunctionCoeffSin.h FunctionCoeffSin.cxx FunctionCoeffSin_dict.h FunctionCoeffSin_dict.cc
@@ -16,9 +26,8 @@ FunctionTaggingCalib.h FunctionTaggingCalib.cxx FunctionTaggingCalib_dict.h Func
 FunctionTaggingCombo.h FunctionTaggingCombo.cxx FunctionTaggingCombo_dict.h FunctionTaggingCombo_dict.cc
 FunctionAtanIncludingBeta.h FunctionAtanIncludingBeta.cxx FunctionAtanIncludingBeta_dict.h FunctionAtanIncludingBeta_dict.cc
 FunctionAtan.h FunctionAtan.cxx FunctionAtan_dict.h FunctionAtan_dict.cc
-SimpleSignedTaggedCPCoefficient.h SimpleSignedTaggedCPCoefficient.cxx
-SimpleSignedTaggedCPCoefficient_dict.h SimpleSignedTaggedCPCoefficient_dict.cc
-SingleMistagCalibration.h SingleMistagCalibration.cxx SingleMistagCalibration_dict.h SingleMistagCalibration_dict.cc)
+SimpleSignedTaggedCPCoefficient.h SimpleSignedTaggedCPCoefficient.cxx SimpleSignedTaggedCPCoefficient_dict.h SimpleSignedTaggedCPCoefficient_dict.cc
+SingleMistagCalibrationNoAsymmetries.h SingleMistagCalibrationNoAsymmetries.cxx SingleMistagCalibrationNoAsymmetries_dict.h SingleMistagCalibrationNoAsymmetries_dict.cc)
 
 target_link_libraries(dfFunctions ${ALL_LIBRARIES})
 
@@ -26,9 +35,18 @@ target_link_libraries(dfFunctions ${ALL_LIBRARIES})
 add_dependencies(dfFunctions dfFunctionsDict)
 
 install(TARGETS dfFunctions DESTINATION lib)
-install(FILES FunctionCoeffSin.h FunctionCoeffSinh.h FunctionProduct.h FunctionCoeffCosh.h FunctionTaggingCombo.h FunctionSum.h
-FunctionScaleWithOffset.h FunctionAtanIncludingBeta.h FunctionAtan.h
-FunctionTauCorrection.h FunctionTaggingCalib.h
+install(FILES 
+FunctionCoeffSin.h 
+FunctionCoeffSinh.h 
+FunctionProduct.h 
+FunctionCoeffCosh.h 
+FunctionTaggingCombo.h 
+FunctionSum.h
+FunctionScaleWithOffset.h 
+FunctionAtanIncludingBeta.h 
+FunctionAtan.h
+FunctionTauCorrection.h 
+FunctionTaggingCalib.h
 SimpleSignedTaggedCPCoefficient.h
-SingleMistagCalibration.h
+SingleMistagCalibrationNoAsymmetries.h
 DESTINATION include/doofit/roofit/functions)

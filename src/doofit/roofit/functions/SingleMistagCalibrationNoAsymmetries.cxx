@@ -9,19 +9,19 @@
 
 #include "Riostream.h" 
 
-#include "SingleMistagCalibration.h" 
+#include "SingleMistagCalibrationNoAsymmetries.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::SingleMistagCalibration) 
+ClassImp(doofit::roofit::functions::SingleMistagCalibrationNoAsymmetries) 
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 
- SingleMistagCalibration::SingleMistagCalibration(std::string name, 
+ SingleMistagCalibrationNoAsymmetries::SingleMistagCalibrationNoAsymmetries(std::string name, 
                         RooAbsReal& _eta_,
                         RooAbsReal& _p0_,
                         RooAbsReal& _p1_,
@@ -35,7 +35,7 @@ namespace functions {
  }
 
 
- SingleMistagCalibration::SingleMistagCalibration(const SingleMistagCalibration& other, const char* name) :  
+ SingleMistagCalibrationNoAsymmetries::SingleMistagCalibrationNoAsymmetries(const SingleMistagCalibrationNoAsymmetries& other, const char* name) :  
    RooAbsReal(other,name), 
    eta_("eta_",this,other.eta_),
    p0_("p0_",this,other.p0_),
@@ -46,33 +46,33 @@ namespace functions {
 
 
 
- Double_t SingleMistagCalibration::evaluate() const 
+ Double_t SingleMistagCalibrationNoAsymmetries::evaluate() const 
  { 
    return p0_ + p1_ * ( eta_ - avg_eta_ )  ; 
  } 
 
 
 
- Int_t SingleMistagCalibration::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
+ Int_t SingleMistagCalibrationNoAsymmetries::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
  { 
    // LIST HERE OVER WHICH VARIABLES ANALYTICAL INTEGRATION IS SUPPORTED, 
    // ASSIGN A NUMERIC CODE FOR EACH SUPPORTED (SET OF) PARAMETERS 
    // THE EXAMPLE BELOW ASSIGNS CODE 1 TO INTEGRATION OVER VARIABLE X
    // YOU CAN ALSO IMPLEMENT MORE THAN ONE ANALYTICAL INTEGRAL BY REPEATING THE matchArgs 
    // EXPRESSION MULTIPLE TIMES
-   // std::cout << "SingleMistagCalibration::getAnalyticalIntegral call" << std::endl;   
+   // std::cout << "SingleMistagCalibrationNoAsymmetries::getAnalyticalIntegral call" << std::endl;   
    // if (matchArgs(allVars,analVars,x)) return 1 ; 
    return 0 ; 
  } 
 
 
 
- Double_t SingleMistagCalibration::analyticalIntegral(Int_t code, const char* rangeName) const  
+ Double_t SingleMistagCalibrationNoAsymmetries::analyticalIntegral(Int_t code, const char* rangeName) const  
  { 
    // RETURN ANALYTICAL INTEGRAL DEFINED BY RETURN CODE ASSIGNED BY getAnalyticalIntegral
    // THE MEMBER FUNCTION x.min(rangeName) AND x.max(rangeName) WILL RETURN THE INTEGRATION
    // BOUNDARIES FOR EACH OBSERVABLE x
-   // std::cout << "SingleMistagCalibration::analyticalIntegral call" << std::endl;
+   // std::cout << "SingleMistagCalibrationNoAsymmetries::analyticalIntegral call" << std::endl;
    // assert(code==1) ; 
    // return (x.max(rangeName)-x.min(rangeName)) ; 
    return 0 ; 
