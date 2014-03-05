@@ -21,6 +21,9 @@ set(BASEPATH "${CMAKE_SOURCE_DIR}/src")
 include_directories(${BASEPATH})
 include_directories("${BASEPATH}/lhcb")
 
+include_directories("$ENV{MYSITEROOT}/lcg/external/GSL/1.10/$ENV{CMTCONFIG}/include")
+link_directories("$ENV{MYSITEROOT}/lcg/external/GSL/1.10/$ENV{CMTCONFIG}/lib")
+
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 
