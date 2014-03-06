@@ -4,7 +4,7 @@ FunctionCoeffSin.h
 CoshCoeff.h
 CoshCoeffWithAsymms.h 
 FunctionTaggingCombo.h
-FunctionCoeffSinh.h 
+SinhCoeff.h 
 FunctionProduct.h 
 FunctionScaleWithOffset.h 
 FunctionTauCorrection.h 
@@ -21,7 +21,7 @@ add_library(dfFunctions SHARED
 FunctionCoeffSin.h FunctionCoeffSin.cxx FunctionCoeffSin_dict.h FunctionCoeffSin_dict.cc
 CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
 CoshCoeffWithAsymms.h CoshCoeffWithAsymms.cxx CoshCoeffWithAsymms_dict.h CoshCoeffWithAsymms_dict.cc
-FunctionCoeffSinh.h FunctionCoeffSinh.cxx FunctionCoeffSinh_dict.h FunctionCoeffSinh_dict.cc
+SinhCoeff.h SinhCoeff.cxx SinhCoeff_dict.h SinhCoeff_dict.cc
 FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dict.cc
 FunctionSum.h FunctionSum.cxx FunctionSum_dict.h FunctionSum_dict.cc
 FunctionScaleWithOffset.h FunctionScaleWithOffset.cxx FunctionScaleWithOffset_dict.h FunctionScaleWithOffset_dict.cc
@@ -43,7 +43,7 @@ add_dependencies(dfFunctions dfFunctionsDict)
 install(TARGETS dfFunctions DESTINATION lib)
 install(FILES 
 FunctionCoeffSin.h 
-FunctionCoeffSinh.h 
+SinhCoeff.h 
 FunctionProduct.h 
 CoshCoeff.h
 CoshCoeffWithAsymms.h 

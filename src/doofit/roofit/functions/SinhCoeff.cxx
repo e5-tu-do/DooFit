@@ -8,23 +8,23 @@
 
 #include "Riostream.h" 
 
-#include "FunctionCoeffSinh.h" 
+#include "SinhCoeff.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::FunctionCoeffSinh)
+ClassImp(doofit::roofit::functions::SinhCoeff)
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 
-long long FunctionCoeffSinh::num_calls_evaluate_ = 0;
-long long FunctionCoeffSinh::num_calls_integral_ = 0;
+long long SinhCoeff::num_calls_evaluate_ = 0;
+long long SinhCoeff::num_calls_integral_ = 0;
 
 
- FunctionCoeffSinh::FunctionCoeffSinh(std::string name,
+ SinhCoeff::SinhCoeff(std::string name,
                         RooAbsReal& _par_sinh) :
    RooAbsReal(name.c_str(), name.c_str()),
    par_sinh("par_sinh","par_sinh",this,_par_sinh)
@@ -32,20 +32,20 @@ long long FunctionCoeffSinh::num_calls_integral_ = 0;
  } 
 
 
- FunctionCoeffSinh::FunctionCoeffSinh(const FunctionCoeffSinh& other, const char* name) :  
+ SinhCoeff::SinhCoeff(const SinhCoeff& other, const char* name) :  
    RooAbsReal(other,name), 
    par_sinh("par_sinh",this,other.par_sinh)
  {
  } 
 
-Int_t FunctionCoeffSinh::getAnalyticalIntegral(RooArgSet& allVars,
+Int_t SinhCoeff::getAnalyticalIntegral(RooArgSet& allVars,
                                               RooArgSet& analVars, const char* rangeName) const
 {
   if (allVars.getSize() == 0) {
     return 0;
   }
   #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("FunctionCoeffSinh::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
+  std::printf("SinhCoeff::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
   //  analVars.Print();
   allVars.Print();
@@ -55,10 +55,10 @@ Int_t FunctionCoeffSinh::getAnalyticalIntegral(RooArgSet& allVars,
   return 0;
 }
 
-Int_t FunctionCoeffSinh::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
+Int_t SinhCoeff::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("FunctionCoeffSinh::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
+  std::printf("SinhCoeff::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
   //analVars.Print();
   allVars.Print();
