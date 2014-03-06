@@ -1,13 +1,16 @@
 
 root_generate_dictionaries_local(dfFunctionsDict 
-FunctionCoeffSin.h 
 CoshCoeff.h
 CoshCoeffWithAsymms.h 
 FunctionTaggingCombo.h
-SinhCoeff.h 
+SinhCoeff.h
+SinCoeffSimple.h
+SinCoeffWithProdAsymm.h
+SinCoeffWithTaggingCalib.h
+SinCoeffWithAsymms.h
 FunctionProduct.h 
 FunctionScaleWithOffset.h 
-FunctionTauCorrection.h 
+TauCorrectionWithBetaFactor.h 
 FunctionTaggingCalib.h
 FunctionAtanIncludingBeta.h 
 FunctionAtan.h 
@@ -18,14 +21,17 @@ TwoTaggerMistagCombination.h
 TwoTaggerTagCombination.h)
 
 add_library(dfFunctions SHARED 
-FunctionCoeffSin.h FunctionCoeffSin.cxx FunctionCoeffSin_dict.h FunctionCoeffSin_dict.cc
 CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
 CoshCoeffWithAsymms.h CoshCoeffWithAsymms.cxx CoshCoeffWithAsymms_dict.h CoshCoeffWithAsymms_dict.cc
 SinhCoeff.h SinhCoeff.cxx SinhCoeff_dict.h SinhCoeff_dict.cc
+SinCoeffSimple.h SinCoeffSimple.cxx SinCoeffSimple_dict.h SinCoeffSimple_dict.cc
+SinCoeffWithProdAsymm.h SinCoeffWithProdAsymm.cxx SinCoeffWithProdAsymm_dict.h SinCoeffWithProdAsymm_dict.cc
+SinCoeffWithTaggingCalib.h SinCoeffWithTaggingCalib.cxx SinCoeffWithTaggingCalib_dict.h SinCoeffWithTaggingCalib_dict.cc
+SinCoeffWithAsymms.h SinCoeffWithAsymms.cxx SinCoeffWithAsymms_dict.h SinCoeffWithAsymms_dict.cc
 FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dict.cc
 FunctionSum.h FunctionSum.cxx FunctionSum_dict.h FunctionSum_dict.cc
 FunctionScaleWithOffset.h FunctionScaleWithOffset.cxx FunctionScaleWithOffset_dict.h FunctionScaleWithOffset_dict.cc
-FunctionTauCorrection.h FunctionTauCorrection.cxx FunctionTauCorrection_dict.h FunctionTauCorrection_dict.cc
+TauCorrectionWithBetaFactor.h TauCorrectionWithBetaFactor.cxx TauCorrectionWithBetaFactor_dict.h TauCorrectionWithBetaFactor_dict.cc
 FunctionTaggingCalib.h FunctionTaggingCalib.cxx FunctionTaggingCalib_dict.h FunctionTaggingCalib_dict.cc
 FunctionTaggingCombo.h FunctionTaggingCombo.cxx FunctionTaggingCombo_dict.h FunctionTaggingCombo_dict.cc
 FunctionAtanIncludingBeta.h FunctionAtanIncludingBeta.cxx FunctionAtanIncludingBeta_dict.h FunctionAtanIncludingBeta_dict.cc
@@ -42,17 +48,20 @@ add_dependencies(dfFunctions dfFunctionsDict)
 
 install(TARGETS dfFunctions DESTINATION lib)
 install(FILES 
-FunctionCoeffSin.h 
 SinhCoeff.h 
 FunctionProduct.h 
 CoshCoeff.h
-CoshCoeffWithAsymms.h 
+CoshCoeffWithAsymms.h
+SinCoeffSimple.h 
+SinCoeffWithProdAsymm.h
+SinCoeffWithTaggingCalib.h
+SinCoeffWithAsymms.h
 FunctionTaggingCombo.h 
 FunctionSum.h
 FunctionScaleWithOffset.h 
 FunctionAtanIncludingBeta.h 
 FunctionAtan.h
-FunctionTauCorrection.h 
+TauCorrectionWithBetaFactor.h 
 FunctionTaggingCalib.h
 SimpleSignedTaggedCPCoefficient.h
 SingleMistagCalibrationNoAsymmetries.h

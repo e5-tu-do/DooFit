@@ -8,22 +8,22 @@
 
 #include "Riostream.h" 
 
-#include "FunctionTauCorrection.h"
+#include "TauCorrectionWithBetaFactor.h"
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::FunctionTauCorrection)
+ClassImp(doofit::roofit::functions::TauCorrectionWithBetaFactor)
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 
-long long FunctionTauCorrection::num_calls_evaluate_ = 0;
-long long FunctionTauCorrection::num_calls_integral_ = 0;
+long long TauCorrectionWithBetaFactor::num_calls_evaluate_ = 0;
+long long TauCorrectionWithBetaFactor::num_calls_integral_ = 0;
 
- FunctionTauCorrection::FunctionTauCorrection(const char *name, const char *title,
+ TauCorrectionWithBetaFactor::TauCorrectionWithBetaFactor(const char *name, const char *title,
                         RooAbsReal& _par_tau,
                         RooAbsReal& _par_beta) :
    RooAbsReal(name,title), 
@@ -33,18 +33,18 @@ long long FunctionTauCorrection::num_calls_integral_ = 0;
  } 
 
 
- FunctionTauCorrection::FunctionTauCorrection(const FunctionTauCorrection& other, const char* name) :
+ TauCorrectionWithBetaFactor::TauCorrectionWithBetaFactor(const TauCorrectionWithBetaFactor& other, const char* name) :
    RooAbsReal(other,name), 
    par_tau("par_tau",this,other.par_tau),
    par_beta("par_beta",this,other.par_beta)
  {
  } 
 
-Int_t FunctionTauCorrection::getAnalyticalIntegral(RooArgSet& allVars,
+Int_t TauCorrectionWithBetaFactor::getAnalyticalIntegral(RooArgSet& allVars,
                                                RooArgSet& analVars, const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("FunctionTauCorrection::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
+  std::printf("TauCorrectionWithBetaFactor::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
 //  analVars.Print();
   allVars.Print();
@@ -55,10 +55,10 @@ Int_t FunctionTauCorrection::getAnalyticalIntegral(RooArgSet& allVars,
   return 0;
 }
 
-Int_t FunctionTauCorrection::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
+Int_t TauCorrectionWithBetaFactor::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("FunctionTauCorrection::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
+  std::printf("TauCorrectionWithBetaFactor::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
   //analVars.Print();
   allVars.Print();
