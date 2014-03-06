@@ -8,19 +8,19 @@
 
 #include "Riostream.h" 
 
-#include "TwoTaggerMistagCombination.h" 
+#include "TwoTaggerTagCombination.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::TwoTaggerMistagCombination) 
+ClassImp(doofit::roofit::functions::TwoTaggerTagCombination) 
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 
- TwoTaggerMistagCombination::TwoTaggerMistagCombination(std::string name, 
+ TwoTaggerTagCombination::TwoTaggerTagCombination(std::string name, 
                         RooAbsReal& _eta_one_,
                         RooAbsReal& _eta_two_,
                         RooAbsCategory& _tag_one_,
@@ -34,7 +34,7 @@ namespace functions {
  } 
 
 
- TwoTaggerMistagCombination::TwoTaggerMistagCombination(const TwoTaggerMistagCombination& other, const char* name) :  
+ TwoTaggerTagCombination::TwoTaggerTagCombination(const TwoTaggerTagCombination& other, const char* name) :  
    RooAbsReal(other,name), 
    eta_one_("eta_one_",this,other.eta_one_),
    eta_two_("eta_two_",this,other.eta_two_),
@@ -45,9 +45,9 @@ namespace functions {
 
 
 
- Double_t TwoTaggerMistagCombination::evaluate() const 
+ Double_t TwoTaggerTagCombination::evaluate() const 
  { 
-   // mistag combination: the Grabalosa way 
+   // tag combination: the Grabalosa way 
    // https://cds.cern.ch/record/1456804/files/CERN-THESIS-2012-075.pdf
    // note that the probability e.g. to have a b-tagged meson corresponds to a Bbar-Meson, so tag=-1
 
@@ -55,16 +55,18 @@ namespace functions {
    double p_b = ( ( ( 1 + tag_one_ ) / 2 ) - tag_one_ * ( 1 - eta_one_ ) ) * ( ( ( 1 + tag_two_ ) / 2 ) - tag_two_ * ( 1 - eta_two_ ) );
    // probability to have a bbar-tagged meson
    double p_bbar = ( ( ( 1 - tag_one_ ) / 2 ) + tag_one_ * ( 1 - eta_one_ ) ) * ( ( ( 1 - tag_two_ ) / 2 ) + tag_two_ * ( 1 - eta_two_ ) );
+   
+   if (p_b > p_bbar){
+      return -1;
+   }
+   else{
+      return +1;
+   }
+ } 
 
-   // as the combined eta will be the one associated with the larger probability for a b / bbar quark:
-   double eta_combined = 1. - ( std::max(p_b, p_bbar) / (p_b + p_bbar) );
-
-   return eta_combined; 
- }
 
 
-
- Int_t TwoTaggerMistagCombination::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
+ Int_t TwoTaggerTagCombination::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
  { 
    // LIST HERE OVER WHICH VARIABLES ANALYTICAL INTEGRATION IS SUPPORTED, 
    // ASSIGN A NUMERIC CODE FOR EACH SUPPORTED (SET OF) PARAMETERS 
@@ -78,7 +80,7 @@ namespace functions {
 
 
 
- Double_t TwoTaggerMistagCombination::analyticalIntegral(Int_t code, const char* rangeName) const  
+ Double_t TwoTaggerTagCombination::analyticalIntegral(Int_t code, const char* rangeName) const  
  { 
    // RETURN ANALYTICAL INTEGRAL DEFINED BY RETURN CODE ASSIGNED BY getAnalyticalIntegral
    // THE MEMBER FUNCTION x.min(rangeName) AND x.max(rangeName) WILL RETURN THE INTEGRATION
