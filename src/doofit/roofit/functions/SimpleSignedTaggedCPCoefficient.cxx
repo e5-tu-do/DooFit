@@ -24,7 +24,7 @@ namespace functions {
                         RooAbsReal& _mistag_,
                         RooAbsReal& _coeff_,
                         RooAbsReal& _sign_,
-                        RooAbsCategory& _tag_) :
+                        RooAbsReal& _tag_) :
    RooAbsReal(name.c_str(),name.c_str()), 
    mistag_("mistag_","mistag_",this,_mistag_),
    coeff_("coeff_","coeff_",this,_coeff_),

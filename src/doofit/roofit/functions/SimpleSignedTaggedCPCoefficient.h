@@ -24,7 +24,7 @@ public:
 	      RooAbsReal& _mistag_,
 	      RooAbsReal& _coeff_,
 	      RooAbsReal& _sign_,
-	      RooAbsCategory& _tag_);
+	      RooAbsReal& _tag_);
   SimpleSignedTaggedCPCoefficient(const SimpleSignedTaggedCPCoefficient& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new SimpleSignedTaggedCPCoefficient(*this,newname); }
   inline virtual ~SimpleSignedTaggedCPCoefficient() { }
@@ -37,7 +37,7 @@ protected:
   RooRealProxy mistag_ ;
   RooRealProxy coeff_ ;
   RooRealProxy sign_ ;
-  RooCategoryProxy tag_ ;
+  RooRealProxy tag_ ;
   
   Double_t evaluate() const ;
 
