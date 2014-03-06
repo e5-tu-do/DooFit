@@ -1,7 +1,8 @@
 
 root_generate_dictionaries_local(dfFunctionsDict 
 FunctionCoeffSin.h 
-FunctionCoeffCosh.h 
+CoshCoeff.h
+CoshCoeffWithAsymms.h 
 FunctionTaggingCombo.h
 FunctionCoeffSinh.h 
 FunctionProduct.h 
@@ -18,7 +19,8 @@ TwoTaggerTagCombination.h)
 
 add_library(dfFunctions SHARED 
 FunctionCoeffSin.h FunctionCoeffSin.cxx FunctionCoeffSin_dict.h FunctionCoeffSin_dict.cc
-FunctionCoeffCosh.h FunctionCoeffCosh.cxx FunctionCoeffCosh_dict.h FunctionCoeffCosh_dict.cc
+CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
+CoshCoeffWithAsymms.h CoshCoeffWithAsymms.cxx CoshCoeffWithAsymms_dict.h CoshCoeffWithAsymms_dict.cc
 FunctionCoeffSinh.h FunctionCoeffSinh.cxx FunctionCoeffSinh_dict.h FunctionCoeffSinh_dict.cc
 FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dict.cc
 FunctionSum.h FunctionSum.cxx FunctionSum_dict.h FunctionSum_dict.cc
@@ -43,7 +45,8 @@ install(FILES
 FunctionCoeffSin.h 
 FunctionCoeffSinh.h 
 FunctionProduct.h 
-FunctionCoeffCosh.h 
+CoshCoeff.h
+CoshCoeffWithAsymms.h 
 FunctionTaggingCombo.h 
 FunctionSum.h
 FunctionScaleWithOffset.h 
