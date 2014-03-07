@@ -1,5 +1,6 @@
 
 root_generate_dictionaries_local(dfFunctionsDict 
+CategoryToReal.h
 CoshCoeff.h
 CoshCoeffWithAsymms.h 
 FunctionTaggingCombo.h
@@ -23,6 +24,7 @@ CombinationOfCalibratedMistags.h
 CombinationOfMistagsWithAsymmetries.h)
 
 add_library(dfFunctions SHARED 
+CategoryToReal.h CategoryToReal.cxx CategoryToReal_dict.h CategoryToReal_dict.cc
 CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
 CoshCoeffWithAsymms.h CoshCoeffWithAsymms.cxx CoshCoeffWithAsymms_dict.h CoshCoeffWithAsymms_dict.cc
 SinhCoeff.h SinhCoeff.cxx SinhCoeff_dict.h SinhCoeff_dict.cc
@@ -52,6 +54,7 @@ add_dependencies(dfFunctions dfFunctionsDict)
 
 install(TARGETS dfFunctions DESTINATION lib)
 install(FILES 
+CategoryToReal.h
 SinhCoeff.h 
 FunctionProduct.h 
 CoshCoeff.h
