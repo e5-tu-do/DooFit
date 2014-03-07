@@ -8,19 +8,19 @@
 
 #include "Riostream.h" 
 
-#include "FunctionTaggingCombo.h" 
+#include "CombinedTagUncalibrated.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::FunctionTaggingCombo)
+ClassImp(doofit::roofit::functions::CombinedTagUncalibrated)
 
 namespace doofit {
 namespace roofit {
 namespace functions {
   
-FunctionTaggingCombo::FunctionTaggingCombo(const char *name, const char *title,
+CombinedTagUncalibrated::CombinedTagUncalibrated(const char *name, const char *title,
                                            RooAbsCategory& _cat_tag_OS,
                                            RooAbsReal& _par_tag_eta_OS,
                                            RooAbsReal& _par_tag_meaneta_OS,
@@ -46,7 +46,7 @@ FunctionTaggingCombo::FunctionTaggingCombo(const char *name, const char *title,
   }
 
   
-FunctionTaggingCombo::FunctionTaggingCombo(const FunctionTaggingCombo& other, const char* name) :
+CombinedTagUncalibrated::CombinedTagUncalibrated(const CombinedTagUncalibrated& other, const char* name) :
   RooAbsReal(other,name),
   cat_tag_OS("cat_tag_OS",this,other.cat_tag_OS),
   par_tag_p0_OS("par_tag_p0_OS",this,other.par_tag_p0_OS),
@@ -61,11 +61,11 @@ FunctionTaggingCombo::FunctionTaggingCombo(const FunctionTaggingCombo& other, co
  {
  } 
 
-Int_t FunctionTaggingCombo::getAnalyticalIntegral(RooArgSet& allVars,
+Int_t CombinedTagUncalibrated::getAnalyticalIntegral(RooArgSet& allVars,
                                                      RooArgSet& analVars, const char* rangeName) const
 {
 #ifdef FUNCTIONS_COUNT_CALLS
-    std::printf("FunctionTaggingCombo::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
+    std::printf("CombinedTagUncalibrated::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
                 __func__, __LINE__, __FILE__);
     //  analVars.Print();
     allVars.Print();
@@ -74,10 +74,10 @@ Int_t FunctionTaggingCombo::getAnalyticalIntegral(RooArgSet& allVars,
     return 0;
 }
   
-  Int_t FunctionTaggingCombo::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
+  Int_t CombinedTagUncalibrated::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
 {
 #ifdef FUNCTIONS_COUNT_CALLS
-    std::printf("FunctionTaggingCombo::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
+    std::printf("CombinedTagUncalibrated::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
                 __func__, __LINE__, __FILE__);
     //analVars.Print();
     allVars.Print();

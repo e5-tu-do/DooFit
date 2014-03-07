@@ -3,7 +3,6 @@ root_generate_dictionaries_local(dfFunctionsDict
 CategoryToReal.h
 CoshCoeff.h
 CoshCoeffWithAsymms.h 
-FunctionTaggingCombo.h
 SinhCoeff.h
 SinCoeffSimple.h
 SinCoeffWithProdAsymm.h
@@ -21,7 +20,9 @@ SingleMistagCalibrationWithAsymmetries.h
 TwoTaggerMistagCombination.h
 TwoTaggerTagCombination.h
 CombinationOfCalibratedMistags.h
-CombinationOfMistagsWithAsymmetries.h)
+CombinationOfMistagsWithAsymmetries.h
+CombinedTagCalibrated.h
+CombinedTagUncalibrated.h)
 
 add_library(dfFunctions SHARED 
 CategoryToReal.h CategoryToReal.cxx CategoryToReal_dict.h CategoryToReal_dict.cc
@@ -36,7 +37,6 @@ FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dic
 FunctionSum.h FunctionSum.cxx FunctionSum_dict.h FunctionSum_dict.cc
 LinearFunctionWithOffset.h LinearFunctionWithOffset.cxx LinearFunctionWithOffset_dict.h LinearFunctionWithOffset_dict.cc
 TauCorrectionWithBetaFactor.h TauCorrectionWithBetaFactor.cxx TauCorrectionWithBetaFactor_dict.h TauCorrectionWithBetaFactor_dict.cc
-FunctionTaggingCombo.h FunctionTaggingCombo.cxx FunctionTaggingCombo_dict.h FunctionTaggingCombo_dict.cc
 AtanAcceptanceIncludingBeta.h AtanAcceptanceIncludingBeta.cxx AtanAcceptanceIncludingBeta_dict.h AtanAcceptanceIncludingBeta_dict.cc
 AtanAcceptance.h AtanAcceptance.cxx AtanAcceptance_dict.h AtanAcceptance_dict.cc
 SimpleSignedTaggedCPCoefficient.h SimpleSignedTaggedCPCoefficient.cxx SimpleSignedTaggedCPCoefficient_dict.h SimpleSignedTaggedCPCoefficient_dict.cc
@@ -45,7 +45,9 @@ SingleMistagCalibrationWithAsymmetries.h SingleMistagCalibrationWithAsymmetries.
 TwoTaggerMistagCombination.h TwoTaggerMistagCombination.cxx TwoTaggerMistagCombination_dict.h TwoTaggerMistagCombination_dict.cc
 TwoTaggerTagCombination.h TwoTaggerTagCombination.cxx TwoTaggerTagCombination_dict.h TwoTaggerTagCombination_dict.cc
 CombinationOfCalibratedMistags.h CombinationOfCalibratedMistags.cxx CombinationOfCalibratedMistags_dict.h CombinationOfCalibratedMistags_dict.cc
-CombinationOfMistagsWithAsymmetries.h CombinationOfMistagsWithAsymmetries.cxx CombinationOfMistagsWithAsymmetries_dict.h CombinationOfMistagsWithAsymmetries_dict.cc)
+CombinationOfMistagsWithAsymmetries.h CombinationOfMistagsWithAsymmetries.cxx CombinationOfMistagsWithAsymmetries_dict.h CombinationOfMistagsWithAsymmetries_dict.cc
+CombinedTagCalibrated.h CombinedTagCalibrated.cxx CombinedTagCalibrated_dict.h CombinedTagCalibrated_dict.cc
+CombinedTagUncalibrated.h CombinedTagUncalibrated.cxx CombinedTagUncalibrated_dict.h CombinedTagUncalibrated_dict.cc)
 
 target_link_libraries(dfFunctions ${ALL_LIBRARIES})
 
@@ -63,7 +65,6 @@ SinCoeffSimple.h
 SinCoeffWithProdAsymm.h
 SinCoeffWithTaggingCalib.h
 SinCoeffWithAsymms.h
-FunctionTaggingCombo.h 
 FunctionSum.h
 LinearFunctionWithOffset.h 
 AtanAcceptanceIncludingBeta.h 
@@ -76,4 +77,6 @@ TwoTaggerMistagCombination.h
 TwoTaggerTagCombination.h
 CombinationOfCalibratedMistags.h
 CombinationOfMistagsWithAsymmetries.h
+CombinedTagCalibrated.h
+CombinedTagUncalibrated.h
 DESTINATION include/doofit/roofit/functions)
