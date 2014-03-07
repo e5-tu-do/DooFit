@@ -11,7 +11,6 @@ SinCoeffWithAsymms.h
 FunctionProduct.h 
 LinearFunctionWithOffset.h 
 TauCorrectionWithBetaFactor.h 
-#FunctionTaggingCalib.h
 AtanAcceptanceIncludingBeta.h 
 AtanAcceptance.h 
 FunctionSum.h
@@ -20,7 +19,8 @@ SingleMistagCalibrationNoAsymmetries.h
 SingleMistagCalibrationWithAsymmetries.h
 TwoTaggerMistagCombination.h
 TwoTaggerTagCombination.h
-CombinationOfCalibratedMistags.h)
+CombinationOfCalibratedMistags.h
+CombinationOfMistagsWithAsymmetries.h)
 
 add_library(dfFunctions SHARED 
 CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
@@ -34,7 +34,6 @@ FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dic
 FunctionSum.h FunctionSum.cxx FunctionSum_dict.h FunctionSum_dict.cc
 LinearFunctionWithOffset.h LinearFunctionWithOffset.cxx LinearFunctionWithOffset_dict.h LinearFunctionWithOffset_dict.cc
 TauCorrectionWithBetaFactor.h TauCorrectionWithBetaFactor.cxx TauCorrectionWithBetaFactor_dict.h TauCorrectionWithBetaFactor_dict.cc
-#FunctionTaggingCalib.h FunctionTaggingCalib.cxx FunctionTaggingCalib_dict.h FunctionTaggingCalib_dict.cc
 FunctionTaggingCombo.h FunctionTaggingCombo.cxx FunctionTaggingCombo_dict.h FunctionTaggingCombo_dict.cc
 AtanAcceptanceIncludingBeta.h AtanAcceptanceIncludingBeta.cxx AtanAcceptanceIncludingBeta_dict.h AtanAcceptanceIncludingBeta_dict.cc
 AtanAcceptance.h AtanAcceptance.cxx AtanAcceptance_dict.h AtanAcceptance_dict.cc
@@ -43,7 +42,8 @@ SingleMistagCalibrationNoAsymmetries.h SingleMistagCalibrationNoAsymmetries.cxx 
 SingleMistagCalibrationWithAsymmetries.h SingleMistagCalibrationWithAsymmetries.cxx SingleMistagCalibrationWithAsymmetries_dict.h SingleMistagCalibrationWithAsymmetries_dict.cc
 TwoTaggerMistagCombination.h TwoTaggerMistagCombination.cxx TwoTaggerMistagCombination_dict.h TwoTaggerMistagCombination_dict.cc
 TwoTaggerTagCombination.h TwoTaggerTagCombination.cxx TwoTaggerTagCombination_dict.h TwoTaggerTagCombination_dict.cc
-CombinationOfCalibratedMistags.h CombinationOfCalibratedMistags.cxx CombinationOfCalibratedMistags_dict.h CombinationOfCalibratedMistags_dict.cc)
+CombinationOfCalibratedMistags.h CombinationOfCalibratedMistags.cxx CombinationOfCalibratedMistags_dict.h CombinationOfCalibratedMistags_dict.cc
+CombinationOfMistagsWithAsymmetries.h CombinationOfMistagsWithAsymmetries.cxx CombinationOfMistagsWithAsymmetries_dict.h CombinationOfMistagsWithAsymmetries_dict.cc)
 
 target_link_libraries(dfFunctions ${ALL_LIBRARIES})
 
@@ -66,11 +66,11 @@ LinearFunctionWithOffset.h
 AtanAcceptanceIncludingBeta.h 
 AtanAcceptance.h
 TauCorrectionWithBetaFactor.h 
-#FunctionTaggingCalib.h
 SimpleSignedTaggedCPCoefficient.h
 SingleMistagCalibrationNoAsymmetries.h
 SingleMistagCalibrationWithAsymmetries.h
 TwoTaggerMistagCombination.h
 TwoTaggerTagCombination.h
 CombinationOfCalibratedMistags.h
+CombinationOfMistagsWithAsymmetries.h
 DESTINATION include/doofit/roofit/functions)
