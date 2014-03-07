@@ -19,7 +19,9 @@ ClassImp(doofit::roofit::functions::CoshCoeffWithAsymms)
 namespace doofit {
 namespace roofit {
 namespace functions {
-  
+
+CoshCoeffWithAsymms::CoshCoeffWithAsymms(){}
+
 CoshCoeffWithAsymms::CoshCoeffWithAsymms(const char *name, const char *title,
                                      RooAbsReal& _par_tag_omega,
                                      RooAbsReal& _par_tag_meaneta,
