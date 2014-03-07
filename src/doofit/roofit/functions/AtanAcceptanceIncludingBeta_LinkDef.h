@@ -7,5 +7,5 @@
 // #pragma link C++ namespace doofit::roofit;
 #pragma link C++ nestedclass;
 #pragma link C++ nestedtypedef;
-#pragma link C++ class doofit::roofit::functions::FunctionScaleWithOffset;
+#pragma link C++ class doofit::roofit::functions::AtanAcceptanceIncludingBeta;
 #endif

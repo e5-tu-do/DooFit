@@ -8,22 +8,22 @@
 
 #include "Riostream.h" 
 
-#include "FunctionAtanIncludingBeta.h" 
+#include "AtanAcceptanceIncludingBeta.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::FunctionAtanIncludingBeta) 
+ClassImp(doofit::roofit::functions::AtanAcceptanceIncludingBeta) 
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 
-long long FunctionAtanIncludingBeta::num_calls_evaluate_ = 0;
-long long FunctionAtanIncludingBeta::num_calls_integral_ = 0;
+long long AtanAcceptanceIncludingBeta::num_calls_evaluate_ = 0;
+long long AtanAcceptanceIncludingBeta::num_calls_integral_ = 0;
 
- FunctionAtanIncludingBeta::FunctionAtanIncludingBeta(const char *name, const char *title, 
+ AtanAcceptanceIncludingBeta::AtanAcceptanceIncludingBeta(const char *name, const char *title, 
                         RooAbsReal& _par_x,
                         RooAbsReal& _par_slope_a,
                         RooAbsReal& _par_slope_b,
@@ -37,7 +37,7 @@ long long FunctionAtanIncludingBeta::num_calls_integral_ = 0;
  } 
 
 
- FunctionAtanIncludingBeta::FunctionAtanIncludingBeta(const FunctionAtanIncludingBeta& other, const char* name) :  
+ AtanAcceptanceIncludingBeta::AtanAcceptanceIncludingBeta(const AtanAcceptanceIncludingBeta& other, const char* name) :  
    RooAbsReal(other,name), 
    par_x("par_x",this,other.par_x),
    par_slope_a("par_slope_a",this,other.par_slope_a),
@@ -46,12 +46,12 @@ long long FunctionAtanIncludingBeta::num_calls_integral_ = 0;
  {
  } 
 
-Int_t FunctionAtanIncludingBeta::getAnalyticalIntegral(RooArgSet& allVars,
+Int_t AtanAcceptanceIncludingBeta::getAnalyticalIntegral(RooArgSet& allVars,
                                               RooArgSet& analVars, const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
   //if (matchArgs(allVars, analVars, cat_tag)) return 1;
-  std::printf("FunctionAtanIncludingBeta::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
+  std::printf("AtanAcceptanceIncludingBeta::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
   //analVars.Print();
   allVars.Print();
@@ -62,10 +62,10 @@ Int_t FunctionAtanIncludingBeta::getAnalyticalIntegral(RooArgSet& allVars,
 }
 
 
-Int_t FunctionAtanIncludingBeta::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
+Int_t AtanAcceptanceIncludingBeta::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("FunctionAtanIncludingBeta::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
+  std::printf("AtanAcceptanceIncludingBeta::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
   //analVars.Print();
   allVars.Print();

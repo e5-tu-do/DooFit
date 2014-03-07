@@ -8,23 +8,23 @@
 
 #include "Riostream.h" 
 
-#include "FunctionAtan.h" 
+#include "AtanAcceptance.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::FunctionAtan)
+ClassImp(doofit::roofit::functions::AtanAcceptance)
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 
-long long FunctionAtan::num_calls_evaluate_ = 0;
-long long FunctionAtan::num_calls_integral_ = 0;
+long long AtanAcceptance::num_calls_evaluate_ = 0;
+long long AtanAcceptance::num_calls_integral_ = 0;
 
 
- FunctionAtan::FunctionAtan(const char *name, const char *title, 
+ AtanAcceptance::AtanAcceptance(const char *name, const char *title, 
                         RooAbsReal& _par_x,
                         RooAbsReal& _par_slope_a,
                         RooAbsReal& _par_slope_b) :
@@ -36,7 +36,7 @@ long long FunctionAtan::num_calls_integral_ = 0;
  } 
 
 
- FunctionAtan::FunctionAtan(const FunctionAtan& other, const char* name) :  
+ AtanAcceptance::AtanAcceptance(const AtanAcceptance& other, const char* name) :  
    RooAbsReal(other,name), 
    par_x("par_x",this,other.par_x),
    par_slope_a("par_slope_a",this,other.par_slope_a),
@@ -44,11 +44,11 @@ long long FunctionAtan::num_calls_integral_ = 0;
  { 
  } 
 
-Int_t FunctionAtan::getAnalyticalIntegral(RooArgSet& allVars,
+Int_t AtanAcceptance::getAnalyticalIntegral(RooArgSet& allVars,
                                                        RooArgSet& analVars, const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("FunctionAtan::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
+  std::printf("AtanAcceptance::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
   analVars.Print();
   allVars.Print();

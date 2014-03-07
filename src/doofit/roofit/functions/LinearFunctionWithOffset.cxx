@@ -8,22 +8,22 @@
 
 #include "Riostream.h" 
 
-#include "FunctionScaleWithOffset.h" 
+#include "LinearFunctionWithOffset.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::FunctionScaleWithOffset)
+ClassImp(doofit::roofit::functions::LinearFunctionWithOffset)
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 
-long long FunctionScaleWithOffset::num_calls_evaluate_ = 0;
-long long FunctionScaleWithOffset::num_calls_integral_ = 0;
+long long LinearFunctionWithOffset::num_calls_evaluate_ = 0;
+long long LinearFunctionWithOffset::num_calls_integral_ = 0;
 
- FunctionScaleWithOffset::FunctionScaleWithOffset(const char *name, const char *title, 
+ LinearFunctionWithOffset::LinearFunctionWithOffset(const char *name, const char *title, 
                         RooAbsReal& _par_x,
                         RooAbsReal& _par_slope,
                         RooAbsReal& _par_offset) :
@@ -35,7 +35,7 @@ long long FunctionScaleWithOffset::num_calls_integral_ = 0;
  } 
 
 
- FunctionScaleWithOffset::FunctionScaleWithOffset(const FunctionScaleWithOffset& other, const char* name) :  
+ LinearFunctionWithOffset::LinearFunctionWithOffset(const LinearFunctionWithOffset& other, const char* name) :  
    RooAbsReal(other,name), 
    par_x("par_x",this,other.par_x),
    par_slope("par_slope",this,other.par_slope),
@@ -43,11 +43,11 @@ long long FunctionScaleWithOffset::num_calls_integral_ = 0;
  {
  } 
 
-Int_t FunctionScaleWithOffset::getAnalyticalIntegral(RooArgSet& allVars,
+Int_t LinearFunctionWithOffset::getAnalyticalIntegral(RooArgSet& allVars,
                                                RooArgSet& analVars, const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("FunctionScaleWithOffset::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
+  std::printf("LinearFunctionWithOffset::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
 //  analVars.Print();
   allVars.Print();
@@ -58,10 +58,10 @@ Int_t FunctionScaleWithOffset::getAnalyticalIntegral(RooArgSet& allVars,
   return 0;
 }
 
-Int_t FunctionScaleWithOffset::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
+Int_t LinearFunctionWithOffset::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("FunctionScaleWithOffset::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
+  std::printf("LinearFunctionWithOffset::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
   //analVars.Print();
   allVars.Print();

@@ -9,11 +9,11 @@ SinCoeffWithProdAsymm.h
 SinCoeffWithTaggingCalib.h
 SinCoeffWithAsymms.h
 FunctionProduct.h 
-FunctionScaleWithOffset.h 
+LinearFunctionWithOffset.h 
 TauCorrectionWithBetaFactor.h 
 FunctionTaggingCalib.h
-FunctionAtanIncludingBeta.h 
-FunctionAtan.h 
+AtanAcceptanceIncludingBeta.h 
+AtanAcceptance.h 
 FunctionSum.h
 SimpleSignedTaggedCPCoefficient.h 
 SingleMistagCalibrationNoAsymmetries.h
@@ -30,12 +30,12 @@ SinCoeffWithTaggingCalib.h SinCoeffWithTaggingCalib.cxx SinCoeffWithTaggingCalib
 SinCoeffWithAsymms.h SinCoeffWithAsymms.cxx SinCoeffWithAsymms_dict.h SinCoeffWithAsymms_dict.cc
 FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dict.cc
 FunctionSum.h FunctionSum.cxx FunctionSum_dict.h FunctionSum_dict.cc
-FunctionScaleWithOffset.h FunctionScaleWithOffset.cxx FunctionScaleWithOffset_dict.h FunctionScaleWithOffset_dict.cc
+LinearFunctionWithOffset.h LinearFunctionWithOffset.cxx LinearFunctionWithOffset_dict.h LinearFunctionWithOffset_dict.cc
 TauCorrectionWithBetaFactor.h TauCorrectionWithBetaFactor.cxx TauCorrectionWithBetaFactor_dict.h TauCorrectionWithBetaFactor_dict.cc
 FunctionTaggingCalib.h FunctionTaggingCalib.cxx FunctionTaggingCalib_dict.h FunctionTaggingCalib_dict.cc
 FunctionTaggingCombo.h FunctionTaggingCombo.cxx FunctionTaggingCombo_dict.h FunctionTaggingCombo_dict.cc
-FunctionAtanIncludingBeta.h FunctionAtanIncludingBeta.cxx FunctionAtanIncludingBeta_dict.h FunctionAtanIncludingBeta_dict.cc
-FunctionAtan.h FunctionAtan.cxx FunctionAtan_dict.h FunctionAtan_dict.cc
+AtanAcceptanceIncludingBeta.h AtanAcceptanceIncludingBeta.cxx AtanAcceptanceIncludingBeta_dict.h AtanAcceptanceIncludingBeta_dict.cc
+AtanAcceptance.h AtanAcceptance.cxx AtanAcceptance_dict.h AtanAcceptance_dict.cc
 SimpleSignedTaggedCPCoefficient.h SimpleSignedTaggedCPCoefficient.cxx SimpleSignedTaggedCPCoefficient_dict.h SimpleSignedTaggedCPCoefficient_dict.cc
 SingleMistagCalibrationNoAsymmetries.h SingleMistagCalibrationNoAsymmetries.cxx SingleMistagCalibrationNoAsymmetries_dict.h SingleMistagCalibrationNoAsymmetries_dict.cc
 TwoTaggerMistagCombination.h TwoTaggerMistagCombination.cxx TwoTaggerMistagCombination_dict.h TwoTaggerMistagCombination_dict.cc
@@ -58,9 +58,9 @@ SinCoeffWithTaggingCalib.h
 SinCoeffWithAsymms.h
 FunctionTaggingCombo.h 
 FunctionSum.h
-FunctionScaleWithOffset.h 
-FunctionAtanIncludingBeta.h 
-FunctionAtan.h
+LinearFunctionWithOffset.h 
+AtanAcceptanceIncludingBeta.h 
+AtanAcceptance.h
 TauCorrectionWithBetaFactor.h 
 FunctionTaggingCalib.h
 SimpleSignedTaggedCPCoefficient.h
