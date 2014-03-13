@@ -309,6 +309,22 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooMsgService::instance().setStreamStatus(1, true);
     RooMsgService::instance().setStreamStatus(0, true);
     
+    RooArgSet* parameters = pdf_->getParameters(dataset_normalisation);
+    TIterator* it = parameters->createIterator();
+    RooAbsArg* arg = NULL;
+    int num_free_parameters = 0;
+    while(arg = dynamic_cast<RooAbsArg*>(it->Next())) {
+      RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
+      if (var != NULL) {
+//        sdebug << *var << endmsg;
+        if (!var->isConstant()) {
+          num_free_parameters++;
+        }
+      }
+    }
+    delete it;
+    delete parameters;
+        
     // =10^(ln(11)/ln(10)-0.5)
     //plot_frame_pull->SetMinimum(0.5);
     
@@ -338,15 +354,15 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //    plot_frame->GetYaxis()->SetTitle(ylabel);
     
     if (sc_y == kLinear || sc_y == kBoth) {
-      doocore::lutils::PlotPulls(pull_plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, true);
-      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, true, "");
+      doocore::lutils::PlotPulls(pull_plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, true, "", num_free_parameters);
+      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, true, "", num_free_parameters);
     }
     
 //    sdebug << "Plot y axis minimum for log scale plot: " << min_plot << endmsg;
     plot_frame->SetMinimum(min_plot);
     if (sc_y == kLogarithmic || sc_y == kBoth) {
-      doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame, label, config_plot_.plot_directory(), true, false, true);
-      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, false, true, "");
+      doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame, label, config_plot_.plot_directory(), true, false, true, "", num_free_parameters);
+      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, false, true, "", num_free_parameters);
     }
     
 //    delete plot_frame_pull;
