@@ -242,7 +242,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
                         it->getInt(0));
       }
     }
-    if (!project_arg_found) plot.AddPlotArg(ProjWData(sim_cat,data));
+    RooArgSet set_project_local(sim_cat);
+    if (!project_arg_found) plot.AddPlotArg(ProjWData(set_project_local,data));
     
     plot.PlotHandler(sc_y, suffix);
 
