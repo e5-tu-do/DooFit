@@ -355,14 +355,14 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     if (sc_y == kLinear || sc_y == kBoth) {
       doocore::lutils::PlotPulls(pull_plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, true, "_gauss", num_free_parameters);
-      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, true, "_gauss", num_free_parameters);
+      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, true, "", num_free_parameters);
     }
     
 //    sdebug << "Plot y axis minimum for log scale plot: " << min_plot << endmsg;
     plot_frame->SetMinimum(min_plot);
     if (sc_y == kLogarithmic || sc_y == kBoth) {
       doocore::lutils::PlotPulls(log_pull_plot_name, plot_frame, label, config_plot_.plot_directory(), true, false, true, "_gauss", num_free_parameters);
-      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, false, true, "_gauss", num_free_parameters);
+      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, false, true, "", num_free_parameters);
     }
     
 //    delete plot_frame_pull;
