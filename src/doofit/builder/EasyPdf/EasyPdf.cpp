@@ -156,6 +156,17 @@ bool doofit::builder::EasyPdf::BinningExists(const std::string &name) {
   }
 }
 
+bool doofit::builder::EasyPdf::SetExists(const std::string &set_name) const {
+  std::map<std::string,std::string>::const_iterator it = variable_sets_.find(set_name);
+  
+  if (it != variable_sets_.end()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
 RooRealVar& doofit::builder::EasyPdf::Var(const std::string &name) {
   if (vars_.count(name) == 1) {
     return *vars_[name];
@@ -312,16 +323,13 @@ RooArgSet doofit::builder::EasyPdf::Vars(const std::string &names, const std::st
   
   RooArgSet argset;
   for (int i=0; i<variables.size(); ++i) {
-//    if (vars_.count(variables[i]) == 1) {
-//      argset.add(Var(variables[i]));
-//    } else if (cats_.count(variables[i]) == 1) {
-//      argset.add(Cat(variables[i]));
-//    } else if (formulas_.count(variables[i]) == 1) {
-//      argset.add(Formula(variables[i]));
-//    } else {
-//      argset.add(Var(variables[i]));
-//    }
-    argset.add(Real(variables[i]));
+    if (vars_.count(variables[i]) == 1) {
+      argset.add(Var(variables[i]));
+    } else if (cats_.count(variables[i]) == 1) {
+      argset.add(Cat(variables[i]));
+    } else {
+      argset.add(Real(variables[i]));
+    }
   }
   
   if (define_set_name.length() > 0) {
@@ -351,16 +359,13 @@ RooArgList doofit::builder::EasyPdf::VarList(const std::string &name) {
   
   RooArgList arglist;
   for (int i=0; i<variables.size(); ++i) {
-//    if (vars_.count(variables[i]) == 1) {
-//      arglist.add(Var(variables[i]));
-//    } else if (cats_.count(variables[i]) == 1) {
-//      arglist.add(Cat(variables[i]));
-//    } else if (formulas_.count(variables[i]) == 1) {
-//      arglist.add(Formula(variables[i]));
-//    } else {
-//      arglist.add(Var(variables[i]));
-//    }
-    arglist.add(Real(variables[i]));
+    if (vars_.count(variables[i]) == 1) {
+      arglist.add(Var(variables[i]));
+    } else if (cats_.count(variables[i]) == 1) {
+      arglist.add(Cat(variables[i]));
+    } else {
+      arglist.add(Real(variables[i]));
+    }
   }
   return arglist;
 }
