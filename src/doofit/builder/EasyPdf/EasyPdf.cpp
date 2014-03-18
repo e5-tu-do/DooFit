@@ -312,15 +312,16 @@ RooArgSet doofit::builder::EasyPdf::Vars(const std::string &names, const std::st
   
   RooArgSet argset;
   for (int i=0; i<variables.size(); ++i) {
-    if (vars_.count(variables[i]) == 1) {
-      argset.add(Var(variables[i]));
-    } else if (cats_.count(variables[i]) == 1) {
-      argset.add(Cat(variables[i]));
-    } else if (formulas_.count(variables[i]) == 1) {
-      argset.add(Formula(variables[i]));
-    } else {
-      argset.add(Var(variables[i]));
-    }
+//    if (vars_.count(variables[i]) == 1) {
+//      argset.add(Var(variables[i]));
+//    } else if (cats_.count(variables[i]) == 1) {
+//      argset.add(Cat(variables[i]));
+//    } else if (formulas_.count(variables[i]) == 1) {
+//      argset.add(Formula(variables[i]));
+//    } else {
+//      argset.add(Var(variables[i]));
+//    }
+    argset.add(Real(variables[i]));
   }
   
   if (define_set_name.length() > 0) {
@@ -350,15 +351,16 @@ RooArgList doofit::builder::EasyPdf::VarList(const std::string &name) {
   
   RooArgList arglist;
   for (int i=0; i<variables.size(); ++i) {
-    if (vars_.count(variables[i]) == 1) {
-      arglist.add(Var(variables[i]));
-    } else if (cats_.count(variables[i]) == 1) {
-      arglist.add(Cat(variables[i]));
-    } else if (formulas_.count(variables[i]) == 1) {
-      arglist.add(Formula(variables[i]));
-    } else {
-      arglist.add(Var(variables[i]));
-    }
+//    if (vars_.count(variables[i]) == 1) {
+//      arglist.add(Var(variables[i]));
+//    } else if (cats_.count(variables[i]) == 1) {
+//      arglist.add(Cat(variables[i]));
+//    } else if (formulas_.count(variables[i]) == 1) {
+//      arglist.add(Formula(variables[i]));
+//    } else {
+//      arglist.add(Var(variables[i]));
+//    }
+    arglist.add(Real(variables[i]));
   }
   return arglist;
 }
