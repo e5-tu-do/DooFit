@@ -52,6 +52,20 @@ class EasyFit
 
   void Fit() { PrepareFit(); ExecuteFit(); FinalizeFit();}
   const RooFitResult* GetFitResult();
+
+  /**
+   *  @brief Get fit observables
+   *
+   *  @return RooArgSet pointer to fit observables RooArgSet
+   */
+  RooArgSet* ObservablesArgSet();
+
+  /**
+   *  @brief Get fit parameters
+   *
+   *  @return RooArgSet pointer to fit parameters RooArgSet
+   */
+  RooArgSet* ParameterArgSet();
   
   /**
    *  @brief Get timing information from fit
