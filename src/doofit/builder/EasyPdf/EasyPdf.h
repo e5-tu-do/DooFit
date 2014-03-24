@@ -419,6 +419,18 @@ class EasyPdf {
    *  @return whether the binning already exists
    */
   bool BinningExists(const std::string& name);
+  
+  /**
+   *  @brief Check if defined set exists
+   *
+   *  Check if a named set exists by a specified name. If it does exist in this
+   *  EasyPdf pool of sets, true is returned, otherwise false.
+   *
+   *  @param set_name name of the defined set
+   *  @return whether the set already exists
+   */
+  bool SetExists(const std::string& set_name) const;
+
   ///@}
   
   /** @name Basic PDFs
