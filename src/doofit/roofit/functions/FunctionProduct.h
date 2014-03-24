@@ -35,7 +35,7 @@ public:
   FunctionProduct(const FunctionProduct& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new FunctionProduct(*this,newname); }
   inline virtual ~FunctionProduct() {
-    std::cout << "FunctionProduct::~FunctionProduct(): num calls " << num_calls_ << std::endl;
+//    std::cout << "FunctionProduct::~FunctionProduct(): num calls " << num_calls_ << std::endl;
   }
   
 protected:

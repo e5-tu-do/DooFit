@@ -68,6 +68,13 @@ class PlotConfig : public config::AbsConfig {
    */
   ///@{
   /**
+   * @brief Getter for num_cpu_
+   *
+   * @see set_num_cpu()
+   **/
+  int num_cpu() const { return num_cpu_; }
+  
+  /**
    * @brief Getter for pdf_linecolor_map_
    * 
    * @see set_pdf_linecolor_map()
@@ -100,6 +107,15 @@ class PlotConfig : public config::AbsConfig {
    *  Implementation of setter functions.
    */
   ///@{
+  /**
+   * @brief Setter for num_cpu_
+   *
+   * Set number of CPUs to be used in plotting.
+   *
+   * @param num_cpu number of CPUs to use
+   **/
+  void set_num_cpu(int num_cpu) { num_cpu_ = num_cpu; }
+  
   /**
    * @brief Setter for pdf_linecolor_map_ with config::CommaSeparatedList
    *
@@ -232,6 +248,11 @@ class PlotConfig : public config::AbsConfig {
    */
   std::string plot_directory_;
 
+  /**
+   *  @brief Number of CPUs to use for plotting
+   */
+  int num_cpu_;
+  
   /** @name Stacked plotting support members
    *  Members to support stacked plotting into one file.
    */
