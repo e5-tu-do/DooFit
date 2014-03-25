@@ -209,7 +209,9 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
     easyfitter_->Fit();
     
     const RooFitResult* fit_result = easyfitter_->GetFitResult();
-    
+    parameters_ = easyfitter_->ParameterArgSet();
+    pdf_ = easyfitter_->FitPdf();
+
     if (fit_result != NULL) {
       fit_result->Print("v");
     } else {
@@ -244,14 +246,14 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
     RooFitResult* fit_result = pdf_->fitTo(*input_data_, fitting_args);
     fit_result->Print("v");
     delete fit_result;
+
+    parameters_ = pdf().getParameters(*input_data_);
   }
-  
-  parameters_ = pdf().getParameters(*input_data_);
   
   //=========================================================================
   // create sPlot
   // get all parameters
-  RooArgSet* par_disc_set = pdf_->getParameters(*input_data_);
+  RooArgSet* par_disc_set = parameters_; //pdf_->getParameters(*input_data_);
   
   // remove yields from parameter set
   par_disc_set->remove(yields_);
