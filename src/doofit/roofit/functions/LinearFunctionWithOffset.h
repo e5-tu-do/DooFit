@@ -22,7 +22,7 @@ namespace functions {
 class LinearFunctionWithOffset : public RooAbsReal {
 public:
   LinearFunctionWithOffset() {} ; 
-  LinearFunctionWithOffset(const char *name, const char *title,
+  LinearFunctionWithOffset(std::string name,
 	      RooAbsReal& _par_x,
 	      RooAbsReal& _par_slope,
 	      RooAbsReal& _par_offset);

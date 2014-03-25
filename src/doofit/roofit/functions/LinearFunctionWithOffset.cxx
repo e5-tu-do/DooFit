@@ -23,11 +23,11 @@ namespace functions {
 long long LinearFunctionWithOffset::num_calls_evaluate_ = 0;
 long long LinearFunctionWithOffset::num_calls_integral_ = 0;
 
- LinearFunctionWithOffset::LinearFunctionWithOffset(const char *name, const char *title, 
+ LinearFunctionWithOffset::LinearFunctionWithOffset(std::string name, 
                         RooAbsReal& _par_x,
                         RooAbsReal& _par_slope,
                         RooAbsReal& _par_offset) :
-   RooAbsReal(name,title), 
+   RooAbsReal(name.c_str(),name.c_str()), 
    par_x("par_x","par_x",this,_par_x),
    par_slope("par_slope","par_slope",this,_par_slope),
    par_offset("par_offset","par_offset",this,_par_offset)
