@@ -228,6 +228,10 @@ RooArgSet* EasyFit::ParameterArgSet() {
   return pdf_->getParameters(data_);
 }
 
+RooAbsPdf* EasyFit::FitPdf(){
+  return pdf_;
+}
+
 std::pair<double,double> EasyFit::FitTime() const {
   if (!prepared_ || !fitted_ || !finalized_ || fit_result_ == NULL){
     // something went wrong

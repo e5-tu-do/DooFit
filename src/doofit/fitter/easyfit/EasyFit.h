@@ -68,6 +68,13 @@ class EasyFit
   RooArgSet* ParameterArgSet();
   
   /**
+   *  @brief Get fit pdf
+   *
+   *  @return RooAbsPdf pointer to fit pdf
+   */
+  RooAbsPdf* FitPdf();
+
+  /**
    *  @brief Get timing information from fit
    *
    *  Return consumed fit time as std::pair<double, double> with real wall time
