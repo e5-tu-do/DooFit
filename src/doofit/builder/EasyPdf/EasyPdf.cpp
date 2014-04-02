@@ -45,6 +45,7 @@
 #include "P2VV/RooAbsGaussModelEfficiency.h"
 #include "P2VV/RooGaussEfficiencyModel.h"
 #include "P2VV/RooEffResAddModel.h"
+#include "Urania/RooIpatia.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -395,6 +396,10 @@ RooGaussian& doofit::builder::EasyPdf::Gaussian(const std::string &name, RooAbsR
 
 RooCBShape& doofit::builder::EasyPdf::CBShape(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& alpha, RooAbsReal& n) {
   return AddPdfToStore<RooCBShape>(new RooCBShape(name.c_str(), name.c_str(), x, mean, sigma, alpha, n));
+}
+
+RooIpatia& doofit::builder::EasyPdf::Ipatia(const std::string& name, RooAbsReal& x, RooAbsReal& l, RooAbsReal& zeta, RooAbsReal& fb, RooAbsReal& sigma, RooAbsReal& mu, RooAbsReal& a, RooAbsReal& n) {
+  return AddPdfToStore<RooIpatia>(new RooIpatia(name.c_str(), name.c_str(), x, l, zeta, fb, sigma, mu, a, n));
 }
 
 RooExponential& doofit::builder::EasyPdf::Exponential(const std::string &name, RooAbsReal& x, RooAbsReal& e) {

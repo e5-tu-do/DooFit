@@ -23,6 +23,7 @@ class RooAbsCategoryLValue;
 class RooAbsPdf;
 class RooGaussian;
 class RooCBShape;
+class RooIpatia;
 class RooExponential;
 class RooArgList;
 class RooProdPdf;
@@ -469,6 +470,26 @@ class EasyPdf {
    */
   RooCBShape& CBShape(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& alpha, RooAbsReal& n);
   
+  /**
+   *  @brief Add and access an Ipatia PDF
+   *
+   *  Request a RooIpatia by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param l l variable
+   *  @param zeta zeta variable
+   *  @param fb fb variable
+   *  @param sigma sigma variable
+   *  @param mu mu variable
+   *  @param a a variable
+   *  @param n n variable
+   *  @return the appropriate PDF
+   */
+  RooIpatia& Ipatia(const std::string& name, RooAbsReal& x, RooAbsReal& l, RooAbsReal& zeta, RooAbsReal& fb, RooAbsReal& sigma, RooAbsReal& mu, RooAbsReal& a, RooAbsReal& n);
+
   /**
    *  @brief Add and access an Exponential PDF
    *

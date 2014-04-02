@@ -5,7 +5,7 @@
 #add_subdirectory(numerobis)
 
 add_library(Builder SHARED EasyPdf/EasyPdf.h EasyPdf/EasyPdf.cpp)
-target_link_libraries(Builder Config dfp2vvpdfs ${ALL_LIBRARIES})
+target_link_libraries(Builder Config dfp2vvpdfs dfipatia ${ALL_LIBRARIES})
 
 install(TARGETS Builder DESTINATION lib)
 install(FILES EasyPdf/EasyPdf.h DESTINATION include/doofit/builder/EasyPdf)
