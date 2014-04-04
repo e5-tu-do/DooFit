@@ -2,10 +2,12 @@
 root_generate_dictionaries_local(dfFunctionsDict 
 CategoryToReal.h
 CoshCoeff.h
+CoshCoeffTagAsReal.h
 CoshCoeffWithAsymms.h 
 SinhCoeff.h
 SinCoeffSimple.h
 SinCoeffWithProdAsymm.h
+SinCoeffWithProdAsymmTagAsReal.h
 SinCoeffWithTaggingCalib.h
 SinCoeffWithAsymms.h
 FunctionProduct.h 
@@ -28,10 +30,12 @@ CombinedTagUncalibrated.h)
 add_library(dfFunctions SHARED 
 CategoryToReal.h CategoryToReal.cxx CategoryToReal_dict.h CategoryToReal_dict.cc
 CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
+CoshCoeffTagAsReal.h CoshCoeffTagAsReal.cxx CoshCoeffTagAsReal_dict.h CoshCoeffTagAsReal_dict.cc
 CoshCoeffWithAsymms.h CoshCoeffWithAsymms.cxx CoshCoeffWithAsymms_dict.h CoshCoeffWithAsymms_dict.cc
 SinhCoeff.h SinhCoeff.cxx SinhCoeff_dict.h SinhCoeff_dict.cc
 SinCoeffSimple.h SinCoeffSimple.cxx SinCoeffSimple_dict.h SinCoeffSimple_dict.cc
 SinCoeffWithProdAsymm.h SinCoeffWithProdAsymm.cxx SinCoeffWithProdAsymm_dict.h SinCoeffWithProdAsymm_dict.cc
+SinCoeffWithProdAsymmTagAsReal.h SinCoeffWithProdAsymmTagAsReal.cxx SinCoeffWithProdAsymmTagAsReal_dict.h SinCoeffWithProdAsymmTagAsReal_dict.cc
 SinCoeffWithTaggingCalib.h SinCoeffWithTaggingCalib.cxx SinCoeffWithTaggingCalib_dict.h SinCoeffWithTaggingCalib_dict.cc
 SinCoeffWithAsymms.h SinCoeffWithAsymms.cxx SinCoeffWithAsymms_dict.h SinCoeffWithAsymms_dict.cc
 FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dict.cc
@@ -62,9 +66,11 @@ CategoryToReal.h
 SinhCoeff.h 
 FunctionProduct.h 
 CoshCoeff.h
+CoshCoeffTagAsReal.h
 CoshCoeffWithAsymms.h
 SinCoeffSimple.h 
 SinCoeffWithProdAsymm.h
+SinCoeffWithProdAsymmTagAsReal.h
 SinCoeffWithTaggingCalib.h
 SinCoeffWithAsymms.h
 FunctionSum.h
