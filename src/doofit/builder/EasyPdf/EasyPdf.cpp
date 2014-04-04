@@ -115,6 +115,14 @@ void doofit::builder::EasyPdf::PurgeAllObjects() {
 }
 
 RooAbsReal& doofit::builder::EasyPdf::Real(const std::string &name) {
+  using namespace doocore::io;
+  
+//  sdebug << "EasyPdf::Real(" << name << ")" << endmsg;
+//  sdebug << "vars_.count(" << name << ") = " << vars_.count(name) << endmsg;
+//  sdebug << "formulas_.count(" << name << ") = " << formulas_.count(name) << endmsg;
+//  sdebug << "hidden_reals_.count(" << name << ") = " << hidden_reals_.count(name) << endmsg;
+//  sdebug << "external_reals_.count(" << name << ") = " << external_reals_.count(name) << endmsg;
+  
   if (vars_.count(name) == 1) {
     return *vars_[name];
   } else if (formulas_.count(name) == 1) {
