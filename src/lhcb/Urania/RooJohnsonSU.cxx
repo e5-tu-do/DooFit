@@ -111,10 +111,10 @@ RooJohnsonSU::analyticalIntegral(Int_t code, const char* rangeName) const
     ret *= c * width;
     ret *= 0.5 / c / width / pi;
 //     if (gDebug>2) {
-//       cout << "Int_gauss_dx(mean=" << mean << ",sigma=" << sigma << ", xmin=" << x.min(rangeName) << ", xmax=" << x.max(rangeName) << ")=" << ret << endl ;
+//       std::cout << "Int_gauss_dx(mean=" << mean << ",sigma=" << sigma << ", xmin=" << x.min(rangeName) << ", xmax=" << x.max(rangeName) << ")=" << ret << std::endl ;
 //     }
   } else{
-    cout << "Error in RooJohnsonSU::analyticalIntegral" << endl;
+    std::cout << "Error in RooJohnsonSU::analyticalIntegral" << std::endl;
   }
   return ret ;
 

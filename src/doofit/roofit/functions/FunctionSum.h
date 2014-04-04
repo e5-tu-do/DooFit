@@ -22,15 +22,10 @@ namespace functions {
 
 class FunctionSum : public RooAbsReal {
 public:
-  FunctionSum() ;
+  FunctionSum() {};
   FunctionSum(std::string name,
                   RooAbsReal& _par_addend1,
                   RooAbsReal& _par_addend2);
-  
-  FunctionSum(std::string name,
-                  RooAbsReal& _par_addend1,
-                  RooAbsReal& _par_addend2,
-                  RooAbsReal& _par_addend3);
   
   FunctionSum(const FunctionSum& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new FunctionSum(*this,newname); }
@@ -42,9 +37,6 @@ protected:
 
   RooRealProxy par_addend1 ;
   RooRealProxy par_addend2 ;
-  RooRealProxy par_addend3 ;
-  
-  const int num_addends ;
   
   mutable long long num_calls_;
   
@@ -54,13 +46,8 @@ protected:
   inline Double_t evaluate() const {
     // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
     //++num_calls_;
-    if (num_addends == 2) {
-      //std::cout << par_addend1+par_addend2 << std::endl;
-      return par_addend1+par_addend2;
-    }
-    if (num_addends == 3) {
-      return par_addend1+par_addend2+par_addend3;
-    }
+    //std::cout << par_addend1+par_addend2 << std::endl;
+    return par_addend1+par_addend2;
   }
   
 private:
