@@ -23,6 +23,8 @@ class RooAbsCategoryLValue;
 class RooAbsPdf;
 class RooGaussian;
 class RooCBShape;
+class RooIpatia;
+class RooIpatia2;
 class RooExponential;
 class RooArgList;
 class RooProdPdf;
@@ -469,6 +471,48 @@ class EasyPdf {
    */
   RooCBShape& CBShape(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& alpha, RooAbsReal& n);
   
+  /**
+   *  @brief Add and access an Ipatia PDF
+   *
+   *  Request a RooIpatia by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param l l variable
+   *  @param zeta zeta variable
+   *  @param fb fb variable
+   *  @param sigma sigma variable
+   *  @param mu mu variable
+   *  @param a a variable
+   *  @param n n variable
+   *  @return the appropriate PDF
+   */
+  RooIpatia& Ipatia(const std::string& name, RooAbsReal& x, RooAbsReal& l, RooAbsReal& zeta, RooAbsReal& fb, RooAbsReal& sigma, RooAbsReal& mu, RooAbsReal& a, RooAbsReal& n);
+
+  /**
+   *  @brief Add and access an Ipatia2 PDF
+   *
+   *  Request a RooIpatia by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param l l variable
+   *  @param zeta zeta variable
+   *  @param fb fb variable
+   *  @param sigma sigma variable
+   *  @param mu mu variable
+   *  @param a1 a1 variable
+   *  @param n1 n1 variable
+   *  @param a2 a2 variable
+   *  @param n2 n2 variable
+   *  @return the appropriate PDF
+   */
+  RooIpatia2& Ipatia2(const std::string& name, RooAbsReal& x, RooAbsReal& l, RooAbsReal& zeta, RooAbsReal& fb, RooAbsReal& sigma, RooAbsReal& mu, RooAbsReal& a1, RooAbsReal& n1, RooAbsReal& a2, RooAbsReal& n2);
+
   /**
    *  @brief Add and access an Exponential PDF
    *
