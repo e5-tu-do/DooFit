@@ -48,7 +48,10 @@ namespace functions {
 
  Double_t SingleMistagCalibrationNoAsymmetries::evaluate() const 
  { 
-   return p0_ + p1_ * ( eta_ - avg_eta_ )  ; 
+   if (eta_ >= 0.5){
+      return 0.5;
+   }
+   return p0_ + p1_ * ( eta_ - avg_eta_ ); 
  } 
 
 
