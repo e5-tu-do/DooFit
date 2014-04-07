@@ -51,15 +51,26 @@ namespace functions {
    // https://cds.cern.ch/record/1456804/files/CERN-THESIS-2012-075.pdf
    // note that the probability e.g. to have a b-tagged meson corresponds to a Bbar-Meson, so tag=-1
 
-   // probability to have a b-tagged meson
-   double p_b = ( ( ( 1 + tag_one_ ) / 2 ) - tag_one_ * ( 1 - eta_one_ ) ) * ( ( ( 1 + tag_two_ ) / 2 ) - tag_two_ * ( 1 - eta_two_ ) );
-   // probability to have a bbar-tagged meson
-   double p_bbar = ( ( ( 1 - tag_one_ ) / 2 ) + tag_one_ * ( 1 - eta_one_ ) ) * ( ( ( 1 - tag_two_ ) / 2 ) + tag_two_ * ( 1 - eta_two_ ) );
+   if ((eta_one_ >= 0.5) && (eta_two_ >= 0.5)){
+      return 0.5;
+   }
+   if (eta_one_ >= 0.5) {
+      return eta_two_;
+   }
+   if (eta_two_ >= 0.5){
+      return eta_one_;
+   }
+   else{
+      // probability to have a b-tagged meson
+      double p_b = ( ( ( 1. + tag_one_ ) / 2. ) - tag_one_ * ( 1. - eta_one_ ) ) * ( ( ( 1. + tag_two_ ) / 2. ) - tag_two_ * ( 1. - eta_two_ ) );
+      // probability to have a bbar-tagged meson
+      double p_bbar = ( ( ( 1. - tag_one_ ) / 2. ) + tag_one_ * ( 1. - eta_one_ ) ) * ( ( ( 1. - tag_two_ ) / 2. ) + tag_two_ * ( 1. - eta_two_ ) );
 
-   // as the combined eta will be the one associated with the larger probability for a b / bbar quark:
-   double eta_combined = 1. - ( std::max(p_b, p_bbar) / (p_b + p_bbar) );
+      // as the combined eta will be the one associated with the larger probability for a b / bbar quark:
+      double eta_combined = 1. - ( std::max(p_b, p_bbar) / (p_b + p_bbar) );
 
-   return eta_combined; 
+      return eta_combined;
+   }
  }
 
 
