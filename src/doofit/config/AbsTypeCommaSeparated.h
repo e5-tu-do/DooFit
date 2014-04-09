@@ -19,6 +19,9 @@
 // from ROOT
 #include "TObject.h"
 
+// from DooCore
+#include <doocore/io/MsgStream.h>
+
 namespace doofit {
 namespace config {
   class AbsTypeCommaSeparated : public TObject {

@@ -7,12 +7,12 @@
 add_library(Config SHARED AbsConfig.cpp AbsConfig.h CommonConfig.cpp
 CommonConfig.h AbsTypeCommaSeparated.cpp AbsTypeCommaSeparated.h
 DiscreteProbabilityDistribution.h DiscreteProbabilityDistribution.cpp
-ConfigCstStringVector.h ConfigCstStringVector.cpp CommaSeparatedPair.h
-CommaSeparatedPair.cpp CommaSeparatedList.h CommaSeparatedList.cpp)
+CommaSeparatedPair.h CommaSeparatedPair.cpp 
+CommaSeparatedList.h CommaSeparatedList.cpp)
 
 install(TARGETS Config DESTINATION lib)
 install(FILES AbsConfig.h CommonConfig.h AbsTypeCommaSeparated.h
-DiscreteProbabilityDistribution.h ConfigCstStringVector.h CommaSeparatedPair.h
+DiscreteProbabilityDistribution.h CommaSeparatedPair.h
 CommaSeparatedList.h DESTINATION include/doofit/config)
 
 #add_library(CommonConfig CommonConfig.cpp CommonConfig.h)
