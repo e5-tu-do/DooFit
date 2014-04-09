@@ -21,9 +21,6 @@ set(BASEPATH "${CMAKE_SOURCE_DIR}/src")
 include_directories(${BASEPATH})
 include_directories("${BASEPATH}/lhcb")
 
-include_directories("$ENV{MYSITEROOT}/lcg/external/GSL/1.10/$ENV{CMTCONFIG}/include")
-link_directories("$ENV{MYSITEROOT}/lcg/external/GSL/1.10/$ENV{CMTCONFIG}/lib")
-
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 
@@ -45,6 +42,7 @@ install(FILES external/FindDooFit.cmake DESTINATION cmake/Modules)
 FIND_PACKAGE(Boost 1.48 COMPONENTS program_options filesystem regex thread system random REQUIRED)
 find_package(ROOT REQUIRED)
 find_package(DooCore REQUIRED)
+FIND_PACKAGE(GSL REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIR})
@@ -53,6 +51,9 @@ include_directories(${ROOT_INCLUDE_DIR})
 
 include_directories(${DooCore_INCLUDE_DIR})
 link_directories(${DooCore_LIBRARY_DIR})
+
+include_directories(${GSL_INCLUDE_DIRS})
+link_directories(${GSL_LIBRARY_DIRS})
 
 set(ALL_LIBRARIES ${DooCore_LIBRARIES} ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
 

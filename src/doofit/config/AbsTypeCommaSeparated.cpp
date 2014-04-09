@@ -1,6 +1,7 @@
 #include "doofit/config/AbsTypeCommaSeparated.h"
 
 // from STL
+#include <iostream>
 #include <string>
 #include <vector>
 
