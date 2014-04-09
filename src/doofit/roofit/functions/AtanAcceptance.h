@@ -58,7 +58,7 @@ protected:
     return (TMath::ATan(par_x*TMath::Exp(par_slope_a*par_x+par_slope_b)))/1.570796327;
   }
 
-  virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,
+  virtual Int_t	getAnalyticalIntegral(RooArgSet& , RooArgSet& ,
                                       const char* rangeName = 0) const;
   
 private:

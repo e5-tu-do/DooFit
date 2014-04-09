@@ -19,9 +19,12 @@
 // from ROOT
 #include "TObject.h"
 
+// from DooCore
+#include <doocore/io/MsgStream.h>
+
 namespace doofit {
 namespace config {
-  class AbsTypeCommaSeparated : public TObject {
+  class AbsTypeCommaSeparated { //: public TObject {
   public:
     /**
      *  \brief Destructor.
@@ -108,6 +111,16 @@ std::istream& operator>>(std::istream& is, doofit::config::AbsTypeCommaSeparated
  */
 std::ostream& operator<<(std::ostream& os, const doofit::config::AbsTypeCommaSeparated& arg);
 
+/**
+ *  @brief Function to output RooArgSet directly and nicely into MsgStreams
+ *
+ *  This function just prints all arguments in a RooArgSet nicely.
+ */
+inline doocore::io::MsgStream& operator<<(doocore::io::MsgStream& lhs, const doofit::config::AbsTypeCommaSeparated& arg) {
+  arg.Print(lhs.stream());
+  
+  return lhs;
+}
 
 #endif // CONFIGABSTRACTTYPECOMMASEPARATED_h
 

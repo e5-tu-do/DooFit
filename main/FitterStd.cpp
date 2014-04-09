@@ -12,8 +12,10 @@
 
 using namespace doofit;
 
-int main(int argc, char *argv[]){
+int main(){
   // Test Builder
+  
+  
   
   return 0;
 }
