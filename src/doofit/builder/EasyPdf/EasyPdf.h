@@ -1356,7 +1356,7 @@ class EasyPdf {
    *
    *  @param other EasyPdf object to copy
    */
-  EasyPdf(const EasyPdf& other) {}
+  EasyPdf(const EasyPdf&) {}
   
   /**
    *  @brief Container for all generated RooRealVars
