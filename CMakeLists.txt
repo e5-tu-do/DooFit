@@ -53,7 +53,7 @@ include_directories(${DooCore_INCLUDE_DIR})
 link_directories(${DooCore_LIBRARY_DIR})
 
 include_directories(${GSL_INCLUDE_DIRS})
-link_directories(${GSL_LIBRARIES})
+link_directories(${GSL_LIBRARY_DIRS})
 
 set(ALL_LIBRARIES ${DooCore_LIBRARIES} ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
 
