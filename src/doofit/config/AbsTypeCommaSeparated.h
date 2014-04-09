@@ -12,6 +12,7 @@
 #define CONFIGABSTRACTTYPECOMMASEPARATED_h
 
 // from STL
+#include <iostream>
 #include <string>
 #include <vector>
 
