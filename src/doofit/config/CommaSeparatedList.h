@@ -4,6 +4,7 @@
 // from STL
 #include <vector>
 #include <string>
+#include <iostream>
 
 // from Boost
 #include <boost/lexical_cast.hpp>
@@ -108,6 +109,7 @@ namespace config {
      */
     std::vector<T> vec_;
   };
+  
 }
 }
 

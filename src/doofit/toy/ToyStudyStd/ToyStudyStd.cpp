@@ -343,7 +343,7 @@ namespace toy {
       TString herr_name = parameter->GetName() + TString("_herr");
       TString herr_desc = TString("High error of ") + parameter->GetTitle();
       
-      double par_error = ((RooRealVar*)parameter_list.find(parameter->GetName()))->getError();
+      //double par_error = ((RooRealVar*)parameter_list.find(parameter->GetName()))->getError();
       
       RooRealVar& par  = CopyRooRealVar(*parameter);
       RooRealVar* pull = new RooRealVar(pull_name, pull_desc, 0.0);
