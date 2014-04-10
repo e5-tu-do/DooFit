@@ -330,12 +330,16 @@ namespace toy {
       // @todo If PDF ist extended AND no yield is set, we need to get yield from
       //       PDF itself for proto.
       
+      // sdebug << "Expected yield from external call: " << expected_yield << endmsg;
+
       int proto_size;
       if (proto_data.size() > 0) {
         proto_size = proto_data[0]->numEntries();
       } else {
         double yield = expected_yield;
         if (expected_yield==0) {
+          // pdf.Print("v");
+          
           yield = pdf.expectedEvents(argset_generation_observables);
         }
         proto_size = yield+10*TMath::Sqrt(yield);
@@ -554,6 +558,8 @@ namespace toy {
           yield_lost_due_rounding = 0.0;
         }
         
+        // sdebug << "Sub yield for next PDF " << sub_pdf->GetName() << " is " << sub_yield << endmsg;
+
         if (data) {
           RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield, false, sub_proto_data);
           AppendDatasets(data, data_temp);
