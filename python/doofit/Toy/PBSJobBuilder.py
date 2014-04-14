@@ -147,7 +147,10 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
           'parametern' : options.parametern
           }
         min_seed = create_single_job(proto_script, settings_dict, jobs_dir, num_iterations_per_job, min_seed)
-        submit_file.writelines('qsub -q ' + options.queue + ' ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
+	if len(options.queue) > 0:
+          submit_file.writelines('qsub -q ' + options.queue + ' ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
+	else:
+	  submit_file.writelines('qsub ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
         job_index += 1
       scan1_value += options.scan1increment*options.scan1perjob
     scan2_value += options.scan2increment*options.scan2perjob
@@ -172,7 +175,7 @@ if __name__ == "__main__":
  %prog proto_script jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu
     """
   parser = OptionParser(usage, version="1.0")
-  parser.add_option("-q", "--queue", action="store", type="string", dest="queue", default="default", help="PBS queue to use")
+  parser.add_option("-q", "--queue", action="store", type="string", dest="queue", default="", help="PBS queue to use")
   parser.add_option("-b", "--basename", action="store", type="string", dest="basename", default="pbs_job", help="PBS job base name")
   parser.add_option("-s", "--minseed", action="store", type="int", dest="minseed", default=1, help="Minimal seed to use")
   parser.add_option("", "--scan1-start", action="store", type="float", dest="scan1start", default=0.0, help="Start value of scan parameter 1")
