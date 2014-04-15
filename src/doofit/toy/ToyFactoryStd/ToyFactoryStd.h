@@ -224,7 +224,7 @@ namespace toy {
      *  @param delete_slave whether slave dataset is to be deleted (default: 
      *                      yes)
      */
-    void MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const RooArgSet* ignore_argset=NULL, bool delete_slave=true) const;
+    void MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const std::vector<RooDataSet*>* ignore_sets=NULL, bool delete_slave=true) const;
     
     /**
      *  @brief Append a dataset to another

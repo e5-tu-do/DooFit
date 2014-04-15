@@ -44,8 +44,8 @@ long long AtanAcceptance::num_calls_integral_ = 0;
  { 
  } 
 
-Int_t AtanAcceptance::getAnalyticalIntegral(RooArgSet& allVars,
-                                                       RooArgSet& analVars, const char* rangeName) const
+Int_t AtanAcceptance::getAnalyticalIntegral(RooArgSet& ,
+                                                       RooArgSet& , const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
   std::printf("AtanAcceptance::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
