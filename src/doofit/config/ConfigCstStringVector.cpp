@@ -42,7 +42,7 @@ void ConfigCstStringVector::Parse(const std::string& str) {
 //  }
 }
 
-void ConfigCstStringVector::Print(std::ostream& os) const {
+void ConfigCstStringVector::Print() const {
 //  os << "Variable: " << var_name_;
 //  double cumuluated_prob = 0.0;
 //  for (std::vector<pair<double,double> >::const_iterator itmap=probabilities_.begin(); itmap!=probabilities_.end(); ++itmap) {

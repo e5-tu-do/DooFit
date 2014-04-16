@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 #ifndef DOOFIT_ROOFIT_FUNCTIONS_ATANACCEPTANCEINCLUDINGBETA
-#define DOOFIT_ROOFIT_FUNCTIONS_ATANACCEPTAMCEINCLUDINGBETA
+#define DOOFIT_ROOFIT_FUNCTIONS_ATANACCEPTANCEINCLUDINGBETA
 
 #include "RooAbsReal.h"
 #include "RooRealProxy.h"

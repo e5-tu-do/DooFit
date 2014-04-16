@@ -333,6 +333,7 @@ namespace toy {
      *  \brief CommonConfig instance to use
      */
     const config::CommonConfig& config_common_;
+    
     /**
      *  \brief ToyFactoryStdConfig instance to use
      */

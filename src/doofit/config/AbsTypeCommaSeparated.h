@@ -12,11 +12,15 @@
 #define CONFIGABSTRACTTYPECOMMASEPARATED_h
 
 // from STL
+#include <iostream>
 #include <string>
 #include <vector>
 
 // from ROOT
 #include "TObject.h"
+
+// from DooCore
+#include <doocore/io/MsgStream.h>
 
 namespace doofit {
 namespace config {
