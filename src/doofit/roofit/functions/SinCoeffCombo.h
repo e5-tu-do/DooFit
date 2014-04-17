@@ -99,13 +99,13 @@ protected:
     Double_t  omega_Bdb = par_eta_SS;
     Int_t     tag = cat_tag_SS;
 
-    if (cat_tag_OS != 0)
+    if (par_eta_OS < 0.5)
     {
       omega_OS_Bd  = par_p0_OS + 0.5*par_delta_p0_OS + (par_p1_OS + 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
       omega_OS_Bdb = par_p0_OS - 0.5*par_delta_p0_OS + (par_p1_OS - 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
     }
 
-    if (cat_tag_SS != 0)
+    if (par_eta_SS < 0.5)
     {
       omega_SS_Bd  = par_p0_SS + 0.5*par_delta_p0_SS + (par_p1_SS + 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
       omega_SS_Bdb = par_p0_SS - 0.5*par_delta_p0_SS + (par_p1_SS - 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
