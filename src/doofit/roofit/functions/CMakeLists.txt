@@ -12,7 +12,9 @@ SinCoeffWithTaggingCalib.h
 SinCoeffWithAsymms.h
 FunctionProduct.h
 FunctionTripleProduct.h
-LinearFunctionWithOffset.h 
+LinearFunctionWithOffset.h
+PolyTest.h 
+PowerLaw.h 
 TauCorrectionWithBetaFactor.h 
 AtanAcceptanceIncludingBeta.h 
 AtanAcceptance.h 
@@ -43,6 +45,8 @@ FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dic
 FunctionTripleProduct.h FunctionTripleProduct.cxx FunctionTripleProduct_dict.h FunctionTripleProduct_dict.cc
 FunctionSum.h FunctionSum.cxx FunctionSum_dict.h FunctionSum_dict.cc
 LinearFunctionWithOffset.h LinearFunctionWithOffset.cxx LinearFunctionWithOffset_dict.h LinearFunctionWithOffset_dict.cc
+PolyTest.h PolyTest.cxx PolyTest_dict.h PolyTest_dict.cc
+PowerLaw.h PowerLaw.cxx PowerLaw_dict.h PowerLaw_dict.cc
 TauCorrectionWithBetaFactor.h TauCorrectionWithBetaFactor.cxx TauCorrectionWithBetaFactor_dict.h TauCorrectionWithBetaFactor_dict.cc
 AtanAcceptanceIncludingBeta.h AtanAcceptanceIncludingBeta.cxx AtanAcceptanceIncludingBeta_dict.h AtanAcceptanceIncludingBeta_dict.cc
 AtanAcceptance.h AtanAcceptance.cxx AtanAcceptance_dict.h AtanAcceptance_dict.cc
@@ -78,6 +82,8 @@ SinCoeffWithTaggingCalib.h
 SinCoeffWithAsymms.h
 FunctionSum.h
 LinearFunctionWithOffset.h 
+PolyTest.h 
+PowerLaw.h 
 AtanAcceptanceIncludingBeta.h 
 AtanAcceptance.h
 TauCorrectionWithBetaFactor.h 
