@@ -58,30 +58,64 @@ namespace functions {
  { 
  } 
 
+ // Define per-bin functions
+ Double_t PolyTest::F1(double x) const
+ {
+   return TMath::Power(x, 4);
+ }
 
+ Double_t PolyTest::F2(double x) const
+ {
+   return c0_ * TMath::Power(x, 3) + TMath::Power(x, 4);
+ }
+
+ Double_t PolyTest::F3(double x) const
+ {
+   return c1_ + TMath::Power(x, 1);
+ }
+
+ Double_t PolyTest::F4(double x) const
+ {
+   return c2_ * TMath::Power(x, 4) + c3_ * TMath::Power(x, 5) - TMath::Power(x, 6);
+ }
+
+ Double_t PolyTest::F5(double x) const
+ {
+   return c4_ * TMath::Power(x, 3) + c5_ * TMath::Power(x, 4) + c6_ * TMath::Power(x, 5) + c7_ * TMath::Power(x, 6);
+ }
 
  Double_t PolyTest::evaluate() const 
  { 
    // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE 
    // return c0_ + c1_ * TMath::Power(x_, 1) + c2_ *  TMath::Power(x_, 2) + c3_ * TMath::Power(x_, 3) + c4_ * TMath::Power(x_, 4) + c5_ * TMath::Power(x_, 5) + c6_ * TMath::Power(x_, 6); 
-   double val = 0;
-   // first range: 0.00-0.15
+
+   // per-bin normalisation
+   double n1 = 1;
+   double n2 = n1 * F1(0.15) / F2(0.15);
+   double n3 = n2 * F2(0.20) / F3(0.20);
+   double n4 = n3 * F3(0.29) / F4(0.29);
+   double n5 = n4 * F4(0.45) / F5(0.45);
+
    if ((x_>0.00) && (x_<=0.15)){
-      val = TMath::Power(x_, 4); 
+      return n1 * F1(x_);
    }
    else if ((x_>0.15) && (x_<=0.20)){
-      val = c0_ * TMath::Power(x_, 3) + TMath::Power(x_, 4);
+      return n2 * F2(x_);
    }
    else if ((x_>0.20) && (x_<=0.29)){
-      val = c1_ + TMath::Power(x_, 1);
+   
+      return n3 * F3(x_);
    }
    else if ((x_>0.29) && (x_<=0.45)){
-      val = c2_ * TMath::Power(x_, 4) + c3_ * TMath::Power(x_, 5) - TMath::Power(x_, 6); 
+   
+      /// n4 = (0,016 + 0,2) / (0,2 * 0,00707281 + 0,16 * 0,002051115 - 0,000594823) = 
+      return n4 * F4(x_); 
    }
    else if ((x_>0.45) && (x_<=0.50)){
-      val = c4_ * TMath::Power(x_, 3) + c5_ * TMath::Power(x_, 4) + c6_ * TMath::Power(x_, 5) + c7_ * TMath::Power(x_, 6); 
+   
+      return n5 * F5(x_); 
    }
-   return val;
+   return 0;
  } 
 
 
@@ -94,7 +128,9 @@ namespace functions {
    // YOU CAN ALSO IMPLEMENT MORE THAN ONE ANALYTICAL INTEGRAL BY REPEATING THE matchArgs 
    // EXPRESSION MULTIPLE TIMES
 
-   // if (matchArgs(allVars,analVars,x)) return 1 ; 
+   std::printf("In %s line %u (%s): allVars = ", __func__, __LINE__, __FILE__);
+   analVars.Print();
+
    return 0 ; 
  } 
 
@@ -107,7 +143,7 @@ namespace functions {
    // BOUNDARIES FOR EACH OBSERVABLE x
 
    // assert(code==1) ; 
-   // return (x.max(rangeName)-x.min(rangeName)) ; 
+   // return (x.max(rangeName)-x.min(rangeName)); 
    return 0 ; 
  } 
 

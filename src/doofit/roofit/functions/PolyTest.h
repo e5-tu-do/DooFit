@@ -53,6 +53,13 @@ protected:
 
 private:
 
+  Double_t F1(double x) const;
+  Double_t F2(double x) const;
+  Double_t F3(double x) const;
+  Double_t F4(double x) const;
+  Double_t F5(double x) const;
+
+
   ClassDef(PolyTest,1) // Your description goes here...
 };
 
