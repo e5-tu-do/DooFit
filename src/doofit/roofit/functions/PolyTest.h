@@ -29,7 +29,15 @@ public:
         RooAbsReal& _c4_,
         RooAbsReal& _c5_,
         RooAbsReal& _c6_,
-        RooAbsReal& _c7_);
+        RooAbsReal& _c7_,
+        RooAbsReal& _c8_,
+        RooAbsReal& _c9_,
+        RooAbsReal& _c10_,
+        RooAbsReal& _c11_,
+        RooAbsReal& _c12_,
+        RooAbsReal& _c13_,
+        RooAbsReal& _c14_,
+        RooAbsReal& _c15_);
   PolyTest(const PolyTest& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new PolyTest(*this,newname); }
   inline virtual ~PolyTest() { }
@@ -48,6 +56,14 @@ protected:
   RooRealProxy c5_ ;
   RooRealProxy c6_ ;
   RooRealProxy c7_ ;
+  RooRealProxy c8_ ;
+  RooRealProxy c9_ ;
+  RooRealProxy c10_ ;
+  RooRealProxy c11_ ;
+  RooRealProxy c12_ ;
+  RooRealProxy c13_ ;
+  RooRealProxy c14_ ;
+  RooRealProxy c15_ ;
   
   Double_t evaluate() const ;
 

@@ -29,7 +29,15 @@ namespace functions {
                         RooAbsReal& _c4_,
                         RooAbsReal& _c5_,
                         RooAbsReal& _c6_,
-                        RooAbsReal& _c7_) :
+                        RooAbsReal& _c7_,
+                        RooAbsReal& _c8_,
+                        RooAbsReal& _c9_,
+                        RooAbsReal& _c10_,
+                        RooAbsReal& _c11_,
+                        RooAbsReal& _c12_,
+                        RooAbsReal& _c13_,
+                        RooAbsReal& _c14_,
+                        RooAbsReal& _c15_) :
    RooAbsPdf(name.c_str(),name.c_str()), 
    x_("x_","x_",this,_x_),
    c0_("c0_","c0_",this,_c0_),
@@ -39,7 +47,15 @@ namespace functions {
    c4_("c4_","c4_",this,_c4_),
    c5_("c5_","c5_",this,_c5_),
    c6_("c6_","c6_",this,_c6_),
-   c7_("c7_","c7_",this,_c7_)
+   c7_("c7_","c7_",this,_c7_),
+   c8_("c8_","c8_",this,_c8_),
+   c9_("c9_","c9_",this,_c9_),
+   c10_("c10_","c10_",this,_c10_),
+   c11_("c11_","c11_",this,_c11_),
+   c12_("c12_","c12_",this,_c12_),
+   c13_("c13_","c13_",this,_c13_),
+   c14_("c14_","c14_",this,_c14_),
+   c15_("c15_","c15_",this,_c15_)
  { 
  } 
 
@@ -54,34 +70,47 @@ namespace functions {
    c4_("c4_",this,other.c4_),
    c5_("c5_",this,other.c5_),
    c6_("c6_",this,other.c6_),
-   c7_("c7_",this,other.c7_)
+   c7_("c7_",this,other.c7_),
+   c8_("c8_",this,other.c8_),
+   c9_("c9_",this,other.c9_),
+   c10_("c10_",this,other.c10_),
+   c11_("c11_",this,other.c11_),
+   c12_("c12_",this,other.c12_),
+   c13_("c13_",this,other.c13_),
+   c14_("c14_",this,other.c14_),
+   c15_("c15_",this,other.c15_)
  { 
  } 
 
  // Define per-bin functions
  Double_t PolyTest::F1(double x) const
  {
-   return TMath::Power(x, 4);
+   // return TMath::Power(x, 4);
+   return c0_ + c1_ * x + c2_ * TMath::Power(x, 2) + c3_ * TMath::Power(x, 3);
  }
 
  Double_t PolyTest::F2(double x) const
  {
-   return c0_ * TMath::Power(x, 3) + TMath::Power(x, 4);
+   // return c0_ * TMath::Power(x, 3) + TMath::Power(x, 4);
+   return c4_ * x + c5_ * TMath::Power(x, 2) + c6_ * TMath::Power(x, 3);
  }
 
  Double_t PolyTest::F3(double x) const
  {
-   return c1_ + TMath::Power(x, 1);
+   // return c1_ + TMath::Power(x, 1);
+   return c7_ * x + c8_ * TMath::Power(x, 2) + c9_ * TMath::Power(x, 3);
  }
 
  Double_t PolyTest::F4(double x) const
  {
-   return c2_ * TMath::Power(x, 4) + c3_ * TMath::Power(x, 5) - TMath::Power(x, 6);
+   // return c2_ * TMath::Power(x, 4) + c3_ * TMath::Power(x, 5) - TMath::Power(x, 6);
+   return c10_ * x + c11_ * TMath::Power(x, 2) + c12_ * TMath::Power(x, 3);
  }
 
  Double_t PolyTest::F5(double x) const
  {
-   return c4_ * TMath::Power(x, 3) + c5_ * TMath::Power(x, 4) + c6_ * TMath::Power(x, 5) + c7_ * TMath::Power(x, 6);
+   // return c4_ * TMath::Power(x, 3) + c5_ * TMath::Power(x, 4) + c6_ * TMath::Power(x, 5) + c7_ * TMath::Power(x, 6);
+   return c12_ * x + c13_ * TMath::Power(x, 2) + c14_ * TMath::Power(x, 3);
  }
 
  Double_t PolyTest::evaluate() const 
@@ -93,8 +122,8 @@ namespace functions {
    double n1 = 1;
    double n2 = n1 * F1(0.15) / F2(0.15);
    double n3 = n2 * F2(0.20) / F3(0.20);
-   double n4 = n3 * F3(0.29) / F4(0.29);
-   double n5 = n4 * F4(0.45) / F5(0.45);
+   double n4 = n3 * F3(0.28) / F4(0.28);
+   double n5 = n4 * F4(0.46) / F5(0.46);
 
    if ((x_>0.00) && (x_<=0.15)){
       return n1 * F1(x_);
@@ -102,16 +131,16 @@ namespace functions {
    else if ((x_>0.15) && (x_<=0.20)){
       return n2 * F2(x_);
    }
-   else if ((x_>0.20) && (x_<=0.29)){
+   else if ((x_>0.20) && (x_<=0.28)){
    
       return n3 * F3(x_);
    }
-   else if ((x_>0.29) && (x_<=0.45)){
+   else if ((x_>0.28) && (x_<=0.46)){
    
       /// n4 = (0,016 + 0,2) / (0,2 * 0,00707281 + 0,16 * 0,002051115 - 0,000594823) = 
       return n4 * F4(x_); 
    }
-   else if ((x_>0.45) && (x_<=0.50)){
+   else if ((x_>0.46) && (x_<=0.50)){
    
       return n5 * F5(x_); 
    }
