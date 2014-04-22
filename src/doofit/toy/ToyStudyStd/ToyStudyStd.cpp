@@ -32,13 +32,16 @@
 #include "RooGaussian.h"
 #include "RooPlot.h"
 
+// from DooCore
+#include "doocore/io/MsgStream.h"
+#include "doocore/lutils/lutils.h"
+#include "doocore/system/FileLock.h"
+#include <doocore/io/Progress.h>
+
 // from Project
 #include "doofit/config/CommonConfig.h"
 #include "doofit/config/CommaSeparatedPair.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
-#include "doocore/io/MsgStream.h"
-#include "doocore/lutils/lutils.h"
-#include "doocore/system/FileLock.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -214,8 +217,13 @@ namespace toy {
     doocore::lutils::printPlotOpenStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     
     const RooArgSet* parameters = evaluated_values_->get();
+    int num_parameters          = parameters->getSize();
     TIterator* parameter_iter   = parameters->createIterator();
     RooRealVar* parameter       = NULL;
+    
+    using namespace doocore::io;
+    Progress p("Evaluating parameter distributions", num_parameters);
+    
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       std::string param_name = parameter->GetName();
             
@@ -226,7 +234,7 @@ namespace toy {
         minmax.second = 2.3;
       }
       
-      sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
+      //sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
             
       RooRealVar* mean             = NULL;
       RooRealVar* sigma            = NULL;
@@ -263,12 +271,25 @@ namespace toy {
         gauss = new RooGaussian("pdf_pull", "Gaussian PDF of pull", *parameter, *mean, *sigma);
         
         sinfo.increment_indent(2);
-        sinfo << "Fitting Gaussian distribution for parameter " << param_name << endmsg;
-        if (fit_plot_dataset != evaluated_values_) {
-          sinfo << "Losing " << evaluated_values_->numEntries() - fit_plot_dataset->numEntries() << "(" << (evaluated_values_->numEntries() - fit_plot_dataset->numEntries())/static_cast<double>(evaluated_values_->numEntries())*100 << "%) toys for this fit due to cuts applied." << endmsg;
+        //sinfo << "Fitting Gaussian distribution for parameter " << param_name << endmsg;
+        int num_lost_entries     = evaluated_values_->numEntries() - fit_plot_dataset->numEntries();
+        double frac_lost_entries = (evaluated_values_->numEntries() - fit_plot_dataset->numEntries())/static_cast<double>(evaluated_values_->numEntries())*100;
+        if (fit_plot_dataset != evaluated_values_ && frac_lost_entries>1.0) {
+          sinfo << "Losing " << num_lost_entries << " (" << frac_lost_entries << "%) toys for this fit due to cuts applied for " << param_name << "." << endmsg;
         }
-        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(2), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"));
-        fit_result->Print("v");
+            
+            
+            
+            // supress RooFit spam
+            RooMsgService::instance().setStreamStatus(0, false);
+            RooMsgService::instance().setStreamStatus(1, false);
+            RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(2), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(1));
+
+            // un-supress RooFit spam
+            RooMsgService::instance().setStreamStatus(0, true);
+            RooMsgService::instance().setStreamStatus(1, true);
+            
+            //fit_result->Print("v");
         delete fit_result;
         sinfo.increment_indent(-2);
       }
@@ -299,7 +320,10 @@ namespace toy {
         delete sigma;
         delete mean;
       }
+      
+      ++p;
     }
+    p.Finish();
     
     doocore::lutils::printPlotCloseStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     sinfo.Ruler();
@@ -384,11 +408,11 @@ namespace toy {
       double res_value = -(init.getVal() - par.getVal());
       res->setVal(res_value);
       
-      std::string paramname = parameter->GetName();
-      if (paramname == "par_bdsig_time_C" && TMath::Abs(res->getVal()) < 0.000001) {
-        swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-(" << par.getVal() << ")" << endmsg;
-        fit_result.Print("v");
-      }
+//      std::string paramname = parameter->GetName();
+//      if (paramname == "par_bdsig_time_C" && TMath::Abs(res->getVal()) < 0.000001) {
+//        swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-(" << par.getVal() << ")" << endmsg;
+//        fit_result.Print();
+//      }
       
       err->setVal(err_value);
             
