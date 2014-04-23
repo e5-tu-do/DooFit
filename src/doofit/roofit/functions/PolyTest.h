@@ -22,16 +22,16 @@ public:
   PolyTest() {} ; 
   PolyTest(const std::string name,
 	      RooAbsReal& _x_,
-	      RooAbsReal& _c0_,
-	      RooAbsReal& _c1_,
-	      RooAbsReal& _c2_,
-	      RooAbsReal& _c3_,
-        RooAbsReal& _c4_,
-        RooAbsReal& _c5_,
-        RooAbsReal& _c6_,
-        RooAbsReal& _c7_,
-        RooAbsReal& _c8_,
-        RooAbsReal& _c9_,
+	      RooAbsReal& _c00_,
+	      RooAbsReal& _c01_,
+	      RooAbsReal& _c02_,
+	      RooAbsReal& _c03_,
+        RooAbsReal& _c04_,
+        RooAbsReal& _c05_,
+        RooAbsReal& _c06_,
+        RooAbsReal& _c07_,
+        RooAbsReal& _c08_,
+        RooAbsReal& _c09_,
         RooAbsReal& _c10_,
         RooAbsReal& _c11_,
         RooAbsReal& _c12_,
@@ -48,16 +48,16 @@ public:
 protected:
 
   RooRealProxy x_ ;
-  RooRealProxy c0_ ;
-  RooRealProxy c1_ ;
-  RooRealProxy c2_ ;
-  RooRealProxy c3_ ;
-  RooRealProxy c4_ ;
-  RooRealProxy c5_ ;
-  RooRealProxy c6_ ;
-  RooRealProxy c7_ ;
-  RooRealProxy c8_ ;
-  RooRealProxy c9_ ;
+  RooRealProxy c00_ ;
+  RooRealProxy c01_ ;
+  RooRealProxy c02_ ;
+  RooRealProxy c03_ ;
+  RooRealProxy c04_ ;
+  RooRealProxy c05_ ;
+  RooRealProxy c06_ ;
+  RooRealProxy c07_ ;
+  RooRealProxy c08_ ;
+  RooRealProxy c09_ ;
   RooRealProxy c10_ ;
   RooRealProxy c11_ ;
   RooRealProxy c12_ ;

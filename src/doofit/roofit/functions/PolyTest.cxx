@@ -22,16 +22,16 @@ namespace functions {
 
  PolyTest::PolyTest(const std::string name, 
                         RooAbsReal& _x_,
-                        RooAbsReal& _c0_,
-                        RooAbsReal& _c1_,
-                        RooAbsReal& _c2_,
-                        RooAbsReal& _c3_,
-                        RooAbsReal& _c4_,
-                        RooAbsReal& _c5_,
-                        RooAbsReal& _c6_,
-                        RooAbsReal& _c7_,
-                        RooAbsReal& _c8_,
-                        RooAbsReal& _c9_,
+                        RooAbsReal& _c00_,
+                        RooAbsReal& _c01_,
+                        RooAbsReal& _c02_,
+                        RooAbsReal& _c03_,
+                        RooAbsReal& _c04_,
+                        RooAbsReal& _c05_,
+                        RooAbsReal& _c06_,
+                        RooAbsReal& _c07_,
+                        RooAbsReal& _c08_,
+                        RooAbsReal& _c09_,
                         RooAbsReal& _c10_,
                         RooAbsReal& _c11_,
                         RooAbsReal& _c12_,
@@ -40,16 +40,16 @@ namespace functions {
                         RooAbsReal& _c15_) :
    RooAbsPdf(name.c_str(),name.c_str()), 
    x_("x_","x_",this,_x_),
-   c0_("c0_","c0_",this,_c0_),
-   c1_("c1_","c1_",this,_c1_),
-   c2_("c2_","c2_",this,_c2_),
-   c3_("c3_","c3_",this,_c3_),
-   c4_("c4_","c4_",this,_c4_),
-   c5_("c5_","c5_",this,_c5_),
-   c6_("c6_","c6_",this,_c6_),
-   c7_("c7_","c7_",this,_c7_),
-   c8_("c8_","c8_",this,_c8_),
-   c9_("c9_","c9_",this,_c9_),
+   c00_("c00_","c00_",this,_c00_),
+   c01_("c01_","c01_",this,_c01_),
+   c02_("c02_","c02_",this,_c02_),
+   c03_("c03_","c03_",this,_c03_),
+   c04_("c04_","c04_",this,_c04_),
+   c05_("c05_","c05_",this,_c05_),
+   c06_("c06_","c06_",this,_c06_),
+   c07_("c07_","c07_",this,_c07_),
+   c08_("c08_","c08_",this,_c08_),
+   c09_("c09_","c09_",this,_c09_),
    c10_("c10_","c10_",this,_c10_),
    c11_("c11_","c11_",this,_c11_),
    c12_("c12_","c12_",this,_c12_),
@@ -63,16 +63,16 @@ namespace functions {
  PolyTest::PolyTest(const PolyTest& other, const char* name) :  
    RooAbsPdf(other,name), 
    x_("x_",this,other.x_),
-   c0_("c0_",this,other.c0_),
-   c1_("c1_",this,other.c1_),
-   c2_("c2_",this,other.c2_),
-   c3_("c3_",this,other.c3_),
-   c4_("c4_",this,other.c4_),
-   c5_("c5_",this,other.c5_),
-   c6_("c6_",this,other.c6_),
-   c7_("c7_",this,other.c7_),
-   c8_("c8_",this,other.c8_),
-   c9_("c9_",this,other.c9_),
+   c00_("c00_",this,other.c00_),
+   c01_("c01_",this,other.c01_),
+   c02_("c02_",this,other.c02_),
+   c03_("c03_",this,other.c03_),
+   c04_("c04_",this,other.c04_),
+   c05_("c05_",this,other.c05_),
+   c06_("c06_",this,other.c06_),
+   c07_("c07_",this,other.c07_),
+   c08_("c08_",this,other.c08_),
+   c09_("c09_",this,other.c09_),
    c10_("c10_",this,other.c10_),
    c11_("c11_",this,other.c11_),
    c12_("c12_",this,other.c12_),
@@ -86,19 +86,19 @@ namespace functions {
  Double_t PolyTest::F1(double x) const
  {
    // return TMath::Power(x, 4);
-   return c0_ + c1_ * x + c2_ * TMath::Power(x, 2) + c3_ * TMath::Power(x, 3);
+   return c00_ + c01_ * x + c02_ * TMath::Power(x, 2) + c03_ * TMath::Power(x, 3);
  }
 
  Double_t PolyTest::F2(double x) const
  {
    // return c0_ * TMath::Power(x, 3) + TMath::Power(x, 4);
-   return c4_ * x + c5_ * TMath::Power(x, 2) + c6_ * TMath::Power(x, 3);
+   return c04_ * x + c05_ * TMath::Power(x, 2) + c06_ * TMath::Power(x, 3);
  }
 
  Double_t PolyTest::F3(double x) const
  {
    // return c1_ + TMath::Power(x, 1);
-   return c7_ * x + c8_ * TMath::Power(x, 2) + c9_ * TMath::Power(x, 3);
+   return c07_ * x + c08_ * TMath::Power(x, 2) + c09_ * TMath::Power(x, 3);
  }
 
  Double_t PolyTest::F4(double x) const
@@ -125,7 +125,10 @@ namespace functions {
    double n4 = n3 * F3(0.28) / F4(0.28);
    double n5 = n4 * F4(0.46) / F5(0.46);
 
-   if ((x_>0.00) && (x_<=0.15)){
+   if (x_<=0.07){
+      return 0;
+   }
+   else if ((x_>0.07) && (x_<=0.15)){
       return n1 * F1(x_);
    }
    else if ((x_>0.15) && (x_<=0.20)){
