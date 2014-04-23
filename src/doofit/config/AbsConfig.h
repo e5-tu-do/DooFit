@@ -194,7 +194,7 @@ namespace config {
   /// Map of AbsConfig pointers accessible via std::string
   typedef std::map<unsigned int,AbsConfig*> ConfigMap;
   
-  class AbsConfig : public TObject {
+  class AbsConfig { // : public TObject {
     
   public:
     

@@ -1,19 +1,15 @@
 #include "doofit/config/AbsTypeCommaSeparated.h"
 
 // from STL
+#include <iostream>
 #include <string>
 #include <vector>
 
 // from Boost
 #include <boost/tokenizer.hpp>
 
-namespace doofit {
-
 using namespace std;
-using namespace config;
-
-  
-vector<string> AbsTypeCommaSeparated::DecomposeString(string str) const {
+vector<string> doofit::config::AbsTypeCommaSeparated::DecomposeString(string str) const {
   vector<string> elements;
   
   using namespace boost;
@@ -25,8 +21,6 @@ vector<string> AbsTypeCommaSeparated::DecomposeString(string str) const {
   }
   
   return elements;
-}
-
 }
 
 std::istream& operator>>(std::istream& is, doofit::config::AbsTypeCommaSeparated& arg) {

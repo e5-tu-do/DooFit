@@ -45,6 +45,8 @@
 #include "P2VV/RooAbsGaussModelEfficiency.h"
 #include "P2VV/RooGaussEfficiencyModel.h"
 #include "P2VV/RooEffResAddModel.h"
+#include "Urania/RooIpatia.h"
+#include "Urania/RooIpatia2.h"
 
 using namespace ROOT;
 using namespace RooFit;
@@ -113,6 +115,14 @@ void doofit::builder::EasyPdf::PurgeAllObjects() {
 }
 
 RooAbsReal& doofit::builder::EasyPdf::Real(const std::string &name) {
+  using namespace doocore::io;
+  
+//  sdebug << "EasyPdf::Real(" << name << ")" << endmsg;
+//  sdebug << "vars_.count(" << name << ") = " << vars_.count(name) << endmsg;
+//  sdebug << "formulas_.count(" << name << ") = " << formulas_.count(name) << endmsg;
+//  sdebug << "hidden_reals_.count(" << name << ") = " << hidden_reals_.count(name) << endmsg;
+//  sdebug << "external_reals_.count(" << name << ") = " << external_reals_.count(name) << endmsg;
+  
   if (vars_.count(name) == 1) {
     return *vars_[name];
   } else if (formulas_.count(name) == 1) {
@@ -395,6 +405,14 @@ RooGaussian& doofit::builder::EasyPdf::Gaussian(const std::string &name, RooAbsR
 
 RooCBShape& doofit::builder::EasyPdf::CBShape(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& alpha, RooAbsReal& n) {
   return AddPdfToStore<RooCBShape>(new RooCBShape(name.c_str(), name.c_str(), x, mean, sigma, alpha, n));
+}
+
+RooIpatia& doofit::builder::EasyPdf::Ipatia(const std::string& name, RooAbsReal& x, RooAbsReal& l, RooAbsReal& zeta, RooAbsReal& fb, RooAbsReal& sigma, RooAbsReal& mu, RooAbsReal& a, RooAbsReal& n) {
+  return AddPdfToStore<RooIpatia>(new RooIpatia(name.c_str(), name.c_str(), x, l, zeta, fb, sigma, mu, a, n));
+}
+
+RooIpatia2& doofit::builder::EasyPdf::Ipatia2(const std::string& name, RooAbsReal& x, RooAbsReal& l, RooAbsReal& zeta, RooAbsReal& fb, RooAbsReal& sigma, RooAbsReal& mu, RooAbsReal& a1, RooAbsReal& n1, RooAbsReal& a2, RooAbsReal& n2) {
+  return AddPdfToStore<RooIpatia2>(new RooIpatia2(name.c_str(), name.c_str(), x, l, zeta, fb, sigma, mu, a1, n1, a2, n2));
 }
 
 RooExponential& doofit::builder::EasyPdf::Exponential(const std::string &name, RooAbsReal& x, RooAbsReal& e) {

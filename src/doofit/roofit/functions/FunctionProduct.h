@@ -22,15 +22,10 @@ namespace functions {
 
 class FunctionProduct : public RooAbsReal {
 public:
-  FunctionProduct() ;
+  FunctionProduct() {};
   FunctionProduct(std::string name,
                   RooAbsReal& _par_factor1,
                   RooAbsReal& _par_factor2);
-  
-  FunctionProduct(std::string name,
-                  RooAbsReal& _par_factor1,
-                  RooAbsReal& _par_factor2,
-                  RooAbsReal& _par_factor3);
   
   FunctionProduct(const FunctionProduct& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new FunctionProduct(*this,newname); }
@@ -42,9 +37,6 @@ protected:
 
   RooRealProxy par_factor1 ;
   RooRealProxy par_factor2 ;
-  RooRealProxy par_factor3 ;
-  
-  const int num_factors ;
   
   mutable long long num_calls_;
   
@@ -54,13 +46,8 @@ protected:
   inline Double_t evaluate() const {
     // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
     //++num_calls_;
-    if (num_factors == 2) {
-      //std::cout << par_factor1*par_factor2 << std::endl;
-      return par_factor1*par_factor2;
-    }
-    if (num_factors == 3) {
-      return par_factor1*par_factor2*par_factor3;
-    }
+    //std::cout << par_factor1*par_factor2 << std::endl;
+    return par_factor1*par_factor2;
   }
   
 private:

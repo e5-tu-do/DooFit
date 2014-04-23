@@ -209,7 +209,9 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
     easyfitter_->Fit();
     
     const RooFitResult* fit_result = easyfitter_->GetFitResult();
-    
+    parameters_ = easyfitter_->ParameterArgSet();
+    pdf_ = easyfitter_->FitPdf();
+
     if (fit_result != NULL) {
       fit_result->Print("v");
     } else {
@@ -244,14 +246,14 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
     RooFitResult* fit_result = pdf_->fitTo(*input_data_, fitting_args);
     fit_result->Print("v");
     delete fit_result;
+
+    parameters_ = pdf().getParameters(*input_data_);
   }
-  
-  parameters_ = pdf().getParameters(*input_data_);
   
   //=========================================================================
   // create sPlot
   // get all parameters
-  RooArgSet* par_disc_set = pdf_->getParameters(*input_data_);
+  RooArgSet* par_disc_set = parameters_; //pdf_->getParameters(*input_data_);
   
   // remove yields from parameter set
   par_disc_set->remove(yields_);
@@ -261,7 +263,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
   
   // iterate over left over parameters of full disc pdf and set constant
   RooLinkedListIter* par_disc_set_iterator = (RooLinkedListIter*)par_disc_set->createIterator();
-  while (var_iter1=(RooRealVar*)par_disc_set_iterator->Next()) {
+  while ((var_iter1=(RooRealVar*)par_disc_set_iterator->Next())) {
     var_iter1->setConstant();
   }
   delete par_disc_set_iterator;
@@ -275,7 +277,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
 
   // iterate over yields
   RooLinkedListIter* yield_iterator = (RooLinkedListIter*)yields_.createIterator();
-  while (var_iter1=(RooRealVar*)yield_iterator->Next()) {
+  while ((var_iter1=(RooRealVar*)yield_iterator->Next())) {
     std::string comp_name = var_iter1->GetName();
     
     sinfo << "SPlotFit2: Adding sweighted dataset with name " << comp_name << endmsg;

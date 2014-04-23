@@ -218,7 +218,7 @@ namespace toy {
     }
   }
   
-  void ToyFactoryStd::MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const RooArgSet* ignore_argset, bool delete_slave) const {
+  void ToyFactoryStd::MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const std::vector<RooDataSet*>* ignore_sets, bool delete_slave) const {
     // sanity check
     const RooArgSet& master_argset = *master_dataset->get();
     const RooArgSet& slave_argset  = *slave_dataset->get();
@@ -235,7 +235,7 @@ namespace toy {
       // First assume datasets are not mergable.
       bool not_mergable = true;
       
-      if (ignore_argset != NULL) {
+      if (ignore_sets != NULL) {
         // there is an ignore argset, might be mergable
         not_mergable = false;
         // Happy fun time using TIterator, yay!
@@ -244,18 +244,28 @@ namespace toy {
         while ((column = (RooAbsArg*)iter->Next())) {
           // If any overlaping column is not in ignore_argset, datasets are not
           // mergable.
-          if (master_argset.contains(*column) && !(ignore_argset->contains(*column))) {
-            not_mergable = true;
+          if (master_argset.contains(*column)) {
+            bool overlap_in_ignore = false;
+            for (auto ignore_set : *ignore_sets) {
+              overlap_in_ignore |= ignore_set->get()->contains(*column);
+            }
+            not_mergable |= !overlap_in_ignore;
           }
+          
         }
         delete iter;
       }
       
       if (not_mergable) {
         serr << "Attempting two merge two non-disjoint datasets. Unable to cope with that. Giving up." << endmsg;
-        serr << "Cannot merge " << master_argset << " with " << slave_argset;
-        if (ignore_argset != NULL) {
-          serr << " (ignoring " << ignore_argset << ")";
+        serr << "Cannot merge " << endmsg;
+        serr << "  " << master_argset << endmsg;
+        serr << " with " << endmsg;
+        serr << "  " << slave_argset << endmsg;
+        if (ignore_sets != NULL) {
+          for (auto ignore_set : *ignore_sets) {
+            serr << " (ignoring " << *ignore_set->get() << ")";
+          }
         }
         serr << endmsg;
         throw DatasetsNotDisjointException();
@@ -330,12 +340,16 @@ namespace toy {
       // @todo If PDF ist extended AND no yield is set, we need to get yield from
       //       PDF itself for proto.
       
+      // sdebug << "Expected yield from external call: " << expected_yield << endmsg;
+
       int proto_size;
       if (proto_data.size() > 0) {
         proto_size = proto_data[0]->numEntries();
       } else {
         double yield = expected_yield;
         if (expected_yield==0) {
+          // pdf.Print("v");
+          
           yield = pdf.expectedEvents(argset_generation_observables);
         }
         proto_size = yield+10*TMath::Sqrt(yield);
@@ -554,6 +568,8 @@ namespace toy {
           yield_lost_due_rounding = 0.0;
         }
         
+        // sdebug << "Sub yield for next PDF " << sub_pdf->GetName() << " is " << sub_yield << endmsg;
+
         if (data) {
           RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield, false, sub_proto_data);
           AppendDatasets(data, data_temp);
@@ -595,7 +611,7 @@ namespace toy {
         RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, expected_yield, false, proto_data);
         
         if (proto_data.size() > 0) {
-          MergeDatasets(data, data_temp, proto_data[0]->get());
+          MergeDatasets(data, data_temp, &proto_data);
         } else {
           MergeDatasets(data, data_temp);
         }
