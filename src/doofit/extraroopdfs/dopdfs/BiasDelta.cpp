@@ -58,8 +58,7 @@ BiasDelta::BiasDelta(const BiasDelta& other, const char* name) :
 //_____________________________________________________________________________
 Double_t BiasDelta::evaluate() const
 {
-  Double_t arg= x - mean;  
-  if (arg == 0) return 1;
+  if (x == mean) return 1;
   else return 0;
 }
 
@@ -75,10 +74,10 @@ Int_t BiasDelta::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, 
 
 
 //_____________________________________________________________________________
-Double_t BiasDelta::analyticalIntegral(Int_t code, const char* rangeName) const 
+Double_t BiasDelta::analyticalIntegral(Int_t code, const char* /*rangeName*/) const 
 {
   assert(code==1) ;
-  return 1;
+  return (x.max()-x.min())/100.;
 
 }
 
@@ -98,7 +97,6 @@ Int_t BiasDelta::getGenerator(const RooArgSet& directVars, RooArgSet &generateVa
 void BiasDelta::generateEvent(Int_t code)
 {
   assert(code==1) ;
-  Double_t xgen = mean;
   x = mean;
   return;
 }
