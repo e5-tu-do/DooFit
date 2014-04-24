@@ -190,7 +190,7 @@ if __name__ == "__main__":
   parser.add_option("", "--scan2-increment", action="store", type="float", dest="scan2increment", default=1.0, help="Increment value of scan parameter 2")
   parser.add_option("", "--scan2-per-job", action="store", type="float", dest="scan2perjob", default=1.0, help="Number of scan points per job (default 1) for scan parameter 2")
   parser.add_option("-n", "--parameter-n", action="store", type="int", dest="parametern", default=0, help="Additional arbitrary parameter n (e.g. number of toys)")
-  parser.add_option("-m", "--vmem-per-core", action="store", type="int", dest="vmem_per_core", default=1000, help="Required vmem per core in PBS notation (in MB, default 1000)")
+  parser.add_option("-m", "--vmem-per-core", action="store", type="int", dest="vmem_per_core", default=3000, help="Required vmem per core in PBS notation (in MB, default 3000)")
   (options, args) = parser.parse_args()
   if len(args) < 6:
     print 'Usage: ' + sys.argv[0] + ' proto_script jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu'
