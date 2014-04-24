@@ -12,6 +12,7 @@ echo "Loading DooSoftware for ROOT $ROOTVERS"
 export DOOFITSYS=/doosoft/doofit/ROOT_v$ROOTVERS
 export DOOCORESYS=/doosoft/doocore/ROOT_v$ROOTVERS
 export DOOSELECTIONSYS=/doosoft/dooselection/ROOT_v$ROOTVERS
+export BOOST_ROOT=$(dirname $(echo $LD_LIBRARY_PATH | tr ":" "\n" | grep Boost))
 
 if [ "$1" != "--ignore-local" ]; then
   if [ -e "$HOME/LocalDooSoftware.sh" ]; then
@@ -20,6 +21,7 @@ if [ "$1" != "--ignore-local" ]; then
   fi
 fi
 
+echo "Using Boost from: $BOOST_ROOT"
 echo "Using DooFit from: $DOOFITSYS"
 echo "Using DooCore from: $DOOCORESYS"
 echo "Using DooSelection from: $DOOSELECTIONSYS"
