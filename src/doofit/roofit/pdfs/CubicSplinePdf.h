@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "RooAbsReal.h"
-  #include "RooRealVar.h"
+#include "RooRealVar.h"
 #include "RooRealProxy.h"
 #include "RooCategoryProxy.h"
 #include "RooAbsPdf.h"
@@ -29,7 +29,7 @@ namespace pdfs {
 
 class CubicSplinePdf : public RooAbsPdf {
 public:
-  CubicSplinePdf(); 
+  CubicSplinePdf(){}; 
   CubicSplinePdf(const std::string name,
 	      RooRealVar& _x_,
         std::vector<double>& _knots_, 
