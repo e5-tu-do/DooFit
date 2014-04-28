@@ -28,6 +28,7 @@ namespace pdfs {
    cubic_spline_fun_("cubic_spline_fun_", "cubic_spline_fun_", _x_, _knots_, _coefList_),
    max_range_(_max_range_)
  { 
+   cubic_spline_fun_.Print();
  } 
 
 
@@ -42,6 +43,7 @@ namespace pdfs {
 
  Double_t CubicSplinePdf::evaluate() const 
  { 
+   // std::cout << cubic_spline_fun_.getVal() << std::endl;
    if ( (x_ >= 0.0) && (x_ <= max_range_) ){
       return cubic_spline_fun_.getVal();
    }
@@ -52,29 +54,16 @@ namespace pdfs {
 
 
 
- Int_t CubicSplinePdf::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
+ Int_t CubicSplinePdf::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const  
  { 
-   // LIST HERE OVER WHICH VARIABLES ANALYTICAL INTEGRATION IS SUPPORTED, 
-   // ASSIGN A NUMERIC CODE FOR EACH SUPPORTED (SET OF) PARAMETERS 
-   // THE EXAMPLE BELOW ASSIGNS CODE 1 TO INTEGRATION OVER VARIABLE X
-   // YOU CAN ALSO IMPLEMENT MORE THAN ONE ANALYTICAL INTEGRAL BY REPEATING THE matchArgs 
-   // EXPRESSION MULTIPLE TIMES
-
-   // if (matchArgs(allVars,analVars,x)) return 1 ; 
-   return 0 ; 
+   return cubic_spline_fun_.getAnalyticalIntegral(allVars, analVars, rangeName);
  } 
 
 
 
  Double_t CubicSplinePdf::analyticalIntegral(Int_t code, const char* rangeName) const  
  { 
-   // RETURN ANALYTICAL INTEGRAL DEFINED BY RETURN CODE ASSIGNED BY getAnalyticalIntegral
-   // THE MEMBER FUNCTION x.min(rangeName) AND x.max(rangeName) WILL RETURN THE INTEGRATION
-   // BOUNDARIES FOR EACH OBSERVABLE x
-
-   // assert(code==1) ; 
-   // return (x.max(rangeName)-x.min(rangeName)) ; 
-   return 0 ; 
+   return cubic_spline_fun_.analyticalIntegral(code, rangeName);
  } 
 
 }
