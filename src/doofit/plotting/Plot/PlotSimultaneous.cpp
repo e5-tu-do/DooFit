@@ -172,7 +172,10 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         label.SetFillColor(0);
         label.Draw();
         c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
+        
+        TStopwatch sw_plot; sw_plot.Start();
         plot.PlotHandler(sc_y, suffix);
+        sdebug << "This plot took " << sw_plot << endmsg;
         
         if (set_project != NULL) delete set_project;
         if (data_reduced != NULL) {
@@ -277,7 +280,9 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooArgSet set_project_local(sim_cat);
     if (!project_arg_found) plot.AddPlotArg(ProjWData(set_project_local,data));
     
+    TStopwatch sw_plot; sw_plot.Start();
     plot.PlotHandler(sc_y, suffix);
+    sdebug << "This plot took " << sw_plot << endmsg;
 
     if (set_project != NULL) delete set_project;
     if (data_reduced != NULL) {
