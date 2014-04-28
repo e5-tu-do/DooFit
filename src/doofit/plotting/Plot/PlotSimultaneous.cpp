@@ -11,6 +11,7 @@
 #include "TIterator.h"
 #include "TCanvas.h"
 #include "TPaveText.h"
+#include "TStopwatch.h"
 
 // from RooFit
 #include "RooSimultaneous.h"
@@ -123,25 +124,37 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
             
             // check for binned projection and if so generate binned dataset here to
             // accelerate projection
+            set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
             if (binned_projection) {
-              set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
-              
               sinfo << " Binned projection is requested. Will generate a binned dataset to accelerate projection." << endmsg;
-
+              
               data_reduced = sub_data.reduce(*set_project);
               std::string name_data_hist = std::string(sub_data.GetName()) + "_hist" + sim_cat_type->GetName();
               data_project = new RooDataHist(name_data_hist.c_str(), "binned projection dataset", *data_reduced->get(), *data_reduced);
-              
+
               sinfo << " Created binned dataset with " << data_project->numEntries() << " bins." << endmsg;
+              
+              unsigned int num_nonempty_bins = 0;
+              for (int i=0; i<data_project->numEntries(); ++i) {
+                data_project->get(i);
+                if (data_project->weight() != 0.0) {
+                  ++num_nonempty_bins;
+                }
+              }
+              double frac_nonempty = static_cast<double>(num_nonempty_bins)/static_cast<double>(data_project->numEntries());
+              if (frac_nonempty < 0.05) {
+                swarn << " The binned dataset contains only " << num_nonempty_bins << " non-empty bins, that is only " << frac_nonempty*100.0 << "% of all bins. You might want to optimize the binning of your projection variables." << endmsg;
+              }
             } else {
-              data_project = &sub_data;
+              data_reduced = sub_data.reduce(*set_project);
+              //data_project = &sub_data;
             }
 
             
             // create the new projection argument
             *it = ProjWData(*dynamic_cast<const RooArgSet*>(it->getObject(0)),
                             *data_project,
-                            it->getInt(0));
+                            binned_projection);
           }
         }
         
@@ -160,12 +173,17 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         label.Draw();
         c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
         
+        TStopwatch sw_plot; sw_plot.Start();
         plot.PlotHandler(sc_y, suffix);
+        sdebug << "This plot took " << sw_plot << endmsg;
         
         if (set_project != NULL) delete set_project;
+        if (data_reduced != NULL) {
+          delete data_reduced;
+        }
+
         if (binned_projection) {
           delete data_project;
-          delete data_reduced;
         }
         
         ++num_slices;
@@ -203,9 +221,12 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooAbsData* data_reduced       = NULL;
     const RooAbsData* data_project = NULL;
     bool binned_projection         = false;
+    const RooAbsData* data_all     = NULL;
     for (std::vector<RooCmdArg>::iterator it = plot.plot_args_.begin();
          it != plot.plot_args_.end(); ++it) {
       if (std::string(it->GetName()) == "ProjData") {
+        data_all = dynamic_cast<const RooAbsData*>(it->getObject(1));
+        
         sinfo << "Found ProjWData() argument. Will join with " << sim_cat.GetName() << " on same dataset." << endmsg;
         project_arg_found = true;
         binned_projection = it->getInt(0);
@@ -226,13 +247,27 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         if (binned_projection) {
           sinfo << " Binned projection is requested. Will generate a binned dataset to accelerate projection." << endmsg;
           
-          RooAbsData* data_proj = const_cast<RooAbsData*>(dynamic_cast<const RooAbsData*>(it->getObject(1)));
-          std::string name_data_hist = std::string(data_proj->GetName()) + "_hist";
+          RooAbsData* data_proj = const_cast<RooAbsData*>(data_all);
           data_reduced = data_proj->reduce(*set_project);
+          std::string name_data_hist = std::string(data_proj->GetName()) + "_hist";
           data_project = new RooDataHist(name_data_hist.c_str(), "binned projection dataset", *data_reduced->get(), *data_reduced);
           
           sinfo << " Created binned dataset with " << data_project->numEntries() << " bins." << endmsg;
+          
+          unsigned int num_nonempty_bins = 0;
+          for (int i=0; i<data_project->numEntries(); ++i) {
+            data_project->get(i);
+            if (data_project->weight() != 0.0) {
+              ++num_nonempty_bins;
+            }
+          }
+          double frac_nonempty = static_cast<double>(num_nonempty_bins)/static_cast<double>(data_project->numEntries());
+          if (frac_nonempty < 0.05) {
+            swarn << " The binned dataset contains only " << num_nonempty_bins << " non-empty bins, that is only " << frac_nonempty*100.0 << "% of all bins. You might want to optimize the binning of your projection variables." << endmsg;
+          }
         } else {
+          RooAbsData* data_proj = const_cast<RooAbsData*>(data_all);
+          data_reduced = data_proj->reduce(*set_project);
           data_project = dynamic_cast<const RooAbsData*>(it->getObject(1));
         }
         
@@ -245,11 +280,15 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooArgSet set_project_local(sim_cat);
     if (!project_arg_found) plot.AddPlotArg(ProjWData(set_project_local,data));
     
+    TStopwatch sw_plot; sw_plot.Start();
     plot.PlotHandler(sc_y, suffix);
+    sdebug << "This plot took " << sw_plot << endmsg;
 
     if (set_project != NULL) delete set_project;
-    if (binned_projection) {
+    if (data_reduced != NULL) {
       delete data_reduced;
+    }
+    if (binned_projection) {
       delete data_project;
     }
   }
