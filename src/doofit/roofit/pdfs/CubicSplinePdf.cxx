@@ -19,22 +19,27 @@ namespace roofit {
 namespace pdfs {
 
  CubicSplinePdf::CubicSplinePdf(const std::string name, 
-                        RooRealVar& _x_,
-                        std::vector<double>& _knots_, 
-                        RooArgList& _coefList_,
-                        double _max_range_) :
-   RooAbsPdf(name.c_str(),name.c_str()), 
+                                RooRealVar& _x_,
+                                std::vector<double>& _knots_, 
+                                RooArgList& _coefList_,
+                                double _max_range_):
+   RooAbsPdf(name.c_str(),name.c_str()),
    x_("x_","x_",this,_x_),
-   cubic_spline_fun_("cubic_spline_fun_", "cubic_spline_fun_", _x_, _knots_, _coefList_),
-   max_range_(_max_range_)
+   knots_(_knots_),
+   coefList_(_coefList_),
+   max_range_(_max_range_),
+   cubic_spline_fun_(new RooCubicSplineFun("cubic_spline_fun_", "cubic_spline_fun_", _x_, knots_, coefList_))
  { 
-   cubic_spline_fun_.Print();
+   // cubic_spline_fun_ = new RooCubicSplineFun("cubic_spline_fun_", "cubic_spline_fun_", x_, knots_, coefList_);
+   cubic_spline_fun_->Print();
  } 
 
 
  CubicSplinePdf::CubicSplinePdf(const CubicSplinePdf& other, const char* name) :  
    RooAbsPdf(other,name), 
    x_("x_",this,other.x_),
+   knots_(other.knots_),
+   coefList_(other.coefList_),
    cubic_spline_fun_(other.cubic_spline_fun_),
    max_range_(other.max_range_)
  { 
@@ -43,9 +48,9 @@ namespace pdfs {
 
  Double_t CubicSplinePdf::evaluate() const 
  { 
-   // std::cout << cubic_spline_fun_.getVal() << std::endl;
+   // std::cout << cubic_spline_fun_->getVal() << std::endl;
    if ( (x_ >= 0.0) && (x_ <= max_range_) ){
-      return cubic_spline_fun_.getVal();
+      return cubic_spline_fun_->getVal();
    }
    else{
       return 0;
@@ -56,14 +61,14 @@ namespace pdfs {
 
  Int_t CubicSplinePdf::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const  
  { 
-   return cubic_spline_fun_.getAnalyticalIntegral(allVars, analVars, rangeName);
+   return cubic_spline_fun_->getAnalyticalIntegral(allVars, analVars, rangeName);
  } 
 
 
 
  Double_t CubicSplinePdf::analyticalIntegral(Int_t code, const char* rangeName) const  
  { 
-   return cubic_spline_fun_.analyticalIntegral(code, rangeName);
+   return cubic_spline_fun_->analyticalIntegral(code, rangeName);
  } 
 
 }

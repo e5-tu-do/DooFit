@@ -29,18 +29,18 @@ namespace pdfs {
 
 class CubicSplinePdf : public RooAbsPdf {
 public:
-  CubicSplinePdf(){}; 
+  // CubicSplinePdf(); 
   CubicSplinePdf(const std::string name,
-	      RooRealVar& _x_,
-        std::vector<double>& _knots_, 
-        RooArgList& _coefList_,
-        double _max_range_=0.5);
+	               RooRealVar& _x_,
+                 std::vector<double>& _knots_, 
+                 RooArgList& _coefList_,
+                 double _max_range_=0.5);
   
   CubicSplinePdf(const CubicSplinePdf& other, const char* name=0) ;
   
   virtual TObject* clone(const char* newname) const { return new CubicSplinePdf(*this,newname); }
   
-  inline virtual ~CubicSplinePdf() { }
+  virtual ~CubicSplinePdf() {delete cubic_spline_fun_;}
 
   Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
   
@@ -49,8 +49,10 @@ public:
 protected:
 
   RooRealProxy x_ ;
-  RooCubicSplineFun cubic_spline_fun_;
+  std::vector<double>& knots_;
+  RooArgList& coefList_;
   double max_range_;
+  RooCubicSplineFun* cubic_spline_fun_;
 
   Double_t evaluate() const ;
 
