@@ -51,14 +51,28 @@ namespace pdfs {
   DooCubicSplinePdf::DooCubicSplinePdf(const std::string name,
                                        RooRealVar& x, 
                                        const vector<double>& knots,
-                                       const RooArgList& coefList):
+                                       const RooArgList& coefList,
+                                       double range_min,
+                                       double range_max):
     RooAbsPdf(name.c_str(), name.c_str()),
     _x("x", "Dependent", this, x),
     _coefList("coefficients", "List of coefficients", this),
-    _aux(knots.begin(), knots.end())
+    _aux(knots.begin(), knots.end()),
+    _use_range(true),
+    _range_min(range_min),
+    _range_max(range_max)
   {
      assert(size_t(coefList.getSize()) == 2 + knots.size());
      _coefList.add(coefList);
+  }
+
+  DooCubicSplinePdf::DooCubicSplinePdf(const std::string name,
+                                       RooRealVar& x, 
+                                       const vector<double>& knots,
+                                       const RooArgList& coefList):
+    DooCubicSplinePdf(name, x, knots, coefList, 0, 0)
+  {
+    _use_range = false;
   }
 
   DooCubicSplinePdf::DooCubicSplinePdf(const DooCubicSplinePdf& other, const char* name) :
@@ -75,6 +89,11 @@ namespace pdfs {
 
   Double_t DooCubicSplinePdf::evaluate() const
   {
+    if (_use_range){
+      if ((_x <= _range_min) || (_x >= _range_max)){
+        return 0;
+      }
+    }
     return _aux.evaluate(_x,_coefList);
   }
 

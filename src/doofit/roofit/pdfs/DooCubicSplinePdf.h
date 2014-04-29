@@ -38,6 +38,13 @@ public:
   DooCubicSplinePdf(const std::string name, 
                     RooRealVar& x,
                     const std::vector<double>& knots, 
+                    const RooArgList& coefList,
+                    double range_min,
+                    double range_max);
+
+  DooCubicSplinePdf(const std::string name, 
+                    RooRealVar& x,
+                    const std::vector<double>& knots, 
                     const RooArgList& coefList);
 
   ~DooCubicSplinePdf();
@@ -70,6 +77,9 @@ private:
   RooRealProxy _x;
   RooListProxy _coefList ;
   RooCubicSplineKnot _aux;
+  bool _use_range;
+  double _range_min;
+  double _range_max;
 
   void init(const char* name, const std::vector<double>& heights,
             const std::vector<double>& errors, double smooth, bool constCoeffs);
