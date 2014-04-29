@@ -32,9 +32,6 @@
 #include <RooConstVar.h>
 #include <RooArgList.h>
 
-// Splines
-#include "P2VV/RooCubicSplineKnot.h"
-
 using namespace std;
 
 ClassImp(doofit::roofit::pdfs::DooCubicSplinePdf) 
@@ -58,12 +55,15 @@ namespace pdfs {
     _x("x", "Dependent", this, x),
     _coefList("coefficients", "List of coefficients", this),
     _aux(knots.begin(), knots.end()),
-    _use_range(true),
     _range_min(range_min),
     _range_max(range_max)
   {
-     assert(size_t(coefList.getSize()) == 2 + knots.size());
-     _coefList.add(coefList);
+    assert(size_t(coefList.getSize()) == 2 + knots.size());
+    _coefList.add(coefList);
+    if ((_range_min!=0) || (_range_max!=0)){
+      std::cout << "DooCubicSplinePdf: using limited range " << _range_min << "-" << _range_max << std::endl;
+      _aux.set_range(_range_min, _range_max);
+    }
   }
 
   DooCubicSplinePdf::DooCubicSplinePdf(const std::string name,
@@ -72,7 +72,6 @@ namespace pdfs {
                                        const RooArgList& coefList):
     DooCubicSplinePdf(name, x, knots, coefList, 0, 0)
   {
-    _use_range = false;
   }
 
   DooCubicSplinePdf::DooCubicSplinePdf(const DooCubicSplinePdf& other, const char* name) :
@@ -89,18 +88,19 @@ namespace pdfs {
 
   Double_t DooCubicSplinePdf::evaluate() const
   {
-    if (_use_range){
-      if ((_x <= _range_min) || (_x >= _range_max)){
-        return 0;
-      }
-    }
-    return _aux.evaluate(_x,_coefList);
+    // if x is not in range return 0, else call evaluate
+    // if ((_use_range) && ((_x < _range_min) || (_x > _range_max))) return 0;
+    double val = _aux.evaluate(_x,_coefList);
+    // std::cout << "evaluate() " << val << std::endl;
+    return val;
   }
 
   Int_t DooCubicSplinePdf::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const
   {
     // No analytical calculation available (yet) of integrals over subranges
+    // std::cout << "getAnalyticalIntegral()" << std::endl;
     if (_x.min(rangeName)!=_aux.knots().front() || _x.max(rangeName)!=_aux.knots().back() ) return 0;
+    // if ((_use_range) && ((_x < _range_min) || (_x > _range_max))) return 0;
     if (matchArgs(allVars, analVars, _x)) return 1;
     return 0;
   }
@@ -108,27 +108,29 @@ namespace pdfs {
   Double_t DooCubicSplinePdf::analyticalIntegral(Int_t code, const char* /* rangeName */) const
   {
     assert(code==1) ;
-    return _aux.analyticalIntegral(_coefList);
+    double val = _aux.analyticalIntegral(_coefList);
+    // std::cout << "analyticalIntegral() " << val << std::endl;
+    return val;
   }
 
-  Int_t DooCubicSplinePdf::getMaxVal(const RooArgSet& vars) const
-  {
-      // check that vars only contains _x...
-      return ( vars.getSize() == 1 && vars.contains( _x.arg() ) ) ? 1 : 0;
-  }
+  // Int_t DooCubicSplinePdf::getMaxVal(const RooArgSet& vars) const
+  // {
+  //     // check that vars only contains _x...
+  //     return ( vars.getSize() == 1 && vars.contains( _x.arg() ) ) ? 1 : 0;
+  // }
 
-  Double_t DooCubicSplinePdf::maxVal(Int_t code) const
-  {
-      assert(code==1);
-      RooFIter iter = _coefList.fwdIterator();
-      RooAbsReal *c(0);
-      double res = 0;
-      while((c=(RooAbsReal*)iter.next())) {
-            double x = fabs(c->getVal());
-            if (x>res)  { res = x; }
-      }
-      return res;
-  }
+  // Double_t DooCubicSplinePdf::maxVal(Int_t code) const
+  // {
+  //     assert(code==1);
+  //     RooFIter iter = _coefList.fwdIterator();
+  //     RooAbsReal *c(0);
+  //     double res = 0;
+  //     while((c=(RooAbsReal*)iter.next())) {
+  //           double x = fabs(c->getVal());
+  //           if (x>res)  { res = x; }
+  //     }
+  //     return res;
+  // }
 
 }
 }

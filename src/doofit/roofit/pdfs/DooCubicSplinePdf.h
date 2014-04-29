@@ -21,10 +21,13 @@
 #include "RooListProxy.h"
 #include "RooArgList.h"
 #include "RooAbsReal.h"
-  #include "RooRealVar.h"
+#include "RooRealVar.h"
+
+// from DooFit
+#include "DooCubicSplineKnot.h"
 
 // from LHCb P2VV
-#include "P2VV/RooCubicSplineKnot.h"
+// #include "P2VV/RooCubicSplineKnot.h"
 #include "P2VV/RooAbsGaussModelEfficiency.h"
 
 namespace doofit {
@@ -55,8 +58,8 @@ public:
   Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
   Double_t analyticalIntegral(Int_t code, const char* rangeName=0) const ;
 
-  Int_t getMaxVal(const RooArgSet& vars) const;
-  Double_t maxVal(Int_t code) const;
+  // Int_t getMaxVal(const RooArgSet& vars) const;
+  // Double_t maxVal(Int_t code) const;
 
   // for use as RooAbsGaussModelEfficiency...
   // std::complex<double> productAnalyticalIntegral(Double_t umin, 
@@ -76,8 +79,7 @@ private:
 
   RooRealProxy _x;
   RooListProxy _coefList ;
-  RooCubicSplineKnot _aux;
-  bool _use_range;
+  DooCubicSplineKnot _aux;
   double _range_min;
   double _range_max;
 
