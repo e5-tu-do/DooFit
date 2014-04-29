@@ -34,6 +34,11 @@ namespace correlations {
  *  Usage is shown via this example:
  *
  * @code
+ * doofit::fitter::easyfit::EasyFit efit_full("fit_toy")
+ * efit_full.Fit();
+ * fit_result = efit_full.GetFitResult();
+ * doofit::plotting::correlations::CorrelationPlot cplot(*fit_result);
+ * cplot.Plot("PlotCorrelation/");
  * @endcode
  *
  *  @author Florian Kruse
