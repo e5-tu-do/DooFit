@@ -88,19 +88,13 @@ namespace pdfs {
 
   Double_t DooCubicSplinePdf::evaluate() const
   {
-    // if x is not in range return 0, else call evaluate
-    // if ((_use_range) && ((_x < _range_min) || (_x > _range_max))) return 0;
-    double val = _aux.evaluate(_x,_coefList);
-    // std::cout << "evaluate() " << val << std::endl;
-    return val;
+    return _aux.evaluate(_x,_coefList);
   }
 
   Int_t DooCubicSplinePdf::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const
   {
     // No analytical calculation available (yet) of integrals over subranges
-    // std::cout << "getAnalyticalIntegral()" << std::endl;
     if (_x.min(rangeName)!=_aux.knots().front() || _x.max(rangeName)!=_aux.knots().back() ) return 0;
-    // if ((_use_range) && ((_x < _range_min) || (_x > _range_max))) return 0;
     if (matchArgs(allVars, analVars, _x)) return 1;
     return 0;
   }
@@ -108,30 +102,8 @@ namespace pdfs {
   Double_t DooCubicSplinePdf::analyticalIntegral(Int_t code, const char* /* rangeName */) const
   {
     assert(code==1) ;
-    double val = _aux.analyticalIntegral(_coefList);
-    // std::cout << "analyticalIntegral() " << val << std::endl;
-    return val;
+    return _aux.analyticalIntegral(_coefList);
   }
-
-  // Int_t DooCubicSplinePdf::getMaxVal(const RooArgSet& vars) const
-  // {
-  //     // check that vars only contains _x...
-  //     return ( vars.getSize() == 1 && vars.contains( _x.arg() ) ) ? 1 : 0;
-  // }
-
-  // Double_t DooCubicSplinePdf::maxVal(Int_t code) const
-  // {
-  //     assert(code==1);
-  //     RooFIter iter = _coefList.fwdIterator();
-  //     RooAbsReal *c(0);
-  //     double res = 0;
-  //     while((c=(RooAbsReal*)iter.next())) {
-  //           double x = fabs(c->getVal());
-  //           if (x>res)  { res = x; }
-  //     }
-  //     return res;
-  // }
-
 }
 }
 }
