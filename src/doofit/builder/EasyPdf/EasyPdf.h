@@ -1165,6 +1165,30 @@ class EasyPdf {
   RooAddPdf& DoubleDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& tau2, RooAbsReal& fraction, const RooResolutionModel& model);
   
   /**
+   *  @brief Add and access a double Decay PDF with scaled lifetimes
+   *
+   *  Request a double Decay as RooAddPdf by a specified name. If the PDF
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The PDF is modelled as
+   *
+   *  P(x) = fraction * Decay(t,tau1) + (1-fraction) * Decay(t,tau2)
+   *
+   *  with tau2 = tau1*scale
+   *
+   *  @param name name of the PDF
+   *  @param t t variable
+   *  @param tau1 lifetime 1
+   *  @param scale scaling factor between tau1 and tau2
+   *  @param fraction fraction between two Decays
+   *  @param model the resolution model to use
+   *  @param tau2_name name of tau2 formula
+   *  @return the appropriate PDF
+   */
+  RooAddPdf& DoubleDecayScaled(const std::string& name, RooRealVar& t, RooAbsReal& tau1, RooAbsReal& scale, RooAbsReal& fraction, const RooResolutionModel& model, std::string tau2_name="");
+  
+  /**
    *  @brief Add and access a triple Decay PDF
    *
    *  Request a triple Decay as RooAddPdf by a specified name. If the PDF
