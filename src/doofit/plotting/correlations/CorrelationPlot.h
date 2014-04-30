@@ -88,7 +88,7 @@ class CorrelationPlot {
    *  @param axis axis to rename
    *  @param arg_list argument list with parameters
    */
-  void RenameAxisLabel(TAxis* axis, const RooArgList& arg_list) const;
+  double RenameAxisLabel(TAxis* axis, const RooArgList& arg_list) const;
   
  private:
   const RooFitResult& fit_result_;

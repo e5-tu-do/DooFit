@@ -11,13 +11,15 @@
 #include "TPaletteAxis.h"
 #include "TColor.h"
 #include "TStyle.h"
+#include "TLatex.h"
 
 // from RooFit
 #include "RooFitResult.h"
 #include "RooArgList.h"
 
 // from DooCore
-#include "doocore/lutils/lutils.h"
+#include <doocore/lutils/lutils.h>
+#include <doocore/io/MsgStream.h>
 
 doofit::plotting::correlations::CorrelationPlot::CorrelationPlot(const RooFitResult& fit_result)
 : fit_result_(fit_result)
@@ -26,6 +28,7 @@ doofit::plotting::correlations::CorrelationPlot::CorrelationPlot(const RooFitRes
 
 void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::string& plot_path) const {
   namespace lu = doocore::lutils;
+  using namespace doocore::io;
   
   gROOT->SetStyle("Plain");
   lu::setStyle();
@@ -33,23 +36,26 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
   RooArgList par_list_float_final = fit_result_.floatParsFinal();
   TH2* hist_corr = fit_result_.correlationHist();
   
+  double max_xsize = 0.0;
   TAxis* axis = NULL;
   axis = hist_corr->GetXaxis();
   axis->SetLabelSize(0.02);
   axis->SetLabelFont(42);
-  axis->LabelsOption("d");
+  axis->LabelsOption("v");
   RenameAxisLabel(axis, par_list_float_final);
   axis = hist_corr->GetYaxis();
   axis->SetLabelSize(0.02);
   axis->SetLabelFont(42);
   axis->LabelsOption("h");
-  RenameAxisLabel(axis, par_list_float_final);
+  max_xsize = RenameAxisLabel(axis, par_list_float_final);
+  
+//  sdebug << "max_xsize = " << max_xsize << endmsg;
   
   TCanvas canvas("canvas","canvas",800,600);
   canvas.SetRightMargin(0.1);
-  canvas.SetLeftMargin(0.07);
+  canvas.SetLeftMargin(max_xsize*0.4);
   canvas.SetTopMargin(0.05);
-  canvas.SetBottomMargin(0.1);
+  canvas.SetBottomMargin(max_xsize*0.5);
   
   TPaletteAxis *pal = NULL;
   
@@ -57,15 +63,15 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
   hist_corr->Draw("COLZ");
   canvas.Update();
   pal = (TPaletteAxis*)(hist_corr->GetListOfFunctions()->FindObject("palette"));
-  pal->GetAxis()->SetLabelSize(0.02);
+  pal->GetAxis()->SetLabelSize(0.03);
   lu::printPlot(&canvas,"FitResultsCorrMatrix_RedBlue",plot_path);
   
-  lu::setHotColdPalette(hist_corr);
-  hist_corr->Draw("COLZ");
-  canvas.Update();
-  pal = (TPaletteAxis*)(hist_corr->GetListOfFunctions()->FindObject("palette"));
-  pal->GetAxis()->SetLabelSize(0.02);
-  lu::printPlot(&canvas,"FitResultsCorrMatrix_HotCold",plot_path);
+//  lu::setHotColdPalette(hist_corr);
+//  hist_corr->Draw("COLZ");
+//  canvas.Update();
+//  pal = (TPaletteAxis*)(hist_corr->GetListOfFunctions()->FindObject("palette"));
+//  pal->GetAxis()->SetLabelSize(0.02);
+//  lu::printPlot(&canvas,"FitResultsCorrMatrix_HotCold",plot_path);
   
   const Int_t NRGBs = 9;
   const Int_t NCont = 40;
@@ -85,7 +91,7 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
   hist_corr->Draw("COLZ");
   canvas.Update();
   pal = (TPaletteAxis*)(hist_corr->GetListOfFunctions()->FindObject("palette"));
-  pal->GetAxis()->SetLabelSize(0.02);
+  pal->GetAxis()->SetLabelSize(0.03);
   lu::printPlot(&canvas,"FitResultsCorrMatrix_RedBlueDiscete",plot_path);
   
   hist_corr->SetMarkerSize(0.6);
@@ -96,14 +102,29 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
   lu::printPlot(&canvas,"FitResultsCorrMatrix_RedBlueDiscete_wText",plot_path);
 }
 
-void doofit::plotting::correlations::CorrelationPlot::RenameAxisLabel(TAxis* axis, const RooArgList& arg_list) const {
+double doofit::plotting::correlations::CorrelationPlot::RenameAxisLabel(TAxis* axis, const RooArgList& arg_list) const {
+  using namespace doocore::io;
+  
+  double max_xsize = 0.0;
+  
   for ( int bin = axis->GetFirst(); bin <= axis->GetLast(); ++bin ){
     TString bin_label = axis->GetBinLabel(bin);
     
     RooAbsArg* label_arg = arg_list.find(bin_label);
-    if (label_arg == NULL ) continue;
+    if (label_arg == NULL ) {
+      continue;
+    } else {
+      bin_label = label_arg->GetTitle();
+    }
     
-    bin_label = label_arg->GetTitle();
+    TCanvas canvas("canvas","canvas",800,600);
+    TLatex label(0,0,bin_label);
+    label.Draw();
+    double xsize = label.GetXsize();
+    if (max_xsize <= xsize) max_xsize = xsize;
+    
     axis->SetBinLabel(bin, bin_label);
   }
+  
+  return max_xsize;
 }
