@@ -7,5 +7,5 @@
 // #pragma link C++ namespace doofit::extraroopdfs;
 #pragma link C++ nestedclass;
 #pragma link C++ nestedtypedef;
-#pragma link C++ class doofit::extraroopdfs::schillerpdfs::DecRateCoeff;
+#pragma link C++ class doofit::extraroopdfs::schillerpdfs::DecRateCoeff+;
 #endif

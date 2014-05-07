@@ -74,8 +74,6 @@ protected:
     #ifdef FUNCTIONS_COUNT_CALLS
     ++num_calls_evaluate_;
     #endif
-    // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
-    //std::cout << 1.0 - cat_tag*(par_tag_omega_Bd - par_tag_omega_Bdb) - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb) << std::endl;
     Double_t  omega_OS_Bd  = par_eta_OS;
     Double_t  omega_OS_Bdb = par_eta_OS;
     Double_t  omega_SS_Bd  = par_eta_SS;
@@ -101,7 +99,7 @@ protected:
       omega_Bdb = omega_OS_Bdb*omega_SS_Bdb/(omega_OS_Bdb*omega_SS_Bdb + (1.0 - omega_OS_Bdb)*(1.0 - omega_SS_Bdb));
     }
     else {
-      if ((par_p0_SS + par_p1_SS*(par_eta_SS - par_meaneta_SS)) >= (par_p0_OS + par_p1_OS*(par_eta_OS - par_meaneta_OS))) {
+      if ((omega_SS_Bd + omega_SS_Bdb) >= (omega_OS_Bd + omega_OS_Bdb)) {
         omega_Bd = omega_OS_Bd*(1.0 - omega_SS_Bd)/(omega_OS_Bd*(1.0 - omega_SS_Bd) + (1.0 - omega_OS_Bd)*omega_SS_Bd);
         omega_Bdb = omega_OS_Bdb*(1.0 - omega_SS_Bdb)/(omega_OS_Bdb*(1.0 - omega_SS_Bdb) + (1.0 - omega_OS_Bdb)*omega_SS_Bdb);
         tag = cat_tag_OS;
