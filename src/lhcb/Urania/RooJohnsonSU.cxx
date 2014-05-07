@@ -11,7 +11,7 @@
 
 // -- CLASS DESCRIPTION [PDF] -- 
 //
-// file: RooJohnsonSU.cxx
+// file: RooJohnsonSU.h
 // author: Maurizio Martinelli (Nikhef)
 // email: maurizio.martinelli@cern.ch
 //
@@ -96,8 +96,8 @@ RooJohnsonSU::analyticalIntegral(Int_t code, const char* rangeName) const
   double omega = - nu * tau;
   double c = 0.5 * (w-1) * (w * TMath::CosH(2 * omega) + 1);
   c = pow(c, -0.5);
-  double zmax = (x.max(rangeName) - (mean + c * width * sqrt(w) * TMath::SinH(omega) )) / c / width;
-  double zmin = (x.min(rangeName) - (mean + c * width * sqrt(w) * TMath::SinH(omega) )) / c / width;
+  double zmax = (- x.max(rangeName) + (mean + c * width * sqrt(w) * TMath::SinH(omega) )) / c / width;
+  double zmin = (- x.min(rangeName) + (mean + c * width * sqrt(w) * TMath::SinH(omega) )) / c / width;
   static const Double_t pi = atan2(0.0,-1.0);
   static const Double_t PiBy2 = pi/2.0;
   static const Double_t rootPiBy2 = sqrt(PiBy2);
@@ -106,15 +106,18 @@ RooJohnsonSU::analyticalIntegral(Int_t code, const char* rangeName) const
   Double_t ret = 0;
   if(code==1){  
     //    ret = rootPiBy2 * sigx * (RooMath::erf((x.max(rangeName)-mean)/xscale)-RooMath::erf((x.min(rangeName)-mean)/xscale));
-    ret = -rootPiBy2 * ( RooMath::erf( PiBy2 * nu - ( PiBy2 * TMath::ASinH( zmax ) / tau ) ) - 
+    ret =  -0.25/rootPiBy2* ( RooMath::erf( (nu*tau + TMath::ASinH( zmax ) )/(sqrt(2)*tau) )-
+				   RooMath::erf( (nu*tau + TMath::ASinH( zmin ) )/(sqrt(2)*tau) ) );
+
+    /*-rootPiBy2 * ( RooMath::erf( PiBy2 * nu - ( PiBy2 * TMath::ASinH( zmax ) / tau ) ) - 
 			 RooMath::erf( PiBy2 * nu - ( PiBy2 * TMath::ASinH( zmin ) / tau ) ) );
     ret *= c * width;
-    ret *= 0.5 / c / width / pi;
+    ret *= 0.5 / c / width / pi;*/
 //     if (gDebug>2) {
-//       std::cout << "Int_gauss_dx(mean=" << mean << ",sigma=" << sigma << ", xmin=" << x.min(rangeName) << ", xmax=" << x.max(rangeName) << ")=" << ret << std::endl ;
+//       cout << "Int_gauss_dx(mean=" << mean << ",sigma=" << sigma << ", xmin=" << x.min(rangeName) << ", xmax=" << x.max(rangeName) << ")=" << ret << endl ;
 //     }
   } else{
-    std::cout << "Error in RooJohnsonSU::analyticalIntegral" << std::endl;
+    cout << "Error in RooJohnsonSU::analyticalIntegral" << endl;
   }
   return ret ;
 
