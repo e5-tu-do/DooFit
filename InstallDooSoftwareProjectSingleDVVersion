@@ -7,7 +7,7 @@ base_dir=$3
 expected_args=3
 # set number of CPUs (not used currently)
 num_cpu=$((`cat /proc/cpuinfo | grep processor | wc -l` / 2))
-CMAKE=/usr/local/bin/cmake
+#CMAKE=/usr/local/bin/cmake
 
 if [ $# -ne $expected_args ]
 then
@@ -29,7 +29,7 @@ echo "Starting build"
 echo
 
 #cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir && make VERBOSE="" -j $num_cpu
-$CMAKE -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir -DCMAKE_BUILD_TYPE=Release && make VERBOSE=""
+$CMAKE_EXECUTABLE -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir -DCMAKE_BUILD_TYPE=Release && make VERBOSE=""
 rc=$?
 if [[ $rc != 0 ]] ; then
   make VERBOSE=""
