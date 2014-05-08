@@ -271,7 +271,7 @@ ClassImp(RooIpatia2)
     if (l<=-1.0) { delta = sigma *sqrt(-2+cons1);}
     else {delta = sigma;}
     delta2 = delta*delta;
-    printf("Here ^_^ \n"); 
+    //printf("Here ^_^ \n"); 
     if ((d0 > -asigma) && (d1 < a2sigma)){ return  stIntegral(d1,delta, l) - stIntegral(d0,delta, l);}
     if (d0 > a2sigma) {  
     
