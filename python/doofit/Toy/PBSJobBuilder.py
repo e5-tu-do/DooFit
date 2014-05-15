@@ -128,7 +128,8 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
   job_index  = min_id
 
   bulk_dir = os.path.join(jobs_dir, "job_bulk_dir")
-  os.makedirs(bulk_dir)
+  if not os.path.exists(bulk_dir):
+    os.makedirs(bulk_dir)
 
   while scan2_value <= options.scan2end:
     scan1_value = options.scan1start
