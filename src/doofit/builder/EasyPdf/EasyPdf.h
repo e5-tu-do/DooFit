@@ -1018,6 +1018,42 @@ class EasyPdf {
   RooEffResAddModel& DoubleGaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& fraction);
   
   /**
+   *  @brief Add and access a triple RooGaussEfficiencyModel
+   *
+   *  Request a triple RooGaussEfficiencyModel by a specified name. If the PDF
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The resolution model is modelled as
+   *
+   *  P(x) = fraction1 * GaussEfficiencyModel(x,eff,mean,sigma1)
+   *       + fraction2 * GaussEfficiencyModel(x,eff,mean,sigma2)
+   *       + fraction3 * GaussEfficiencyModel(x,eff,mean,sigma3)
+   *
+   *  with fraction3 = (1-fraction1-fraction2) implicitly by the PDF.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param eff the efficiency to use
+   *  @param mean mean or bias of resolution
+   *  @param sigma1 width of first Gaussian
+   *  @param sigma2 width of second Gaussian
+   *  @param sigma3 width of third Gaussian
+   *  @param fraction1 fraction of first Gaussian
+   *  @param fraction2 fraction of second Gaussian
+   *  @return the appropriate PDF
+   */
+  RooEffResAddModel& TripleGaussEfficiencyModel(const std::string& name,
+                                                RooRealVar& x,
+                                                RooAbsGaussModelEfficiency &eff,
+                                                RooAbsReal& mean,
+                                                RooAbsReal& sigma1,
+                                                RooAbsReal& sigma2,
+                                                RooAbsReal& sigma3,
+                                                RooAbsReal& fraction1,
+                                                RooAbsReal& fraction2);
+  
+  /**
    *  @brief Add and access a per-event RooGaussEfficiencyModel
    *
    *  Request a RooGaussEfficiencyModel by a specified name. If the PDF does not
