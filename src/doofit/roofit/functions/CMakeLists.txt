@@ -1,3 +1,7 @@
+# --------------------------------------------------------------------------------------------------------------
+# Authors: Christophe Cauet, Frank Meier, Florian Kruse
+# 2014-05-16
+# ______________________________________________________________________________________________________________
 
 root_generate_dictionaries_local(dfFunctionsDict 
 CategoryToReal.h
@@ -30,7 +34,8 @@ CombinationOfCalibratedMistags.h
 CombinationOfUncalibratedMistags.h
 CombinationOfMistagsWithAsymmetries.h
 CombinedTagCalibrated.h
-CombinedTagUncalibrated.h)
+CombinedTagUncalibrated.h
+DooDecRateCoeff.h)
 
 add_library(dfFunctions SHARED 
 CategoryToReal.h CategoryToReal.cxx CategoryToReal_dict.h CategoryToReal_dict.cc
@@ -63,7 +68,8 @@ CombinationOfCalibratedMistags.h CombinationOfCalibratedMistags.cxx CombinationO
 CombinationOfUncalibratedMistags.h CombinationOfUncalibratedMistags.cxx CombinationOfUncalibratedMistags_dict.h CombinationOfUncalibratedMistags_dict.cc
 CombinationOfMistagsWithAsymmetries.h CombinationOfMistagsWithAsymmetries.cxx CombinationOfMistagsWithAsymmetries_dict.h CombinationOfMistagsWithAsymmetries_dict.cc
 CombinedTagCalibrated.h CombinedTagCalibrated.cxx CombinedTagCalibrated_dict.h CombinedTagCalibrated_dict.cc
-CombinedTagUncalibrated.h CombinedTagUncalibrated.cxx CombinedTagUncalibrated_dict.h CombinedTagUncalibrated_dict.cc)
+CombinedTagUncalibrated.h CombinedTagUncalibrated.cxx CombinedTagUncalibrated_dict.h CombinedTagUncalibrated_dict.cc
+DooDecRateCoeff.h DooDecRateCoeff.cxx DooDecRateCoeff_dict.h DooDecRateCoeff_dict.cc)
 
 target_link_libraries(dfFunctions ${ALL_LIBRARIES})
 
@@ -103,4 +109,5 @@ CombinationOfUncalibratedMistags.h
 CombinationOfMistagsWithAsymmetries.h
 CombinedTagCalibrated.h
 CombinedTagUncalibrated.h
+DooDecRateCoeff.h
 DESTINATION include/doofit/roofit/functions)
