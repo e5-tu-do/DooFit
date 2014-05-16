@@ -3,9 +3,7 @@
 #pragma link off all classes;
 #pragma link off all functions;
 
-// #pragma link C++ namespace doofit;
-// #pragma link C++ namespace doofit::roofit;
 #pragma link C++ nestedclass;
 #pragma link C++ nestedtypedef;
-#pragma link C++ class doofit::roofit::pdfs::CubicSplinePdf+;
+#pragma link C++ class RooEffConvGenContext+;
 #endif
