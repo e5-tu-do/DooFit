@@ -261,7 +261,7 @@ namespace toy {
       }
 
       // for all pulls fit a gaussian
-      if (param_name.length() > 5 &&
+      if (param_name.length() > 4 &&
           (param_name.substr(param_name.length()-5).compare("_pull") == 0 ||
            param_name.substr(param_name.length()-4).compare("_res") == 0 ||
            param_name.substr(param_name.length()-4).compare("_err") == 0 ||

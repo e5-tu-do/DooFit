@@ -36,6 +36,7 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 install(FILES external/FindDooFit.cmake DESTINATION cmake/Modules)
+install(PROGRAMS scripts/jobmonitor.sh DESTINATION bin)
 
 FIND_PACKAGE(Boost 1.48 COMPONENTS program_options filesystem regex thread system random REQUIRED)
 find_package(ROOT REQUIRED)
