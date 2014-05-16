@@ -630,6 +630,15 @@ RooEffResAddModel& doofit::builder::EasyPdf::DoubleGaussEfficiencyModel(const st
                   RooArgList(fraction));
 }
 
+RooEffResAddModel& doofit::builder::EasyPdf::TripleGaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& sigma3, RooAbsReal& fraction1, RooAbsReal& fraction2) {
+  return EffResAddModel(name,
+                        RooArgList(GaussEfficiencyModel("p1_"+name,x,eff,mean,sigma1),
+                                   GaussEfficiencyModel("p2_"+name,x,eff,mean,sigma2),
+                                   GaussEfficiencyModel("p3_"+name,x,eff,mean,sigma3)),
+                        RooArgList(fraction1, fraction2));
+}
+
+
 RooGaussEfficiencyModel& doofit::builder::EasyPdf::GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal &scale_error) {
   return AddPdfToStore<RooGaussEfficiencyModel>(new RooGaussEfficiencyModel(name.c_str(), name.c_str(), x, eff, mean, error, RooConst(1.0), scale_error));
 }
