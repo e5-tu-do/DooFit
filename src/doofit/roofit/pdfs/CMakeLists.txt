@@ -11,7 +11,7 @@ DooCubicSplineKnot.h DooCubicSplineKnot.cxx DooCubicSplineKnot_dict.h DooCubicSp
 DooCubicSplinePdf.h DooCubicSplinePdf.cxx DooCubicSplinePdf_dict.h DooCubicSplinePdf_dict.cc
 RectangularPdf.h RectangularPdf.cxx RectangularPdf_dict.h RectangularPdf_dict.cc)
 
-target_link_libraries(dfPdfs ${ALL_LIBRARIES})
+target_link_libraries(dfPdfs dfp2vvpdfs ${ALL_LIBRARIES})
 
 # see above, not sure if it works
 add_dependencies(dfPdfs dfPdfsDict)
