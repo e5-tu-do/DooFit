@@ -8,13 +8,16 @@
  * with or without modification, are permitted according to the terms        *
  * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
  *****************************************************************************/
-#ifndef DOOFIT_EXTRAROOPDFS_SCHILLERPDFS_ROO_ABS_EFF_RES_MODEL
-#define DOOFIT_EXTRAROOPDFS_SCHILLERPDFS_ROO_ABS_EFF_RES_MODEL
+#ifndef DOOFIT_SCHILLER_ROO_ABS_EFF_RES_MODEL
+#define DOOFIT_SCHILLER_ROO_ABS_EFF_RES_MODEL
 
 #include <RooResolutionModel.h>
 #include <RooRealProxy.h>
 #include <RooObjCacheManager.h>
 #include <RooSetProxy.h>
+
+namespace doofit {
+namespace schiller {
 
 class RooAbsEffResModel : public RooResolutionModel  {
 public:
@@ -32,5 +35,8 @@ private:
 
    ClassDef(RooAbsEffResModel, 0) // EffResian Resolution Model
 };
+
+}// namespace schiller
+}// namespace doofit
 
 #endif

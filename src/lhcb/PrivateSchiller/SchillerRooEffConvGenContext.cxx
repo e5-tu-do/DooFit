@@ -43,6 +43,9 @@
 #include "SchillerRooEffConvGenContext.h"
 #include "SchillerRooEffResModel.h"
 
+namespace doofit {
+namespace schiller {
+
 RooEffConvGenContext::~RooEffConvGenContext()
 { }
 
@@ -154,3 +157,6 @@ const RooAbsReal* RooEffConvGenContext::efficiency()
    assert(eff);
    return eff;
 }
+
+}// namespace schiller
+}// namespace doofit
