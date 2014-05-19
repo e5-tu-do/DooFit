@@ -13,8 +13,8 @@
  * 2012-10-04 re-import from upstream, with some experimental changes, which *
  *	which are disabled by default for now...                             *
  *****************************************************************************/
-#ifndef DOOFIT_EXTRAROOPDFS_SCHILLERPDFS_ROO_EFF_RES_MODEL
-#define DOOFIT_EXTRAROOPDFS_SCHILLERPDFS_ROO_EFF_RES_MODEL
+#ifndef DOOFIT_SCHILLER_ROO_EFF_RES_MODEL
+#define DOOFIT_SCHILLER_ROO_EFF_RES_MODEL
 
 #include <string>
 
@@ -27,6 +27,9 @@ class RooCustomizer;
 class RooResoluitionModel;
 class RooAbsAnaConvPdf;
 
+namespace doofit {
+namespace schiller {
+	
 class RooEffResModel : public RooAbsEffResModel {
     public:
 	// Constructors, assignment etc
@@ -107,5 +110,8 @@ class RooEffResModel : public RooAbsEffResModel {
 
 	ClassDef(RooEffResModel, 1) // EffResian Resolution Model
 };
+
+}// namespace schiller
+}// namespace doofit
 
 #endif

@@ -5,5 +5,5 @@
 
 #pragma link C++ nestedclass;
 #pragma link C++ nestedtypedef;
-#pragma link C++ class RooBinnedPdf+;
+#pragma link C++ class doofit::schiller::RooBinnedPdf+;
 #endif

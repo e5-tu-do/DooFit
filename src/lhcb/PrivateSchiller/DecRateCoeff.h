@@ -6,8 +6,8 @@
  * @author Manuel Schiller <manuel.schiller@nikhef.nl>
  * @date 2012-10-24
  */
-#ifndef DOOFIT_EXTRAROOPDFS_SCHILLERPDFS_DECRATECOEFF
-#define DOOFIT_EXTRAROOPDFS_SCHILLERPDFS_DECRATECOEFF
+#ifndef DOOFIT_SCHILLER_DECRATECOEFF
+#define DOOFIT_SCHILLER_DECRATECOEFF
 
 #include <map>
 #include <string>
@@ -113,6 +113,9 @@
  * @author Manuel Schiller <manuel.schiller@nikhef.nl>
  * @date 2012-10-24
  */
+
+namespace doofit {
+namespace schiller {
 
 class DecRateCoeff : public RooAbsReal
 {
@@ -505,6 +508,9 @@ class DecRateCoeff : public RooAbsReal
 
 	ClassDef(DecRateCoeff, 2);
 };
+
+}// namespace schiller
+}// namespace doofit
 
 #endif // DECRATECOEFF
 
