@@ -21,6 +21,9 @@
 
 #include "DecRateCoeff.h"
 
+namespace doofit {
+namespace schiller {
+
 RooArgSet DecRateCoeff::s_emptyset;
 
 DecRateCoeff::DecRateCoeff(
@@ -1279,5 +1282,8 @@ double DecRateCoeff::CacheElem::etaintprodpdfmistagtagged(int qt) const
     }
     return (m_prodcachedval[cacheidx] = retVal);
 }
+
+}// namespace schiller
+}// namespace doofit
 
 // vim: sw=4:tw=78:ft=cpp

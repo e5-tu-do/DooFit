@@ -28,7 +28,7 @@
 
 // from LHCb P2VV
 // #include "P2VV/RooCubicSplineKnot.h"
-#include "P2VV/RooAbsGaussModelEfficiency.h"
+// #include "P2VV/RooAbsGaussModelEfficiency.h"
 
 namespace doofit {
 namespace roofit {

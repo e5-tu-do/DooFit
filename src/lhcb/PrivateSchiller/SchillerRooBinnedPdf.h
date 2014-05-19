@@ -13,8 +13,8 @@
  * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
  *****************************************************************************/
 
-#ifndef DOOFIT_EXTRAROOPDFS_SCHILLERPDFS_ROO_BINNED_PDF
-#define DOOFIT_EXTRAROOPDFS_SCHILLERPDFS_ROO_BINNED_PDF
+#ifndef DOOFIT_SCHILLER_ROO_BINNED_PDF
+#define DOOFIT_SCHILLER_ROO_BINNED_PDF
 
 #include <map>
 #include <vector>
@@ -31,6 +31,9 @@ class RooArgSet;
 class TObjArray;
 class RooAbsReal;
 
+namespace doofit {
+namespace schiller {
+  
 class RooBinnedPdf : public RooAbsPdf
 {
 
@@ -179,6 +182,9 @@ private:
 
   ClassDef(RooBinnedPdf, 2) // binned PDF
 };
+
+}// namespace schiller
+}// namespace doofit
 
 #endif
 

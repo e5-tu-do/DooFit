@@ -54,6 +54,9 @@
 
 #include "SchillerRooBinnedPdf.h"
 
+namespace doofit {
+namespace schiller {
+
 using namespace std;
 
 //_____________________________________________________________________________
@@ -1309,3 +1312,6 @@ Double_t RooBinnedPdf::CacheElem::max() const
     }
     return maxval;
 }
+
+}// namespace schiller
+}// namespace doofit
