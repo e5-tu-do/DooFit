@@ -39,7 +39,8 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
 : config_plot_(cfg_plot),
   dimension_(dimension),
   datasets_(),
-  plot_name_(plot_name)
+  plot_name_(plot_name),
+  ignore_num_cpu_(false)
 {
   datasets_.push_back(&dataset);
   pdf_ = dynamic_cast<RooAbsPdf*>(pdfs.first());
@@ -70,7 +71,8 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
 : config_plot_(cfg_plot),
   dimension_(dimension),
   datasets_(),
-  plot_name_(plot_name)
+  plot_name_(plot_name),
+  ignore_num_cpu_(false)
 {
   datasets_.push_back(&dataset);
   pdf_ = &pdf;
@@ -267,24 +269,33 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //    }
     
     RooCmdArg normalisation_hack;
-    for (std::vector<RooCmdArg>::const_iterator it = plot_args_.begin();
-         it != plot_args_.end(); ++it) {
-      if (std::string(it->GetName()) == "ProjData" && config_plot_.num_cpu() > 1) {
-        RooArgSet* set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
-        
-        TIterator* arg_it = set_project->createIterator();
-        RooAbsArg* arg = NULL;
-        while ((arg = (RooAbsArg*)arg_it->Next())) {
-          RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
-          if (var != NULL) {
-            if (pdf_->observableOverlaps(dataset_normalisation, *var)) {
-              swarn << "Warning in Plot::PlotHandler(...): Plotting with multiple processes and projection dataset. PDF depends upon " << *var << ". Will manipulate normalisation to fix RooFit bugs." << endmsg;
-              normalisation_hack = Normalization(1./dataset_normalisation->sumEntries());
+    if (config_plot_.num_cpu() > 1 && !ignore_num_cpu_) {
+      for (std::vector<RooCmdArg>::const_iterator it = plot_args_.begin();
+           it != plot_args_.end(); ++it) {
+        if (std::string(it->GetName()) == "ProjData") {
+          RooArgSet* set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
+          
+          TIterator* arg_it = set_project->createIterator();
+          RooAbsArg* arg = NULL;
+          while ((arg = (RooAbsArg*)arg_it->Next())) {
+            RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
+            if (var != NULL) {
+              if (pdf_->observableOverlaps(dataset_normalisation, *var)) {
+                swarn << "Warning in Plot::PlotHandler(...): Plotting with multiple processes and projection dataset. PDF depends upon " << *var << ". Will manipulate normalisation to fix RooFit bugs." << endmsg;
+                normalisation_hack = Normalization(1./dataset_normalisation->sumEntries());
+              }
             }
           }
+          delete arg_it;
         }
-        delete arg_it;
       }
+    }
+
+    RooCmdArg arg_num_cpu;
+    if (config_plot_.num_cpu() > 1 && !ignore_num_cpu_) {
+      arg_num_cpu = NumCPU(config_plot_.num_cpu());
+    } else if (ignore_num_cpu_) {
+      swarn << "Warning in Plot::PlotHandler(...): Multicore plotting is requested but intentionally disabled for this plot to avoid nasty RooFit plotting bugs." << endmsg;
     }
     
     int i=1;
@@ -294,7 +305,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //        sinfo << "Plotting component " << it->first()->GetName() << ", sum entries: " << dataset_normalisation->sumEntries() << endmsg;
         RooMsgService::instance().setStreamStatus(1, false);
         RooMsgService::instance().setStreamStatus(0, false);
-        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, NumCPU(config_plot_.num_cpu()), normalisation_hack, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, arg_num_cpu, normalisation_hack, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
 //        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
         RooMsgService::instance().setStreamStatus(1, true);
         RooMsgService::instance().setStreamStatus(0, true);
@@ -304,7 +315,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     RooMsgService::instance().setStreamStatus(1, false);
     RooMsgService::instance().setStreamStatus(0, false);
-    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, NumCPU(config_plot_.num_cpu()), normalisation_hack, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, arg_num_cpu, normalisation_hack, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
 //    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
     RooMsgService::instance().setStreamStatus(1, true);
     RooMsgService::instance().setStreamStatus(0, true);

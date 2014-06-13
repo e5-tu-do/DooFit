@@ -296,6 +296,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooArgSet set_project_local(sim_cat);
     if (!project_arg_found) plot.AddPlotArg(ProjWData(set_project_local,data));
     
+    // Only possible way to avoid plotting problems: Do not use NumCPU for complete fit of whole PDF on all data.
+    plot.set_ignore_num_cpu(true);
 //    TStopwatch sw_plot; sw_plot.Start();
     plot.PlotHandler(sc_y, suffix);
 //    sdebug << "This plot took " << sw_plot << endmsg;
