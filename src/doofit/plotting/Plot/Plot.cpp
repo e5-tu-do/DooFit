@@ -23,9 +23,12 @@
 #include "RooBinning.h"
 #include <RooMsgService.h>
 
-// from Project
+// from DooCore
 #include "doocore/io/MsgStream.h"
 #include "doocore/lutils/lutils.h"
+#include <doocore/io/Progress.h>
+
+// from Project
 #include "doofit/plotting/Plot/PlotConfig.h"
 
 using namespace ROOT;
@@ -299,6 +302,11 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     }
     
     int i=1;
+    int num_steps = components_.size()+1;
+
+    using namespace doocore::io;
+    Progress p("Plotting components and full PDF", num_steps);
+
     for (std::vector<RooArgSet>::const_iterator it = components_.begin();
          it != components_.end(); ++it) {
       if (it->getSize() > 0) {
@@ -311,6 +319,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
         RooMsgService::instance().setStreamStatus(0, true);
         ++i;
       }
+      ++p;
     }
     
     RooMsgService::instance().setStreamStatus(1, false);
@@ -319,6 +328,8 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
     RooMsgService::instance().setStreamStatus(1, true);
     RooMsgService::instance().setStreamStatus(0, true);
+    ++p;
+    p.Finish();
     
     RooArgSet* parameters = pdf_->getParameters(dataset_normalisation);
     TIterator* it = parameters->createIterator();
