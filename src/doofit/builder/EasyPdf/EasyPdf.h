@@ -13,7 +13,7 @@
 #include "RooGlobalFunc.h"
 #include "RooArgSet.h"
 #include "RooArgList.h"
-#include "RooMultiVarGaussian.h"
+#include "TMatrixDSym.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -23,6 +23,7 @@ class RooRealVar;
 class RooAbsCategoryLValue;
 class RooAbsPdf;
 class RooGaussian;
+class RooMultiVarGaussian;
 class RooCBShape;
 class RooIpatia;
 class RooIpatia2;
