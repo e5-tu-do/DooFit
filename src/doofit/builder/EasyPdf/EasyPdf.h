@@ -13,6 +13,7 @@
 #include "RooGlobalFunc.h"
 #include "RooArgSet.h"
 #include "RooArgList.h"
+#include "TMatrixDSym.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -22,6 +23,7 @@ class RooRealVar;
 class RooAbsCategoryLValue;
 class RooAbsPdf;
 class RooGaussian;
+class RooMultiVarGaussian;
 class RooCBShape;
 class RooIpatia;
 class RooIpatia2;
@@ -454,6 +456,21 @@ class EasyPdf {
    */
   RooGaussian& Gaussian(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma);
   
+  /**
+   *  @brief Add and access a Multivariate Gaussian PDF
+   *
+   *  Request a RooGaussian by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param xvec vector of variables that the MultiVarGaussian is defined on
+   *  @param mu mean values of variables that MultiVarGaussian is defined on
+   *  @param covMatrix covariance Matrix of variables
+   *  @return the appropriate PDF
+   */
+  RooMultiVarGaussian& MultiVarGaussian(const std::string &name, const RooArgList& xvec, const RooArgList& mu, const TMatrixDSym& covMatrix);
+
   /**
    *  @brief Add and access a Crystal Ball Shape PDF
    *

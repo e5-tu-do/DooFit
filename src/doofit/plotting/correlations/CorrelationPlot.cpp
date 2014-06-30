@@ -3,6 +3,9 @@
 // STL
 #include <string>
 
+// from Boost
+#include <boost/filesystem.hpp>
+
 // from ROOT
 #include "TROOT.h"
 #include "TH2.h"
@@ -20,6 +23,7 @@
 // from DooCore
 #include <doocore/lutils/lutils.h>
 #include <doocore/io/MsgStream.h>
+#include <doocore/config/Summary.h>
 
 doofit::plotting::correlations::CorrelationPlot::CorrelationPlot(const RooFitResult& fit_result)
 : fit_result_(fit_result)
@@ -100,6 +104,9 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
   pal = (TPaletteAxis*)(hist_corr->GetListOfFunctions()->FindObject("palette"));
   pal->GetAxis()->SetLabelSize(0.03);
   lu::printPlot(&canvas,"FitResultsCorrMatrix_RedBlueDiscete_wText",plot_path);
+  
+  namespace fs = boost::filesystem;
+  doocore::config::Summary::GetInstance().AddFile(fs::path(plot_path) / fs::path("pdf/FitResultsCorrMatrix_RedBlueDiscete_wText.pdf"));
 }
 
 double doofit::plotting::correlations::CorrelationPlot::RenameAxisLabel(TAxis* axis, const RooArgList& arg_list) const {
