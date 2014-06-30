@@ -77,15 +77,15 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
     RooArgList par_list_const = fit_result_.constPars();
 
     if (par_list_const.getSize() > 0) {
-      std::cout << format("%-34s %15s") % "       Constant Parameter        " % "     Value     " << std::endl;
-      std::cout << format("%-34s %15s") % "---------------------------------" % "---------------" << std::endl;
+      std::cout << format("%-40s %17s") % "          Constant Parameter           " % "      Value      " << std::endl;
+      std::cout << format("%-40s %17s") % "---------------------------------------" % "-----------------" << std::endl;
 
       TIterator* it_const = par_list_const.createIterator();
       RooAbsArg* arg = NULL;
       while ((arg = dynamic_cast<RooAbsArg*>(it_const->Next()))) {
         RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
         if (var != NULL) {
-          std::cout << format("%-34s %15g") % var->GetName() % var->getVal() << std::endl;
+          std::cout << format("%-40s %17g") % var->GetName() % var->getVal() << std::endl;
         }
       }
       std::cout << std::endl;
@@ -98,15 +98,15 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
   TIterator* it_float = par_list_float_final.createIterator();
   RooAbsArg* arg = NULL;
 
-  std::cout << format("%-34s %15s %15s +/- %-15s ") % "            Parameter            " % "   InitValue   " % "    Fit result" % "Error         ";
+  std::cout << format("%-40s %17s %17s +/- %-17s ") % "               Parameter               " % "    InitValue    " % "      Fit result" % "Error           ";
   if (print_pulls_) {
-    std::cout << format("%15s") % "      Pull     ";
+    std::cout << format("%17s") % "       Pull      ";
   }
   std::cout << std::endl;
 
-  std::cout << format("%-34s %15s %15s-----%-15s ") % "---------------------------------" % "---------------" % "--------------" % "--------------";
+  std::cout << format("%-40s %17s %17s-----%-17s ") % "---------------------------------------" % "-----------------" % "----------------" % "----------------";
   if (print_pulls_) {
-    std::cout << format("%15s") % "---------------";
+    std::cout << format("%17s") % "-----------------";
   }
   std::cout << std::endl;
 
@@ -134,9 +134,9 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
 
       val.FormatString();
 
-      std::cout << format("%-34s %15g %15s +/- %-15s ") % var->GetName() % val_init % val.str_value() % val.str_error();
+      std::cout << format("%-40s %17g %17s +/- %-17s ") % var->GetName() % val_init % val.str_value() % val.str_error();
       if (print_pulls_) {
-        std::cout << format("%s%15g%s") % str_color % pull % str_term;
+        std::cout << format("%s%17g%s") % str_color % pull % str_term;
       }
       std::cout << std::endl;
     }
