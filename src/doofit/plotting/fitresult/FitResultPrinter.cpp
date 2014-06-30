@@ -2,6 +2,8 @@
 
 // STL
 #include <iomanip>
+#include <string>
+#include <vector>
 
 // from Boost
 #include <boost/format.hpp>
@@ -31,6 +33,47 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
   using boost::format;
   using boost::io::group;
 
+  std::vector<std::string> str_colors;
+  str_colors.push_back("\033[1;32m");
+  str_colors.push_back("\033[1;33m");
+  str_colors.push_back("\033[1;31m");
+
+  std::cout << std::endl;
+  std::cout << "FitResultPrinter: NLL = " << fit_result_.minNll() << ", EDM = " << fit_result_.edm() << std::endl;
+  std::cout << "                  covariance matrix quality: ";
+  switch(fit_result_.covQual()) {
+    case -1:
+      std::cout << str_colors.at(2) << fit_result_.covQual() << ": Unknown, matrix was externally provided \033[0m" << std::endl; 
+      break;
+    case 0:
+      std::cout << str_colors.at(2) << fit_result_.covQual() << ": Not calculated at all \033[0m" << std::endl; 
+      break;
+    case 1:
+      std::cout << str_colors.at(2) << fit_result_.covQual() << ": Approximation only, not accurate \033[0m" << std::endl; 
+      break;
+    case 2:
+      std::cout << str_colors.at(1) << fit_result_.covQual() << ": Full matrix, but forced positive-definite \033[0m" << std::endl; 
+      break; 
+    case 3:
+      std::cout << str_colors.at(0) << fit_result_.covQual() << ": Full, accurate covariance matrix \033[0m" << std::endl; 
+      break;  
+  }
+
+  std::cout << "                  Fit status: ";
+  for (unsigned int i=0; i<fit_result_.numStatusHistory(); ++i) {
+    if (fit_result_.statusCodeHistory(i) == 0) {
+      std::cout << str_colors.at(0);
+    } else if (fit_result_.statusCodeHistory(i) == 1) {
+      std::cout << str_colors.at(1);
+    } else {
+      std::cout << str_colors.at(2);
+    }
+    std::cout << fit_result_.statusLabelHistory(i) << "=" << fit_result_.statusCodeHistory(i) << "\033[0m";
+    if (i<(fit_result_.numStatusHistory()-1)) {
+      std::cout << ", ";
+    }
+  }
+  std::cout << std::endl;
   std::cout << std::endl;
 
 	RooArgList par_list_float_final = fit_result_.floatParsFinal();
