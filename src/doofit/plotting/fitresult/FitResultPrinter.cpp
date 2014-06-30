@@ -63,20 +63,23 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
         pull = (val_init-val.value)/val.error;
       }
 
-      std::string str_color;
-      if (std::abs(pull) < 2.0) {
-        str_color = "\033[1;32m";
-      } else if (std::abs(pull) > 2.0 && std::abs(pull) <= 3.0) {
-        str_color = "\033[1;33m";
-      } else if (std::abs(pull) > 3.0) {
-        str_color = "\033[1;31m";
+      std::string str_color, str_term;
+      if (!doocore::io::TerminalIsRedirected()) {
+        if (std::abs(pull) < 2.0) {
+          str_color = "\033[1;32m";
+        } else if (std::abs(pull) > 2.0 && std::abs(pull) <= 3.0) {
+          str_color = "\033[1;33m";
+        } else if (std::abs(pull) > 3.0) {
+          str_color = "\033[1;31m";
+        }
+        str_term = "\033[0m";
       }
 
       val.FormatString();
 
       std::cout << format("%-30s %15g %15s +/- %-15s ") % var->GetName() % val_init % val.str_value() % val.str_error();
       if (print_pulls_) {
-        std::cout << format("%s%15g%s") % str_color % pull % "\033[0m";
+        std::cout << format("%s%15g%s") % str_color % pull % str_term;
       }
       std::cout << std::endl;
     }
