@@ -24,7 +24,8 @@
 doofit::plotting::fitresult::FitResultPrinter::FitResultPrinter(const RooFitResult& fit_result)
 : fit_result_(fit_result),
   full_precision_printout_(false),
-  print_pulls_(true)
+  print_pulls_(true),
+  print_const_pars_(true)
 {
 }
 
@@ -71,6 +72,25 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
   }
   std::cout << std::endl;
   std::cout << std::endl;
+
+  if (print_const_pars_){
+    RooArgList par_list_const = fit_result_.constPars();
+
+    if (par_list_const.getSize() > 0) {
+      std::cout << format("%-30s %15s") % "          Parameter          " % "     Value     " << std::endl;
+      std::cout << format("%-30s %15s") % "-----------------------------" % "---------------" << std::endl;
+
+      TIterator* it_const = par_list_const.createIterator();
+      RooAbsArg* arg = NULL;
+      while ((arg = dynamic_cast<RooAbsArg*>(it_const->Next()))) {
+        RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
+        if (var != NULL) {
+          std::cout << format("%-30s %15g") % var->GetName() % var->getVal() << std::endl;
+        }
+      }
+      std::cout << std::endl;
+    }
+  }
 
 	RooArgList par_list_float_final = fit_result_.floatParsFinal();
   RooArgList par_list_float_init  = fit_result_.floatParsInit();

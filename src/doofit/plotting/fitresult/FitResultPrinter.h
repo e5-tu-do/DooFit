@@ -71,6 +71,11 @@ class FitResultPrinter {
   	print_pulls_ = print_pulls;
   	return *this;
   }
+
+  FitResultPrinter& set_print_const_pars(bool print_const_pars) {
+    print_const_pars_ = print_const_pars;
+    return *this;
+  }
   
  protected:
   
@@ -113,6 +118,7 @@ class FitResultPrinter {
 
   bool full_precision_printout_;
   bool print_pulls_;
+  bool print_const_pars_;
 };
 
 
