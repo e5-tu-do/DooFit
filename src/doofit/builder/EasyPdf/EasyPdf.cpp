@@ -10,6 +10,7 @@
 // from RooFit
 #include "RooRealVar.h"
 #include "RooGaussian.h"
+#include "RooMultiVarGaussian.h"
 #include "RooExponential.h"
 #include "RooArgList.h"
 #include "RooProdPdf.h"
@@ -401,6 +402,10 @@ RooArgSet doofit::builder::EasyPdf::AllVars() {
 
 RooGaussian& doofit::builder::EasyPdf::Gaussian(const std::string &name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma) {
   return AddPdfToStore<RooGaussian>(new RooGaussian(name.c_str(), name.c_str(), x, mean, sigma));
+}
+
+RooMultiVarGaussian& doofit::builder::EasyPdf::MultiVarGaussian(const std::string &name, const RooArgList& xvec, const RooArgList& mu, const TMatrixDSym& covMatrix) {
+  return AddPdfToStore<RooMultiVarGaussian>(new RooMultiVarGaussian(name.c_str(), name.c_str(), xvec, mu, covMatrix));
 }
 
 RooCBShape& doofit::builder::EasyPdf::CBShape(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma, RooAbsReal& alpha, RooAbsReal& n) {
