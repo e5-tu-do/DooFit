@@ -18,6 +18,7 @@
 #include <RooRealVar.h>
 
 // from DooCore
+#include <doocore/io/MsgStream.h>
 #include <doocore/statistics/general.h>
 
 doofit::plotting::fitresult::FitResultPrinter::FitResultPrinter(const RooFitResult& fit_result)
@@ -33,42 +34,37 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
   using boost::format;
   using boost::io::group;
 
-  std::vector<std::string> str_colors;
-  str_colors.push_back("\033[1;32m");
-  str_colors.push_back("\033[1;33m");
-  str_colors.push_back("\033[1;31m");
-
   std::cout << std::endl;
   std::cout << "FitResultPrinter: NLL = " << fit_result_.minNll() << ", EDM = " << fit_result_.edm() << std::endl;
   std::cout << "                  covariance matrix quality: ";
   switch(fit_result_.covQual()) {
     case -1:
-      std::cout << str_colors.at(2) << fit_result_.covQual() << ": Unknown, matrix was externally provided \033[0m" << std::endl; 
+      std::cout << TerminalColorCode(2) << fit_result_.covQual() << ": Unknown, matrix was externally provided" << TerminalResetCode() << std::endl; 
       break;
     case 0:
-      std::cout << str_colors.at(2) << fit_result_.covQual() << ": Not calculated at all \033[0m" << std::endl; 
+      std::cout << TerminalColorCode(2) << fit_result_.covQual() << ": Not calculated at all" << TerminalResetCode() << std::endl; 
       break;
     case 1:
-      std::cout << str_colors.at(2) << fit_result_.covQual() << ": Approximation only, not accurate \033[0m" << std::endl; 
+      std::cout << TerminalColorCode(2) << fit_result_.covQual() << ": Approximation only, not accurate" << TerminalResetCode() << std::endl; 
       break;
     case 2:
-      std::cout << str_colors.at(1) << fit_result_.covQual() << ": Full matrix, but forced positive-definite \033[0m" << std::endl; 
+      std::cout << TerminalColorCode(1) << fit_result_.covQual() << ": Full matrix, but forced positive-definite" << TerminalResetCode() << std::endl; 
       break; 
     case 3:
-      std::cout << str_colors.at(0) << fit_result_.covQual() << ": Full, accurate covariance matrix \033[0m" << std::endl; 
+      std::cout << TerminalColorCode(0) << fit_result_.covQual() << ": Full, accurate covariance matrix" << TerminalResetCode() << std::endl; 
       break;  
   }
 
   std::cout << "                  Fit status: ";
   for (unsigned int i=0; i<fit_result_.numStatusHistory(); ++i) {
     if (fit_result_.statusCodeHistory(i) == 0) {
-      std::cout << str_colors.at(0);
+      std::cout << TerminalColorCode(0);
     } else if (fit_result_.statusCodeHistory(i) == 1) {
-      std::cout << str_colors.at(1);
+      std::cout << TerminalColorCode(1);
     } else {
-      std::cout << str_colors.at(2);
+      std::cout << TerminalColorCode(2);
     }
-    std::cout << fit_result_.statusLabelHistory(i) << "=" << fit_result_.statusCodeHistory(i) << "\033[0m";
+    std::cout << fit_result_.statusLabelHistory(i) << "=" << fit_result_.statusCodeHistory(i) << TerminalResetCode();
     if (i<(fit_result_.numStatusHistory()-1)) {
       std::cout << ", ";
     }
@@ -107,16 +103,14 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
       }
 
       std::string str_color, str_term;
-      if (!doocore::io::TerminalIsRedirected()) {
-        if (std::abs(pull) < 2.0) {
-          str_color = "\033[1;32m";
-        } else if (std::abs(pull) > 2.0 && std::abs(pull) <= 3.0) {
-          str_color = "\033[1;33m";
-        } else if (std::abs(pull) > 3.0) {
-          str_color = "\033[1;31m";
-        }
-        str_term = "\033[0m";
+      if (std::abs(pull) < 2.0) {
+        str_color = TerminalColorCode(0);
+      } else if (std::abs(pull) > 2.0 && std::abs(pull) <= 3.0) {
+        str_color = TerminalColorCode(1);
+      } else if (std::abs(pull) > 3.0) {
+        str_color = TerminalColorCode(2);
       }
+      str_term = TerminalResetCode();
 
       val.FormatString();
 

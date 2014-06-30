@@ -2,6 +2,8 @@
 #define DOOFIT_PLOTTING_FITRESULT_FITRESULTPRINTER_h
 
 // STL
+#include <string>
+#include <vector>
 
 // BOOST
 
@@ -10,6 +12,7 @@
 // from RooFit
 
 // from DooCore
+#include <doocore/io/MsgStream.h>
 
 // from project
 
@@ -71,6 +74,35 @@ class FitResultPrinter {
   
  protected:
   
+  /**
+   *  @brief Get a terminal color code (if tty terminal)
+   *
+   *  @param color the color (0: green, 1: yellow, 2: red)
+   */
+  std::string TerminalColorCode(int color) const {
+  	std::vector<std::string> str_colors;
+	  str_colors.push_back("\033[1;32m");
+	  str_colors.push_back("\033[1;33m");
+	  str_colors.push_back("\033[1;31m");
+
+    if (!doocore::io::TerminalIsRedirected()) {
+      return str_colors.at(color);
+    } else {
+      return "";
+    }
+  }
+
+  /**
+   *  @brief Get a terminal reset string (if tty terminal)
+   */
+  std::string TerminalResetCode() const {
+    if (!doocore::io::TerminalIsRedirected()) {
+      return "\033[0m";
+    } else {
+      return "";
+    }
+  }
+
   /**
    *  @brief Print the RooFitResult (internal handler)
    */
