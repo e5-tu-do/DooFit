@@ -21,7 +21,7 @@
 doofit::plotting::fitresult::FitResultPrinter::FitResultPrinter(const RooFitResult& fit_result)
 : fit_result_(fit_result),
   full_precision_printout_(false),
-  print_pulls_(false)
+  print_pulls_(true)
 {
 }
 
@@ -72,9 +72,9 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
 
       val.FormatString();
 
-      std::cout << format("%-30s %15g %15s +/- %-15s ") % var->GetName() % val_init % val.str_value() % val.str_error() % str_color % pull;
+      std::cout << format("%-30s %15g %15s +/- %-15s ") % var->GetName() % val_init % val.str_value() % val.str_error();
       if (print_pulls_) {
-        std::cout << format("%s%15g%s") % "\033[0m";
+        std::cout << format("%s%15g%s") % str_color % pull % "\033[0m";
       }
       std::cout << std::endl;
     }
