@@ -77,7 +77,7 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
     RooArgList par_list_const = fit_result_.constPars();
 
     if (par_list_const.getSize() > 0) {
-      std::cout << format("%-34s %15s") % "            Parameter            " % "     Value     " << std::endl;
+      std::cout << format("%-34s %15s") % "       Constant Parameter        " % "     Value     " << std::endl;
       std::cout << format("%-34s %15s") % "---------------------------------" % "---------------" << std::endl;
 
       TIterator* it_const = par_list_const.createIterator();
