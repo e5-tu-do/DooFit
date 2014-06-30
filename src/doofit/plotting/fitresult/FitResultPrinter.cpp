@@ -31,6 +31,8 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
   using boost::format;
   using boost::io::group;
 
+  std::cout << std::endl;
+
 	RooArgList par_list_float_final = fit_result_.floatParsFinal();
   RooArgList par_list_float_init  = fit_result_.floatParsInit();
 
@@ -79,4 +81,6 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
       std::cout << std::endl;
     }
   }
+
+  std::cout << std::endl;
 }
