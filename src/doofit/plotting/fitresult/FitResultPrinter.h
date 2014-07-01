@@ -63,13 +63,13 @@ class FitResultPrinter {
   }
 
   FitResultPrinter& set_full_precision_printout(bool full_precision_printout) {
-  	full_precision_printout_ = full_precision_printout;
-  	return *this;
+    full_precision_printout_ = full_precision_printout;
+    return *this;
   }
 
   FitResultPrinter& set_print_pulls(bool print_pulls) {
-  	print_pulls_ = print_pulls;
-  	return *this;
+    print_pulls_ = print_pulls;
+    return *this;
   }
 
   FitResultPrinter& set_print_const_pars(bool print_const_pars) {
@@ -85,10 +85,11 @@ class FitResultPrinter {
    *  @param color the color (0: green, 1: yellow, 2: red)
    */
   std::string TerminalColorCode(int color) const {
-  	std::vector<std::string> str_colors;
-	  str_colors.push_back("\033[1;32m");
-	  str_colors.push_back("\033[1;33m");
-	  str_colors.push_back("\033[1;31m");
+    std::vector<std::string> str_colors;
+    str_colors.push_back("\033[1;32m");
+    str_colors.push_back("\033[1;33m");
+    str_colors.push_back("\033[1;31m");
+    str_colors.push_back("\033[1;34m");
 
     if (!doocore::io::TerminalIsRedirected()) {
       return str_colors.at(color);
