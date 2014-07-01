@@ -40,7 +40,7 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
   std::cout << "                  covariance matrix quality: ";
   switch(fit_result_.covQual()) {
     case -1:
-      std::cout << TerminalColorCode(2) << fit_result_.covQual() << ": Unknown, matrix was externally provided" << TerminalResetCode() << std::endl; 
+      std::cout << TerminalColorCode(3) << fit_result_.covQual() << ": Unknown, matrix was externally provided" << TerminalResetCode() << std::endl; 
       break;
     case 0:
       std::cout << TerminalColorCode(2) << fit_result_.covQual() << ": Not calculated at all" << TerminalResetCode() << std::endl; 
@@ -92,7 +92,7 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
     }
   }
 
-	RooArgList par_list_float_final = fit_result_.floatParsFinal();
+  RooArgList par_list_float_final = fit_result_.floatParsFinal();
   RooArgList par_list_float_init  = fit_result_.floatParsInit();
 
   TIterator* it_float = par_list_float_final.createIterator();
