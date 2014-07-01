@@ -142,7 +142,7 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
       ValueWithError<double> val(var->getVal(), var->getError());
 
       if (var->hasAsymError()) {
-        val.error_lo = var->getErrorLo();
+        val.error_lo = -var->getErrorLo();
         val.error_hi = var->getErrorHi();
       }
 
@@ -167,7 +167,7 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
       val.FormatString();
 
       if (asym_errors_present) {
-        std::string str_asym_error = " + " + val.str_error_hi() + " - " + val.str_error_lo();
+        std::string str_asym_error = "+ " + val.str_error_hi() + " - " + val.str_error_lo();
         std::cout << format("%-40s %17g %17s %-37s ") % var->GetName() % val_init % val.str_value() % str_asym_error;
       } else {
         std::cout << format("%-40s %17g %17s +/- %-17s ") % var->GetName() % val_init % val.str_value() % val.str_error();
