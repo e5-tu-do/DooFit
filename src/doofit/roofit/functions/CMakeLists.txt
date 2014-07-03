@@ -5,6 +5,7 @@
 
 root_generate_dictionaries_local(dfFunctionsDict 
 CategoryToReal.h
+CosCoeffWithProdAsymm.h
 CoshCoeff.h
 CoshCoeffTagAsReal.h
 CoshCoeffWithAsymms.h 
@@ -40,6 +41,7 @@ DooDecRateCoeff.h)
 add_library(dfFunctions SHARED 
 CategoryToReal.h CategoryToReal.cxx CategoryToReal_dict.h CategoryToReal_dict.cc
 CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
+CosCoeffWithProdAsymm.h CosCoeffWithProdAsymm.cxx CosCoeffWithProdAsymm_dict.h CosCoeffWithProdAsymm_dict.cc
 CoshCoeffTagAsReal.h CoshCoeffTagAsReal.cxx CoshCoeffTagAsReal_dict.h CoshCoeffTagAsReal_dict.cc
 CoshCoeffWithAsymms.h CoshCoeffWithAsymms.cxx CoshCoeffWithAsymms_dict.h CoshCoeffWithAsymms_dict.cc
 CoshCoeffCombo.h CoshCoeffCombo.cxx CoshCoeffCombo_dict.h CoshCoeffCombo_dict.cc
@@ -81,7 +83,8 @@ install(FILES
 CategoryToReal.h
 SinhCoeff.h 
 FunctionProduct.h 
-FunctionTripleProduct.h 
+FunctionTripleProduct.h
+CosCoeffWithProdAsymm.h
 CoshCoeff.h
 CoshCoeffTagAsReal.h
 CoshCoeffWithAsymms.h

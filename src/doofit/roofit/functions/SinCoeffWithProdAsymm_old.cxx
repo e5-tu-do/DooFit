@@ -23,18 +23,26 @@ namespace functions {
 long long SinCoeffWithProdAsymm::num_calls_evaluate_ = 0;
 long long SinCoeffWithProdAsymm::num_calls_integral_ = 0;
 
+
+SinCoeffWithProdAsymm::SinCoeffWithProdAsymm() :
+  type_coeff_(kCType)
+  {
+  }
+
 SinCoeffWithProdAsymm::SinCoeffWithProdAsymm(std::string name,
                                    RooAbsReal& _par_S,
                                    RooAbsReal& _par_omega_Bd,
                                    RooAbsReal& _par_omega_Bdb,
                                    RooAbsCategory& _cat_tag,
-                                   RooAbsReal& _par_prod_asym) :
+                                   RooAbsReal& _par_prod_asym,
+                                   CoeffType type_coeff) :
   RooAbsReal(name.c_str(), name.c_str()),
   par_S_("par_S_","par_S_",this,_par_S),
   par_omega_Bd_("par_omega_Bd_","par_omega_Bd_",this,_par_omega_Bd),
   par_omega_Bdb_("par_omega_Bdb_","par_omega_Bdb_",this,_par_omega_Bdb),
   cat_tag_("cat_tag_","cat_tag_",this,_cat_tag),
-  par_prod_asym_("par_prod_asym_","par_prod_asym_",this,_par_prod_asym)
+  par_prod_asym_("par_prod_asym_","par_prod_asym_",this,_par_prod_asym),
+  type_coeff_(type_coeff)
   {
   }
 
@@ -44,7 +52,8 @@ SinCoeffWithProdAsymm::SinCoeffWithProdAsymm(const SinCoeffWithProdAsymm& other,
   par_omega_Bd_("par_omega_Bd_",this,other.par_omega_Bd_),
   par_omega_Bdb_("par_omega_Bdb_",this,other.par_omega_Bdb_),
   cat_tag_("cat_tag_",this,other.cat_tag_),
-  par_prod_asym_("par_prod_asym_",this,other.par_prod_asym_)
+  par_prod_asym_("par_prod_asym_",this,other.par_prod_asym_),
+  type_coeff_(other.type_coeff_)
   {
   }
 
