@@ -70,10 +70,10 @@ protected:
   
   virtual Int_t	getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName = 0) const;
   
-  // virtual Double_t analyticalIntegral(Int_t code, const char* rangeName = 0) const {
-  //   #ifdef FUNCTIONS_COUNT_CALLS
-  //   ++num_calls_integral_;
-  //   #endif
+  virtual Double_t analyticalIntegral(Int_t code, const char* rangeName = 0) const {
+    #ifdef FUNCTIONS_COUNT_CALLS
+    ++num_calls_integral_;
+    #endif
     
   //   //++n_calls;
   //   //assert(0 != code);
@@ -83,7 +83,7 @@ protected:
   //   // }
   //   // must not get here
   //   //assert(1 == 0);
-  // }
+  }
   
 //  virtual Double_t getValV(const RooArgSet* nset=0) const {
 //    if (nset!=NULL) {

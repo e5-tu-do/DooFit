@@ -24,15 +24,20 @@ namespace functions {
 
 class SinCoeffWithProdAsymm : public RooAbsReal {
 public:
+  enum CoeffType {
+    kSType = -1,
+    kCType = +1
+  };
   
-  SinCoeffWithProdAsymm() {};
+  SinCoeffWithProdAsymm();
   
   SinCoeffWithProdAsymm(std::string name,
                    RooAbsReal& _par_S,
                    RooAbsReal& _par_omega_Bd,
                    RooAbsReal& _par_omega_Bdb,
                    RooAbsCategory& _cat_tag,
-                   RooAbsReal& _par_prod_asym);
+                   RooAbsReal& _par_prod_asym,
+                   CoeffType type_coeff);
   
   SinCoeffWithProdAsymm(const SinCoeffWithProdAsymm& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new SinCoeffWithProdAsymm(*this,newname); }
@@ -51,7 +56,9 @@ protected:
   RooRealProxy par_prod_asym_ ;
 
   RooCategoryProxy cat_tag_ ;
-    
+  
+  const CoeffType type_coeff_ ;
+  
   static long long num_calls_evaluate_ ;
   static long long num_calls_integral_ ;
   
@@ -62,7 +69,7 @@ protected:
     
     // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
 //    ++n_calls;
-    return -1.0*(cat_tag_*(1.0 - par_omega_Bd_ - par_omega_Bdb_) - par_prod_asym_*(1.0 - cat_tag_*(par_omega_Bd_ - par_omega_Bdb_)))*par_S_ ;
+    return par_S_*type_coeff_*(cat_tag_*(1.0 - par_omega_Bd_ - par_omega_Bdb_) - par_prod_asym_*(1.0 - cat_tag_*(par_omega_Bd_ - par_omega_Bdb_))) ;
   }
 
   virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,
