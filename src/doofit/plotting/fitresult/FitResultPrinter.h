@@ -37,7 +37,7 @@ namespace fitresult {
  * doofit::fitter::easyfit::EasyFit efit_full("fit_toy")
  * efit_full.Fit();
  * fit_result = efit_full.GetFitResult();
- * doofit::plotting::correlations::FitResultPrinter printer(*fit_result);
+ * doofit::plotting::fitresult::FitResultPrinter printer(*fit_result);
  * printer.Print();
  * @endcode
  *
