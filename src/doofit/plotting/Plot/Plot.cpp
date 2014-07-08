@@ -375,9 +375,12 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //    ylabel.ReplaceAll("Events","Candidates");
 //    plot_frame->GetYaxis()->SetTitle(ylabel);
     
-    if (sc_y == kLinear || sc_y == kBoth) {
+    if (sc_y == kLinear) {
       doocore::lutils::PlotPulls(pull_plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, "_gauss", num_free_parameters);
       doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, "", num_free_parameters);
+    } else if (sc_y == kBoth) {
+      doocore::lutils::PlotPulls(pull_plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, "nogauss", num_free_parameters);
+      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, "nogauss", num_free_parameters);
     }
     
 //    sdebug << "Plot y axis minimum for log scale plot: " << min_plot << endmsg;

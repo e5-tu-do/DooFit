@@ -40,7 +40,7 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
   std::cout << "                  covariance matrix quality: ";
   switch(fit_result_.covQual()) {
     case -1:
-      std::cout << TerminalColorCode(2) << fit_result_.covQual() << ": Unknown, matrix was externally provided" << TerminalResetCode() << std::endl; 
+      std::cout << TerminalColorCode(3) << fit_result_.covQual() << ": Unknown, matrix was externally provided" << TerminalResetCode() << std::endl; 
       break;
     case 0:
       std::cout << TerminalColorCode(2) << fit_result_.covQual() << ": Not calculated at all" << TerminalResetCode() << std::endl; 
@@ -77,36 +77,62 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
     RooArgList par_list_const = fit_result_.constPars();
 
     if (par_list_const.getSize() > 0) {
-      std::cout << format("%-34s %15s") % "            Parameter            " % "     Value     " << std::endl;
-      std::cout << format("%-34s %15s") % "---------------------------------" % "---------------" << std::endl;
+      std::cout << format("%-40s %17s") % "          Constant Parameter           " % "      Value      " << std::endl;
+      std::cout << format("%-40s %17s") % "---------------------------------------" % "-----------------" << std::endl;
 
       TIterator* it_const = par_list_const.createIterator();
       RooAbsArg* arg = NULL;
       while ((arg = dynamic_cast<RooAbsArg*>(it_const->Next()))) {
         RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
         if (var != NULL) {
-          std::cout << format("%-34s %15g") % var->GetName() % var->getVal() << std::endl;
+          std::cout << format("%-40s %17g") % var->GetName() % var->getVal() << std::endl;
         }
       }
       std::cout << std::endl;
+      delete it_const;
+      it_const = nullptr;
     }
   }
 
-	RooArgList par_list_float_final = fit_result_.floatParsFinal();
-  RooArgList par_list_float_init  = fit_result_.floatParsInit();
+  RooArgList par_list_float_final = fit_result_.floatParsFinal();
+  RooArgList par_list_float_init  = fit_result_.floatParsInit();  
 
   TIterator* it_float = par_list_float_final.createIterator();
   RooAbsArg* arg = NULL;
 
-  std::cout << format("%-34s %15s %15s +/- %-15s ") % "            Parameter            " % "   InitValue   " % "    Fit result" % "Error         ";
+  bool asym_errors_present = false;
+    while ((arg = dynamic_cast<RooAbsArg*>(it_float->Next()))) {
+    RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
+    if (var != NULL) {
+      ValueWithError<double> val(var->getVal(), var->getError());
+
+      if (var->hasAsymError()) {
+        asym_errors_present = true;
+      }
+    }
+  }
+  delete it_float;
+  it_float = nullptr;
+
+  it_float = par_list_float_final.createIterator();
+
+  if (asym_errors_present) {
+    std::cout << format("%-40s %17s %17s +/- %-37s ") % "               Parameter               " % "    InitValue    " % "      Fit result" % "Error                               ";
+  } else {
+    std::cout << format("%-40s %17s %17s +/- %-17s ") % "               Parameter               " % "    InitValue    " % "      Fit result" % "Error           ";
+  }
   if (print_pulls_) {
-    std::cout << format("%15s") % "      Pull     ";
+    std::cout << format("%17s") % "       Pull      ";
   }
   std::cout << std::endl;
 
-  std::cout << format("%-34s %15s %15s-----%-15s ") % "---------------------------------" % "---------------" % "--------------" % "--------------";
+  if (asym_errors_present) {
+    std::cout << format("%-40s %17s %17s-----%-37s ") % "---------------------------------------" % "-----------------" % "----------------" % "------------------------------------";
+  } else {
+    std::cout << format("%-40s %17s %17s-----%-17s ") % "---------------------------------------" % "-----------------" % "----------------" % "----------------";
+  }
   if (print_pulls_) {
-    std::cout << format("%15s") % "---------------";
+    std::cout << format("%17s") % "-----------------";
   }
   std::cout << std::endl;
 
@@ -114,6 +140,13 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
     RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
     if (var != NULL) {
       ValueWithError<double> val(var->getVal(), var->getError());
+
+      bool var_has_asym_error = var->hasAsymError();
+      if (var_has_asym_error) {
+        val.error_lo = -var->getErrorLo();
+        val.error_hi = var->getErrorHi();
+      }
+
       val.set_full_precision_printout(full_precision_printout_);
       RooRealVar* var_init = dynamic_cast<RooRealVar*>(par_list_float_init.find(var->GetName()));
       double val_init = 0.0, pull = 0.0;
@@ -134,13 +167,24 @@ void doofit::plotting::fitresult::FitResultPrinter::PlotHandler() const {
 
       val.FormatString();
 
-      std::cout << format("%-34s %15g %15s +/- %-15s ") % var->GetName() % val_init % val.str_value() % val.str_error();
+      if (asym_errors_present) {
+        if (var_has_asym_error) {
+          std::string str_asym_error = "+ " + val.str_error_hi() + " - " + val.str_error_lo();
+          std::cout << format("%-40s %17g %17s %-37s ") % var->GetName() % val_init % val.str_value() % str_asym_error;
+        } else {
+          std::cout << format("%-40s %17g %17s +/- %-33s ") % var->GetName() % val_init % val.str_value() % val.str_error();
+        }
+      } else {
+        std::cout << format("%-40s %17g %17s +/- %-17s ") % var->GetName() % val_init % val.str_value() % val.str_error();
+      }
       if (print_pulls_) {
-        std::cout << format("%s%15g%s") % str_color % pull % str_term;
+        std::cout << format("%s%17g%s") % str_color % pull % str_term;
       }
       std::cout << std::endl;
     }
   }
+  delete it_float;
+  it_float = nullptr;
 
   std::cout << std::endl;
 }

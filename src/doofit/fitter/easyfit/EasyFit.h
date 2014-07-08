@@ -135,6 +135,12 @@ class EasyFit
    */
   EasyFit& SetOptimize(int fc_optimize);
   
+  /** @brief Activate offset of likelihood by initial value
+   *
+   *  Default is false.
+   */
+  EasyFit& SetOffset(int fc_offset);
+
   /** @brief Apply correction to errors and covariance matrix using sum-of-weights covariance matrix.
    *
    *  Apply correction to errors and covariance matrix using sum-of-weights covariance matrix
@@ -310,7 +316,8 @@ class EasyFit
    */
   /**@{*/
   int fc_strategy_;   ///< Fit strategy (0 through 2, default is 1).
-  int fc_optimize_;           ///< Activate constant term optimization during minimization (true by default).
+  int fc_optimize_;   ///< Activate constant term optimization during minimization (true by default).
+  int fc_offset_;     ///< Offset likelihood by initial value. This can improve numeric stability in simultaneously fits.
 
   /** @brief Correct errors and covariance matrix using sum-of-weights covariance matrix (false by default).
    *
