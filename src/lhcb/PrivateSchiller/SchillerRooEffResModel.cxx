@@ -43,6 +43,9 @@
 #include "SchillerRooEffConvGenContext.h"
 #include "SchillerRooEffResModel.h"
 
+namespace doofit {
+namespace schiller {
+
 //_____________________________________________________________________________
 RooEffResModel::CacheElem::~CacheElem()
 {
@@ -351,3 +354,6 @@ RooEffResModel::CacheElem* RooEffResModel::getCache(
     _cacheMgr.setObj(iset, new CacheElem( *this,  *iset,  rangeName), rangeName);
     return getCache(iset, rangeName );
 }
+
+}// namespace schiller
+}// namespace doofit

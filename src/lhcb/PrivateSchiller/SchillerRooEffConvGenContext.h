@@ -1,5 +1,5 @@
-#ifndef DOOFIT_EXTRAROOPDFS_SCHILLERPDFS_ROO_EFF_CONV_GEN_CONTEXT
-#define DOOFIT_EXTRAROOPDFS_SCHILLERPDFS_ROO_EFF_CONV_GEN_CONTEXT
+#ifndef DOOFIT_SCHILLER_ROO_EFF_CONV_GEN_CONTEXT
+#define DOOFIT_SCHILLER_ROO_EFF_CONV_GEN_CONTEXT
 
 // use C preprocessor to smuggle in a friend class into RooAbsGenContext
 //
@@ -7,8 +7,8 @@
 // *** better than hacking the header files that come with ROOT for now...
 // namespace doofit { namespace extraroopdfs { namespace schillerpdfs { class RooEffConvGenContext; } } };
 // #define RooEffGenContext RooEffGenContext; friend class doofit::extraroopdfs::schillerpdfs::RooEffConvGenContext;
-class RooEffConvGenContext;
-#define RooEffGenContext RooEffGenContext; friend class RooEffConvGenContext;
+namespace doofit { namespace schiller { class RooEffConvGenContext; } };
+#define RooEffGenContext RooEffGenContext; friend class doofit::schiller::RooEffConvGenContext;
 
 #include <RooConvGenContext.h>
 #include <RooArgSet.h>
@@ -16,6 +16,9 @@ class RooEffConvGenContext;
 class RooAbsAnaConvPdf;
 class RooDataSet;
 class RooAbsReal;
+
+namespace doofit {
+namespace schiller {
 
 class RooEffConvGenContext : public RooConvGenContext {
 public:
@@ -44,5 +47,8 @@ private:
 
    ClassDef(RooEffConvGenContext,0) // Context for generating a dataset from a PDF
 };
+
+}// namespace schiller
+}// namespace doofit
 
 #endif

@@ -146,14 +146,26 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
                 swarn << " The binned dataset contains only " << num_nonempty_bins << " non-empty bins, that is only " << frac_nonempty*100.0 << "% of all bins. You might want to optimize the binning of your projection variables." << endmsg;
               }
             } else {
-              data_reduced = sub_data.reduce(*set_project);
+              data_project = data_reduced = sub_data.reduce(*set_project);
               //data_project = &sub_data;
             }
-
+            
+//            //data_reduced = &sub_data;
+//            swarn << "Projection set: " << *set_project << endmsg;
+//            data.Print();
+//            sub_data.Print();
+//            data_reduced->Print();
+//            
+//            const RooAbsData* orig_data = dynamic_cast<const RooAbsData*>(it->getObject(1));
+//            orig_data->Print();
             
             // create the new projection argument
             *it = ProjWData(*dynamic_cast<const RooArgSet*>(it->getObject(0)),
-                            *data_project,
+                            *data_project, // works, WTF?
+                            //*data_reduced, // works!
+                            //sub_data, // works!
+                            //data, // works!
+                            //*dynamic_cast<const RooAbsData*>(it->getObject(1)), // works!
                             binned_projection);
           }
         }
@@ -178,9 +190,12 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //        sdebug << "This plot took " << sw_plot << endmsg;
         
         if (set_project != NULL) delete set_project;
-        if (data_reduced != NULL) {
+        if (data_reduced != NULL && data_reduced != &sub_data) {
           delete data_reduced;
         }
+//        if (data_project != NULL && data_project != data_reduced) {
+//          delete data_project;
+//        }
 
         if (binned_projection) {
           delete data_project;
@@ -268,8 +283,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           }
         } else {
           RooAbsData* data_proj = const_cast<RooAbsData*>(data_all);
-          data_reduced = data_proj->reduce(*set_project);
-          data_project = dynamic_cast<const RooAbsData*>(it->getObject(1));
+          data_project = data_reduced = data_proj->reduce(*set_project);
+          //data_project = dynamic_cast<const RooAbsData*>(it->getObject(1));
         }
         
         // create the new projection argument
@@ -281,14 +296,19 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooArgSet set_project_local(sim_cat);
     if (!project_arg_found) plot.AddPlotArg(ProjWData(set_project_local,data));
     
+    // Only possible way to avoid plotting problems: Do not use NumCPU for complete fit of whole PDF on all data.
+    plot.set_ignore_num_cpu(true);
 //    TStopwatch sw_plot; sw_plot.Start();
     plot.PlotHandler(sc_y, suffix);
 //    sdebug << "This plot took " << sw_plot << endmsg;
 
     if (set_project != NULL) delete set_project;
-    if (data_reduced != NULL) {
+    if (data_reduced != NULL && data_reduced != data_all) {
       delete data_reduced;
     }
+//    if (data_project != NULL && data_project != data_reduced) {
+//      delete data_project;
+//    }
     if (binned_projection) {
       delete data_project;
     }

@@ -19,11 +19,11 @@
 #include "RooAbsPdf.h"
 #include "RooRealProxy.h"
 
+class RooRealVar;
+
 namespace doofit {
 namespace roofit {
 namespace pdfs {
-
-class RooRealVar;
 
 class BiasDelta : public RooAbsPdf {
 public:

@@ -5,5 +5,5 @@
 
 #pragma link C++ nestedclass;
 #pragma link C++ nestedtypedef;
-#pragma link C++ class RooAbsEffResModel+;
+#pragma link C++ class doofit::schiller::RooAbsEffResModel+;
 #endif

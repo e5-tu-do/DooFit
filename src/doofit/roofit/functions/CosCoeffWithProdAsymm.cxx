@@ -8,80 +8,66 @@
 
 #include "Riostream.h" 
 
-#include "SinCoeffWithProdAsymm.h" 
+#include "CosCoeffWithProdAsymm.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::SinCoeffWithProdAsymm)
+ClassImp(doofit::roofit::functions::CosCoeffWithProdAsymm)
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 
-long long SinCoeffWithProdAsymm::num_calls_evaluate_ = 0;
-long long SinCoeffWithProdAsymm::num_calls_integral_ = 0;
+long long CosCoeffWithProdAsymm::num_calls_evaluate_ = 0;
+long long CosCoeffWithProdAsymm::num_calls_integral_ = 0;
 
-
-SinCoeffWithProdAsymm::SinCoeffWithProdAsymm() :
-  type_coeff_(kCType)
-  {
-  }
-
-SinCoeffWithProdAsymm::SinCoeffWithProdAsymm(std::string name,
-                                   RooAbsReal& _par_S,
+CosCoeffWithProdAsymm::CosCoeffWithProdAsymm(std::string name,
+                                   RooAbsReal& _par_C,
                                    RooAbsReal& _par_omega_Bd,
                                    RooAbsReal& _par_omega_Bdb,
                                    RooAbsCategory& _cat_tag,
-                                   RooAbsReal& _par_prod_asym,
-                                   CoeffType type_coeff) :
+                                   RooAbsReal& _par_prod_asym):
   RooAbsReal(name.c_str(), name.c_str()),
-  par_S_("par_S_","par_S_",this,_par_S),
+  par_C_("par_C_","par_C_",this,_par_C),
   par_omega_Bd_("par_omega_Bd_","par_omega_Bd_",this,_par_omega_Bd),
   par_omega_Bdb_("par_omega_Bdb_","par_omega_Bdb_",this,_par_omega_Bdb),
   cat_tag_("cat_tag_","cat_tag_",this,_cat_tag),
-  par_prod_asym_("par_prod_asym_","par_prod_asym_",this,_par_prod_asym),
-  type_coeff_(type_coeff)
+  par_prod_asym_("par_prod_asym_","par_prod_asym_",this,_par_prod_asym)
   {
   }
 
-SinCoeffWithProdAsymm::SinCoeffWithProdAsymm(const SinCoeffWithProdAsymm& other, const char* name) :
+CosCoeffWithProdAsymm::CosCoeffWithProdAsymm(const CosCoeffWithProdAsymm& other, const char* name) :
   RooAbsReal(other,name),
-  par_S_("par_S_",this,other.par_S_),
+  par_C_("par_C_",this,other.par_C_),
   par_omega_Bd_("par_omega_Bd_",this,other.par_omega_Bd_),
   par_omega_Bdb_("par_omega_Bdb_",this,other.par_omega_Bdb_),
   cat_tag_("cat_tag_",this,other.cat_tag_),
-  par_prod_asym_("par_prod_asym_",this,other.par_prod_asym_),
-  type_coeff_(other.type_coeff_)
+  par_prod_asym_("par_prod_asym_",this,other.par_prod_asym_)
   {
   }
 
-Int_t SinCoeffWithProdAsymm::getAnalyticalIntegral(RooArgSet& allVars,
+Int_t CosCoeffWithProdAsymm::getAnalyticalIntegral(RooArgSet& allVars,
                                         RooArgSet& analVars, const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("SinCoeffWithProdAsymm::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
+  std::printf("CosCoeffWithProdAsymm::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
   //analVars.Print();
   allVars.Print();
   if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
   #endif
   
-  // matchArgs(allVars, analVars, cat_tag_);
-    
-  // if (analVars.contains(cat_tag_.arg())) {
-  //   return 1;
-  // }
   
   return 0;
 }
 
 
-Int_t SinCoeffWithProdAsymm::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
+Int_t CosCoeffWithProdAsymm::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
 {
   #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("SinCoeffWithProdAsymm::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
+  std::printf("CosCoeffWithProdAsymm::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
   //analVars.Print();
   allVars.Print();
