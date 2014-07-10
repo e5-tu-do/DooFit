@@ -117,3 +117,5 @@ CombinedTagCalibrated.h
 CombinedTagUncalibrated.h
 DooDecRateCoeff.h
 DESTINATION include/doofit/roofit/functions)
+
+add_subdirectory(bdecay)
