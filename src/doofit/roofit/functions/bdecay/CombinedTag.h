@@ -1,7 +1,7 @@
 #ifndef DOOFIT_ROOFIT_FUNCTIONS_BDECAY_COMBINEDTAG
 #define DOOFIT_ROOFIT_FUNCTIONS_BDECAY_COMBINEDTAG
 
-#include "RooAbsPdf.h"
+#include "RooAbsReal.h"
 #include "RooRealProxy.h"
 #include "RooCategoryProxy.h"
 #include "RooAbsReal.h"
@@ -12,7 +12,7 @@ namespace roofit {
 namespace functions {
 namespace bdecay {
 
-class CombinedTag : public RooAbsPdf {
+class CombinedTag : public RooAbsReal {
 public:
   CombinedTag(const std::string& name,
 	      RooAbsReal& _eta_one_,

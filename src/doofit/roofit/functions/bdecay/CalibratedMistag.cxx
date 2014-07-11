@@ -22,7 +22,7 @@ CalibratedMistag::CalibratedMistag(const std::string& name,
                        RooAbsReal& _delta_p1_,
                        RooAbsCategory& _tag_,
                        const MistagType& _mistag_type_) :
-  RooAbsPdf(name.c_str(),name.c_str()), 
+  RooAbsReal(name.c_str(),name.c_str()), 
   eta_("eta_","eta_",this,_eta_),
   avg_eta_("avg_eta_","avg_eta_",this,_avg_eta_),
   p0_("p0_","p0_",this,_p0_),
@@ -36,7 +36,7 @@ CalibratedMistag::CalibratedMistag(const std::string& name,
 
 
 CalibratedMistag::CalibratedMistag(const CalibratedMistag& other, const char* name) :  
-  RooAbsPdf(other,name), 
+  RooAbsReal(other,name), 
   eta_("eta_",this,other.eta_),
   avg_eta_("avg_eta_",this,other.avg_eta_),
   p0_("p0_",this,other.p0_),

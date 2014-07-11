@@ -2,7 +2,6 @@
 
 #include "Coefficient.h" 
 #include "RooAbsReal.h" 
-#include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
@@ -15,13 +14,13 @@ namespace bdecay {
 
 Coefficient::Coefficient(const std::string& name, 
                        RooAbsReal& _cp_coeff_,
-                       CoeffType&  _coeff_type_,
-                       RooAbsCategory& _tag_,
+                       CoeffType   _coeff_type_,
+                       RooAbsReal& _tag_,
                        RooAbsReal& _mistag_b_,
                        RooAbsReal& _mistag_bbar_,
                        RooAbsReal& _production_asym_
                        ) :
-  RooAbsPdf(name.c_str(),name.c_str()), 
+  RooAbsReal(name.c_str(),name.c_str()), 
   cp_coeff_("cp_coeff_","cp_coeff_",this,_cp_coeff_),
   coeff_type_(_coeff_type_),
   tag_("tag_","tag_",this,_tag_),
@@ -33,7 +32,7 @@ Coefficient::Coefficient(const std::string& name,
 
 
 Coefficient::Coefficient(const Coefficient& other, const char* name) :  
-  RooAbsPdf(other,name), 
+  RooAbsReal(other,name), 
   cp_coeff_("cp_coeff_",this,other.cp_coeff_),
   coeff_type_(other.coeff_type_),
   tag_("tag_",this,other.tag_),
@@ -43,52 +42,25 @@ Coefficient::Coefficient(const Coefficient& other, const char* name) :
 { 
 } 
 
-Double_t Coefficient::evaluate() const 
+inline Double_t Coefficient::evaluate() const 
 { 
-  switch (coeff_type_){
-    case 3: // Sin coefficient, aka f3 in RooBDecay notation
-      std::cout << "CoeffType: Sin" << std::endl;
-      
-      return -1.0 * ( tag_ - production_asym_ * ( 1.0 - tag_ * mistag_b_ + tag_ * mistag_bbar_ ) - tag_ * ( mistag_b_ + mistag_bbar_ ) ) * cp_coeff_;
-      
-      break;
-    case 2: // Cos coefficient aka f2
-      std::cout << "CoeffType: Cos" << std::endl;
-      
-      return +1.0 * ( tag_ - production_asym_ * ( 1.0 - tag_ * mistag_b_ + tag_ * mistag_bbar_ ) - tag_ * ( mistag_b_ + mistag_bbar_ ) ) * cp_coeff_;
-
-      break;
-    case 1: // Sinh coefficient aka f1
-      std::cout << "CoeffType: Sinh" << std::endl;
-
-      // TODO: Implement correct Sinh coefficient
-      return cp_coeff_;
-      
-      break;
-    case 0: // Cosh coefficient aka f0
-      std::cout << "CoeffType: Cosh" << std::endl;
-
-      return ( 1.0 + tag_ * production_asym_ * ( 1.0 - mistag_b_ - mistag_bbar_ ) + tag_ * ( mistag_b_ - mistag_bbar_ ) ) * cp_coeff_;
-
-      break;
-    default:
-      std::cout << "ERROR in doofit::roofit::functions::bdecay::Coefficient! No valid coefficient type!" << std::endl;
-      abort();
+  if (coeff_type_ == kSin){
+    return cp_coeff_ * ( -1.0 * tag_ + production_asym_ * ( 1.0 - tag_ * mistag_b_ + tag_ * mistag_bbar_ ) + tag_ * ( mistag_b_ + mistag_bbar_ ) );
   }
-} 
-
-
-
-Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
-{
-  return 0 ; 
-} 
-
-
-
-Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) const  
-{ 
-  return 0 ; 
+  else if (coeff_type_ == kCos){
+    return cp_coeff_ * ( +1.0 * tag_ - production_asym_ * ( 1.0 - tag_ * mistag_b_ + tag_ * mistag_bbar_ ) - tag_ * ( mistag_b_ + mistag_bbar_ ) );
+  }
+  else if (coeff_type_ == kSinh){
+    // TODO: Implement Sinh coefficient
+    return cp_coeff_;
+  }
+  else if (coeff_type_ == kCosh){
+    return cp_coeff_ * ( 1.0 + tag_ * production_asym_ * ( 1.0 - mistag_b_ - mistag_bbar_ ) + tag_ * ( mistag_b_ - mistag_bbar_ ) );
+  }
+  else{
+    std::cout << "ERROR\t" << "Coefficient::evaluate(): No valid coefficient type!" << std::endl;
+    abort();
+  }
 } 
 
 } // namespace bdecay

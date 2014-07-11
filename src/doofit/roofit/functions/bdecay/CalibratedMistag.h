@@ -1,7 +1,7 @@
 #ifndef DOOFIT_ROOFIT_FUNCTIONS_BDECAY_CALIBRATEDMISTAG
 #define DOOFIT_ROOFIT_FUNCTIONS_BDECAY_CALIBRATEDMISTAG
 
-#include "RooAbsPdf.h"
+#include "RooAbsReal.h"
 #include "RooRealProxy.h"
 #include "RooCategoryProxy.h"
 #include "RooAbsReal.h"
@@ -12,7 +12,7 @@ namespace roofit {
 namespace functions {
 namespace bdecay {
 
-class CalibratedMistag : public RooAbsPdf {
+class CalibratedMistag : public RooAbsReal {
 public:
   enum MistagType {
     kB  = +1,
