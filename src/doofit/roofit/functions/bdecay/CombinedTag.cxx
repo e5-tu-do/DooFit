@@ -67,20 +67,6 @@ Double_t CombinedTag::evaluate() const
   }
 } 
 
-
-
-Int_t CombinedTag::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
-{ 
-  return 0 ; 
-} 
-
-
-
-Double_t CombinedTag::analyticalIntegral(Int_t code, const char* rangeName) const  
-{ 
-  return 0 ; 
-} 
-
 } // namespace bdecay
 } // namespace functions
 } // namespace roofit

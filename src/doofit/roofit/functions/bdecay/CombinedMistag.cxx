@@ -66,20 +66,6 @@ Double_t CombinedMistag::evaluate() const
   }
 } 
 
-
-
-Int_t CombinedMistag::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
-{ 
-  return 0 ; 
-} 
-
-
-
-Double_t CombinedMistag::analyticalIntegral(Int_t code, const char* rangeName) const  
-{ 
-  return 0 ; 
-} 
-
 } // namespace bdecay
 } // namespace functions
 } // namespace roofit

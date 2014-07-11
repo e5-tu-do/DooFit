@@ -23,9 +23,6 @@ public:
   virtual TObject* clone(const char* newname) const { return new CombinedTag(*this,newname); }
   inline virtual ~CombinedTag() { }
 
-  Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
-  Double_t analyticalIntegral(Int_t code, const char* rangeName=0) const ;
-
 protected:
 
   RooRealProxy eta_one_ ;

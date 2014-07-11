@@ -45,10 +45,10 @@ Coefficient::Coefficient(const Coefficient& other, const char* name) :
 inline Double_t Coefficient::evaluate() const 
 { 
   if (coeff_type_ == kSin){
-    return cp_coeff_ * ( -1.0 * tag_ + production_asym_ * ( 1.0 - tag_ * mistag_b_ + tag_ * mistag_bbar_ ) + tag_ * ( mistag_b_ + mistag_bbar_ ) );
+    return -1.0 * cp_coeff_ * ( tag_ - production_asym_ * ( 1.0 - tag_ * mistag_b_ + tag_ * mistag_bbar_ ) - tag_ * ( mistag_b_ + mistag_bbar_ ) );
   }
   else if (coeff_type_ == kCos){
-    return cp_coeff_ * ( +1.0 * tag_ - production_asym_ * ( 1.0 - tag_ * mistag_b_ + tag_ * mistag_bbar_ ) - tag_ * ( mistag_b_ + mistag_bbar_ ) );
+    return +1.0 * cp_coeff_ * ( tag_ - production_asym_ * ( 1.0 - tag_ * mistag_b_ + tag_ * mistag_bbar_ ) - tag_ * ( mistag_b_ + mistag_bbar_ ) );
   }
   else if (coeff_type_ == kSinh){
     // TODO: Implement Sinh coefficient
