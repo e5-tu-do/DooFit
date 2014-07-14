@@ -51,7 +51,7 @@ inline Double_t Coefficient::evaluate() const
     return +1.0 * cp_coeff_ * ( tag_ - production_asym_ * ( 1.0 - tag_ * mistag_b_ + tag_ * mistag_bbar_ ) - tag_ * ( mistag_b_ + mistag_bbar_ ) );
   }
   else if (coeff_type_ == kSinh){
-    // TODO: Implement Sinh coefficient
+    // TODO: Implement Sinh coefficient if necessary!
     return cp_coeff_;
   }
   else if (coeff_type_ == kCosh){
@@ -123,7 +123,6 @@ Double_t Coefficient::analyticalIntegral(Int_t code/**, const char* rangeName**/
     abort();
   }
 }
-
 
 } // namespace bdecay
 } // namespace functions

@@ -3,7 +3,6 @@
 
 #include "RooAbsReal.h"
 #include "RooRealProxy.h"
-#include "RooCategoryProxy.h"
 #include "RooAbsReal.h"
 
 namespace doofit {
