@@ -44,13 +44,14 @@ Double_t CombinedTag::evaluate() const
   // note that the probability e.g. to have a b-tagged meson corresponds to a Bbar-Meson, so tag=-1
 
   if ((eta_one_ >= 0.5) && (eta_two_ >= 0.5)){
-     return 1;
+    // if untagged set to 1
+    return 1;
   }
   if (eta_one_ >= 0.5) {
-     return tag_two_;
+    return tag_two_;
   }
   if (eta_two_ >= 0.5){
-     return tag_one_;
+    return tag_one_;
   }
   else{
     // probability to have a b-tagged meson
