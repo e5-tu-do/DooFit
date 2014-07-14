@@ -1,7 +1,7 @@
 #ifndef DOOFIT_ROOFIT_FUNCTIONS_BDECAY_COMBINEDTAG
 #define DOOFIT_ROOFIT_FUNCTIONS_BDECAY_COMBINEDTAG
 
-#include "RooAbsPdf.h"
+#include "RooAbsReal.h"
 #include "RooRealProxy.h"
 #include "RooCategoryProxy.h"
 #include "RooAbsReal.h"
@@ -12,7 +12,7 @@ namespace roofit {
 namespace functions {
 namespace bdecay {
 
-class CombinedTag : public RooAbsPdf {
+class CombinedTag : public RooAbsReal {
 public:
   CombinedTag(const std::string& name,
 	      RooAbsReal& _eta_one_,
@@ -22,9 +22,6 @@ public:
   CombinedTag(const CombinedTag& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new CombinedTag(*this,newname); }
   inline virtual ~CombinedTag() { }
-
-  Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
-  Double_t analyticalIntegral(Int_t code, const char* rangeName=0) const ;
 
 protected:
 

@@ -22,7 +22,7 @@ CalibratedMistag::CalibratedMistag(const std::string& name,
                        RooAbsReal& _delta_p1_,
                        RooAbsCategory& _tag_,
                        const MistagType& _mistag_type_) :
-  RooAbsPdf(name.c_str(),name.c_str()), 
+  RooAbsReal(name.c_str(),name.c_str()), 
   eta_("eta_","eta_",this,_eta_),
   avg_eta_("avg_eta_","avg_eta_",this,_avg_eta_),
   p0_("p0_","p0_",this,_p0_),
@@ -36,7 +36,7 @@ CalibratedMistag::CalibratedMistag(const std::string& name,
 
 
 CalibratedMistag::CalibratedMistag(const CalibratedMistag& other, const char* name) :  
-  RooAbsPdf(other,name), 
+  RooAbsReal(other,name), 
   eta_("eta_",this,other.eta_),
   avg_eta_("avg_eta_",this,other.avg_eta_),
   p0_("p0_",this,other.p0_),
@@ -59,6 +59,11 @@ Double_t CalibratedMistag::evaluate() const
   else{
     // calibrate mistag
     double mistag = p0_ + ( mistag_type_ * 0.5 * delta_p0_ ) + ( p1_ + ( mistag_type_ * 0.5 * delta_p1_ ) ) * ( eta_ - avg_eta_ );
+    ///// debug
+    // double xcheck_mistag = p0_ - ( mistag_type_ * 0.5 * delta_p0_ ) + ( p1_ - ( mistag_type_ * 0.5 * delta_p1_ ) ) * ( eta_ - avg_eta_ );
+    // double xcheck2_mistag = p0_ + p1_ * ( eta_ - avg_eta_ );
+    // if (((delta_p0_ != 0) || (delta_p1_ != 0)) && ((mistag >= 0.5) || (xcheck_mistag >= 0.5))) std::cout << "WARNING\t" << "Mistag larger 0.5" << "\t eta: " << eta_ << " : " << xcheck2_mistag << " : " << mistag << " " << xcheck_mistag << std::endl;
+    ///// debug
     if (mistag >= 0.5){
       // if calibrated mistag is larger or equal 0.5 return 0.5
       return 0.5;

@@ -1,7 +1,7 @@
 #ifndef DOOFIT_ROOFIT_FUNCTIONS_BDECAY_COMBINEDMISTAG
 #define DOOFIT_ROOFIT_FUNCTIONS_BDECAY_COMBINEDMISTAG
 
-#include "RooAbsPdf.h"
+#include "RooAbsReal.h"
 #include "RooRealProxy.h"
 #include "RooCategoryProxy.h"
 #include "RooAbsReal.h"
@@ -12,7 +12,7 @@ namespace roofit {
 namespace functions {
 namespace bdecay {
 
-class CombinedMistag : public RooAbsPdf {
+class CombinedMistag : public RooAbsReal {
 public:
   CombinedMistag(const std::string& name,
 	      RooAbsReal& _eta_one_,
@@ -22,9 +22,6 @@ public:
   CombinedMistag(const CombinedMistag& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new CombinedMistag(*this,newname); }
   inline virtual ~CombinedMistag() { }
-
-  Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
-  Double_t analyticalIntegral(Int_t code, const char* rangeName=0) const ;
 
 protected:
 

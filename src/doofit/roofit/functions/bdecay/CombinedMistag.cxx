@@ -18,7 +18,7 @@ CombinedMistag::CombinedMistag(const std::string& name,
                        RooAbsReal& _eta_two_,
                        RooAbsCategory& _tag_one_,
                        RooAbsCategory& _tag_two_) :
-  RooAbsPdf(name.c_str(),name.c_str()), 
+  RooAbsReal(name.c_str(),name.c_str()), 
   eta_one_("eta_one_","eta_one_",this,_eta_one_),
   eta_two_("eta_two_","eta_two_",this,_eta_two_),
   tag_one_("tag_one_","tag_one_",this,_tag_one_),
@@ -28,7 +28,7 @@ CombinedMistag::CombinedMistag(const std::string& name,
 
 
 CombinedMistag::CombinedMistag(const CombinedMistag& other, const char* name) :  
-  RooAbsPdf(other,name), 
+  RooAbsReal(other,name), 
   eta_one_("eta_one_",this,other.eta_one_),
   eta_two_("eta_two_",this,other.eta_two_),
   tag_one_("tag_one_",this,other.tag_one_),
@@ -64,20 +64,6 @@ Double_t CombinedMistag::evaluate() const
 
      return eta_combined;
   }
-} 
-
-
-
-Int_t CombinedMistag::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
-{ 
-  return 0 ; 
-} 
-
-
-
-Double_t CombinedMistag::analyticalIntegral(Int_t code, const char* rangeName) const  
-{ 
-  return 0 ; 
 } 
 
 } // namespace bdecay
