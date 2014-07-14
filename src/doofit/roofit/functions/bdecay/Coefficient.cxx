@@ -63,6 +63,68 @@ inline Double_t Coefficient::evaluate() const
   }
 } 
 
+Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars/**, const char* rangeName**/) const{
+  
+  // WARNING: works only if untagged events hold a tag state of ±1
+  
+  // return 1: integration over one tag state 
+  // return 2: integration over two tag states
+  
+  // Now we have to handle the different possibilities:
+  // 1.) a uncalibrated + uncombined tag is used (single RooRealVar)
+  // 2.) a calibrated + uncombined tag ist used (single RooAbsReal)
+  // 3.) a calibrated + combined tag is used (two RooAbsReals)
+  // since we cannot access the observables, we have to trust that only
+  // two possible integrals are requested, namely the integral over
+  // a single tag state or the integral over two tag states.
+  // For all other cases this implementation fails.
+
+  if (allVars.getSize() == 0){
+    std::printf("ERROR: In %s line %u (%s): allVars = ", __func__, __LINE__, __FILE__);
+    allVars.Print();
+    return 0;
+  }
+  else if (allVars.getSize() == 1){
+    // case 1. and 2.: only one tag
+    return 1;
+  }
+  else if (allVars.getSize() == 2){
+    // case 3.: integration over two tag states
+    return 2;
+  }
+  else{
+    std::printf("ERROR: In %s line %u (%s): allVars = ", __func__, __LINE__, __FILE__);
+    allVars.Print();
+    return 0;
+  }
+}
+
+Double_t Coefficient::analyticalIntegral(Int_t code/**, const char* rangeName**/) const{
+  if (code != 1 || code != 2){
+    std::printf("ERROR: In %s line %u (%s)", __func__, __LINE__, __FILE__);
+    return 0;
+    abort();
+  }
+  if (coeff_type_ == kSin){
+    return +2.0 * production_asym_ * cp_coeff_ * code;
+  }
+  else if (coeff_type_ == kCos){
+    return -2.0 * production_asym_ * cp_coeff_ * code;
+  }
+  else if (coeff_type_ == kSinh){
+    return 2.0 * cp_coeff_ * code;
+  }
+  else if (coeff_type_ == kCosh){
+    return 2.0 * cp_coeff_ * code;
+  }
+  else{
+    std::printf("ERROR: In %s line %u (%s)", __func__, __LINE__, __FILE__);
+    return 0;
+    abort();
+  }
+}
+
+
 } // namespace bdecay
 } // namespace functions
 } // namespace roofit
