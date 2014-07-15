@@ -138,15 +138,20 @@ protected:
     #ifdef FUNCTIONS_COUNT_CALLS
     ++num_calls_integral_;
     #endif
-    
-    //++n_calls;
-    //assert(0 != code);
-    // if (1 == code) {
-      //std::cout << "SinCoeffCombo::analyticalIntegral(" << code << ", ...): Called." << std::endl;
-      // return 0.0;
-    // }
-    // must not get here
-    //assert(1 == 0);
+    // std::cout << "SinCoeffCombo::analyticalIntegral(" << code << ", ...): Called." << std::endl;
+    switch(code){
+      case 0: return evaluate() ;
+
+      case 3: return  -2.0*par_S*type_coeff*par_prod_asym ;
+
+      case 2: return  -2.0*par_S*type_coeff*par_prod_asym ;
+
+      case 1: return  -4.0*par_S*type_coeff*par_prod_asym ;
+
+      default: assert(0);
+    }
+
+    return 0 ;
   }
   
 //  virtual Double_t getValV(const RooArgSet* nset=0) const {

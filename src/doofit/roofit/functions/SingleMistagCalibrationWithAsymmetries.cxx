@@ -56,35 +56,34 @@ SingleMistagCalibrationWithAsymmetries::SingleMistagCalibrationWithAsymmetries(c
  {
  } 
 
-Int_t SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegral(RooArgSet& allVars,
-                                                     RooArgSet& analVars, const char* rangeName) const
+Int_t SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const
 {
-#ifdef FUNCTIONS_COUNT_CALLS
+  #ifdef FUNCTIONS_COUNT_CALLS
     std::printf("SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
                 __func__, __LINE__, __FILE__);
-    //  analVars.Print();
+    // analVars.Print();
     allVars.Print();
-#endif
+  #endif
     
-    //if (matchArgs(allVars, analVars, cat_tag)) return 1;
-    
-    return 0;
+  return 0;
 }
   
-  Int_t SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
+Int_t SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
 {
-#ifdef FUNCTIONS_COUNT_CALLS
+  #ifdef FUNCTIONS_COUNT_CALLS
     std::printf("SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
                 __func__, __LINE__, __FILE__);
     //analVars.Print();
     allVars.Print();
     if (normSet) normSet->Print();
     if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
-#endif
-    
-    //if (matchArgs(allVars, analVars, cat_tag)) return 1;
-    
-    return 0;
+  #endif
+  return 0;
+}
+
+Double_t SingleMistagCalibrationWithAsymmetries::analyticalIntegral(Int_t code, const char* rangeName) const
+{
+  return 0. ;
 }
 } // namespace functions
 } // namespace roofit

@@ -83,10 +83,11 @@ Int_t CoshCoeffCombo::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analV
     //  analVars.Print();
     allVars.Print();
 #endif
-    
-    //if (matchArgs(allVars, analVars, cat_tag)) return 1;
-    
-    return 0;
+    if (rangeName) return 0 ;
+    if (matchArgs(allVars, analVars, cat_tag_OS, cat_tag_SS)) return 1 ;
+    if (matchArgs(allVars, analVars, cat_tag_OS)) return 2 ;
+    if (matchArgs(allVars, analVars, cat_tag_SS)) return 3 ;
+    return 0 ;
 }
   
   Int_t CoshCoeffCombo::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const

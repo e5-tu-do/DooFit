@@ -118,15 +118,23 @@ protected:
   
   virtual Int_t	getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName = 0) const;
   
-//  virtual Double_t analyticalIntegral(Int_t code, const char* rangeName = 0) const {
-//    
-//    if (1 == code) {
-//      //std::cout << "CoshCoeffCombo::analyticalIntegral(" << code << ", ...): Called." << std::endl;
-//      return 0.0;
-//    }
-//    // must not get here
-//    //assert(1 == 0);
-//  }
+ virtual Double_t analyticalIntegral(Int_t code, const char* rangeName = 0) const {
+   
+   // std::cout << "CoshCoeffCombo::analyticalIntegral(" << code << ", ...): Called." << std::endl;
+    switch(code){
+      case 0: return evaluate() ;
+
+      case 3: return  2.0;
+
+      case 2: return  2.0;
+
+      case 1: return  4.0;
+
+      default: assert(0);
+    }
+
+    return 0 ;
+ }
   
 private:
 
