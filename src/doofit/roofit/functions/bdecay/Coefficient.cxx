@@ -51,11 +51,11 @@ inline Double_t Coefficient::evaluate() const
     return +1.0 * cp_coeff_ * ( tag_ - production_asym_ * ( 1.0 - tag_ * mistag_b_ + tag_ * mistag_bbar_ ) - tag_ * ( mistag_b_ + mistag_bbar_ ) );
   }
   else if (coeff_type_ == kSinh){
-    // TODO: Implement Sinh coefficient if necessary!
+    // TODO: Implement Sinh coefficient
     return cp_coeff_;
   }
   else if (coeff_type_ == kCosh){
-    return cp_coeff_ * ( 1.0 + tag_ * production_asym_ * ( 1.0 - mistag_b_ - mistag_bbar_ ) + tag_ * ( mistag_b_ - mistag_bbar_ ) );
+    return cp_coeff_ * ( 1.0 - tag_ * production_asym_ * ( 1.0 - mistag_b_ - mistag_bbar_ ) - tag_ * ( mistag_b_ - mistag_bbar_ ) );
   }
   else{
     std::cout << "ERROR\t" << "Coefficient::evaluate(): No valid coefficient type!" << std::endl;
@@ -123,6 +123,7 @@ Double_t Coefficient::analyticalIntegral(Int_t code/**, const char* rangeName**/
     abort();
   }
 }
+
 
 } // namespace bdecay
 } // namespace functions
