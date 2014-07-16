@@ -63,7 +63,7 @@ inline Double_t Coefficient::evaluate() const
   }
 } 
 
-Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars/**, const char* rangeName**/) const{
+Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const{
   
   // WARNING: works only if untagged events hold a tag state of ±1
   
@@ -79,8 +79,11 @@ Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars
   // a single tag state or the integral over two tag states.
   // For all other cases this implementation fails.
 
+  // std::printf("ERROR: In %s line %u (%s): allVars = ", __func__, __LINE__, __FILE__);
+  // allVars.Print();
+
   if (allVars.getSize() == 0){
-    std::printf("ERROR: In %s line %u (%s): allVars = ", __func__, __LINE__, __FILE__);
+    std::printf("ERROR: In %s line %u (%s): CASE 0 : allVars = ", __func__, __LINE__, __FILE__);
     allVars.Print();
     return 0;
   }
@@ -93,15 +96,15 @@ Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars
     return 2;
   }
   else{
-    std::printf("ERROR: In %s line %u (%s): allVars = ", __func__, __LINE__, __FILE__);
+    std::printf("ERROR: In %s line %u (%s): CASE ELSE : allVars = ", __func__, __LINE__, __FILE__);
     allVars.Print();
     return 0;
   }
 }
 
-Double_t Coefficient::analyticalIntegral(Int_t code/**, const char* rangeName**/) const{
-  if (code != 1 || code != 2){
-    std::printf("ERROR: In %s line %u (%s)", __func__, __LINE__, __FILE__);
+Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) const{
+  if (!(code == 1 || code == 2)){
+    std::printf("ERROR: In %s line %u (%s) : code is not 1 or 2 \n", __func__, __LINE__, __FILE__);
     return 0;
     abort();
   }
@@ -118,7 +121,7 @@ Double_t Coefficient::analyticalIntegral(Int_t code/**, const char* rangeName**/
     return 2.0 * cp_coeff_ * code;
   }
   else{
-    std::printf("ERROR: In %s line %u (%s)", __func__, __LINE__, __FILE__);
+    std::printf("ERROR: In %s line %u (%s) : No valid coefficent! \n", __func__, __LINE__, __FILE__);
     return 0;
     abort();
   }
