@@ -61,7 +61,7 @@ Int_t SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegral(RooArgSet& a
   #ifdef FUNCTIONS_COUNT_CALLS
     std::printf("SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
                 __func__, __LINE__, __FILE__);
-    // analVars.Print();
+    analVars.Print();
     allVars.Print();
   #endif
     
@@ -73,7 +73,7 @@ Int_t SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegralWN(RooArgSet&
   #ifdef FUNCTIONS_COUNT_CALLS
     std::printf("SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
                 __func__, __LINE__, __FILE__);
-    //analVars.Print();
+    analVars.Print();
     allVars.Print();
     if (normSet) normSet->Print();
     if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
@@ -81,7 +81,7 @@ Int_t SingleMistagCalibrationWithAsymmetries::getAnalyticalIntegralWN(RooArgSet&
   return 0;
 }
 
-Double_t SingleMistagCalibrationWithAsymmetries::analyticalIntegral(Int_t code, const char* rangeName) const
+Double_t SingleMistagCalibrationWithAsymmetries::analyticalIntegral(Int_t code, const char* /*rangeName*/) const
 {
   return 0. ;
 }

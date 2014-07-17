@@ -62,15 +62,15 @@ protected:
     #ifdef FUNCTIONS_COUNT_CALLS
     ++num_calls_evaluate_;
     #endif
-    // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
     
-    //std::cout <<  << std::endl;
-    
-    return par_tag_p0 + 0.5*type_tag*par_tag_delta_p0 + (par_tag_p1 + 0.5*type_tag*par_tag_delta_p1) * (par_tag_eta - par_tag_meaneta);
+    if ((par_tag_p0 + par_tag_p1 * (par_tag_eta - par_tag_meaneta)) > 0.5)
+    {
+      return 0.5 ;
+    }
+    else return par_tag_p0 + 0.5*type_tag*par_tag_delta_p0 + (par_tag_p1 + 0.5*type_tag*par_tag_delta_p1) * (par_tag_eta - par_tag_meaneta);
   }
 
-  virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,
-                                      const char* rangeName = 0) const;
+  virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName = 0) const;
   
   virtual Int_t	getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName = 0) const;
   

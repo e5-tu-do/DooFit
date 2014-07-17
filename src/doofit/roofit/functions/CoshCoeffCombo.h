@@ -49,12 +49,14 @@ public:
 
 protected:
 
+  RooCategoryProxy cat_tag_OS ;
   RooRealProxy par_p0_OS ;
   RooRealProxy par_p1_OS ;
   RooRealProxy par_meaneta_OS ;
   RooRealProxy par_eta_OS ;
   RooRealProxy par_delta_p0_OS ;
   RooRealProxy par_delta_p1_OS ;
+  RooCategoryProxy cat_tag_SS ;
   RooRealProxy par_p0_SS ;
   RooRealProxy par_p1_SS ;
   RooRealProxy par_meaneta_SS ;
@@ -62,10 +64,6 @@ protected:
   RooRealProxy par_delta_p0_SS ;
   RooRealProxy par_delta_p1_SS ;
   RooRealProxy par_prod_asym ;
-  
-  RooCategoryProxy cat_tag_OS ;
-  RooCategoryProxy cat_tag_SS ;
-
   
   static long long num_calls_evaluate_;
   static long long num_calls_integral_;
@@ -84,14 +82,28 @@ protected:
 
     if (par_eta_OS < 0.5)
     {
-      omega_OS_Bd  = par_p0_OS + 0.5*par_delta_p0_OS + (par_p1_OS + 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
-      omega_OS_Bdb = par_p0_OS - 0.5*par_delta_p0_OS + (par_p1_OS - 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
+      if ((par_p0_OS + par_p1_OS*(par_eta_OS - par_meaneta_OS)) > 0.5)
+      {
+        omega_OS_Bd  = 0.5;
+        omega_OS_Bdb = 0.5;
+      }
+      else {
+        omega_OS_Bd  = par_p0_OS + 0.5*par_delta_p0_OS + (par_p1_OS + 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
+        omega_OS_Bdb = par_p0_OS - 0.5*par_delta_p0_OS + (par_p1_OS - 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
+      }
     }
 
     if (par_eta_SS < 0.5)
     {
-      omega_SS_Bd  = par_p0_SS + 0.5*par_delta_p0_SS + (par_p1_SS + 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
-      omega_SS_Bdb = par_p0_SS - 0.5*par_delta_p0_SS + (par_p1_SS - 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
+      if ((par_p0_SS + par_p1_SS*(par_eta_SS - par_meaneta_SS)) > 0.5)
+      {
+        omega_SS_Bd  = 0.5;
+        omega_SS_Bdb = 0.5;
+      }
+      else{
+        omega_SS_Bd  = par_p0_SS + 0.5*par_delta_p0_SS + (par_p1_SS + 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
+        omega_SS_Bdb = par_p0_SS - 0.5*par_delta_p0_SS + (par_p1_SS - 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
+      }
     }
     
     if (cat_tag_OS == cat_tag_SS) {
@@ -113,12 +125,11 @@ protected:
     return 1.0 - tag*(omega_Bd - omega_Bdb) - tag*par_prod_asym*(1.0 - omega_Bd - omega_Bdb);
   }
 
-  virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,
-                                      const char* rangeName = 0) const;
+  virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName = 0) const;
   
   virtual Int_t	getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName = 0) const;
   
- virtual Double_t analyticalIntegral(Int_t code, const char* rangeName = 0) const {
+  virtual Double_t analyticalIntegral(Int_t code, const char* rangeName = 0) const {
    
    // std::cout << "CoshCoeffCombo::analyticalIntegral(" << code << ", ...): Called." << std::endl;
     switch(code){
