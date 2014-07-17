@@ -41,6 +41,7 @@ protected:
     
   Double_t evaluate() const ;
 
+  virtual Int_t getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName = 0) const;
   virtual Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName = 0) const;
   virtual Double_t analyticalIntegral(Int_t code, const char* rangeName = 0) const;
 

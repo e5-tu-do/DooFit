@@ -63,8 +63,14 @@ inline Double_t Coefficient::evaluate() const
   }
 } 
 
+Int_t Coefficient::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const{
+  std::printf("CHECK: In %s line %u (%s): #Vars = %d : allVars = ", __func__, __LINE__, __FILE__, allVars.getSize());
+  allVars.Print();
+
+  return 0;
+}
+
 Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const{
-  
   // WARNING: works only if untagged events hold a tag state of ±1
   
   // return 1: integration over one tag state 
@@ -79,7 +85,9 @@ Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars
   // a single tag state or the integral over two tag states.
   // For all other cases this implementation fails.
 
-  // std::printf("ERROR: In %s line %u (%s): allVars = ", __func__, __LINE__, __FILE__);
+
+  // debug
+  // std::printf("CHECK: In %s line %u (%s): #Vars = %d : allVars = ", __func__, __LINE__, __FILE__, allVars.getSize());
   // allVars.Print();
 
   if (allVars.getSize() == 0){
@@ -100,6 +108,7 @@ Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars
     allVars.Print();
     return 0;
   }
+  return 0;
 }
 
 Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) const{
@@ -109,15 +118,21 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
     abort();
   }
   if (coeff_type_ == kSin){
+    // std::printf("kSin: In %s line %u (%s) \n", __func__, __LINE__, __FILE__);
+    // std::cout << +2.0 * production_asym_ * cp_coeff_ * code << std::endl;
     return +2.0 * production_asym_ * cp_coeff_ * code;
   }
   else if (coeff_type_ == kCos){
+    // std::printf("kCos: In %s line %u (%s) \n", __func__, __LINE__, __FILE__);
+    // std::cout << -2.0 * production_asym_ * cp_coeff_ * code << std::endl;
     return -2.0 * production_asym_ * cp_coeff_ * code;
   }
   else if (coeff_type_ == kSinh){
     return 2.0 * cp_coeff_ * code;
   }
   else if (coeff_type_ == kCosh){
+    // std::printf("kCosh: In %s line %u (%s) \n", __func__, __LINE__, __FILE__);
+    // std::cout << 2.0 * cp_coeff_ * code << std::endl;
     return 2.0 * cp_coeff_ * code;
   }
   else{
