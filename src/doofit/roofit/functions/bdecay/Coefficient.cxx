@@ -108,7 +108,6 @@ Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars
     allVars.Print();
     return 0;
   }
-  return 0;
 }
 
 Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) const{
@@ -118,21 +117,15 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
     abort();
   }
   if (coeff_type_ == kSin){
-    // std::printf("kSin: In %s line %u (%s) \n", __func__, __LINE__, __FILE__);
-    // std::cout << +2.0 * production_asym_ * cp_coeff_ * code << std::endl;
     return +2.0 * production_asym_ * cp_coeff_ * code;
   }
   else if (coeff_type_ == kCos){
-    // std::printf("kCos: In %s line %u (%s) \n", __func__, __LINE__, __FILE__);
-    // std::cout << -2.0 * production_asym_ * cp_coeff_ * code << std::endl;
     return -2.0 * production_asym_ * cp_coeff_ * code;
   }
   else if (coeff_type_ == kSinh){
     return 2.0 * cp_coeff_ * code;
   }
   else if (coeff_type_ == kCosh){
-    // std::printf("kCosh: In %s line %u (%s) \n", __func__, __LINE__, __FILE__);
-    // std::cout << 2.0 * cp_coeff_ * code << std::endl;
     return 2.0 * cp_coeff_ * code;
   }
   else{
