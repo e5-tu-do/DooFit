@@ -61,7 +61,7 @@ inline Double_t Coefficient::evaluate() const
     std::cout << "ERROR\t" << "Coefficient::evaluate(): No valid coefficient type!" << std::endl;
     abort();
   }
-} 
+}
 
 Int_t Coefficient::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const{
   std::printf("CHECK: In %s line %u (%s): #Vars = %d : allVars = ", __func__, __LINE__, __FILE__, allVars.getSize());
@@ -108,6 +108,7 @@ Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars
     allVars.Print();
     return 0;
   }
+  // return 0;
 }
 
 Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) const{
