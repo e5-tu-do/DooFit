@@ -195,6 +195,16 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
 SPlotFit2::~SPlotFit2(){
   if (pdf_owned_ && pdf_ != NULL) delete pdf_;
   if (parameters_ != NULL) delete parameters_;
+
+  for (auto sweighted_data : sweighted_data_map_) {
+    delete sweighted_data.second;
+    sweighted_data.second = nullptr;
+  }
+
+  for (auto sweighted_hist : sweighted_hist_map_) {
+    delete sweighted_hist.second;
+    sweighted_hist.second = nullptr;
+  }
 }
 
 void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
@@ -284,6 +294,8 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
     sweighted_data_map_[comp_name] = new RooDataSet(input_data_->GetName(),input_data_->GetTitle(),input_data_,*input_data_->get(),0,TString("")+var_iter1->GetName()+"_sw");
   }
   delete yield_iterator;
+
+  delete sData;
 }
 
 std::pair<RooHistPdf*,RooDataHist*> SPlotFit2::GetHistPdf(const std::string& pdf_name, const RooArgSet& vars_set, const std::string& comp_name, const std::string& binningName){
