@@ -1,6 +1,12 @@
+# --------------------------------------------------------------------------------------------------------------
+# Authors: Christophe Cauet, Frank Meier, Florian Kruse
+# 2014-05-16
+# ______________________________________________________________________________________________________________
 
 root_generate_dictionaries_local(dfFunctionsDict 
 CategoryToReal.h
+#CosCoeffWithProdAsymm.h
+#CosCoeffCombo.h
 CoshCoeff.h
 CoshCoeffTagAsReal.h
 CoshCoeffWithAsymms.h 
@@ -14,7 +20,9 @@ SinCoeffWithAsymms.h
 SinCoeffCombo.h
 FunctionProduct.h
 FunctionTripleProduct.h
-LinearFunctionWithOffset.h 
+LinearFunctionWithOffset.h
+PolyTest.h 
+PowerLaw.h 
 TauCorrectionWithBetaFactor.h 
 AtanAcceptanceIncludingBeta.h 
 AtanAcceptance.h 
@@ -28,11 +36,14 @@ CombinationOfCalibratedMistags.h
 CombinationOfUncalibratedMistags.h
 CombinationOfMistagsWithAsymmetries.h
 CombinedTagCalibrated.h
-CombinedTagUncalibrated.h)
+CombinedTagUncalibrated.h
+DooDecRateCoeff.h)
 
 add_library(dfFunctions SHARED 
 CategoryToReal.h CategoryToReal.cxx CategoryToReal_dict.h CategoryToReal_dict.cc
 CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
+#CosCoeffWithProdAsymm.h CosCoeffWithProdAsymm.cxx CosCoeffWithProdAsymm_dict.h CosCoeffWithProdAsymm_dict.cc
+#CosCoeffCombo.h CosCoeffCombo.cxx CosCoeffCombo_dict.h CosCoeffCombo_dict.cc
 CoshCoeffTagAsReal.h CoshCoeffTagAsReal.cxx CoshCoeffTagAsReal_dict.h CoshCoeffTagAsReal_dict.cc
 CoshCoeffWithAsymms.h CoshCoeffWithAsymms.cxx CoshCoeffWithAsymms_dict.h CoshCoeffWithAsymms_dict.cc
 CoshCoeffCombo.h CoshCoeffCombo.cxx CoshCoeffCombo_dict.h CoshCoeffCombo_dict.cc
@@ -47,6 +58,8 @@ FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dic
 FunctionTripleProduct.h FunctionTripleProduct.cxx FunctionTripleProduct_dict.h FunctionTripleProduct_dict.cc
 FunctionSum.h FunctionSum.cxx FunctionSum_dict.h FunctionSum_dict.cc
 LinearFunctionWithOffset.h LinearFunctionWithOffset.cxx LinearFunctionWithOffset_dict.h LinearFunctionWithOffset_dict.cc
+PolyTest.h PolyTest.cxx PolyTest_dict.h PolyTest_dict.cc
+PowerLaw.h PowerLaw.cxx PowerLaw_dict.h PowerLaw_dict.cc
 TauCorrectionWithBetaFactor.h TauCorrectionWithBetaFactor.cxx TauCorrectionWithBetaFactor_dict.h TauCorrectionWithBetaFactor_dict.cc
 AtanAcceptanceIncludingBeta.h AtanAcceptanceIncludingBeta.cxx AtanAcceptanceIncludingBeta_dict.h AtanAcceptanceIncludingBeta_dict.cc
 AtanAcceptance.h AtanAcceptance.cxx AtanAcceptance_dict.h AtanAcceptance_dict.cc
@@ -59,7 +72,8 @@ CombinationOfCalibratedMistags.h CombinationOfCalibratedMistags.cxx CombinationO
 CombinationOfUncalibratedMistags.h CombinationOfUncalibratedMistags.cxx CombinationOfUncalibratedMistags_dict.h CombinationOfUncalibratedMistags_dict.cc
 CombinationOfMistagsWithAsymmetries.h CombinationOfMistagsWithAsymmetries.cxx CombinationOfMistagsWithAsymmetries_dict.h CombinationOfMistagsWithAsymmetries_dict.cc
 CombinedTagCalibrated.h CombinedTagCalibrated.cxx CombinedTagCalibrated_dict.h CombinedTagCalibrated_dict.cc
-CombinedTagUncalibrated.h CombinedTagUncalibrated.cxx CombinedTagUncalibrated_dict.h CombinedTagUncalibrated_dict.cc)
+CombinedTagUncalibrated.h CombinedTagUncalibrated.cxx CombinedTagUncalibrated_dict.h CombinedTagUncalibrated_dict.cc
+DooDecRateCoeff.h DooDecRateCoeff.cxx DooDecRateCoeff_dict.h DooDecRateCoeff_dict.cc)
 
 target_link_libraries(dfFunctions ${ALL_LIBRARIES})
 
@@ -71,7 +85,9 @@ install(FILES
 CategoryToReal.h
 SinhCoeff.h 
 FunctionProduct.h 
-FunctionTripleProduct.h 
+FunctionTripleProduct.h
+#CosCoeffWithProdAsymm.h
+#CosCoeffCombo.h
 CoshCoeff.h
 CoshCoeffTagAsReal.h
 CoshCoeffWithAsymms.h
@@ -84,6 +100,8 @@ SinCoeffWithAsymms.h
 SinCoeffCombo.h
 FunctionSum.h
 LinearFunctionWithOffset.h 
+PolyTest.h 
+PowerLaw.h 
 AtanAcceptanceIncludingBeta.h 
 AtanAcceptance.h
 TauCorrectionWithBetaFactor.h 
@@ -97,4 +115,7 @@ CombinationOfUncalibratedMistags.h
 CombinationOfMistagsWithAsymmetries.h
 CombinedTagCalibrated.h
 CombinedTagUncalibrated.h
+DooDecRateCoeff.h
 DESTINATION include/doofit/roofit/functions)
+
+add_subdirectory(bdecay)

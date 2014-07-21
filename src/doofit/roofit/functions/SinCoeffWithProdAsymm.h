@@ -69,7 +69,7 @@ protected:
     
     // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
 //    ++n_calls;
-    return type_coeff_*(cat_tag_*(1.0 - par_omega_Bd_ - par_omega_Bdb_) - par_prod_asym_*(1.0 - cat_tag_*(par_omega_Bd_ - par_omega_Bdb_)))*par_S_ ;
+    return par_S_*type_coeff_*(cat_tag_*(1.0 - par_omega_Bd_ - par_omega_Bdb_) - par_prod_asym_*(1.0 - cat_tag_*(par_omega_Bd_ - par_omega_Bdb_))) ;
   }
 
   virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,
@@ -84,10 +84,10 @@ protected:
     
     //++n_calls;
     //assert(0 != code);
-    if (1 == code) {
+    // if (1 == code) {
       //std::cout << "SinCoeffWithProdAsymm::analyticalIntegral(" << code << ", ...): Called." << std::endl;
-      return 0.0;
-    }
+      // return 0.0;
+    // }
     // must not get here
     //assert(1 == 0);
   }

@@ -52,8 +52,8 @@ SinCoeffWithProdAsymm::SinCoeffWithProdAsymm(const SinCoeffWithProdAsymm& other,
   par_omega_Bd_("par_omega_Bd_",this,other.par_omega_Bd_),
   par_omega_Bdb_("par_omega_Bdb_",this,other.par_omega_Bdb_),
   cat_tag_("cat_tag_",this,other.cat_tag_),
-  type_coeff_(other.type_coeff_),
-  par_prod_asym_("par_prod_asym_",this,other.par_prod_asym_)
+  par_prod_asym_("par_prod_asym_",this,other.par_prod_asym_),
+  type_coeff_(other.type_coeff_)
   {
   }
 
@@ -68,11 +68,11 @@ Int_t SinCoeffWithProdAsymm::getAnalyticalIntegral(RooArgSet& allVars,
   if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
   #endif
   
-  matchArgs(allVars, analVars, cat_tag_);
+  // matchArgs(allVars, analVars, cat_tag_);
     
-  if (analVars.contains(cat_tag_.arg())) {
-    return 1;
-  }
+  // if (analVars.contains(cat_tag_.arg())) {
+  //   return 1;
+  // }
   
   return 0;
 }

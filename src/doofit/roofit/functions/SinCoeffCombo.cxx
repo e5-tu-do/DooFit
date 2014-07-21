@@ -85,8 +85,8 @@ SinCoeffCombo::SinCoeffCombo(const SinCoeffCombo& other, const char* name) :
   par_eta_SS("par_eta_SS",this,other.par_eta_SS),
   par_delta_p0_SS("par_delta_p0_SS",this,other.par_delta_p0_SS),
   par_delta_p1_SS("par_delta_p1_SS",this,other.par_delta_p1_SS),
-  type_coeff(other.type_coeff),
-  par_prod_asym("par_prod_asym",this,other.par_prod_asym)
+  par_prod_asym("par_prod_asym",this,other.par_prod_asym),
+  type_coeff(other.type_coeff)
   {
   }
 
@@ -101,11 +101,11 @@ Int_t SinCoeffCombo::getAnalyticalIntegral(RooArgSet& allVars,
   if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
   #endif
   
-  matchArgs(allVars, analVars, cat_tag_OS);
+  // matchArgs(allVars, analVars, cat_tag_OS);
     
-  if (analVars.contains(cat_tag_OS.arg())) {
-    return 1;
-  }
+  // if (analVars.contains(cat_tag_OS.arg())) {
+    // return 1;
+  // }
   
   return 0;
 }
