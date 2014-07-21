@@ -87,7 +87,9 @@ EasyFit::EasyFit(const string& fit_name)
 }
 
 EasyFit::~EasyFit() {
-
+  if (fit_result_ != nullptr) {
+    delete fit_result_;
+  }
 }
 
 void EasyFit::SetPdfAndDataSet(RooAbsPdf* pdf, RooAbsData* data) {
