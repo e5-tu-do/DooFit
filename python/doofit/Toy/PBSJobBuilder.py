@@ -35,7 +35,7 @@ from optparse import OptionParser
 # #PBS -j oe
 # #PBS -l walltime=%(walltime)s
 # #PBS -l nodes=1:ppn=%(num_cpu)s
-# #PBS -l mem=5000mb
+# #PBS -l vmem=%(vmem)s
 # export SCRATCH=/local/$USER/$PBS_JOBID
 #
 # echo "Auto-generated PBS script"
@@ -62,6 +62,7 @@ from optparse import OptionParser
 #@li @c log_file: the log file for the individual job
 #@li @c walltime: the walltime for the job
 #@li @c num_cpu:  the number of CPUs to use
+#@li @c vmem:     the number of total vmem the job can use
 #@li @c seeds:    the seeds for the iterations in this individual job to use (will be generated as <tt>minseed maxseed</tt> compatible to the above @c for statement)
 #@li @c job_number: the number of the individual job
 #@li @c scan1_start: the current scan value 1 starting point
@@ -105,6 +106,7 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
   min_id = 0
   job_base_name = options.basename
   min_seed = options.minseed
+  vmem = options.vmem_per_core*num_cpu
   if job_base_name == "pbs_job":
     job_base_name = os.path.basename(jobs_dir)
   if os.path.isfile(os.path.join(jobs_dir,'max_seed')):
@@ -124,15 +126,20 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
   submit_file.writelines('#!/bin/sh\n')
   scan2_value = options.scan2start
   job_index  = min_id
+
+  bulk_dir = os.path.join(jobs_dir, "job_bulk_dir")
+  if not os.path.exists(bulk_dir):
+    os.makedirs(bulk_dir)
+
   while scan2_value <= options.scan2end:
     scan1_value = options.scan1start
     while scan1_value <= options.scan1end:
       for i in range(min_id,min_id+num_jobs):
         settings_dict = {
           'job_name'   : job_base_name + '_' + str(job_index),
-          'out_file'   : os.path.join(jobs_dir,'o_' + job_base_name + '_' + str(job_index) + '.log'),
-          'err_file'   : os.path.join(jobs_dir,'e_' + job_base_name + '_' + str(job_index) + '.log'),
-          'log_file'   : os.path.join(jobs_dir,'l_' + job_base_name + '_' + str(job_index) + '.log'),
+          'out_file'   : os.path.join(bulk_dir,'o_' + job_base_name + '_' + str(job_index) + '.log'),
+          'err_file'   : os.path.join(bulk_dir,'e_' + job_base_name + '_' + str(job_index) + '.log'),
+          'log_file'   : os.path.join(bulk_dir,'l_' + job_base_name + '_' + str(job_index) + '.log'),
           'walltime'   : walltime,
           'num_cpu'    : str(num_cpu),
           'job_number' : str(job_index),
@@ -144,10 +151,14 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
           'scan2_end'  : min(scan2_value+options.scan2increment*(options.scan2perjob-1),options.scan2end),
           'scan2_increment' : options.scan2increment,
           'jobs_dir'   : jobs_dir,
-          'parametern' : options.parametern
+          'parametern' : options.parametern,
+          'vmem'       : str(vmem)+"mb"
           }
-        min_seed = create_single_job(proto_script, settings_dict, jobs_dir, num_iterations_per_job, min_seed)
-        submit_file.writelines('qsub -q ' + options.queue + ' ' + os.path.join(jobs_dir,settings_dict['job_name']+'.sh\n'))
+        min_seed = create_single_job(proto_script, settings_dict, bulk_dir, num_iterations_per_job, min_seed)
+        if len(options.queue) > 0:
+          submit_file.writelines('qsub -q ' + options.queue + ' ' + os.path.join(bulk_dir,settings_dict['job_name']+'.sh\n'))
+        else:
+          submit_file.writelines('qsub ' + os.path.join(bulk_dir,settings_dict['job_name']+'.sh\n'))
         job_index += 1
       scan1_value += options.scan1increment*options.scan1perjob
     scan2_value += options.scan2increment*options.scan2perjob
@@ -172,7 +183,7 @@ if __name__ == "__main__":
  %prog proto_script jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu
     """
   parser = OptionParser(usage, version="1.0")
-  parser.add_option("-q", "--queue", action="store", type="string", dest="queue", default="default", help="PBS queue to use")
+  parser.add_option("-q", "--queue", action="store", type="string", dest="queue", default="", help="PBS queue to use")
   parser.add_option("-b", "--basename", action="store", type="string", dest="basename", default="pbs_job", help="PBS job base name")
   parser.add_option("-s", "--minseed", action="store", type="int", dest="minseed", default=1, help="Minimal seed to use")
   parser.add_option("", "--scan1-start", action="store", type="float", dest="scan1start", default=0.0, help="Start value of scan parameter 1")
@@ -184,6 +195,7 @@ if __name__ == "__main__":
   parser.add_option("", "--scan2-increment", action="store", type="float", dest="scan2increment", default=1.0, help="Increment value of scan parameter 2")
   parser.add_option("", "--scan2-per-job", action="store", type="float", dest="scan2perjob", default=1.0, help="Number of scan points per job (default 1) for scan parameter 2")
   parser.add_option("-n", "--parameter-n", action="store", type="int", dest="parametern", default=0, help="Additional arbitrary parameter n (e.g. number of toys)")
+  parser.add_option("-m", "--vmem-per-core", action="store", type="int", dest="vmem_per_core", default=3000, help="Required vmem per core in PBS notation (in MB, default 3000)")
   (options, args) = parser.parse_args()
   if len(args) < 6:
     print 'Usage: ' + sys.argv[0] + ' proto_script jobs_dir num_pbs_jobs num_iterations_per_job walltime num_cpu'

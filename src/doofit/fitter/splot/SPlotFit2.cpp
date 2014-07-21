@@ -263,7 +263,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
   
   // iterate over left over parameters of full disc pdf and set constant
   RooLinkedListIter* par_disc_set_iterator = (RooLinkedListIter*)par_disc_set->createIterator();
-  while (var_iter1=(RooRealVar*)par_disc_set_iterator->Next()) {
+  while ((var_iter1=(RooRealVar*)par_disc_set_iterator->Next())) {
     var_iter1->setConstant();
   }
   delete par_disc_set_iterator;
@@ -277,7 +277,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
 
   // iterate over yields
   RooLinkedListIter* yield_iterator = (RooLinkedListIter*)yields_.createIterator();
-  while (var_iter1=(RooRealVar*)yield_iterator->Next()) {
+  while ((var_iter1=(RooRealVar*)yield_iterator->Next())) {
     std::string comp_name = var_iter1->GetName();
     
     sinfo << "SPlotFit2: Adding sweighted dataset with name " << comp_name << endmsg;

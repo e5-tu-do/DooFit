@@ -209,9 +209,9 @@ class SPlotFit2{
   
   bool use_minos_;
   
-  TString starting_values_;
-  
   doofit::fitter::easyfit::EasyFit* easyfitter_;
+
+  TString starting_values_;  
 };
 
 } //namespace splot

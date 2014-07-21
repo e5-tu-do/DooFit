@@ -60,7 +60,7 @@ namespace config {
      *
      *  @param os ostream to print to
      */
-    virtual void Print(std::ostream& os) const;
+    virtual void Print() const;
     
     /**
      *  @brief Getter for variable name
