@@ -56,6 +56,7 @@ inline Double_t Coefficient::evaluate() const
   }
   else if (coeff_type_ == kCosh){
     return cp_coeff_ * ( 1.0 - tag_ * production_asym_ * ( 1.0 - mistag_b_ - mistag_bbar_ ) - tag_ * ( mistag_b_ - mistag_bbar_ ) );
+    // return 1.0 - tag_ * production_asym_ * ( 1.0 - mistag_b_ - mistag_bbar_ ) - tag_ * ( mistag_b_ - mistag_bbar_ );
   }
   else{
     std::cout << "ERROR\t" << "Coefficient::evaluate(): No valid coefficient type!" << std::endl;
@@ -118,16 +119,17 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
     abort();
   }
   if (coeff_type_ == kSin){
-    return +2.0 * production_asym_ * cp_coeff_ * code;
+    return +1.0 * production_asym_ * cp_coeff_ * code;
   }
   else if (coeff_type_ == kCos){
-    return -2.0 * production_asym_ * cp_coeff_ * code;
+    return -1.0 * production_asym_ * cp_coeff_ * code;
   }
   else if (coeff_type_ == kSinh){
-    return 2.0 * cp_coeff_ * code;
+    std::printf("WARNING: In %s line %u (%s) : sinh coefficient not yet implemented! \n", __func__, __LINE__, __FILE__);
+    return 1;
   }
   else if (coeff_type_ == kCosh){
-    return 2.0 * cp_coeff_ * code;
+    return 1.0 * cp_coeff_ * code;
   }
   else{
     std::printf("ERROR: In %s line %u (%s) : No valid coefficent! \n", __func__, __LINE__, __FILE__);
