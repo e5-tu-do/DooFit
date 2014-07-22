@@ -289,7 +289,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
   delete par_disc_set_iterator;
   
   // create datasets
-  RooStats::SPlot *sData = new RooStats::SPlot("sData","SPlot",*input_data_,pdf_,yields_, RooArgSet(), true, true);
+  RooStats::SPlot *sData = new RooStats::SPlot("sData","SPlot",*input_data_,pdf_,yields_);//, RooArgSet(), true, false);
 
   //=========================================================================
   // create sweighted datasets

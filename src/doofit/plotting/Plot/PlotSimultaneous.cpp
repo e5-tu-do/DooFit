@@ -58,8 +58,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooAbsPdf& sub_pdf = *(pdf.getPdf(sim_cat_type->GetName()));
     if (&sub_pdf != NULL) {
       //RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
-      sim_cat.Print();
-      sdebug << sim_cat_type->getVal() << endmsg;
+      // sim_cat.Print();
+      // sdebug << sim_cat_type->getVal() << endmsg;
       sim_cat.setIndex(sim_cat_type->getVal());
       
       std::string cut_string = "";
