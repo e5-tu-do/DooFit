@@ -64,7 +64,7 @@ SPlotFit2::SPlotFit2(doofit::fitter::easyfit::EasyFit& easyfit, RooDataSet& data
   use_minos_(true),
   easyfitter_(&easyfit)
 {
-  
+  pdf_ = easyfitter_->FitPdf();
 }
 
   
@@ -197,6 +197,7 @@ SPlotFit2::~SPlotFit2(){
   if (parameters_ != NULL) delete parameters_;
 
   for (auto sweighted_data : sweighted_data_map_) {
+    // sdebug << "SPlotFit2::~SPlotFit2(): Deleting sweighted dataset: " << sweighted_data.first << endmsg;
     delete sweighted_data.second;
     sweighted_data.second = nullptr;
   }
@@ -220,14 +221,13 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
     
     const RooFitResult* fit_result = easyfitter_->GetFitResult();
     parameters_ = easyfitter_->ParameterArgSet();
-    pdf_ = easyfitter_->FitPdf();
 
     if (fit_result != NULL) {
       fit_result->Print("v");
     } else {
       serr << "Error in SPlotFit2::Fit(RooLinkedList*): Fit result not available." << endmsg;
     }
-  } else {
+  } else { // if (easyfitter_ != NULL)
     swarn << "SPlotFit2::Fit(): Not using EasyFit for fitting! This will be deprecated in the near future." << endmsg;
     swarn << "SPlotFit2::Fit(): Seriously, switch to EasyFit ASAP! It's much good and beautiful." << endmsg;
     
@@ -295,6 +295,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
   }
   delete yield_iterator;
 
+  // sdebug << "SPlotFit2::Fit(...): Deleting SPlot." << endmsg;
   delete sData;
 }
 
