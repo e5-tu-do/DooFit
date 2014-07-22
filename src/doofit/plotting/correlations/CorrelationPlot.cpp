@@ -44,6 +44,9 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
     RooArgList par_list_float_final = fit_result_.floatParsFinal();
     TH2* hist_corr = fit_result_.correlationHist();
     
+    // fit_result_.Print();
+    // hist_corr->Print();
+
     double max_xsize = 0.0;
     TAxis* axis = NULL;
     axis = hist_corr->GetXaxis();
@@ -111,6 +114,8 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
     
     namespace fs = boost::filesystem;
     doocore::config::Summary::GetInstance().AddFile(fs::path(plot_path) / fs::path("pdf/FitResultsCorrMatrix_RedBlueDiscete_wText.pdf"));
+
+    delete hist_corr;
   }
 }
 
