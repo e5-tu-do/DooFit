@@ -54,6 +54,7 @@ SPlotFit2::SPlotFit2(doofit::fitter::easyfit::EasyFit& easyfit, RooDataSet& data
   parameters_(NULL),
   num_cpu_(1),
   input_data_(&data),
+  sweighted_data_(nullptr),
   disc_vars_(),
   cont_vars_(),
   disc_pdfs_(),
@@ -75,6 +76,7 @@ SPlotFit2::SPlotFit2() :
   parameters_(NULL),
   num_cpu_(4),
   input_data_(),
+  sweighted_data_(nullptr),
   disc_vars_(),
   cont_vars_(),
   disc_pdfs_(),
@@ -96,6 +98,7 @@ SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
   parameters_(NULL),
   num_cpu_(4),
   input_data_(&data),
+  sweighted_data_(nullptr),
   disc_vars_(),
   cont_vars_(),
   disc_pdfs_(),
@@ -117,6 +120,7 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector
   parameters_(NULL),
   num_cpu_(4),
   input_data_(&data),
+  sweighted_data_(nullptr),
   disc_vars_(),
   cont_vars_(),
   disc_pdfs_(),
@@ -167,6 +171,7 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
   parameters_(NULL),
   num_cpu_(4),
   input_data_(NULL),
+  sweighted_data_(nullptr),
   disc_vars_(),
   cont_vars_(),
   disc_pdfs_(),
@@ -206,6 +211,11 @@ SPlotFit2::~SPlotFit2(){
     delete sweighted_hist.second;
     sweighted_hist.second = nullptr;
   }
+
+  // if (sweighted_data_ != nullptr) {
+  //   sdebug << "SPlotFit2::~SPlotFit2(): Deleting sweighted dataset: " << sweighted_data_ << endmsg;
+  //   delete sweighted_data_;
+  // }
 }
 
 void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
@@ -279,7 +289,7 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
   delete par_disc_set_iterator;
   
   // create datasets
-  RooStats::SPlot *sData = new RooStats::SPlot("sData","SPlot",*input_data_,pdf_,yields_);
+  RooStats::SPlot *sData = new RooStats::SPlot("sData","SPlot",*input_data_,pdf_,yields_, RooArgSet(), true, true);
 
   //=========================================================================
   // create sweighted datasets
