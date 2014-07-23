@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------
 # Authors: Christophe Cauet
-# 2014-07-10
+# 2014-07-23
 # ______________________________________________________________________________
 
 root_generate_dictionaries_local(dfBDecayDict 
@@ -8,6 +8,7 @@ CalibratedMistag.h
 CombinedTag.h
 CombinedMistag.h
 Coefficient.h
+SuperCoefficient.h
 )
 
 add_library(dfBDecay SHARED 
@@ -15,6 +16,7 @@ CalibratedMistag.h CalibratedMistag.cxx CalibratedMistag_dict.h CalibratedMistag
 CombinedTag.h CombinedTag.cxx CombinedTag_dict.h CombinedTag_dict.cc
 CombinedMistag.h CombinedMistag.cxx CombinedMistag_dict.h CombinedMistag_dict.cc
 Coefficient.h Coefficient.cxx Coefficient_dict.h Coefficient_dict.cc
+SuperCoefficient.h SuperCoefficient.cxx SuperCoefficient_dict.h SuperCoefficient_dict.cc
 )
 
 target_link_libraries(dfBDecay ${ALL_LIBRARIES})
@@ -28,4 +30,5 @@ CalibratedMistag.h
 CombinedTag.h
 CombinedMistag.h
 Coefficient.h
+SuperCoefficient.h
 DESTINATION include/doofit/roofit/functions/bdecay)
