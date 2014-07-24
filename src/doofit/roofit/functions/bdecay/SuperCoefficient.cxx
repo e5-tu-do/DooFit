@@ -52,16 +52,16 @@ SuperCoefficient::SuperCoefficient(const std::string& name,
   delta_p1_ss_("delta_p1_ss_","delta_p1_ss_",this,_delta_p1_ss_),
   production_asym_("production_asym_","production_asym_",this,_production_asym_),
   calibrate_os_(_calibrate_os_),
-  calibrate_ss_(_calibrate_ss_)//,
-  // eta_cal_os_(eta_os_),
-  // eta_cal_os_b_(eta_os_),
-  // eta_cal_os_bbar_(eta_os_),
-  // eta_cal_ss_(eta_ss_),
-  // eta_cal_ss_b_(eta_ss_),
-  // eta_cal_ss_bbar_(eta_ss_),
-  // eta_combined_b_(0.5),
-  // eta_combined_bbar_(0.5),
-  // tag_combined_(1)
+  calibrate_ss_(_calibrate_ss_),
+  eta_cal_os_(eta_os_),
+  eta_cal_os_b_(eta_os_),
+  eta_cal_os_bbar_(eta_os_),
+  eta_cal_ss_(eta_ss_),
+  eta_cal_ss_b_(eta_ss_),
+  eta_cal_ss_bbar_(eta_ss_),
+  eta_combined_b_(0.5),
+  eta_combined_bbar_(0.5),
+  tag_combined_(1)
 { 
 } 
 
@@ -86,16 +86,16 @@ SuperCoefficient::SuperCoefficient(const SuperCoefficient& other, const char* na
   delta_p1_ss_("delta_p1_ss_",this,other.delta_p1_ss_),
   production_asym_("production_asym_",this,other.production_asym_),
   calibrate_os_(other.calibrate_os_),
-  calibrate_ss_(other.calibrate_ss_)//,
-  // eta_cal_os_(other.eta_cal_os_),
-  // eta_cal_os_b_(other.eta_cal_os_b_),
-  // eta_cal_os_bbar_(other.eta_cal_os_bbar_),
-  // eta_cal_ss_(other.eta_cal_ss_),
-  // eta_cal_ss_b_(other.eta_cal_ss_b_),
-  // eta_cal_ss_bbar_(other.eta_cal_ss_bbar_),
-  // eta_combined_b_(other.eta_combined_b_),
-  // eta_combined_bbar_(other.eta_combined_bbar_),
-  // tag_combined_(other.tag_combined_)
+  calibrate_ss_(other.calibrate_ss_),
+  eta_cal_os_(other.eta_cal_os_),
+  eta_cal_os_b_(other.eta_cal_os_b_),
+  eta_cal_os_bbar_(other.eta_cal_os_bbar_),
+  eta_cal_ss_(other.eta_cal_ss_),
+  eta_cal_ss_b_(other.eta_cal_ss_b_),
+  eta_cal_ss_bbar_(other.eta_cal_ss_bbar_),
+  eta_combined_b_(other.eta_combined_b_),
+  eta_combined_bbar_(other.eta_combined_bbar_),
+  tag_combined_(other.tag_combined_)
 { 
 } 
 
@@ -247,7 +247,7 @@ Double_t SuperCoefficient::evaluate() const
   combine_tags();
 
   if (coeff_type_ == kSin){
-    return -1.0 * cp_coeff_ * ( tag_combined_ - production_asym_ * ( 1.0 - tag_combined_ * eta_combined_b_ + tag_combined_ * eta_combined_bbar_ ) - tag_combined_ * ( eta_combined_b_ + eta_combined_bbar_ ) );
+    return -2.0 * cp_coeff_ * ( tag_combined_ - production_asym_ * ( 1.0 - tag_combined_ * eta_combined_b_ + tag_combined_ * eta_combined_bbar_ ) - tag_combined_ * ( eta_combined_b_ + eta_combined_bbar_ ) );
   }
   else if (coeff_type_ == kCos){
     return +1.0 * cp_coeff_ * ( tag_combined_ - production_asym_ * ( 1.0 - tag_combined_ * eta_combined_b_ + tag_combined_ * eta_combined_bbar_ ) - tag_combined_ * ( eta_combined_b_ + eta_combined_bbar_ ) );
@@ -269,22 +269,40 @@ Double_t SuperCoefficient::evaluate() const
 Int_t SuperCoefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
 { 
   // debug
-  std::printf("CHECK: In %s line %u (%s): #Vars = %d : allVars = ", __func__, __LINE__, __FILE__, allVars.getSize());
-  allVars.Print();
+  // std::printf("CHECK: In %s line %u (%s): #Vars = %d : allVars = ", __func__, __LINE__, __FILE__, allVars.getSize());
+  // allVars.Print();
 
-  // if (matchArgs(allVars,analVars,x)) return 1 ; 
+  if (matchArgs(allVars, analVars, tag_os_)) return 1 ;
+  if (matchArgs(allVars, analVars, tag_ss_)) return 1 ;
+  if (matchArgs(allVars, analVars, tag_os_, tag_ss_)) return 2 ;
   return 0 ; 
 } 
 
 Double_t SuperCoefficient::analyticalIntegral(Int_t code, const char* rangeName) const  
 { 
-  // RETURN ANALYTICAL INTEGRAL DEFINED BY RETURN CODE ASSIGNED BY getAnalyticalIntegral
-  // THE MEMBER FUNCTION x.min(rangeName) AND x.max(rangeName) WILL RETURN THE INTEGRATION
-  // BOUNDARIES FOR EACH OBSERVABLE x
-
-  // assert(code==1) ; 
-  // return (x.max(rangeName)-x.min(rangeName)) ; 
-  return 0 ; 
+  if (!(code == 1 || code == 2)){
+    std::printf("ERROR: In %s line %u (%s) : code is not 1 or 2 \n", __func__, __LINE__, __FILE__);
+    return 0;
+    abort();
+  }
+  if (coeff_type_ == kSin){
+    return +2.0 * production_asym_ * cp_coeff_ * code;
+  }
+  else if (coeff_type_ == kCos){
+    return -2.0 * production_asym_ * cp_coeff_ * code;
+  }
+  else if (coeff_type_ == kSinh){
+    std::printf("WARNING: In %s line %u (%s) : sinh coefficient not yet implemented! \n", __func__, __LINE__, __FILE__);
+    return 2;
+  }
+  else if (coeff_type_ == kCosh){
+    return 2.0 * cp_coeff_ * code;
+  }
+  else{
+    std::printf("ERROR: In %s line %u (%s) : No valid coefficent! \n", __func__, __LINE__, __FILE__);
+    return 0;
+    abort();
+  }
 } 
 
 } // namespace bdecay
