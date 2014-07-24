@@ -247,7 +247,7 @@ Double_t SuperCoefficient::evaluate() const
   combine_tags();
 
   if (coeff_type_ == kSin){
-    return -2.0 * cp_coeff_ * ( tag_combined_ - production_asym_ * ( 1.0 - tag_combined_ * eta_combined_b_ + tag_combined_ * eta_combined_bbar_ ) - tag_combined_ * ( eta_combined_b_ + eta_combined_bbar_ ) );
+    return -1.0 * cp_coeff_ * ( tag_combined_ - production_asym_ * ( 1.0 - tag_combined_ * eta_combined_b_ + tag_combined_ * eta_combined_bbar_ ) - tag_combined_ * ( eta_combined_b_ + eta_combined_bbar_ ) );
   }
   else if (coeff_type_ == kCos){
     return +1.0 * cp_coeff_ * ( tag_combined_ - production_asym_ * ( 1.0 - tag_combined_ * eta_combined_b_ + tag_combined_ * eta_combined_bbar_ ) - tag_combined_ * ( eta_combined_b_ + eta_combined_bbar_ ) );
@@ -258,7 +258,6 @@ Double_t SuperCoefficient::evaluate() const
   }
   else if (coeff_type_ == kCosh){
     return cp_coeff_ * ( 1.0 - tag_combined_ * production_asym_ * ( 1.0 - eta_combined_b_ - eta_combined_bbar_ ) - tag_combined_ * ( eta_combined_b_ - eta_combined_bbar_ ) );
-    // return 1.0 - tag_combined_ * production_asym_ * ( 1.0 - eta_combined_b_ - eta_combined_bbar_ ) - tag_combined_ * ( eta_combined_b_ - eta_combined_bbar_ );
   }
   else{
     std::cout << "ERROR\t" << "SuperCoefficient::evaluate(): No valid coefficient type!" << std::endl;
