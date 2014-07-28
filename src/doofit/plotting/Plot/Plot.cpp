@@ -297,7 +297,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooCmdArg arg_num_cpu;
     if (config_plot_.num_cpu() > 1 && !ignore_num_cpu_) {
       arg_num_cpu = NumCPU(config_plot_.num_cpu());
-    } else if (ignore_num_cpu_) {
+    } else if (ignore_num_cpu_ && config_plot_.num_cpu() > 1) {
       swarn << "Warning in Plot::PlotHandler(...): Multicore plotting is requested but intentionally disabled for this plot to avoid nasty RooFit plotting bugs." << endmsg;
     }
     
