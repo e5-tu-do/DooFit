@@ -119,17 +119,17 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
     abort();
   }
   if (coeff_type_ == kSin){
-    return +1.0 * production_asym_ * cp_coeff_ * code;
+    return +2.0 * production_asym_ * cp_coeff_ * code;
   }
   else if (coeff_type_ == kCos){
-    return -1.0 * production_asym_ * cp_coeff_ * code;
+    return -2.0 * production_asym_ * cp_coeff_ * code;
   }
   else if (coeff_type_ == kSinh){
     std::printf("WARNING: In %s line %u (%s) : sinh coefficient not yet implemented! \n", __func__, __LINE__, __FILE__);
     return 1;
   }
   else if (coeff_type_ == kCosh){
-    return 1.0 * cp_coeff_ * code;
+    return 2.0 * cp_coeff_ * code;
   }
   else{
     std::printf("ERROR: In %s line %u (%s) : No valid coefficent! \n", __func__, __LINE__, __FILE__);
