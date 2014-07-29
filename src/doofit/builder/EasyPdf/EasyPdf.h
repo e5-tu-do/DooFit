@@ -13,6 +13,7 @@
 #include "RooGlobalFunc.h"
 #include "RooArgSet.h"
 #include "RooArgList.h"
+#include "TMatrixDSym.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -22,6 +23,8 @@ class RooRealVar;
 class RooAbsCategoryLValue;
 class RooAbsPdf;
 class RooGaussian;
+class RooMultiVarGaussian;
+class RooPolynomial;
 class RooCBShape;
 class RooIpatia;
 class RooIpatia2;
@@ -454,6 +457,42 @@ class EasyPdf {
    */
   RooGaussian& Gaussian(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma);
   
+  /**
+   *  @brief Add and access a Multivariate Gaussian PDF
+   *
+   *  Request a RooGaussian by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param xvec vector of variables that the MultiVarGaussian is defined on
+   *  @param mu mean values of variables that MultiVarGaussian is defined on
+   *  @param covMatrix covariance Matrix of variables
+   *  @return the appropriate PDF
+   */
+  RooMultiVarGaussian& MultiVarGaussian(const std::string &name, const RooArgList& xvec, const RooArgList& mu, const TMatrixDSym& covMatrix);
+
+  /**
+   *  @brief Add and access a Polynomial PDF
+   *
+   *  Request a RooPolynomial by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  Polynomial implements a polynomial p.d.f of the form
+   *  f(x) = sum_i a_i * x^i
+   *  By default coefficient a_0 is chosen to be 1, as polynomial probability 
+   *  density functions have one degree of freedome less than polynomial 
+   *  functions due to the normalization condition.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param coefficientList RooArgSet of coefficients
+   *  @param lowestOrder lowest order of polynomial (Default = 1)
+   *  @return the appropriate PDF
+   */
+  RooPolynomial& Polynomial(const std::string& name, RooAbsReal& x, RooArgList& coefficientList, Int_t lowestOrder = 1);
+
   /**
    *  @brief Add and access a Crystal Ball Shape PDF
    *
@@ -1016,6 +1055,42 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooEffResAddModel& DoubleGaussEfficiencyModel(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& sigma1, RooAbsReal& sigma2, RooAbsReal& fraction);
+  
+  /**
+   *  @brief Add and access a triple RooGaussEfficiencyModel
+   *
+   *  Request a triple RooGaussEfficiencyModel by a specified name. If the PDF
+   *  does not yet exist in this EasyPdf pool of PDFs, it is created and
+   *  returned. Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  The resolution model is modelled as
+   *
+   *  P(x) = fraction1 * GaussEfficiencyModel(x,eff,mean,sigma1)
+   *       + fraction2 * GaussEfficiencyModel(x,eff,mean,sigma2)
+   *       + fraction3 * GaussEfficiencyModel(x,eff,mean,sigma3)
+   *
+   *  with fraction3 = (1-fraction1-fraction2) implicitly by the PDF.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @param eff the efficiency to use
+   *  @param mean mean or bias of resolution
+   *  @param sigma1 width of first Gaussian
+   *  @param sigma2 width of second Gaussian
+   *  @param sigma3 width of third Gaussian
+   *  @param fraction1 fraction of first Gaussian
+   *  @param fraction2 fraction of second Gaussian
+   *  @return the appropriate PDF
+   */
+  RooEffResAddModel& TripleGaussEfficiencyModel(const std::string& name,
+                                                RooRealVar& x,
+                                                RooAbsGaussModelEfficiency &eff,
+                                                RooAbsReal& mean,
+                                                RooAbsReal& sigma1,
+                                                RooAbsReal& sigma2,
+                                                RooAbsReal& sigma3,
+                                                RooAbsReal& fraction1,
+                                                RooAbsReal& fraction2);
   
   /**
    *  @brief Add and access a per-event RooGaussEfficiencyModel

@@ -116,7 +116,7 @@ protected:
       omega_Bdb = omega_OS_Bdb*omega_SS_Bdb/(omega_OS_Bdb*omega_SS_Bdb + (1.0 - omega_OS_Bdb)*(1.0 - omega_SS_Bdb));
     }
     else {
-      if ((par_p0_SS + par_p1_SS*(par_eta_SS - par_meaneta_SS)) >= (par_p0_OS + par_p1_OS*(par_eta_OS - par_meaneta_OS))) {
+      if ((omega_SS_Bd + omega_SS_Bdb) >= (omega_OS_Bd + omega_OS_Bdb)) {
         omega_Bd = omega_OS_Bd*(1.0 - omega_SS_Bd)/(omega_OS_Bd*(1.0 - omega_SS_Bd) + (1.0 - omega_OS_Bd)*omega_SS_Bd);
         omega_Bdb = omega_OS_Bdb*(1.0 - omega_SS_Bdb)/(omega_OS_Bdb*(1.0 - omega_SS_Bdb) + (1.0 - omega_OS_Bdb)*omega_SS_Bdb);
         tag = cat_tag_OS;
@@ -127,7 +127,7 @@ protected:
       }
     }
 
-    return type_coeff*(tag*(1.0 - omega_Bd - omega_Bdb) - par_prod_asym*(1.0 - tag*(omega_Bd - omega_Bdb)))*par_S ;
+    return par_S*type_coeff*(tag*(1.0 - omega_Bd - omega_Bdb) - par_prod_asym*(1.0 - tag*(omega_Bd - omega_Bdb))) ;
   }
 
   virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName = 0) const;
@@ -141,10 +141,10 @@ protected:
     
     //++n_calls;
     //assert(0 != code);
-    if (1 == code) {
+    // if (1 == code) {
       //std::cout << "SinCoeffCombo::analyticalIntegral(" << code << ", ...): Called." << std::endl;
-      return 0.0;
-    }
+      // return 0.0;
+    // }
     // must not get here
     //assert(1 == 0);
   }

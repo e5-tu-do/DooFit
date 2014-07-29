@@ -23,9 +23,12 @@
 #include "RooBinning.h"
 #include <RooMsgService.h>
 
-// from Project
+// from DooCore
 #include "doocore/io/MsgStream.h"
 #include "doocore/lutils/lutils.h"
+#include <doocore/io/Progress.h>
+
+// from Project
 #include "doofit/plotting/Plot/PlotConfig.h"
 
 using namespace ROOT;
@@ -39,7 +42,8 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
 : config_plot_(cfg_plot),
   dimension_(dimension),
   datasets_(),
-  plot_name_(plot_name)
+  plot_name_(plot_name),
+  ignore_num_cpu_(false)
 {
   datasets_.push_back(&dataset);
   pdf_ = dynamic_cast<RooAbsPdf*>(pdfs.first());
@@ -70,7 +74,8 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
 : config_plot_(cfg_plot),
   dimension_(dimension),
   datasets_(),
-  plot_name_(plot_name)
+  plot_name_(plot_name),
+  ignore_num_cpu_(false)
 {
   datasets_.push_back(&dataset);
   pdf_ = &pdf;
@@ -267,47 +272,64 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //    }
     
     RooCmdArg normalisation_hack;
-    for (std::vector<RooCmdArg>::const_iterator it = plot_args_.begin();
-         it != plot_args_.end(); ++it) {
-      if (std::string(it->GetName()) == "ProjData" && config_plot_.num_cpu() > 1) {
-        RooArgSet* set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
-        
-        TIterator* arg_it = set_project->createIterator();
-        RooAbsArg* arg = NULL;
-        while ((arg = (RooAbsArg*)arg_it->Next())) {
-          RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
-          if (var != NULL) {
-            if (pdf_->observableOverlaps(dataset_normalisation, *var)) {
-              swarn << "Warning in Plot::PlotHandler(...): Plotting with multiple processes and projection dataset. PDF depends upon " << *var << ". Will manipulate normalisation to fix RooFit bugs." << endmsg;
-              normalisation_hack = Normalization(1./dataset_normalisation->sumEntries());
+    if (config_plot_.num_cpu() > 1 && !ignore_num_cpu_) {
+      for (std::vector<RooCmdArg>::const_iterator it = plot_args_.begin();
+           it != plot_args_.end(); ++it) {
+        if (std::string(it->GetName()) == "ProjData") {
+          RooArgSet* set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
+          
+          TIterator* arg_it = set_project->createIterator();
+          RooAbsArg* arg = NULL;
+          while ((arg = (RooAbsArg*)arg_it->Next())) {
+            RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
+            if (var != NULL) {
+              if (pdf_->observableOverlaps(dataset_normalisation, *var)) {
+                swarn << "Warning in Plot::PlotHandler(...): Plotting with multiple processes and projection dataset. PDF depends upon " << *var << ". Will manipulate normalisation to fix RooFit bugs." << endmsg;
+                normalisation_hack = Normalization(1./dataset_normalisation->sumEntries());
+              }
             }
           }
+          delete arg_it;
         }
-        delete arg_it;
       }
+    }
+
+    RooCmdArg arg_num_cpu;
+    if (config_plot_.num_cpu() > 1 && !ignore_num_cpu_) {
+      arg_num_cpu = NumCPU(config_plot_.num_cpu());
+    } else if (ignore_num_cpu_ && config_plot_.num_cpu() > 1) {
+      swarn << "Warning in Plot::PlotHandler(...): Multicore plotting is requested but intentionally disabled for this plot to avoid nasty RooFit plotting bugs." << endmsg;
     }
     
     int i=1;
+    int num_steps = components_.size()+1;
+
+    using namespace doocore::io;
+    Progress p("Plotting components and full PDF", num_steps);
+
     for (std::vector<RooArgSet>::const_iterator it = components_.begin();
          it != components_.end(); ++it) {
       if (it->getSize() > 0) {
 //        sinfo << "Plotting component " << it->first()->GetName() << ", sum entries: " << dataset_normalisation->sumEntries() << endmsg;
         RooMsgService::instance().setStreamStatus(1, false);
         RooMsgService::instance().setStreamStatus(0, false);
-        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, NumCPU(config_plot_.num_cpu()), normalisation_hack, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+        pdf_->plotOn(plot_frame, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, arg_num_cpu, normalisation_hack, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
 //        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
         RooMsgService::instance().setStreamStatus(1, true);
         RooMsgService::instance().setStreamStatus(0, true);
         ++i;
       }
+      ++p;
     }
     
     RooMsgService::instance().setStreamStatus(1, false);
     RooMsgService::instance().setStreamStatus(0, false);
-    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, NumCPU(config_plot_.num_cpu()), normalisation_hack, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+    pdf_->plotOn(plot_frame, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, arg_num_cpu, normalisation_hack, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
 //    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
     RooMsgService::instance().setStreamStatus(1, true);
     RooMsgService::instance().setStreamStatus(0, true);
+    ++p;
+    p.Finish();
     
     RooArgSet* parameters = pdf_->getParameters(dataset_normalisation);
     TIterator* it = parameters->createIterator();
@@ -353,9 +375,12 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //    ylabel.ReplaceAll("Events","Candidates");
 //    plot_frame->GetYaxis()->SetTitle(ylabel);
     
-    if (sc_y == kLinear || sc_y == kBoth) {
+    if (sc_y == kLinear) {
       doocore::lutils::PlotPulls(pull_plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, "_gauss", num_free_parameters);
       doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, "", num_free_parameters);
+    } else if (sc_y == kBoth) {
+      doocore::lutils::PlotPulls(pull_plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, "nogauss", num_free_parameters);
+      doocore::lutils::PlotPulls("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, "nogauss", num_free_parameters);
     }
     
 //    sdebug << "Plot y axis minimum for log scale plot: " << min_plot << endmsg;

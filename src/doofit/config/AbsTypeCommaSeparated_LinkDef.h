@@ -1,3 +1,3 @@
 #ifdef __CINT__
-#pragma link C++ class Config::AbsTypeCommaSeparated;
+#pragma link C++ class Config::AbsTypeCommaSeparated+;
 #endif
