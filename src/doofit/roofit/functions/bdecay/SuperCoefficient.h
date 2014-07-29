@@ -37,9 +37,7 @@ public:
 	      RooAbsReal& _p1_ss_,
 	      RooAbsReal& _delta_p0_ss_,
 	      RooAbsReal& _delta_p1_ss_,
-	      RooAbsReal& _production_asym_,
-        bool _calibrate_os_,
-        bool _calibrate_ss_);
+	      RooAbsReal& _production_asym_);
   SuperCoefficient(const SuperCoefficient& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new SuperCoefficient(*this,newname); }
   inline virtual ~SuperCoefficient() { }
@@ -70,29 +68,33 @@ protected:
 
   RooRealProxy production_asym_ ;
 
-  bool calibrate_os_ ;
-  bool calibrate_ss_ ;
-
   Double_t evaluate() const ;
 
 private:
 
-  mutable double eta_cal_os_ ;
-  mutable double eta_cal_os_b_ ;
-  mutable double eta_cal_os_bbar_ ;
+  std::pair<double, double> calibrate(double eta, double avg_eta, double p0, double p1, double delta_p0, double delta_p1) const ;
+  std::pair<double, double> combine_mistags(std::pair<double, double> calibrated_mistag_os, std::pair<double, double> calibrated_mistag_ss, int tag_os, int tag_ss) const ;
+  int                       combine_tags(std::pair<double, double> calibrated_mistag_os, std::pair<double, double> calibrated_mistag_ss, int tag_os, int tag_ss) const ;
 
-  mutable double eta_cal_ss_ ;
-  mutable double eta_cal_ss_b_ ;
-  mutable double eta_cal_ss_bbar_ ;
+  Double_t evaluate(double cp_coeff,
+                    CoeffType coeff_type,
+                    int    tag_os,
+                    double eta_os,
+                    double avg_eta_os,
+                    double p0_os,
+                    double p1_os,
+                    double delta_p0_os,
+                    double delta_p1_os,
+                    int    tag_ss,
+                    double eta_ss,
+                    double avg_eta_ss,
+                    double p0_ss,
+                    double p1_ss,
+                    double delta_p0_ss,
+                    double delta_p1_ss,
+                    double production_asym) const ;
 
-  mutable double eta_combined_b_ ;
-  mutable double eta_combined_bbar_ ;
-  mutable int    tag_combined_ ;
-
-  void calibrate_os() const ;
-  void calibrate_ss() const ;
-  void combine_mistags() const ;
-  void combine_tags() const ;
+  bool isTagInRange(const RooCategoryProxy& tag, int tag_state, const char* rangeName) const ;
 
   ClassDef(SuperCoefficient,1) // CP coefficient for RooBDecay PDF
 };
