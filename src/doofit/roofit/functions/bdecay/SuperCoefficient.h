@@ -73,8 +73,6 @@ protected:
 private:
 
   std::pair<double, double> calibrate(double eta, double avg_eta, double p0, double p1, double delta_p0, double delta_p1) const ;
-  std::pair<double, double> combine_mistags(std::pair<double, double> calibrated_mistag_os, std::pair<double, double> calibrated_mistag_ss, int tag_os, int tag_ss) const ;
-  int                       combine_tags(std::pair<double, double> calibrated_mistag_os, std::pair<double, double> calibrated_mistag_ss, int tag_os, int tag_ss) const ;
 
   Double_t evaluate(double cp_coeff,
                     CoeffType coeff_type,
@@ -95,6 +93,7 @@ private:
                     double production_asym) const ;
 
   bool isTagInRange(const RooCategoryProxy& tag, int tag_state, const char* rangeName) const ;
+  bool hasTagState(const RooCategoryProxy& tag, int tag_state) const;
 
   ClassDef(SuperCoefficient,1) // CP coefficient for RooBDecay PDF
 };
