@@ -219,7 +219,7 @@ Double_t SuperCoefficient::evaluate(double cp_coeff,
   double eta_ss_bbar = calibrated_mistag_ss.second;
 
   // combine taggers and calculate coefficients
-  double sum = 0.5 * ( 1. + tag_os * tag_ss * ( 1 
+  double sum = 0.5 * ( 1. + tag_os * tag_ss * ( 1. 
                                                 + 2. * ( eta_os_b * eta_ss_b + eta_os_bbar * eta_ss_bbar ) 
                                                 - ( eta_os_b + eta_os_bbar ) 
                                                 - ( eta_ss_b + eta_ss_bbar ) 
@@ -227,11 +227,12 @@ Double_t SuperCoefficient::evaluate(double cp_coeff,
                           - tag_os * ( eta_os_b - eta_os_bbar ) 
                           - tag_ss * ( eta_ss_b - eta_ss_bbar ) );
 
-  double difference = 0.5 * ( tag_os * tag_ss * ( 2. * ( eta_os_b * eta_os_bbar - eta_os_bbar * eta_ss_bbar ) 
+  double difference = 0.5 * ( tag_os * tag_ss * ( 2. * ( eta_os_b * eta_ss_b - eta_os_bbar * eta_ss_bbar ) 
                                                   - ( eta_os_b - eta_os_bbar )
-                                                  - ( eta_ss_b - eta_ss_bbar ) )
-                              + tag_os * ( 1. - eta_os_b - eta_os_bbar ) 
-                              + tag_ss * ( 1. - eta_ss_b - eta_ss_bbar ) );
+                                                  - ( eta_ss_b - eta_ss_bbar ) 
+                                                )
+                            + tag_os * ( 1. - eta_os_b - eta_os_bbar ) 
+                            + tag_ss * ( 1. - eta_ss_b - eta_ss_bbar ) );
 
   if (coeff_type == kSin){
     return -0.5 * cp_coeff * ( difference - production_asym * sum );
