@@ -95,6 +95,18 @@ Int_t SuperCoefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& ana
   return 0 ;
 } 
 
+Int_t SuperCoefficient::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* /*rangeName*/) const  
+{ 
+  // debug
+  std::printf("CHECK: In %s line %u (%s): #Vars = %d : allVars = ", __func__, __LINE__, __FILE__, allVars.getSize());
+  allVars.Print();
+  if (normSet) normSet->Print();
+
+  if (matchArgs(allVars, analVars, tag_os_, tag_ss_)) return 2 ;
+  if (matchArgs(allVars, analVars, tag_os_)) return 1 ;
+  if (matchArgs(allVars, analVars, tag_ss_)) return -1 ;
+  return 0 ;
+} 
 
 Double_t SuperCoefficient::analyticalIntegral(Int_t code, const char* rangeName) const  
 { 
@@ -136,7 +148,7 @@ Double_t SuperCoefficient::analyticalIntegral(Int_t code, const char* rangeName)
       if (hasTagState(tag_os_, +1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, 0, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
       if (hasTagState(tag_os_, -1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, 0, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
       // debug
-      // std::cout << "Coeff: " << coeff_type_ << " Integral : " << integral << std::endl;
+      // std::cout << "Coeff: " << coeff_type_ << " : OS Integral : " << integral << std::endl;
       return integral;
     }
     if (code == -1){
@@ -144,17 +156,17 @@ Double_t SuperCoefficient::analyticalIntegral(Int_t code, const char* rangeName)
       if (hasTagState(tag_ss_, +1)) integral += evaluate(cp_coeff_, coeff_type_, 0, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, +1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
       if (hasTagState(tag_ss_, -1)) integral += evaluate(cp_coeff_, coeff_type_, 0, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, -1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
       // debug
-      // std::cout << "Coeff: " << coeff_type_ << " Integral : " << integral << std::endl;
+      // std::cout << "Coeff: " << coeff_type_ << " : SS Integral : " << integral << std::endl;
       return integral;
     }
     if (code == 2){
       double integral = 0.;
-      if (hasTagState(tag_os_, +1) && hasTagState(tag_ss_, +1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, +1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
-      if (hasTagState(tag_os_, +1) && hasTagState(tag_ss_, -1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, -1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
-      if (hasTagState(tag_os_, -1) && hasTagState(tag_ss_, +1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, +1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
-      if (hasTagState(tag_os_, -1) && hasTagState(tag_ss_, -1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, -1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
+      if (hasTagState(tag_os_, +1) && hasTagState(tag_ss_, +1) /*&& (getIndex(tag_os_) == +1) && (getIndex(tag_ss_) == +1)*/) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, +1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
+      if (hasTagState(tag_os_, +1) && hasTagState(tag_ss_, -1) /*&& (getIndex(tag_os_) == +1) && (getIndex(tag_ss_) == -1)*/) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, -1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
+      if (hasTagState(tag_os_, -1) && hasTagState(tag_ss_, +1) /*&& (getIndex(tag_os_) == -1) && (getIndex(tag_ss_) == +1)*/) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, +1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
+      if (hasTagState(tag_os_, -1) && hasTagState(tag_ss_, -1) /*&& (getIndex(tag_os_) == -1) && (getIndex(tag_ss_) == -1)*/) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, -1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
       // debug
-      // std::cout << "Coeff: " << coeff_type_ << " Integral : " << integral << std::endl;
+      // std::cout << "Coeff: " << coeff_type_ << " : OS + SS Integral : " << integral << std::endl;
       return integral;
     }
   }
@@ -262,6 +274,12 @@ bool SuperCoefficient::isTagInRange(const RooCategoryProxy& tag, int tag_state, 
 bool SuperCoefficient::hasTagState(const RooCategoryProxy& tag, int tag_state) const
 { 
   return dynamic_cast<const RooCategory&>(tag.arg()).isValidIndex(tag_state);
+}
+
+
+int  SuperCoefficient::getIndex(const RooCategoryProxy& tag) const
+{
+  return dynamic_cast<const RooCategory&>(tag.arg()).getIndex();
 }
 
 

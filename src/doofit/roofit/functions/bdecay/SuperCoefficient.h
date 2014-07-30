@@ -43,6 +43,7 @@ public:
   inline virtual ~SuperCoefficient() { }
 
   Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
+  Int_t getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName=0) const ;
   Double_t analyticalIntegral(Int_t code, const char* rangeName=0) const ;
 
 protected:
@@ -94,6 +95,7 @@ private:
 
   bool isTagInRange(const RooCategoryProxy& tag, int tag_state, const char* rangeName) const ;
   bool hasTagState(const RooCategoryProxy& tag, int tag_state) const;
+  int  getIndex(const RooCategoryProxy& tag) const;
 
   ClassDef(SuperCoefficient,1) // CP coefficient for RooBDecay PDF
 };
