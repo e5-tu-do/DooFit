@@ -11,6 +11,7 @@ CoshCoeff.h
 CoshCoeffTagAsReal.h
 CoshCoeffWithAsymms.h 
 CoshCoeffCombo.h
+CPCoefficient.h
 SinhCoeff.h
 SinCoeffSimple.h
 SinCoeffWithProdAsymm.h
@@ -42,6 +43,7 @@ DooDecRateCoeff.h)
 add_library(dfFunctions SHARED 
 CategoryToReal.h CategoryToReal.cxx CategoryToReal_dict.h CategoryToReal_dict.cc
 CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
+CPCoefficient.h CPCoefficient.cxx CPCoefficient_dict.h CPCoefficient_dict.cc
 #CosCoeffWithProdAsymm.h CosCoeffWithProdAsymm.cxx CosCoeffWithProdAsymm_dict.h CosCoeffWithProdAsymm_dict.cc
 #CosCoeffCombo.h CosCoeffCombo.cxx CosCoeffCombo_dict.h CosCoeffCombo_dict.cc
 CoshCoeffTagAsReal.h CoshCoeffTagAsReal.cxx CoshCoeffTagAsReal_dict.h CoshCoeffTagAsReal_dict.cc
@@ -86,6 +88,7 @@ CategoryToReal.h
 SinhCoeff.h 
 FunctionProduct.h 
 FunctionTripleProduct.h
+CPCoefficient.h
 #CosCoeffWithProdAsymm.h
 #CosCoeffCombo.h
 CoshCoeff.h
