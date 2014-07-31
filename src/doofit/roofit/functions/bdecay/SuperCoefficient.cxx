@@ -161,10 +161,10 @@ Double_t SuperCoefficient::analyticalIntegral(Int_t code, const char* rangeName)
     }
     if (code == 2){
       double integral = 0.;
-      if (hasTagState(tag_os_, +1) && hasTagState(tag_ss_, +1) /*&& (getIndex(tag_os_) == +1) && (getIndex(tag_ss_) == +1)*/) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, +1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
-      if (hasTagState(tag_os_, +1) && hasTagState(tag_ss_, -1) /*&& (getIndex(tag_os_) == +1) && (getIndex(tag_ss_) == -1)*/) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, -1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
-      if (hasTagState(tag_os_, -1) && hasTagState(tag_ss_, +1) /*&& (getIndex(tag_os_) == -1) && (getIndex(tag_ss_) == +1)*/) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, +1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
-      if (hasTagState(tag_os_, -1) && hasTagState(tag_ss_, -1) /*&& (getIndex(tag_os_) == -1) && (getIndex(tag_ss_) == -1)*/) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, -1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
+      if (hasTagState(tag_os_, +1) && hasTagState(tag_ss_, +1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, +1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
+      if (hasTagState(tag_os_, +1) && hasTagState(tag_ss_, -1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, -1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
+      if (hasTagState(tag_os_, -1) && hasTagState(tag_ss_, +1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, +1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
+      if (hasTagState(tag_os_, -1) && hasTagState(tag_ss_, -1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, -1, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
       // debug
       // std::cout << "Coeff: " << coeff_type_ << " : OS + SS Integral : " << integral << std::endl;
       return integral;
