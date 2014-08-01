@@ -1,5 +1,5 @@
-#ifndef DOOFIT_ROOFIT_FUNCTIONS_BDECAY_SUPERCOEFFICIENT
-#define DOOFIT_ROOFIT_FUNCTIONS_BDECAY_SUPERCOEFFICIENT
+#ifndef DOOFIT_ROOFIT_FUNCTIONS_BDECAY_COEFFICIENT2
+#define DOOFIT_ROOFIT_FUNCTIONS_BDECAY_COEFFICIENT2
 
 #include "RooAbsReal.h"
 #include "RooRealProxy.h"
@@ -11,7 +11,7 @@ namespace roofit {
 namespace functions {
 namespace bdecay {
 
-class SuperCoefficient : public RooAbsReal {
+class Coefficient2 : public RooAbsReal {
 public:
   enum CoeffType {
     kSin  = 3,
@@ -20,7 +20,7 @@ public:
     kCosh = 0
   };
 
-  SuperCoefficient(const std::string& name,
+  Coefficient2(const std::string& name,
 	      RooAbsReal& _cp_coeff_,
         CoeffType   _coeff_type_,
 	      RooAbsCategory& _tag_os_,
@@ -38,9 +38,9 @@ public:
 	      RooAbsReal& _delta_p0_ss_,
 	      RooAbsReal& _delta_p1_ss_,
 	      RooAbsReal& _production_asym_);
-  SuperCoefficient(const SuperCoefficient& other, const char* name=0) ;
-  virtual TObject* clone(const char* newname) const { return new SuperCoefficient(*this,newname); }
-  inline virtual ~SuperCoefficient() { }
+  Coefficient2(const Coefficient2& other, const char* name=0) ;
+  virtual TObject* clone(const char* newname) const { return new Coefficient2(*this,newname); }
+  inline virtual ~Coefficient2() { }
 
   Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
   Int_t getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName=0) const ;
@@ -97,7 +97,7 @@ private:
   bool hasTagState(const RooCategoryProxy& tag, int tag_state) const;
   int  getIndex(const RooCategoryProxy& tag) const;
 
-  ClassDef(SuperCoefficient,1) // CP coefficient for RooBDecay PDF
+  ClassDef(Coefficient2,1) // CP coefficient for RooBDecay PDF
 };
 
 } // namespace bdecay

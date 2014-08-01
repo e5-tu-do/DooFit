@@ -1,20 +1,20 @@
 #include "Riostream.h" 
 
-#include "SuperCoefficient.h" 
+#include "Coefficient2.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h"
 #include "RooCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::bdecay::SuperCoefficient) 
+ClassImp(doofit::roofit::functions::bdecay::Coefficient2) 
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 namespace bdecay {
 
-SuperCoefficient::SuperCoefficient(const std::string& name, 
+Coefficient2::Coefficient2(const std::string& name, 
                        RooAbsReal& _cp_coeff_,
                        CoeffType   _coeff_type_,
                        RooAbsCategory& _tag_os_,
@@ -54,7 +54,7 @@ SuperCoefficient::SuperCoefficient(const std::string& name,
 } 
 
 
-SuperCoefficient::SuperCoefficient(const SuperCoefficient& other, const char* name) :  
+Coefficient2::Coefficient2(const Coefficient2& other, const char* name) :  
   RooAbsReal(other,name), 
   cp_coeff_("cp_coeff_",this,other.cp_coeff_),
   coeff_type_(other.coeff_type_),
@@ -77,13 +77,13 @@ SuperCoefficient::SuperCoefficient(const SuperCoefficient& other, const char* na
 } 
 
 
-Double_t SuperCoefficient::evaluate() const 
+Double_t Coefficient2::evaluate() const 
 { 
   return evaluate(cp_coeff_, coeff_type_, tag_os_, eta_os_, avg_eta_os_, p0_os_, p1_os_, delta_p0_os_, delta_p1_os_, tag_ss_, eta_ss_, avg_eta_ss_, p0_ss_, p1_ss_, delta_p0_ss_, delta_p1_ss_, production_asym_);
 }
 
 
-Int_t SuperCoefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
+Int_t Coefficient2::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
 { 
   // debug
   // std::printf("CHECK: In %s line %u (%s): #Vars = %d : allVars = ", __func__, __LINE__, __FILE__, allVars.getSize());
@@ -95,7 +95,7 @@ Int_t SuperCoefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& ana
   return 0 ;
 } 
 
-Int_t SuperCoefficient::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* /*rangeName*/) const  
+Int_t Coefficient2::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* /*rangeName*/) const  
 { 
   // debug
   std::printf("CHECK: In %s line %u (%s): #Vars = %d : allVars = ", __func__, __LINE__, __FILE__, allVars.getSize());
@@ -108,7 +108,7 @@ Int_t SuperCoefficient::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& a
   return 0 ;
 } 
 
-Double_t SuperCoefficient::analyticalIntegral(Int_t code, const char* rangeName) const  
+Double_t Coefficient2::analyticalIntegral(Int_t code, const char* rangeName) const  
 { 
   // debug
   // std::printf("CHECK: In %s line %u (%s): Range: %s : Code: %d \n", __func__, __LINE__, __FILE__, rangeName, code);
@@ -173,7 +173,7 @@ Double_t SuperCoefficient::analyticalIntegral(Int_t code, const char* rangeName)
 } 
 
 
-std::pair<double, double> SuperCoefficient::calibrate(double eta, double avg_eta, double p0, double p1, double delta_p0, double delta_p1) const
+std::pair<double, double> Coefficient2::calibrate(double eta, double avg_eta, double p0, double p1, double delta_p0, double delta_p1) const
 {
   double eta_cal_ss = 0;
   double eta_cal_ss_b = 0;
@@ -203,7 +203,7 @@ std::pair<double, double> SuperCoefficient::calibrate(double eta, double avg_eta
 }
 
 
-Double_t SuperCoefficient::evaluate(double cp_coeff,
+Double_t Coefficient2::evaluate(double cp_coeff,
                                     CoeffType coeff_type,
                                     int    tag_os,
                                     double eta_os,
@@ -259,25 +259,25 @@ Double_t SuperCoefficient::evaluate(double cp_coeff,
     return +0.5 * cp_coeff * ( sum - production_asym * difference );
   }
   else{
-    std::cout << "ERROR\t" << "SuperCoefficient::evaluate(...): No valid coefficient type!" << std::endl;
+    std::cout << "ERROR\t" << "Coefficient2::evaluate(...): No valid coefficient type!" << std::endl;
     abort();
   }
 }
 
 
-bool SuperCoefficient::isTagInRange(const RooCategoryProxy& tag, int tag_state, const char* rangeName) const 
+bool Coefficient2::isTagInRange(const RooCategoryProxy& tag, int tag_state, const char* rangeName) const 
 {
   return dynamic_cast<const RooCategory&>(tag.arg()).isStateInRange(rangeName, tag.arg().lookupType(tag_state)->GetName());
 }
 
 
-bool SuperCoefficient::hasTagState(const RooCategoryProxy& tag, int tag_state) const
+bool Coefficient2::hasTagState(const RooCategoryProxy& tag, int tag_state) const
 { 
   return dynamic_cast<const RooCategory&>(tag.arg()).isValidIndex(tag_state);
 }
 
 
-int  SuperCoefficient::getIndex(const RooCategoryProxy& tag) const
+int  Coefficient2::getIndex(const RooCategoryProxy& tag) const
 {
   return dynamic_cast<const RooCategory&>(tag.arg()).getIndex();
 }

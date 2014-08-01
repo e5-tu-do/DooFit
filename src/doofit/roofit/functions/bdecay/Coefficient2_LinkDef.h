@@ -5,5 +5,5 @@
 
 #pragma link C++ nestedclass;
 #pragma link C++ nestedtypedef;
-#pragma link C++ class doofit::roofit::functions::bdecay::SuperCoefficient+;
+#pragma link C++ class doofit::roofit::functions::bdecay::Coefficient2+;
 #endif
