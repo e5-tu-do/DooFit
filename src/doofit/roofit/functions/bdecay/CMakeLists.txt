@@ -8,7 +8,6 @@ CalibratedMistag.h
 CombinedTag.h
 CombinedMistag.h
 Coefficient.h
-SimpleCoefficient.h
 Coefficient2.h
 )
 
@@ -17,7 +16,6 @@ CalibratedMistag.h CalibratedMistag.cxx CalibratedMistag_dict.h CalibratedMistag
 CombinedTag.h CombinedTag.cxx CombinedTag_dict.h CombinedTag_dict.cc
 CombinedMistag.h CombinedMistag.cxx CombinedMistag_dict.h CombinedMistag_dict.cc
 Coefficient.h Coefficient.cxx Coefficient_dict.h Coefficient_dict.cc
-SimpleCoefficient.h SimpleCoefficient.cxx SimpleCoefficient_dict.h SimpleCoefficient_dict.cc
 Coefficient2.h Coefficient2.cxx Coefficient2_dict.h Coefficient2_dict.cc
 )
 
@@ -32,6 +30,5 @@ CalibratedMistag.h
 CombinedTag.h
 CombinedMistag.h
 Coefficient.h
-SimpleCoefficient.h
 Coefficient2.h
 DESTINATION include/doofit/roofit/functions/bdecay)
