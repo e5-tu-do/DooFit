@@ -55,10 +55,37 @@ CPCoefficient::CPCoefficient(std::string name,
   par_delta_p0_SS("par_delta_p0_SS","par_delta_p0_SS",this,_par_delta_p0_SS),
   par_delta_p1_SS("par_delta_p1_SS","par_delta_p1_SS",this,_par_delta_p1_SS),
   par_prod_asym("par_prod_asym","par_prod_asym",this,_par_prod_asym),
-  type_coeff(_type_coeff)
+  type_coeff(_type_coeff),
+  combo(true)
   {
   }
   
+CPCoefficient::CPCoefficient(std::string name,
+                             RooAbsReal& _par_cp_coeff,
+                             RooAbsCategory& _cat_tag_OS,
+                             RooAbsReal& _par_p0_OS,
+                             RooAbsReal& _par_p1_OS,
+                             RooAbsReal& _par_meaneta_OS,
+                             RooAbsReal& _par_eta_OS,
+                             RooAbsReal& _par_delta_p0_OS,
+                             RooAbsReal& _par_delta_p1_OS,
+                             RooAbsReal& _par_prod_asym,
+                             CoeffType _type_coeff) :
+  RooAbsReal(name.c_str(),name.c_str()),
+  par_cp_coeff("par_cp_coeff","par_cp_coeff",this,_par_cp_coeff),
+  cat_tag_OS("cat_tag_OS","cat_tag_OS",this,_cat_tag_OS),
+  par_p0_OS("par_p0_OS","par_p0_OS",this,_par_p0_OS),
+  par_p1_OS("par_p1_OS","par_p1_OS",this,_par_p1_OS),
+  par_meaneta_OS("par_meaneta_OS","par_meaneta_OS",this,_par_meaneta_OS),
+  par_eta_OS("par_eta_OS","par_eta_OS",this,_par_eta_OS),
+  par_delta_p0_OS("par_delta_p0_OS","par_delta_p0_OS",this,_par_delta_p0_OS),
+  par_delta_p1_OS("par_delta_p1_OS","par_delta_p1_OS",this,_par_delta_p1_OS),
+  par_prod_asym("par_prod_asym","par_prod_asym",this,_par_prod_asym),
+  type_coeff(_type_coeff),
+  combo(false)
+  {
+  }
+
 CPCoefficient::CPCoefficient(const CPCoefficient& other, const char* name) :
   RooAbsReal(other,name),
   par_cp_coeff("par_cp_coeff",this,other.par_cp_coeff),
@@ -77,21 +104,23 @@ CPCoefficient::CPCoefficient(const CPCoefficient& other, const char* name) :
   par_delta_p0_SS("par_delta_p0_SS",this,other.par_delta_p0_SS),
   par_delta_p1_SS("par_delta_p1_SS",this,other.par_delta_p1_SS),
   par_prod_asym("par_prod_asym",this,other.par_prod_asym),
-  type_coeff(other.type_coeff)
+  type_coeff(other.type_coeff),
+  combo(other.combo)
   {
   }
 
 Int_t CPCoefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const
 {
-  #ifdef FUNCTIONS_COUNT_CALLS
-    std::printf("CPCoefficient::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
-                __func__, __LINE__, __FILE__);
-    allVars.Print();
-  #endif
+    // std::printf("CPCoefficient::getAnalyticalIntegral(): In %s line %u (%s): allVars = ", __func__, __LINE__, __FILE__);
+    // allVars.Print();
   if (rangeName) return 0 ;
-  if (matchArgs(allVars, analVars, cat_tag_OS, cat_tag_SS)) return 1 ;
-  if (matchArgs(allVars, analVars, cat_tag_OS)) return 2 ;
-  if (matchArgs(allVars, analVars, cat_tag_SS)) return 3 ;
+  if (combo) {
+    matchArgs(allVars, analVars, cat_tag_OS, cat_tag_SS);
+    return 1 ;
+  }
+  if (matchArgs(allVars, analVars, cat_tag_OS)) {
+    return 2 ;
+  }
   return 0 ;
 }
   
@@ -106,24 +135,20 @@ Int_t CPCoefficient::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& anal
     if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
   // #endif
     
-  //if (matchArgs(allVars, analVars, cat_tag)) return 1;
+  // if (matchArgs(allVars, analVars, cat_tag_OS, cat_tag_SS)) return 1;
     
   return 0;
 }
 
 Double_t CPCoefficient::evaluate() const {
 
-    Double_t  omega_OS_Bd  = par_eta_OS;
-    Double_t  omega_OS_Bdb = par_eta_OS;
-    Double_t  omega_SS_Bd  = par_eta_SS;
-    Double_t  omega_SS_Bdb = par_eta_SS;
     Double_t  firstsummand = 0.;
     Double_t  secondsummand = 0.;
+    Double_t  omega_OS_Bd  = par_eta_OS;
+    Double_t  omega_OS_Bdb = par_eta_OS;
 
-    if (par_eta_OS < 0.5)
-    {
-      if ((par_p0_OS + par_p1_OS*(par_eta_OS - par_meaneta_OS)) > 0.5)
-      {
+    if (par_eta_OS < 0.5) {
+      if ((par_p0_OS + par_p1_OS*(par_eta_OS - par_meaneta_OS)) > 0.5) {
         omega_OS_Bd  = 0.5;
         omega_OS_Bdb = 0.5;
       }
@@ -132,23 +157,33 @@ Double_t CPCoefficient::evaluate() const {
         omega_OS_Bdb = par_p0_OS - 0.5*par_delta_p0_OS + (par_p1_OS - 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
       }
     }
+    
+    if (combo) {
 
-    if (par_eta_SS < 0.5)
-    {
-      if ((par_p0_SS + par_p1_SS*(par_eta_SS - par_meaneta_SS)) > 0.5)
-      {
-        omega_SS_Bd  = 0.5;
-        omega_SS_Bdb = 0.5;
+      Double_t  omega_SS_Bd  = par_eta_SS;
+      Double_t  omega_SS_Bdb = par_eta_SS;
+
+      if (par_eta_SS < 0.5) {
+        if ((par_p0_SS + par_p1_SS*(par_eta_SS - par_meaneta_SS)) > 0.5) {
+          omega_SS_Bd  = 0.5;
+          omega_SS_Bdb = 0.5;
+        }
+        else{
+          omega_SS_Bd  = par_p0_SS + 0.5*par_delta_p0_SS + (par_p1_SS + 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
+          omega_SS_Bdb = par_p0_SS - 0.5*par_delta_p0_SS + (par_p1_SS - 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
+        }
       }
-      else{
-        omega_SS_Bd  = par_p0_SS + 0.5*par_delta_p0_SS + (par_p1_SS + 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
-        omega_SS_Bdb = par_p0_SS - 0.5*par_delta_p0_SS + (par_p1_SS - 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
-      }
+    
+      firstsummand = 1.0 + cat_tag_OS*cat_tag_SS*(1.0 + 2.0*(omega_OS_Bd*omega_SS_Bd + omega_OS_Bdb*omega_SS_Bdb) - omega_OS_Bd - omega_OS_Bdb - omega_SS_Bd - omega_SS_Bdb) - cat_tag_OS*(omega_OS_Bd - omega_OS_Bdb) - cat_tag_SS*(omega_SS_Bd - omega_SS_Bdb);
+      secondsummand = cat_tag_OS*cat_tag_SS*(omega_OS_Bd - omega_OS_Bdb + omega_SS_Bd - omega_SS_Bdb - 2.0*(omega_OS_Bd*omega_SS_Bd - omega_OS_Bdb*omega_SS_Bdb)) - cat_tag_OS*(1.0 - omega_OS_Bd - omega_OS_Bdb) - cat_tag_SS*(1.0 - omega_SS_Bd - omega_SS_Bdb);
     }
-    
-    firstsummand = 1.0 + cat_tag_OS*cat_tag_SS*(1.0 + 2.0*(omega_OS_Bd*omega_SS_Bd + omega_OS_Bdb*omega_SS_Bdb) - omega_OS_Bd - omega_OS_Bdb - omega_SS_Bd - omega_SS_Bdb) - cat_tag_OS*(omega_OS_Bd - omega_OS_Bdb) - cat_tag_SS*(omega_SS_Bd - omega_SS_Bdb);
-    secondsummand = cat_tag_OS*cat_tag_SS*(omega_OS_Bd - omega_OS_Bdb + omega_SS_Bd - omega_SS_Bdb - 2.0*(omega_OS_Bd*omega_SS_Bd - omega_OS_Bdb*omega_SS_Bdb)) - cat_tag_OS*(1.0 - omega_OS_Bd - omega_OS_Bdb) - cat_tag_SS*(1.0 - omega_SS_Bd - omega_SS_Bdb);
-    
+
+    else {
+
+      firstsummand = 1.0 - cat_tag_OS*(omega_OS_Bd - omega_OS_Bdb);
+      secondsummand = - cat_tag_OS*(1.0 - omega_OS_Bd - omega_OS_Bdb);
+    }
+
     if (type_coeff == kCosh)
     {
       return firstsummand + par_prod_asym*secondsummand;
@@ -166,19 +201,16 @@ Double_t CPCoefficient::evaluate() const {
       return par_cp_coeff*(firstsummand + par_prod_asym*secondsummand);
     }
     else{
-      std::cout  <<  "YOU SHOULD NEVER GET HERE! CPCoefficient could not find a valid coefficient type" <<  std::endl; 
+      std::cout  <<  "YOU SHOULD NEVER GET HERE! CPCoefficient could not find a valid coefficient type." <<  std::endl;
+      return 0;
     }
 }
 
-Double_t CPCoefficient::analyticalIntegral(Int_t code, const char* rangeName) const {
+Double_t CPCoefficient::analyticalIntegral(Int_t code, const char* /*rangeName*/) const {
    
    // std::cout << "CPCoefficient::analyticalIntegral(" << code << ", ...): Called." << std::endl;
     switch(code){
       case 0: return evaluate() ;
-
-      case 3: return  2.0;
-
-      case 2: return  2.0;
 
       case 1: if (type_coeff == kCosh || type_coeff == kSinh) {
                 return 4.0 * par_cp_coeff;
@@ -188,6 +220,16 @@ Double_t CPCoefficient::analyticalIntegral(Int_t code, const char* rangeName) co
               }
               else if (type_coeff == kCos) {
                 return -4.0 * par_cp_coeff * par_prod_asym;
+              }
+
+      case 2: if (type_coeff == kCosh || type_coeff == kSinh) {
+                return 2.0 * par_cp_coeff;
+              }
+              else if (type_coeff == kSin) {
+                return 2.0 * par_cp_coeff * par_prod_asym;
+              }
+              else if (type_coeff == kCos) {
+                return -2.0 * par_cp_coeff * par_prod_asym;
               }
 
       default: assert(0);

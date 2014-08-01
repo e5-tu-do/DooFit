@@ -7,58 +7,58 @@ root_generate_dictionaries_local(dfFunctionsDict
 CategoryToReal.h
 #CosCoeffWithProdAsymm.h
 #CosCoeffCombo.h
-CoshCoeff.h
-CoshCoeffTagAsReal.h
-CoshCoeffWithAsymms.h 
-CoshCoeffCombo.h
+#CoshCoeff.h
+#CoshCoeffTagAsReal.h
+#CoshCoeffWithAsymms.h 
+#CoshCoeffCombo.h
 CPCoefficient.h
-SinhCoeff.h
-SinCoeffSimple.h
-SinCoeffWithProdAsymm.h
-SinCoeffWithProdAsymmTagAsReal.h
-SinCoeffWithTaggingCalib.h
-SinCoeffWithAsymms.h
-SinCoeffCombo.h
-FunctionProduct.h
-FunctionTripleProduct.h
+#SinhCoeff.h
+#SinCoeffSimple.h
+#SinCoeffWithProdAsymm.h
+#SinCoeffWithProdAsymmTagAsReal.h
+#SinCoeffWithTaggingCalib.h
+#SinCoeffWithAsymms.h
+#SinCoeffCombo.h
+#FunctionProduct.h
+#FunctionTripleProduct.h
 LinearFunctionWithOffset.h
 PolyTest.h 
 PowerLaw.h 
 TauCorrectionWithBetaFactor.h 
 AtanAcceptanceIncludingBeta.h 
 AtanAcceptance.h 
-FunctionSum.h
+#FunctionSum.h
 SimpleSignedTaggedCPCoefficient.h 
 SingleMistagCalibrationNoAsymmetries.h
-SingleMistagCalibrationWithAsymmetries.h
+#SingleMistagCalibrationWithAsymmetries.h
 TwoTaggerMistagCombination.h
 TwoTaggerTagCombination.h
-CombinationOfCalibratedMistags.h
-CombinationOfUncalibratedMistags.h
-CombinationOfMistagsWithAsymmetries.h
-CombinedTagCalibrated.h
-CombinedTagUncalibrated.h
+#CombinationOfCalibratedMistags.h
+#CombinationOfUncalibratedMistags.h
+#CombinationOfMistagsWithAsymmetries.h
+#CombinedTagCalibrated.h
+#CombinedTagUncalibrated.h
 DooDecRateCoeff.h)
 
 add_library(dfFunctions SHARED 
 CategoryToReal.h CategoryToReal.cxx CategoryToReal_dict.h CategoryToReal_dict.cc
-CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
+#CoshCoeff.h CoshCoeff.cxx CoshCoeff_dict.h CoshCoeff_dict.cc
 CPCoefficient.h CPCoefficient.cxx CPCoefficient_dict.h CPCoefficient_dict.cc
 #CosCoeffWithProdAsymm.h CosCoeffWithProdAsymm.cxx CosCoeffWithProdAsymm_dict.h CosCoeffWithProdAsymm_dict.cc
 #CosCoeffCombo.h CosCoeffCombo.cxx CosCoeffCombo_dict.h CosCoeffCombo_dict.cc
-CoshCoeffTagAsReal.h CoshCoeffTagAsReal.cxx CoshCoeffTagAsReal_dict.h CoshCoeffTagAsReal_dict.cc
-CoshCoeffWithAsymms.h CoshCoeffWithAsymms.cxx CoshCoeffWithAsymms_dict.h CoshCoeffWithAsymms_dict.cc
-CoshCoeffCombo.h CoshCoeffCombo.cxx CoshCoeffCombo_dict.h CoshCoeffCombo_dict.cc
-SinhCoeff.h SinhCoeff.cxx SinhCoeff_dict.h SinhCoeff_dict.cc
-SinCoeffSimple.h SinCoeffSimple.cxx SinCoeffSimple_dict.h SinCoeffSimple_dict.cc
-SinCoeffWithProdAsymm.h SinCoeffWithProdAsymm.cxx SinCoeffWithProdAsymm_dict.h SinCoeffWithProdAsymm_dict.cc
-SinCoeffWithProdAsymmTagAsReal.h SinCoeffWithProdAsymmTagAsReal.cxx SinCoeffWithProdAsymmTagAsReal_dict.h SinCoeffWithProdAsymmTagAsReal_dict.cc
-SinCoeffWithTaggingCalib.h SinCoeffWithTaggingCalib.cxx SinCoeffWithTaggingCalib_dict.h SinCoeffWithTaggingCalib_dict.cc
-SinCoeffWithAsymms.h SinCoeffWithAsymms.cxx SinCoeffWithAsymms_dict.h SinCoeffWithAsymms_dict.cc
-SinCoeffCombo.h SinCoeffCombo.cxx SinCoeffCombo_dict.h SinCoeffCombo_dict.cc
-FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dict.cc
-FunctionTripleProduct.h FunctionTripleProduct.cxx FunctionTripleProduct_dict.h FunctionTripleProduct_dict.cc
-FunctionSum.h FunctionSum.cxx FunctionSum_dict.h FunctionSum_dict.cc
+#CoshCoeffTagAsReal.h CoshCoeffTagAsReal.cxx CoshCoeffTagAsReal_dict.h CoshCoeffTagAsReal_dict.cc
+#CoshCoeffWithAsymms.h CoshCoeffWithAsymms.cxx CoshCoeffWithAsymms_dict.h CoshCoeffWithAsymms_dict.cc
+#CoshCoeffCombo.h CoshCoeffCombo.cxx CoshCoeffCombo_dict.h CoshCoeffCombo_dict.cc
+#SinhCoeff.h SinhCoeff.cxx SinhCoeff_dict.h SinhCoeff_dict.cc
+#SinCoeffSimple.h SinCoeffSimple.cxx SinCoeffSimple_dict.h SinCoeffSimple_dict.cc
+#SinCoeffWithProdAsymm.h SinCoeffWithProdAsymm.cxx SinCoeffWithProdAsymm_dict.h SinCoeffWithProdAsymm_dict.cc
+#SinCoeffWithProdAsymmTagAsReal.h SinCoeffWithProdAsymmTagAsReal.cxx SinCoeffWithProdAsymmTagAsReal_dict.h SinCoeffWithProdAsymmTagAsReal_dict.cc
+#SinCoeffWithTaggingCalib.h SinCoeffWithTaggingCalib.cxx SinCoeffWithTaggingCalib_dict.h SinCoeffWithTaggingCalib_dict.cc
+#SinCoeffWithAsymms.h SinCoeffWithAsymms.cxx SinCoeffWithAsymms_dict.h SinCoeffWithAsymms_dict.cc
+#SinCoeffCombo.h SinCoeffCombo.cxx SinCoeffCombo_dict.h SinCoeffCombo_dict.cc
+#FunctionProduct.h FunctionProduct.cxx FunctionProduct_dict.h FunctionProduct_dict.cc
+#FunctionTripleProduct.h FunctionTripleProduct.cxx FunctionTripleProduct_dict.h FunctionTripleProduct_dict.cc
+#FunctionSum.h FunctionSum.cxx FunctionSum_dict.h FunctionSum_dict.cc
 LinearFunctionWithOffset.h LinearFunctionWithOffset.cxx LinearFunctionWithOffset_dict.h LinearFunctionWithOffset_dict.cc
 PolyTest.h PolyTest.cxx PolyTest_dict.h PolyTest_dict.cc
 PowerLaw.h PowerLaw.cxx PowerLaw_dict.h PowerLaw_dict.cc
@@ -67,14 +67,14 @@ AtanAcceptanceIncludingBeta.h AtanAcceptanceIncludingBeta.cxx AtanAcceptanceIncl
 AtanAcceptance.h AtanAcceptance.cxx AtanAcceptance_dict.h AtanAcceptance_dict.cc
 SimpleSignedTaggedCPCoefficient.h SimpleSignedTaggedCPCoefficient.cxx SimpleSignedTaggedCPCoefficient_dict.h SimpleSignedTaggedCPCoefficient_dict.cc
 SingleMistagCalibrationNoAsymmetries.h SingleMistagCalibrationNoAsymmetries.cxx SingleMistagCalibrationNoAsymmetries_dict.h SingleMistagCalibrationNoAsymmetries_dict.cc
-SingleMistagCalibrationWithAsymmetries.h SingleMistagCalibrationWithAsymmetries.cxx SingleMistagCalibrationWithAsymmetries_dict.h SingleMistagCalibrationWithAsymmetries_dict.cc
+#SingleMistagCalibrationWithAsymmetries.h SingleMistagCalibrationWithAsymmetries.cxx SingleMistagCalibrationWithAsymmetries_dict.h SingleMistagCalibrationWithAsymmetries_dict.cc
 TwoTaggerMistagCombination.h TwoTaggerMistagCombination.cxx TwoTaggerMistagCombination_dict.h TwoTaggerMistagCombination_dict.cc
 TwoTaggerTagCombination.h TwoTaggerTagCombination.cxx TwoTaggerTagCombination_dict.h TwoTaggerTagCombination_dict.cc
-CombinationOfCalibratedMistags.h CombinationOfCalibratedMistags.cxx CombinationOfCalibratedMistags_dict.h CombinationOfCalibratedMistags_dict.cc
-CombinationOfUncalibratedMistags.h CombinationOfUncalibratedMistags.cxx CombinationOfUncalibratedMistags_dict.h CombinationOfUncalibratedMistags_dict.cc
-CombinationOfMistagsWithAsymmetries.h CombinationOfMistagsWithAsymmetries.cxx CombinationOfMistagsWithAsymmetries_dict.h CombinationOfMistagsWithAsymmetries_dict.cc
-CombinedTagCalibrated.h CombinedTagCalibrated.cxx CombinedTagCalibrated_dict.h CombinedTagCalibrated_dict.cc
-CombinedTagUncalibrated.h CombinedTagUncalibrated.cxx CombinedTagUncalibrated_dict.h CombinedTagUncalibrated_dict.cc
+#CombinationOfCalibratedMistags.h CombinationOfCalibratedMistags.cxx CombinationOfCalibratedMistags_dict.h CombinationOfCalibratedMistags_dict.cc
+#CombinationOfUncalibratedMistags.h CombinationOfUncalibratedMistags.cxx CombinationOfUncalibratedMistags_dict.h CombinationOfUncalibratedMistags_dict.cc
+#CombinationOfMistagsWithAsymmetries.h CombinationOfMistagsWithAsymmetries.cxx CombinationOfMistagsWithAsymmetries_dict.h CombinationOfMistagsWithAsymmetries_dict.cc
+#CombinedTagCalibrated.h CombinedTagCalibrated.cxx CombinedTagCalibrated_dict.h CombinedTagCalibrated_dict.cc
+#CombinedTagUncalibrated.h CombinedTagUncalibrated.cxx CombinedTagUncalibrated_dict.h CombinedTagUncalibrated_dict.cc
 DooDecRateCoeff.h DooDecRateCoeff.cxx DooDecRateCoeff_dict.h DooDecRateCoeff_dict.cc)
 
 target_link_libraries(dfFunctions ${ALL_LIBRARIES})
@@ -85,23 +85,23 @@ add_dependencies(dfFunctions dfFunctionsDict)
 install(TARGETS dfFunctions DESTINATION lib)
 install(FILES 
 CategoryToReal.h
-SinhCoeff.h 
-FunctionProduct.h 
-FunctionTripleProduct.h
+#SinhCoeff.h 
+#FunctionProduct.h 
+#FunctionTripleProduct.h
 CPCoefficient.h
 #CosCoeffWithProdAsymm.h
 #CosCoeffCombo.h
-CoshCoeff.h
-CoshCoeffTagAsReal.h
-CoshCoeffWithAsymms.h
-CoshCoeffCombo.h
-SinCoeffSimple.h 
-SinCoeffWithProdAsymm.h
-SinCoeffWithProdAsymmTagAsReal.h
-SinCoeffWithTaggingCalib.h
-SinCoeffWithAsymms.h
-SinCoeffCombo.h
-FunctionSum.h
+#CoshCoeff.h
+#CoshCoeffTagAsReal.h
+#CoshCoeffWithAsymms.h
+#CoshCoeffCombo.h
+#SinCoeffSimple.h 
+#SinCoeffWithProdAsymm.h
+#SinCoeffWithProdAsymmTagAsReal.h
+#SinCoeffWithTaggingCalib.h
+#SinCoeffWithAsymms.h
+#SinCoeffCombo.h
+#FunctionSum.h
 LinearFunctionWithOffset.h 
 PolyTest.h 
 PowerLaw.h 
@@ -110,14 +110,14 @@ AtanAcceptance.h
 TauCorrectionWithBetaFactor.h 
 SimpleSignedTaggedCPCoefficient.h
 SingleMistagCalibrationNoAsymmetries.h
-SingleMistagCalibrationWithAsymmetries.h
+#SingleMistagCalibrationWithAsymmetries.h
 TwoTaggerMistagCombination.h
 TwoTaggerTagCombination.h
-CombinationOfCalibratedMistags.h
-CombinationOfUncalibratedMistags.h
-CombinationOfMistagsWithAsymmetries.h
-CombinedTagCalibrated.h
-CombinedTagUncalibrated.h
+#CombinationOfCalibratedMistags.h
+#CombinationOfUncalibratedMistags.h
+#CombinationOfMistagsWithAsymmetries.h
+#CombinedTagCalibrated.h
+#CombinedTagUncalibrated.h
 DooDecRateCoeff.h
 DESTINATION include/doofit/roofit/functions)
 

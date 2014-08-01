@@ -44,6 +44,18 @@ public:
                 RooAbsReal& _par_prod_asym,
                 CoeffType _type_coeff);
   
+  CPCoefficient(std::string name,
+                RooAbsReal& _par_cp_coeff,
+                RooAbsCategory& _cat_tag_OS,
+                RooAbsReal& _par_p0_OS,
+                RooAbsReal& _par_p1_OS,
+                RooAbsReal& _par_meaneta_OS,
+                RooAbsReal& _par_eta_OS,
+                RooAbsReal& _par_delta_p0_OS,
+                RooAbsReal& _par_delta_p1_OS,
+                RooAbsReal& _par_prod_asym,
+                CoeffType _type_coeff);
+
   CPCoefficient(const CPCoefficient& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new CPCoefficient(*this,newname); }
   inline virtual ~CPCoefficient() { }
@@ -67,6 +79,8 @@ protected:
   RooRealProxy par_delta_p1_SS ;
   RooRealProxy par_prod_asym ;
   CoeffType type_coeff ;
+
+  bool combo ;
   
   virtual Double_t evaluate() const;
 
