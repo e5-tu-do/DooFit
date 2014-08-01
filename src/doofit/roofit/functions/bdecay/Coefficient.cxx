@@ -112,6 +112,7 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
       // std::cout << "Coeff: " << coeff_type_ << " : OS Integral : " << integral << std::endl;
       return integral;
     }
+    return 0;
   }
 
   // OLD: Explicit integrals
@@ -141,40 +142,44 @@ std::pair<double, double> Coefficient::calibrate(double eta, double avg_eta, dou
   double eta_cal_b = 0;
   double eta_cal_bbar = 0;
 
-  // calculate calibrated average mistag
+  // calculate calibrated average eta
   eta_cal = p0 + p1 * ( eta - avg_eta );
   
-  // if mistag is larger or equal 0.5 return 0.5
+  // if eta is larger or equal 0.5 return 0.5
   if (eta >= 0.5){
     eta_cal      = 0.5;
     eta_cal_b    = 0.5;
     eta_cal_bbar = 0.5;
   }
-  // if calibrated average mistag is larger or equal 0.5 return 0.5
-  else if (eta_cal >= 0.5){
-    eta_cal_b    = 0.5;
-    eta_cal_bbar = 0.5;
-  }
   else{
-    // calibrate mistag
+    // calibrate eta
     eta_cal_b    = p0 + 0.5 * delta_p0 + ( p1 + 0.5 * delta_p1 ) * ( eta - avg_eta );
     eta_cal_bbar = p0 - 0.5 * delta_p0 + ( p1 - 0.5 * delta_p1 ) * ( eta - avg_eta );
   }
-
+  // if calibrated average eta is larger or equal 0.5 return 0.5
+  if (eta_cal >= 0.5){
+    eta_cal_b    = 0.5;
+    eta_cal_bbar = 0.5;
+  }
+  // if calibrated eta is smaller than 0 return 0
+  if (eta_cal < 0.0 || eta_cal_b < 0.0 || eta_cal_bbar < 0.0){
+    eta_cal_b    = 0.0;
+    eta_cal_bbar = 0.0;
+  }
   return std::make_pair(eta_cal_b, eta_cal_bbar);
 }
 
 
 Double_t Coefficient::evaluate(double cp_coeff,
-                                    CoeffType coeff_type,
-                                    int    tag,
-                                    double eta,
-                                    double avg_eta,
-                                    double p0,
-                                    double p1,
-                                    double delta_p0,
-                                    double delta_p1,
-                                    double production_asym) const 
+                               CoeffType coeff_type,
+                               int    tag,
+                               double eta,
+                               double avg_eta,
+                               double p0,
+                               double p1,
+                               double delta_p0,
+                               double delta_p1,
+                               double production_asym) const 
 {
   // calibrate single tagger
   std::pair<double, double> calibrated_mistag = calibrate(eta, avg_eta, p0, p1, delta_p0, delta_p1);
@@ -183,16 +188,16 @@ Double_t Coefficient::evaluate(double cp_coeff,
   double eta_bbar = calibrated_mistag.second;
 
   // calculate coefficients
-  if (coeff_type_ == kSin){
+  if (coeff_type == kSin){
     return -1.0 * cp_coeff * ( tag - production_asym * ( 1.0 - tag * eta_b + tag * eta_bbar ) - tag * ( eta_b + eta_bbar ) );
   }
-  else if (coeff_type_ == kCos){
+  else if (coeff_type == kCos){
     return +1.0 * cp_coeff * ( tag - production_asym * ( 1.0 - tag * eta_b + tag * eta_bbar ) - tag * ( eta_b + eta_bbar ) );
   }
-  else if (coeff_type_ == kSinh){
+  else if (coeff_type == kSinh){
     return cp_coeff * ( 1.0 - tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - tag * ( eta_b - eta_bbar ) );
   }
-  else if (coeff_type_ == kCosh){
+  else if (coeff_type == kCosh){
     return cp_coeff * ( 1.0 - tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - tag * ( eta_b - eta_bbar ) );
   }
   else{

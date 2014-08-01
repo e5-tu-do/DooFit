@@ -170,6 +170,7 @@ Double_t Coefficient2::analyticalIntegral(Int_t code, const char* rangeName) con
       return integral;
     }
   }
+  return 0;
 } 
 
 
@@ -179,47 +180,51 @@ std::pair<double, double> Coefficient2::calibrate(double eta, double avg_eta, do
   double eta_cal_b = 0;
   double eta_cal_bbar = 0;
 
-  // calculate calibrated average mistag
+  // calculate calibrated average eta
   eta_cal = p0 + p1 * ( eta - avg_eta );
   
-  // if mistag is larger or equal 0.5 return 0.5
+  // if eta is larger or equal 0.5 return 0.5
   if (eta >= 0.5){
     eta_cal      = 0.5;
     eta_cal_b    = 0.5;
     eta_cal_bbar = 0.5;
   }
-  // if calibrated average mistag is larger or equal 0.5 return 0.5
-  else if (eta_cal >= 0.5){
-    eta_cal_b    = 0.5;
-    eta_cal_bbar = 0.5;
-  }
   else{
-    // calibrate mistag
+    // calibrate eta
     eta_cal_b    = p0 + 0.5 * delta_p0 + ( p1 + 0.5 * delta_p1 ) * ( eta - avg_eta );
     eta_cal_bbar = p0 - 0.5 * delta_p0 + ( p1 - 0.5 * delta_p1 ) * ( eta - avg_eta );
   }
-
+  // if calibrated average eta is larger or equal 0.5 return 0.5
+  if (eta_cal >= 0.5){
+    eta_cal_b    = 0.5;
+    eta_cal_bbar = 0.5;
+  }
+  // if calibrated eta is smaller than 0 return 0
+  if (eta_cal < 0.0 || eta_cal_b < 0.0 || eta_cal_bbar < 0.0){
+    eta_cal_b    = 0.0;
+    eta_cal_bbar = 0.0;
+  }
   return std::make_pair(eta_cal_b, eta_cal_bbar);
 }
 
 
 Double_t Coefficient2::evaluate(double cp_coeff,
-                                    CoeffType coeff_type,
-                                    int    tag_os,
-                                    double eta_os,
-                                    double avg_eta_os,
-                                    double p0_os,
-                                    double p1_os,
-                                    double delta_p0_os,
-                                    double delta_p1_os,
-                                    int    tag_ss,
-                                    double eta_ss,
-                                    double avg_eta_ss,
-                                    double p0_ss,
-                                    double p1_ss,
-                                    double delta_p0_ss,
-                                    double delta_p1_ss,
-                                    double production_asym) const 
+                                CoeffType coeff_type,
+                                int    tag_os,
+                                double eta_os,
+                                double avg_eta_os,
+                                double p0_os,
+                                double p1_os,
+                                double delta_p0_os,
+                                double delta_p1_os,
+                                int    tag_ss,
+                                double eta_ss,
+                                double avg_eta_ss,
+                                double p0_ss,
+                                double p1_ss,
+                                double delta_p0_ss,
+                                double delta_p1_ss,
+                                double production_asym) const 
 {
   // calibrate single tagger
   std::pair<double, double> calibrated_mistag_os = calibrate(eta_os, avg_eta_os, p0_os, p1_os, delta_p0_os, delta_p1_os);
@@ -230,7 +235,7 @@ Double_t Coefficient2::evaluate(double cp_coeff,
   double eta_ss_b    = calibrated_mistag_ss.first;
   double eta_ss_bbar = calibrated_mistag_ss.second;
 
-  // combine taggers and calculate coefficients
+  // combine taggers and calculate intermediate steps
   double sum = 0.5 * ( 1. + tag_os * tag_ss * ( 1. 
                                                 + 2. * ( eta_os_b * eta_ss_b + eta_os_bbar * eta_ss_bbar ) 
                                                 - ( eta_os_b + eta_os_bbar ) 
@@ -246,6 +251,7 @@ Double_t Coefficient2::evaluate(double cp_coeff,
                             + tag_os * ( 1. - eta_os_b - eta_os_bbar ) 
                             + tag_ss * ( 1. - eta_ss_b - eta_ss_bbar ) );
 
+  // calculate and return coefficients
   if (coeff_type == kSin){
     return -0.5 * cp_coeff * ( difference - production_asym * sum );
   }
