@@ -175,31 +175,31 @@ Double_t Coefficient2::analyticalIntegral(Int_t code, const char* rangeName) con
 
 std::pair<double, double> Coefficient2::calibrate(double eta, double avg_eta, double p0, double p1, double delta_p0, double delta_p1) const
 {
-  double eta_cal_ss = 0;
-  double eta_cal_ss_b = 0;
-  double eta_cal_ss_bbar = 0;
+  double eta_cal = 0;
+  double eta_cal_b = 0;
+  double eta_cal_bbar = 0;
 
   // calculate calibrated average mistag
-  eta_cal_ss = p0 + p1 * ( eta - avg_eta );
+  eta_cal = p0 + p1 * ( eta - avg_eta );
   
   // if mistag is larger or equal 0.5 return 0.5
   if (eta >= 0.5){
-    eta_cal_ss      = 0.5;
-    eta_cal_ss_b    = 0.5;
-    eta_cal_ss_bbar = 0.5;
+    eta_cal      = 0.5;
+    eta_cal_b    = 0.5;
+    eta_cal_bbar = 0.5;
   }
   // if calibrated average mistag is larger or equal 0.5 return 0.5
-  else if (eta_cal_ss >= 0.5){
-    eta_cal_ss_b    = 0.5;
-    eta_cal_ss_bbar = 0.5;
+  else if (eta_cal >= 0.5){
+    eta_cal_b    = 0.5;
+    eta_cal_bbar = 0.5;
   }
   else{
     // calibrate mistag
-    eta_cal_ss_b    = p0 + 0.5 * delta_p0 + ( p1 + 0.5 * delta_p1 ) * ( eta - avg_eta );
-    eta_cal_ss_bbar = p0 - 0.5 * delta_p0 + ( p1 - 0.5 * delta_p1 ) * ( eta - avg_eta );
+    eta_cal_b    = p0 + 0.5 * delta_p0 + ( p1 + 0.5 * delta_p1 ) * ( eta - avg_eta );
+    eta_cal_bbar = p0 - 0.5 * delta_p0 + ( p1 - 0.5 * delta_p1 ) * ( eta - avg_eta );
   }
 
-  return std::make_pair(eta_cal_ss_b, eta_cal_ss_bbar);
+  return std::make_pair(eta_cal_b, eta_cal_bbar);
 }
 
 
