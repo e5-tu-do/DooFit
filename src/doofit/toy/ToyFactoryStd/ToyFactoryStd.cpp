@@ -123,6 +123,11 @@ namespace toy {
           MergeDatasets(data, data_discrete);
         }
       } else {
+        if (data_discrete->numEntries() < discrete_yield) {
+          serr << "Error in ToyFactoryStd::Generate(): Discrete dataset does not contain enough events. Is the cumulative probability < 1.0?" << endmsg;
+          throw;
+        }
+
         data = data_discrete;
       }
       
