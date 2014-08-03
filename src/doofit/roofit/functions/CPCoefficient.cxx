@@ -155,9 +155,12 @@ Double_t CPCoefficient::evaluate() const {
       else {
         omega_OS_Bd  = par_p0_OS + 0.5*par_delta_p0_OS + (par_p1_OS + 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
         omega_OS_Bdb = par_p0_OS - 0.5*par_delta_p0_OS + (par_p1_OS - 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
+        if (omega_OS_Bd < 0)  omega_OS_Bd = 0.;
+        if (omega_OS_Bdb < 0) omega_OS_Bdb = 0.;
       }
     }
-    
+
+
     if (combo) {
 
       Double_t  omega_SS_Bd  = par_eta_SS;
@@ -171,6 +174,8 @@ Double_t CPCoefficient::evaluate() const {
         else{
           omega_SS_Bd  = par_p0_SS + 0.5*par_delta_p0_SS + (par_p1_SS + 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
           omega_SS_Bdb = par_p0_SS - 0.5*par_delta_p0_SS + (par_p1_SS - 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
+          if (omega_SS_Bd < 0)  omega_SS_Bd = 0.;
+          if (omega_SS_Bdb < 0) omega_SS_Bdb = 0.;
         }
       }
     
