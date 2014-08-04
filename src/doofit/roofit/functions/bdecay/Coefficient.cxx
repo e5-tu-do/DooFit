@@ -24,7 +24,8 @@ Coefficient::Coefficient(const std::string& name,
                        RooAbsReal& _p1_,
                        RooAbsReal& _delta_p0_,
                        RooAbsReal& _delta_p1_,
-                       RooAbsReal& _production_asym_) :
+                       RooAbsReal& _production_asym_,
+                       int         _tag_sign_) :
   RooAbsReal(name.c_str(),name.c_str()), 
   cp_coeff_("cp_coeff_","cp_coeff_",this,_cp_coeff_),
   coeff_type_(_coeff_type_),
@@ -35,7 +36,8 @@ Coefficient::Coefficient(const std::string& name,
   p1_("p1_","p1_",this,_p1_),
   delta_p0_("delta_p0_","delta_p0_",this,_delta_p0_),
   delta_p1_("delta_p1_","delta_p1_",this,_delta_p1_),
-  production_asym_("production_asym_","production_asym_",this,_production_asym_)
+  production_asym_("production_asym_","production_asym_",this,_production_asym_),
+  tag_sign_(_tag_sign_)
 { 
 } 
 
@@ -51,14 +53,15 @@ Coefficient::Coefficient(const Coefficient& other, const char* name) :
   p1_("p1_",this,other.p1_),
   delta_p0_("delta_p0_",this,other.delta_p0_),
   delta_p1_("delta_p1_",this,other.delta_p1_),
-  production_asym_("production_asym_",this,other.production_asym_)
+  production_asym_("production_asym_",this,other.production_asym_),
+  tag_sign_(other.tag_sign_)
 { 
 } 
 
 
 Double_t Coefficient::evaluate() const 
 { 
-  return evaluate(cp_coeff_, coeff_type_, tag_, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_);
+  return evaluate(cp_coeff_, coeff_type_, tag_, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
 }
 
 
@@ -92,12 +95,12 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
   if (rangeName){
     double integral = 0;
     if (isTagInRange(tag_, +1, rangeName)){
-      integral += evaluate(cp_coeff_, coeff_type_, +1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_);
+      integral += evaluate(cp_coeff_, coeff_type_, +1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
       // debug
       // std::cout << "Coeff: " << coeff_type_ << " Range: B0B0 : " << integral << std::endl;
     }
     if (isTagInRange(tag_, -1, rangeName)){
-      integral += evaluate(cp_coeff_, coeff_type_, -1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_);
+      integral += evaluate(cp_coeff_, coeff_type_, -1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
       // debug
       // std::cout << "Coeff: " << coeff_type_ << " Range: B0barB0 : " << integral << std::endl;
     }
@@ -106,8 +109,8 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
   else{
     if (code == 1){
       double integral = 0.;
-      if (hasTagState(tag_, +1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_);
-      if (hasTagState(tag_, -1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_);
+      if (hasTagState(tag_, +1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
+      if (hasTagState(tag_, -1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
       // debug
       // std::cout << "Coeff: " << coeff_type_ << " : OS Integral : " << integral << std::endl;
       return integral;
@@ -179,7 +182,8 @@ Double_t Coefficient::evaluate(double cp_coeff,
                                double p1,
                                double delta_p0,
                                double delta_p1,
-                               double production_asym) const 
+                               double production_asym,
+                               int    tag_sign) const 
 {
   // calibrate single tagger
   std::pair<double, double> calibrated_mistag = calibrate(eta, avg_eta, p0, p1, delta_p0, delta_p1);
@@ -189,16 +193,16 @@ Double_t Coefficient::evaluate(double cp_coeff,
 
   // calculate coefficients
   if (coeff_type == kSin){
-    return -1.0 * cp_coeff * ( tag - production_asym * ( 1.0 - tag * eta_b + tag * eta_bbar ) - tag * ( eta_b + eta_bbar ) );
+    return -1.0 * cp_coeff * ( tag_sign * tag - production_asym * ( 1.0 - tag_sign * tag * eta_b + tag_sign * tag * eta_bbar ) - tag_sign * tag * ( eta_b + eta_bbar ) );
   }
   else if (coeff_type == kCos){
-    return +1.0 * cp_coeff * ( tag - production_asym * ( 1.0 - tag * eta_b + tag * eta_bbar ) - tag * ( eta_b + eta_bbar ) );
+    return +1.0 * cp_coeff * ( tag_sign * tag - production_asym * ( 1.0 - tag_sign * tag * eta_b + tag_sign * tag * eta_bbar ) - tag_sign * tag * ( eta_b + eta_bbar ) );
   }
   else if (coeff_type == kSinh){
-    return cp_coeff * ( 1.0 - tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - tag * ( eta_b - eta_bbar ) );
+    return cp_coeff * ( 1.0 - tag_sign * tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - tag_sign * tag * ( eta_b - eta_bbar ) );
   }
   else if (coeff_type == kCosh){
-    return cp_coeff * ( 1.0 - tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - tag * ( eta_b - eta_bbar ) );
+    return cp_coeff * ( 1.0 - tag_sign * tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - tag_sign * tag * ( eta_b - eta_bbar ) );
   }
   else{
     std::cout << "ERROR\t" << "Coefficient::evaluate(): No valid coefficient type!" << std::endl;
