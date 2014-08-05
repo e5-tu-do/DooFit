@@ -139,7 +139,9 @@ private:
       return std::make_pair(0.5, 0.5);
     }
 
-    //if (delta_p0 == 0.0 && )
+    if (delta_p0 == 0.0 && delta_p1 == 0.0) {
+      return std::make_pair(eta_cal, eta_cal);
+    }
 
     // if eta is larger or equal 0.5 return 0.5
     // if (eta >= 0.5){
@@ -184,23 +186,40 @@ private:
     double eta_bbar = calibrated_mistag.second;
     double signed_tag = tag_sign * tag;
 
-    // calculate coefficients
-    if (coeff_type == kSin){
-      return -1.0 * cp_coeff * ( signed_tag - production_asym * ( 1.0 - signed_tag * eta_b + signed_tag * eta_bbar ) - signed_tag * ( eta_b + eta_bbar ) );
+    if (production_asym == 0.0) {
+      // calculate coefficients
+      if (coeff_type == kSin){
+        return -1.0 * cp_coeff * signed_tag * ( 1.0 - ( eta_b + eta_bbar ) );
+      }
+      else if (coeff_type == kCos){
+        return cp_coeff * signed_tag * ( 1.0 - ( eta_b + eta_bbar ) );
+      }
+      else if (coeff_type == kSinh){
+        return cp_coeff * ( 1.0 - signed_tag * ( eta_b - eta_bbar ) );
+      }
+      else if (coeff_type == kCosh){
+        return cp_coeff * ( 1.0 - signed_tag * ( eta_b - eta_bbar ) );
+      }
+    } else {
+
+      // calculate coefficients
+      if (coeff_type == kSin){
+        return -1.0 * cp_coeff * ( signed_tag - production_asym * ( 1.0 - signed_tag * eta_b + signed_tag * eta_bbar ) - signed_tag * ( eta_b + eta_bbar ) );
+      }
+      else if (coeff_type == kCos){
+        return cp_coeff * ( signed_tag - production_asym * ( 1.0 - signed_tag * eta_b + signed_tag * eta_bbar ) - signed_tag * ( eta_b + eta_bbar ) );
+      }
+      else if (coeff_type == kSinh){
+        return cp_coeff * ( 1.0 - signed_tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - signed_tag * ( eta_b - eta_bbar ) );
+      }
+      else if (coeff_type == kCosh){
+        return cp_coeff * ( 1.0 - signed_tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - signed_tag * ( eta_b - eta_bbar ) );
+      }
+      // else{
+      //   std::cout << "ERROR\t" << "Coefficient::evaluate(): No valid coefficient type!" << std::endl;
+      //   abort();
+      // }
     }
-    else if (coeff_type == kCos){
-      return cp_coeff * ( signed_tag - production_asym * ( 1.0 - signed_tag * eta_b + signed_tag * eta_bbar ) - signed_tag * ( eta_b + eta_bbar ) );
-    }
-    else if (coeff_type == kSinh){
-      return cp_coeff * ( 1.0 - signed_tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - signed_tag * ( eta_b - eta_bbar ) );
-    }
-    else if (coeff_type == kCosh){
-      return cp_coeff * ( 1.0 - signed_tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - signed_tag * ( eta_b - eta_bbar ) );
-    }
-    // else{
-    //   std::cout << "ERROR\t" << "Coefficient::evaluate(): No valid coefficient type!" << std::endl;
-    //   abort();
-    // }
   }
 
   inline bool isTagInRange(const RooCategoryProxy& tag, int tag_state, const char* rangeName) const
