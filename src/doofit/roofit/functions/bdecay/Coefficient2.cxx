@@ -261,6 +261,16 @@ Double_t Coefficient2::evaluate(double cp_coeff,
 
   // calculate and return coefficients
   if (coeff_type == kSin){
+    // std::cout << std::endl;
+    // std::cout << "eta_os = " << eta_os << " -> omega_os_b = " << eta_os_b << ", omega_os_bbar = " << eta_os_bbar << " | tag_os = " << tag_os << std::endl;
+    // std::cout << "eta_ss = " << eta_ss << " -> omega_ss_b = " << eta_ss_b << ", omega_ss_bbar = " << eta_ss_bbar << " | tag_ss = " << tag_ss << std::endl;
+    // std::cout << "cp_coeff = " << cp_coeff << std::endl;
+    // std::cout << "delta_p0_os = " << delta_p0_os << ", delta_p1_os = " << delta_p1_os << std::endl;
+    // std::cout << "delta_p0_ss = " << delta_p0_ss << ", delta_p1_ss = " << delta_p1_ss << std::endl;
+    // std::cout << "production_asym = " << production_asym << std::endl;
+    // std::cout << "evaluate = " << -0.5 * cp_coeff * ( difference - production_asym * sum ) << std::endl;
+    // std::cout << std::endl;
+
     return -0.5 * cp_coeff * ( difference - production_asym * sum );
   }
   else if (coeff_type == kCos){
