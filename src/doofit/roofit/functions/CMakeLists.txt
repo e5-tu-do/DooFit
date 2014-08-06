@@ -6,6 +6,7 @@
 
 root_generate_dictionaries_local(dfFunctionsDict 
 CategoryToReal.h
+CPCoefficient.h
 Sum.h
 Product.h
 TripleProduct.h
