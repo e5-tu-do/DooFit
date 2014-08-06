@@ -39,6 +39,7 @@ Coefficient::Coefficient(const std::string& name,
   production_asym_("production_asym_","production_asym_",this,_production_asym_),
   tag_sign_(_tag_sign_)
 { 
+  tag_cat_ = dynamic_cast<const RooCategory*>(&tag_.arg());
 } 
 
 
@@ -56,6 +57,7 @@ Coefficient::Coefficient(const Coefficient& other, const char* name) :
   production_asym_("production_asym_",this,other.production_asym_),
   tag_sign_(other.tag_sign_)
 { 
+  tag_cat_ = dynamic_cast<const RooCategory*>(&tag_.arg());
 } 
 
 Int_t Coefficient::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const  
@@ -102,8 +104,12 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
   else{
     if (code == 1){
       double integral = 0.;
-      if (hasTagState(tag_, +1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
-      if (hasTagState(tag_, -1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
+      // if (hasTagState(tag_, +1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
+      // if (hasTagState(tag_, -1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
+
+      if (tagHasTagState(+1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
+      if (tagHasTagState(-1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
+
       // debug
       // std::cout << "Coeff: " << coeff_type_ << " : OS Integral : " << integral << std::endl;
       return integral;

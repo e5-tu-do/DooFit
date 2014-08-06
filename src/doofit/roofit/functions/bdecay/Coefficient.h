@@ -64,6 +64,8 @@ protected:
 
   RooRealProxy production_asym_ ;
 
+  const RooCategory* tag_cat_;
+
   int tag_sign_ ;
 
   inline Double_t evaluate() const { 
@@ -94,6 +96,12 @@ private:
   { 
     return dynamic_cast<const RooCategory&>(tag.arg()).isValidIndex(tag_state);
   }
+
+  inline bool tagHasTagState(int tag_state) const
+  { 
+    return tag_cat_->isValidIndex(tag_state);
+  }
+
   inline int  getIndex(const RooCategoryProxy& tag) const
   {
     return dynamic_cast<const RooCategory&>(tag.arg()).getIndex();
