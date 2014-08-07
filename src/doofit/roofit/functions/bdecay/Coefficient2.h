@@ -37,7 +37,9 @@ public:
 	      RooAbsReal& _p1_ss_,
 	      RooAbsReal& _delta_p0_ss_,
 	      RooAbsReal& _delta_p1_ss_,
-	      RooAbsReal& _production_asym_);
+	      RooAbsReal& _production_asym_,
+        int         _tag_sign_os_=+1,
+        int         _tag_sign_ss_=+1);
   Coefficient2(const Coefficient2& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new Coefficient2(*this,newname); }
   inline virtual ~Coefficient2() { }
@@ -69,6 +71,9 @@ protected:
 
   RooRealProxy production_asym_ ;
 
+  int tag_sign_os_ ;
+  int tag_sign_ss_ ;
+
   Double_t evaluate() const ;
 
 private:
@@ -91,7 +96,9 @@ private:
                     double p1_ss,
                     double delta_p0_ss,
                     double delta_p1_ss,
-                    double production_asym) const ;
+                    double production_asym,
+                    int    tag_sign_os_,
+                    int    tag_sign_ss_) const ;
 
   bool isTagInRange(const RooCategoryProxy& tag, int tag_state, const char* rangeName) const ;
   bool hasTagState(const RooCategoryProxy& tag, int tag_state) const;
