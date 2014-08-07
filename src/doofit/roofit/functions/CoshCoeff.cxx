@@ -42,35 +42,42 @@ CoshCoeff::CoshCoeff(const CoshCoeff& other, const char* name) :
   {
   }
 
-Int_t CoshCoeff::getAnalyticalIntegral(RooArgSet& allVars,
-                                                     RooArgSet& analVars, const char* rangeName) const
+Double_t CoshCoeff::evaluate() const
 {
-#ifdef FUNCTIONS_COUNT_CALLS
-    std::printf("CoshCoeff::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
-                __func__, __LINE__, __FILE__);
-    //  analVars.Print();
-    allVars.Print();
-#endif
-    
-    //if (matchArgs(allVars, analVars, cat_tag)) return 1;
-    
-    return 0;
+  // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
+  //std::cout << 1.0 - cat_tag*(par_tag_omega_Bd - par_tag_omega_Bdb) - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb) << std::endl;
+  return 1.0 - cat_tag*(par_tag_omega_Bd - par_tag_omega_Bdb) - cat_tag*par_prod_asym*(1.0 - par_tag_omega_Bd - par_tag_omega_Bdb);
+}
+
+Int_t CoshCoeff::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const
+{
+  if (rangeName) return 0 ;
+  if (matchArgs(allVars, analVars, cat_tag)) return 1 ;
+  return 0 ;
 }
   
-  Int_t CoshCoeff::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
+Int_t CoshCoeff::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
 {
-#ifdef FUNCTIONS_COUNT_CALLS
-    std::printf("CoshCoeff::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
-                __func__, __LINE__, __FILE__);
-    //analVars.Print();
-    allVars.Print();
-    if (normSet) normSet->Print();
-    if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
-#endif
+  if (normSet) normSet->Print();
+  if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
     
-    //if (matchArgs(allVars, analVars, cat_tag)) return 1;
+  if (matchArgs(allVars, analVars, cat_tag)) return 1;
     
-    return 0;
+  return 0;
+}
+
+Double_t CoshCoeff::analyticalIntegral(Int_t code, const char* /*rangeName*/) const
+{
+    // std::cout << "CoshCoeff::analyticalIntegral(" << code << ", ...): Called." << std::endl;
+    switch(code){
+      case 0: return evaluate() ;
+
+      case 1: return 2.0 ;
+
+      default: assert(0);
+    }
+
+    return 0. ;
 }
 } // namespace functions
 } // namespace roofit
