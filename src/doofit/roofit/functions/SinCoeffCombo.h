@@ -62,22 +62,21 @@ public:
 protected:
 
   RooRealProxy par_S ;
+  RooCategoryProxy cat_tag_OS ;
   RooRealProxy par_p0_OS ;
   RooRealProxy par_p1_OS ;
   RooRealProxy par_meaneta_OS ;
   RooRealProxy par_eta_OS ;
   RooRealProxy par_delta_p0_OS ;
   RooRealProxy par_delta_p1_OS ;
+  RooCategoryProxy cat_tag_SS ;
   RooRealProxy par_p0_SS ;
   RooRealProxy par_p1_SS ;
   RooRealProxy par_meaneta_SS ;
   RooRealProxy par_eta_SS ;
   RooRealProxy par_delta_p0_SS ;
   RooRealProxy par_delta_p1_SS ;
-  RooRealProxy par_prod_asym ;
-
-  RooCategoryProxy cat_tag_OS ;
-  RooCategoryProxy cat_tag_SS ;
+  RooRealProxy par_prod_asym ; 
 
   const CoeffType type_coeff ;
   
@@ -101,14 +100,28 @@ protected:
 
     if (par_eta_OS < 0.5)
     {
-      omega_OS_Bd  = par_p0_OS + 0.5*par_delta_p0_OS + (par_p1_OS + 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
-      omega_OS_Bdb = par_p0_OS - 0.5*par_delta_p0_OS + (par_p1_OS - 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
+      if ((par_p0_OS + par_p1_OS*(par_eta_OS - par_meaneta_OS)) > 0.5)
+      {
+        omega_OS_Bd  = 0.5;
+        omega_OS_Bdb = 0.5;
+      }
+      else {
+        omega_OS_Bd  = par_p0_OS + 0.5*par_delta_p0_OS + (par_p1_OS + 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
+        omega_OS_Bdb = par_p0_OS - 0.5*par_delta_p0_OS + (par_p1_OS - 0.5*par_delta_p1_OS)*(par_eta_OS - par_meaneta_OS);
+      }
     }
 
     if (par_eta_SS < 0.5)
     {
-      omega_SS_Bd  = par_p0_SS + 0.5*par_delta_p0_SS + (par_p1_SS + 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
-      omega_SS_Bdb = par_p0_SS - 0.5*par_delta_p0_SS + (par_p1_SS - 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
+      if ((par_p0_SS + par_p1_SS*(par_eta_SS - par_meaneta_SS)) > 0.5)
+      {
+        omega_SS_Bd  = 0.5;
+        omega_SS_Bdb = 0.5;
+      }
+      else{
+        omega_SS_Bd  = par_p0_SS + 0.5*par_delta_p0_SS + (par_p1_SS + 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
+        omega_SS_Bdb = par_p0_SS - 0.5*par_delta_p0_SS + (par_p1_SS - 0.5*par_delta_p1_SS)*(par_eta_SS - par_meaneta_SS);
+      }
     }
     
     if (cat_tag_OS == cat_tag_SS) {
@@ -138,15 +151,20 @@ protected:
     #ifdef FUNCTIONS_COUNT_CALLS
     ++num_calls_integral_;
     #endif
-    
-    //++n_calls;
-    //assert(0 != code);
-    // if (1 == code) {
-      //std::cout << "SinCoeffCombo::analyticalIntegral(" << code << ", ...): Called." << std::endl;
-      // return 0.0;
-    // }
-    // must not get here
-    //assert(1 == 0);
+    // std::cout << "SinCoeffCombo::analyticalIntegral(" << code << ", ...): Called." << std::endl;
+    switch(code){
+      case 0: return evaluate() ;
+
+      case 3: return  -2.0*par_S*type_coeff*par_prod_asym ;
+
+      case 2: return  -2.0*par_S*type_coeff*par_prod_asym ;
+
+      case 1: return  -4.0*par_S*type_coeff*par_prod_asym ;
+
+      default: assert(0);
+    }
+
+    return 0 ;
   }
   
 //  virtual Double_t getValV(const RooArgSet* nset=0) const {
