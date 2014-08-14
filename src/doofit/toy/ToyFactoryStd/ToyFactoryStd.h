@@ -225,6 +225,26 @@ namespace toy {
      *                      yes)
      */
     void MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const std::vector<RooDataSet*>* ignore_sets=NULL, bool delete_slave=true) const;
+
+    /**
+     *  @brief Mix two datasets with overlapping columns
+     *
+     *  This functions merges a dataset into another. A full overlap of 
+     *  variables is assumed and the slave dataset must be smaller or of equal
+     *  size compared to the master dataset.
+     *
+     *  In case the slave is smaller only a fraction of its events is mixed into
+     *  the master set.
+     *
+     *  @warning Both individual datasets will not be changed or deleted!
+     *
+     *  @param master_dataset first dataset to merge the second dataset into
+     *  @param slave_dataset second dataset to merge into the first
+     *                      yes)
+     *
+     *  @return the merged dataset
+     */
+    RooDataSet* MixMergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
     
     /**
      *  @brief Append a dataset to another
