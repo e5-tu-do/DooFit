@@ -104,6 +104,11 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
       // debug
       // std::cout << "Coeff: " << coeff_type_ << " Range: B0barB0 : " << integral << std::endl;
     }
+    if (isTagInRange(tag_, 0, rangeName)){
+      integral += evaluate(cp_coeff_, coeff_type_, 0, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
+      // debug
+      // std::cout << "Coeff: " << coeff_type_ << " Range: B0barB0 : " << integral << std::endl;
+    }
     return integral;
   }
   else{
@@ -111,6 +116,7 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
       double integral = 0.;
       if (hasTagState(tag_, +1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
       if (hasTagState(tag_, -1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
+      if (hasTagState(tag_, 0)) integral += evaluate(cp_coeff_, coeff_type_, 0, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
       // debug
       // std::cout << "Coeff: " << coeff_type_ << " : OS Integral : " << integral << std::endl;
       return integral;
