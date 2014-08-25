@@ -77,32 +77,33 @@ CoshCoeffCombo::CoshCoeffCombo(const CoshCoeffCombo& other, const char* name) :
 
 Int_t CoshCoeffCombo::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const
 {
-#ifdef FUNCTIONS_COUNT_CALLS
+  #ifdef FUNCTIONS_COUNT_CALLS
     std::printf("CoshCoeffCombo::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
                 __func__, __LINE__, __FILE__);
     //  analVars.Print();
     allVars.Print();
-#endif
-    
-    //if (matchArgs(allVars, analVars, cat_tag)) return 1;
-    
-    return 0;
+  #endif
+  if (rangeName) return 0 ;
+  if (matchArgs(allVars, analVars, cat_tag_OS, cat_tag_SS)) return 1 ;
+  if (matchArgs(allVars, analVars, cat_tag_OS)) return 2 ;
+  if (matchArgs(allVars, analVars, cat_tag_SS)) return 3 ;
+  return 0 ;
 }
   
   Int_t CoshCoeffCombo::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
 {
-#ifdef FUNCTIONS_COUNT_CALLS
+  // #ifdef FUNCTIONS_COUNT_CALLS
     std::printf("CoshCoeffCombo::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
                 __func__, __LINE__, __FILE__);
-    //analVars.Print();
+    analVars.Print();
     allVars.Print();
     if (normSet) normSet->Print();
     if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
-#endif
+  // #endif
     
-    //if (matchArgs(allVars, analVars, cat_tag)) return 1;
+  //if (matchArgs(allVars, analVars, cat_tag)) return 1;
     
-    return 0;
+  return 0;
 }
 } // namespace functions
 } // namespace roofit

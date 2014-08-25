@@ -37,8 +37,8 @@ namespace config {
     }
     
     if (TMath::Abs((cumuluated_prob - 1.0)) > 1e-14) {
-      serr << "ERROR in DiscreteProbabilityDistribution::Parse(string): Cumulative probability is not 1.0 (is " << cumuluated_prob << " - 1 = " << cumuluated_prob-1.0 << ")." << endmsg;
-      throw;
+      //swarn << "WARNING in DiscreteProbabilityDistribution::Parse(string): Cumulative probability is not 1.0 (is " << cumuluated_prob << " - 1 = " << cumuluated_prob-1.0 << ")." << endmsg;
+      //throw;
     }
   }
   

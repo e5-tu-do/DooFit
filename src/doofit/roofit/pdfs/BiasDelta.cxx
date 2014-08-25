@@ -98,8 +98,8 @@ Int_t BiasDelta::getGenerator(const RooArgSet& directVars, RooArgSet &generateVa
 void BiasDelta::generateEvent(Int_t code)
 {
   assert(code==1) ;
-  x = mean;
-  return;
+  // std::cout <<  "create new event with value " <<  mean   <<  std::endl;
+  x = 1.0*mean;
 }
 
 } // namespace pdfs
