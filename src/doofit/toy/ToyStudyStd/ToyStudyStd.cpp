@@ -23,6 +23,8 @@
 #include "TThread.h"
 #include "TCanvas.h"
 #include "TStopwatch.h"
+#include "TGraph.h"
+#include "TAxis.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -226,7 +228,43 @@ namespace toy {
     
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       std::string param_name = parameter->GetName();
-            
+
+      std::vector<std::string> postfixes_error;
+
+      postfixes_error.push_back("_err");
+      postfixes_error.push_back("_lerr");
+      postfixes_error.push_back("_herr");
+
+      for (auto postfix_error : postfixes_error) {
+        std::string name_error = param_name + postfix_error;
+        const RooRealVar* error = dynamic_cast<const RooRealVar*>(parameters->find(name_error.c_str()));
+        if (error != nullptr) {
+          //sinfo << "Parameter " << param_name << " can be correlated against an error." << endmsg;
+
+          std::vector<double> values;
+          std::vector<double> errors;
+          values.reserve(evaluated_values_->numEntries());
+          errors.reserve(evaluated_values_->numEntries());
+
+          for (int i=0; i<evaluated_values_->numEntries(); ++i) {
+            const RooArgSet* params = evaluated_values_->get(i);
+            //sdebug << param_name << " - " << params->getRealValue(param_name.c_str()) << " +/- " << params->getRealValue(name_error.c_str()) << endmsg;
+            values.push_back(params->getRealValue(param_name.c_str()));
+            errors.push_back(params->getRealValue(name_error.c_str()));
+          }
+
+          TGraph graph_value_error(evaluated_values_->numEntries(), &values[0], &errors[0]);
+          TCanvas canvas("c", "c", 800, 600);
+          graph_value_error.Draw("AP");
+
+          graph_value_error.GetXaxis()->SetTitle(parameter->GetTitle());
+          graph_value_error.GetYaxis()->SetTitle(error->GetTitle());
+
+          std::string plot_name = param_name + "_err_corr" + postfix_error;
+          doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
+        }
+      }
+
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
       
       
@@ -277,19 +315,17 @@ namespace toy {
         if (fit_plot_dataset != evaluated_values_ && frac_lost_entries>1.0) {
           sinfo << "Losing " << num_lost_entries << " (" << frac_lost_entries << "%) toys for this fit due to cuts applied for " << param_name << "." << endmsg;
         }
-            
-            
-            
-            // supress RooFit spam
-            RooMsgService::instance().setStreamStatus(0, false);
-            RooMsgService::instance().setStreamStatus(1, false);
-            RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(2), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(1));
 
-            // un-supress RooFit spam
-            RooMsgService::instance().setStreamStatus(0, true);
-            RooMsgService::instance().setStreamStatus(1, true);
-            
-            //fit_result->Print("v");
+        // supress RooFit spam
+        RooMsgService::instance().setStreamStatus(0, false);
+        RooMsgService::instance().setStreamStatus(1, false);
+        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(2), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(1));
+
+        // un-supress RooFit spam
+        RooMsgService::instance().setStreamStatus(0, true);
+        RooMsgService::instance().setStreamStatus(1, true);
+
+        //fit_result->Print("v");
         delete fit_result;
         sinfo.increment_indent(-2);
       }
