@@ -297,23 +297,61 @@ namespace toy {
   }
 
   RooDataSet* ToyFactoryStd::MixMergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const {
-    double mix_fraction = static_cast<double>(slave_dataset->numEntries()) / static_cast<double>(master_dataset->numEntries());
+    int n_slaves(slave_dataset->numEntries());
 
-    //sdebug << "mix fraction = " << slave_dataset->numEntries() << "/" << master_dataset->numEntries() << " = " << static_cast<double>(slave_dataset->numEntries()) / static_cast<double>(master_dataset->numEntries()) << endmsg;
+    // randomly distribute *all* slave entries over the master dataset range
+    int n_master = master_dataset->numEntries();
+    // std::fesetround(FE_TONEAREST);
+    std::set<int> positions_slave;
+    int i = 0;
+    while (i < slave_dataset->numEntries()) {
+      int rnd_pos = static_cast<int>(RooRandom::randomGenerator()->Rndm()*n_master);
+
+      if (positions_slave.count(rnd_pos) == 0) {
+        positions_slave.insert(rnd_pos);
+        ++i;
+      }
+    }
+
+    // for (auto el : positions_slave) {
+    //   sdebug << " el = " << el << endmsg;
+    // }
+    // sdebug << "mix in " << positions_slave.size() << " elements." << endmsg;
+
+    // double mix_fraction = static_cast<double>(n_slaves) / static_cast<double>(master_dataset->numEntries());
+    
+    // sdebug << "mix fraction = " << slave_dataset->numEntries() << "/" << master_dataset->numEntries() << " = " << static_cast<double>(slave_dataset->numEntries()) / static_cast<double>(master_dataset->numEntries()) << endmsg;
 
     const RooArgSet& vars = *master_dataset->get();
     RooDataSet* dataset_new = new RooDataSet(master_dataset->GetName(), master_dataset->GetTitle(), vars);
 
     int n_slave = 0;
     for (int i=0; i<master_dataset->numEntries(); ++i) {
-      double rnd = RooRandom::randomGenerator()->Rndm();
-
-      if (rnd < mix_fraction) {
+      if (positions_slave.count(i) != 0) {
         dataset_new->add(*slave_dataset->get(n_slave)); 
         ++n_slave;
       } else {
         dataset_new->add(*master_dataset->get(i)); 
       }
+
+      //double rnd = RooRandom::randomGenerator()->Rndm();
+
+      // sdebug << "i = " << i << endmsg;
+      // sdebug << "n_slave = " << n_slave << endmsg;
+      // sdebug << "rnd = " << rnd << endmsg;
+
+      // if (rnd < mix_fraction && n_slave<n_slaves) {
+      //   dataset_new->add(*slave_dataset->get(n_slave)); 
+      //   ++n_slave;
+      // } else if (rnd < mix_fraction && n_slave>=n_slaves) {
+      //   swarn << "No more slaves although requested!" << endmsg;
+      //   dataset_new->add(*master_dataset->get(i)); 
+      // } else {
+      //   dataset_new->add(*master_dataset->get(i)); 
+      // }
+    }
+    if (n_slave < n_slaves-1) {
+      swarn << "Still " << n_slaves-n_slave-1 << " slaves available!" << endmsg;
     }
 
     return dataset_new;
