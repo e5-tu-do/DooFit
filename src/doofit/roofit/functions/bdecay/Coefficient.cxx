@@ -171,10 +171,16 @@ std::pair<double, double> Coefficient::calibrate(double eta, double avg_eta, dou
     eta_cal_bbar = 0.5;
   }
   // if calibrated eta is smaller than 0 return 0
-  if (eta_cal < 0.0 || eta_cal_b < 0.0 || eta_cal_bbar < 0.0){
-    eta_cal_b    = 0.0;
-    eta_cal_bbar = 0.0;
-  }
+  if (eta_cal_b < 0.0)    eta_cal_b = 0;
+  if (eta_cal_bbar < 0.0) eta_cal_bbar = 0;
+
+  // the next few lines set every eta value (avg and high/low from asymmetries) to zero
+  // if only one of them is below zero. This seems to introduce a fit bias on our CP
+  // observables. (CC)
+  // if (eta_cal < 0.0 || eta_cal_b < 0.0 || eta_cal_bbar < 0.0){
+  //   eta_cal_b    = 0.0;
+  //   eta_cal_bbar = 0.0;
+  // }
   return std::make_pair(eta_cal_b, eta_cal_bbar);
 }
 
