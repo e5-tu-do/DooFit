@@ -521,7 +521,7 @@ namespace toy {
       }
     }
     if (problems) {
-      fit_result.Print("v");
+      fit_result.Print("");
     }
     
     parameters.addOwned(*parameters_at_limit);
