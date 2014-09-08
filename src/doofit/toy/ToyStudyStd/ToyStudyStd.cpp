@@ -227,46 +227,58 @@ namespace toy {
     Progress p("Evaluating parameter distributions", num_parameters);
     
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
+      // std::chrono::high_resolution_clock::time_point time_start(std::chrono::high_resolution_clock::now());
+
       std::string param_name = parameter->GetName();
 
       std::vector<std::string> postfixes_error;
 
-      postfixes_error.push_back("_err");
-      postfixes_error.push_back("_lerr");
-      postfixes_error.push_back("_herr");
+      if (config_toystudy_.plot_parameter_vs_error_correlation()) {
+        postfixes_error.push_back("_err");
+        postfixes_error.push_back("_lerr");
+        postfixes_error.push_back("_herr");
 
-      for (auto postfix_error : postfixes_error) {
-        std::string name_error = param_name + postfix_error;
-        const RooRealVar* error = dynamic_cast<const RooRealVar*>(parameters->find(name_error.c_str()));
-        if (error != nullptr) {
-          //sinfo << "Parameter " << param_name << " can be correlated against an error." << endmsg;
+        for (auto postfix_error : postfixes_error) {
+          std::string name_error = param_name + postfix_error;
+          const RooRealVar* error = dynamic_cast<const RooRealVar*>(parameters->find(name_error.c_str()));
+          if (error != nullptr) {
+            //sinfo << "Parameter " << param_name << " can be correlated against an error." << endmsg;
 
-          std::vector<double> values;
-          std::vector<double> errors;
-          values.reserve(evaluated_values_->numEntries());
-          errors.reserve(evaluated_values_->numEntries());
+            std::vector<double> values;
+            std::vector<double> errors;
+            values.reserve(evaluated_values_->numEntries());
+            errors.reserve(evaluated_values_->numEntries());
 
-          for (int i=0; i<evaluated_values_->numEntries(); ++i) {
-            const RooArgSet* params = evaluated_values_->get(i);
-            //sdebug << param_name << " - " << params->getRealValue(param_name.c_str()) << " +/- " << params->getRealValue(name_error.c_str()) << endmsg;
-            values.push_back(params->getRealValue(param_name.c_str()));
-            errors.push_back(params->getRealValue(name_error.c_str()));
+            for (int i=0; i<evaluated_values_->numEntries(); ++i) {
+              const RooArgSet* params = evaluated_values_->get(i);
+              //sdebug << param_name << " - " << params->getRealValue(param_name.c_str()) << " +/- " << params->getRealValue(name_error.c_str()) << endmsg;
+              values.push_back(params->getRealValue(param_name.c_str()));
+              errors.push_back(params->getRealValue(name_error.c_str()));
+            }
+
+            TGraph graph_value_error(evaluated_values_->numEntries(), &values[0], &errors[0]);
+            TCanvas canvas("c", "c", 800, 600);
+            graph_value_error.Draw("AP");
+
+            graph_value_error.GetXaxis()->SetTitle(parameter->GetTitle());
+            graph_value_error.GetYaxis()->SetTitle(error->GetTitle());
+
+            std::string plot_name = param_name + "_err_corr" + postfix_error;
+            doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
           }
-
-          TGraph graph_value_error(evaluated_values_->numEntries(), &values[0], &errors[0]);
-          TCanvas canvas("c", "c", 800, 600);
-          graph_value_error.Draw("AP");
-
-          graph_value_error.GetXaxis()->SetTitle(parameter->GetTitle());
-          graph_value_error.GetYaxis()->SetTitle(error->GetTitle());
-
-          std::string plot_name = param_name + "_err_corr" + postfix_error;
-          doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
         }
       }
 
+      // std::chrono::high_resolution_clock::time_point time_correlation(std::chrono::high_resolution_clock::now());      
+      // double duration_correlation(std::chrono::duration_cast<std::chrono::microseconds>(time_correlation - time_start).count());
+      // sdebug << "duration_correlation = " << duration_correlation*1e-3 << endmsg;
+
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
       
+      // std::chrono::high_resolution_clock::time_point time_sort(std::chrono::high_resolution_clock::now());      
+      // double duration_sort(std::chrono::duration_cast<std::chrono::microseconds>(time_sort - time_correlation).count());
+      // sdebug << "duration_sort = " << duration_sort*1e-3 << endmsg;
+
       
       if (param_name == "par_bssig_time_S_err") {
         minmax.second = 2.3;
@@ -293,10 +305,14 @@ namespace toy {
         cut = cut + "minos_problems < 0.5";
       }
       if (cut.Length() > 0) {
-        fit_plot_dataset = new RooDataSet("fit_plot_dataset", "Plotting and fitting dataset for ToyStudyStd", evaluated_values_, RooArgSet(*parameters), cut);
+        fit_plot_dataset = new RooDataSet("fit_plot_dataset", "Plotting and fitting dataset for ToyStudyStd", evaluated_values_, RooArgSet(*parameter), cut);
       } else {
         fit_plot_dataset = evaluated_values_;
       }
+
+      // std::chrono::high_resolution_clock::time_point time_prefit(std::chrono::high_resolution_clock::now());      
+      // double duration_prefit(std::chrono::duration_cast<std::chrono::microseconds>(time_prefit - time_sort).count());
+      // sdebug << "duration_prefit = " << duration_prefit*1e-3 << endmsg;
 
       // for all pulls fit a gaussian
       if (param_name.length() > 4 &&
@@ -319,7 +335,11 @@ namespace toy {
         // supress RooFit spam
         RooMsgService::instance().setStreamStatus(0, false);
         RooMsgService::instance().setStreamStatus(1, false);
-        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(2), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(1));
+
+        int num_cores = std::max(fit_plot_dataset->numEntries() < 200 ? fit_plot_dataset->numEntries()/1000+1 : 1, 8);
+        //sdebug << fit_plot_dataset->numEntries() << " thus " << num_cores << " cores." << endmsg;
+        num_cores = 1;
+        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(num_cores), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(0));
 
         // un-supress RooFit spam
         RooMsgService::instance().setStreamStatus(0, true);
@@ -329,6 +349,10 @@ namespace toy {
         delete fit_result;
         sinfo.increment_indent(-2);
       }
+
+      // std::chrono::high_resolution_clock::time_point time_postfit(std::chrono::high_resolution_clock::now());      
+      // double duration_postfit(std::chrono::duration_cast<std::chrono::microseconds>(time_postfit - time_prefit).count());
+      // sdebug << "duration_postfit = " << duration_postfit*1e-3 << endmsg;
       
       int num_bins = fit_plot_dataset->numEntries() < 1000 ? fit_plot_dataset->numEntries()/10 : 100;
       if (num_bins < 10) num_bins = 10;
@@ -356,6 +380,10 @@ namespace toy {
         delete sigma;
         delete mean;
       }
+
+      // std::chrono::high_resolution_clock::time_point time_plotvars(std::chrono::high_resolution_clock::now());      
+      // double duration_plotvars(std::chrono::duration_cast<std::chrono::microseconds>(time_plotvars - time_correlation).count());
+      // sdebug << "duration_plotvars = " << duration_plotvars*1e-3 << endmsg;
       
       ++p;
     }
