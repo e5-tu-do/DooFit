@@ -319,7 +319,10 @@ namespace toy {
         // supress RooFit spam
         RooMsgService::instance().setStreamStatus(0, false);
         RooMsgService::instance().setStreamStatus(1, false);
-        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(2), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(1));
+
+        int num_cores = std::max(fit_plot_dataset->numEntries() < 200 ? fit_plot_dataset->numEntries()/1000+1 : 1, 8);
+        //sdebug << fit_plot_dataset->numEntries() << " thus " << num_cores << " cores." << endmsg;
+        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(num_cores), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(0));
 
         // un-supress RooFit spam
         RooMsgService::instance().setStreamStatus(0, true);
