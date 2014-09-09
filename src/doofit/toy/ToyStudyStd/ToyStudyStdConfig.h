@@ -128,21 +128,21 @@ namespace toy {
      *
      *  @return current value of min_acceptable_cov_matrix_quality_
      */
-    int min_acceptable_cov_matrix_quality() const  { return min_acceptable_cov_matrix_quality_; }
+    int min_acceptable_cov_matrix_quality() const { return min_acceptable_cov_matrix_quality_; }
 
     /**
      *  @brief Getter for correlation scatter plots of values of parameters vs. their errors
      *
      *  @return current value of plot_parameter_vs_error_correlation_
      */
-    bool plot_parameter_vs_error_correlation() const  { return plot_parameter_vs_error_correlation_; }
+    bool plot_parameter_vs_error_correlation() const { return plot_parameter_vs_error_correlation_; }
 
     /**
      *  @brief Getter for number of toys to read in
      *
      *  @return current value of num_toys_read_
      */
-    int num_toys_read() const  { return num_toys_read_; }
+    int num_toys_read() const { return num_toys_read_; }
     ///@}
 
     /** @name Setter actual options

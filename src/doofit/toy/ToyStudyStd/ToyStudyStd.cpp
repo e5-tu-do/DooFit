@@ -732,7 +732,6 @@ namespace toy {
                 swarn << "Fit result number " << i << " in file " << *it_files << " neglected." << endmsg;
               }
               results_neglected++;
-              
             }
             fit_result = NULL;
             fit_result2 = NULL;
@@ -745,10 +744,19 @@ namespace toy {
                 if (std::get<1>(fit_results) != NULL) delete std::get<1>(fit_results);
               }
             }
+
+            if (config_toystudy_.num_toys_read() > 0 && results_stored >= config_toystudy_.num_toys_read()) {
+              break;
+            }
           }
-          
+
           delete tree;
           file.Close();
+
+          if (config_toystudy_.num_toys_read() > 0 && results_stored >= config_toystudy_.num_toys_read()) {
+            //sinfo << "Read in " << results_stored << " toys as requested. Finishing." << endmsg;
+            break;
+          }
         }
       }
     }
