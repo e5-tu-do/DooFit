@@ -135,7 +135,14 @@ namespace toy {
      *
      *  @return current value of plot_parameter_vs_error_correlation_
      */
-    int plot_parameter_vs_error_correlation() const  { return plot_parameter_vs_error_correlation_; }
+    bool plot_parameter_vs_error_correlation() const  { return plot_parameter_vs_error_correlation_; }
+
+    /**
+     *  @brief Getter for number of toys to read in
+     *
+     *  @return current value of num_toys_read_
+     */
+    int num_toys_read() const  { return num_toys_read_; }
     ///@}
 
     /** @name Setter actual options
@@ -277,6 +284,13 @@ namespace toy {
     void set_plot_parameter_vs_error_correlation(bool plot_parameter_vs_error_correlation) {plot_parameter_vs_error_correlation_ = plot_parameter_vs_error_correlation;}
 
     /**
+     *  @brief Setter for number of toys to read in
+     *
+     *  @param num_toys_read new value for num_toys_read_ (set to -1 for all toys)
+     */
+    void set_num_toys_read(int num_toys_read) {num_toys_read_ = num_toys_read;}
+
+    /**
      *  @brief Adder for file names and tree names to read fit result from
      *
      *  @param result_file_tree new file and tree name to add to read_results_filename_treename_
@@ -394,6 +408,11 @@ namespace toy {
      *  @brief Plot correlation scatter plot of value of parameter vs. its error
      */
     bool plot_parameter_vs_error_correlation_;
+
+    /**
+     *  @brief Number of toys to read in
+     */
+    int num_toys_read_;
     ///@}
   };
 } // namespace toy
