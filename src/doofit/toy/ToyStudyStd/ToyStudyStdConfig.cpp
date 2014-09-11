@@ -71,9 +71,9 @@ namespace toy {
     }
     scfg << "Plotting of parameter vs error:    " << plot_parameter_vs_error_correlation_ << endmsg;
     if (num_toys_read() >= 0) {
-      scfg << "Number of toys to read in:       " << num_toys_read() << endmsg;
+      scfg << "Number of toys to read in:         " << num_toys_read() << endmsg;
     } else {
-      scfg << "Number of toys to read in:       " << "all" << endmsg;
+      scfg << "Number of toys to read in:         " << "all" << endmsg;
     }
   }
   
