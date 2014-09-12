@@ -11,6 +11,7 @@ Sum.h
 Product.h
 TripleProduct.h
 LinearFunctionWithOffset.h
+QuadraticFunctionWithOffset.h
 TauCorrectionWithBetaFactor.h 
 AtanAcceptanceIncludingBeta.h 
 AtanAcceptance.h 
@@ -51,6 +52,7 @@ Sum.h Sum.cxx Sum_dict.h Sum_dict.cc
 Product.h Product.cxx Product_dict.h Product_dict.cc
 TripleProduct.h TripleProduct.cxx TripleProduct_dict.h TripleProduct_dict.cc
 LinearFunctionWithOffset.h LinearFunctionWithOffset.cxx LinearFunctionWithOffset_dict.h LinearFunctionWithOffset_dict.cc
+QuadraticFunctionWithOffset.h QuadraticFunctionWithOffset.cxx QuadraticFunctionWithOffset_dict.h QuadraticFunctionWithOffset_dict.cc
 TauCorrectionWithBetaFactor.h TauCorrectionWithBetaFactor.cxx TauCorrectionWithBetaFactor_dict.h TauCorrectionWithBetaFactor_dict.cc
 AtanAcceptanceIncludingBeta.h AtanAcceptanceIncludingBeta.cxx AtanAcceptanceIncludingBeta_dict.h AtanAcceptanceIncludingBeta_dict.cc
 AtanAcceptance.h AtanAcceptance.cxx AtanAcceptance_dict.h AtanAcceptance_dict.cc
@@ -97,6 +99,7 @@ Product.h
 TripleProduct.h
 CPCoefficient.h
 LinearFunctionWithOffset.h 
+QuadraticFunctionWithOffset.h 
 AtanAcceptanceIncludingBeta.h 
 AtanAcceptance.h
 TauCorrectionWithBetaFactor.h 
