@@ -38,7 +38,8 @@ namespace plotting {
 
 PlotSimultaneous::PlotSimultaneous(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooSimultaneous& pdf, const std::vector<std::string>& components, const std::string& plot_name)
 : Plot(cfg_plot, dimension, dataset, pdf, components, plot_name),
-  components_regexps_(components)
+  components_regexps_(components),
+  plot_asym_(false)
 {
   
 }
@@ -58,8 +59,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooAbsPdf& sub_pdf = *(pdf.getPdf(sim_cat_type->GetName()));
     if (&sub_pdf != NULL) {
       //RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
-      // sim_cat.Print();
-      // sdebug << sim_cat_type->getVal() << endmsg;
+      
+      
       sim_cat.setIndex(sim_cat_type->getVal());
       
       std::string cut_string = "";
@@ -101,6 +102,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         //plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
         plot_name = plot_name_ + "_" + sim_cat_type->GetName();
         Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
+        plot.plot_asymmetry_ = this->plot_asym_;
         plot.plot_args_ = this->plot_args_;
         plot.plot_range_ = this->plot_range_;
         
@@ -227,6 +229,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     //  plot_name = std::string(dimension_.GetName()) + "_summed";
     plot_name = plot_name_ + "_summed";
     Plot plot(config_plot_, dimension_, data, *pdf_, components_regexps_, plot_name);
+    plot.plot_asymmetry_ = this->plot_asym_;
     plot.plot_args_ = this->plot_args_;
     plot.plot_range_ = this->plot_range_;
     

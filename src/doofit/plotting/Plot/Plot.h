@@ -209,6 +209,16 @@ enum ScaleType {
     void set_plot_range(const std::string& plot_range) { plot_range_ = plot_range; }
     
     /**
+     *  @brief Set asymmetry plotting mode
+     *
+     *  Set true, if an asymmetry shall be plotted. The y-axis  range will be set
+     *  from -1 to 1 
+     *  
+     *  @param plot_asymmetry set true for plotting asymmetry
+     */
+     void set_plot_asymmetry(bool plot_asymmetry) { plot_asymmetry_ = plot_asymmetry; }
+
+    /**
      *  @brief Friend class PlotSimultaneous
      */
     friend class PlotSimultaneous;
@@ -271,6 +281,8 @@ enum ScaleType {
      *  @brief Flag to ignore setting of NumCPU to avoid plotting problems
      */
     bool ignore_num_cpu_;
+
+    bool plot_asymmetry_;
     
   private:
   };  

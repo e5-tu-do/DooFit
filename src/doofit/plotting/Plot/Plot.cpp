@@ -43,7 +43,8 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
   dimension_(dimension),
   datasets_(),
   plot_name_(plot_name),
-  ignore_num_cpu_(false)
+  ignore_num_cpu_(false),
+  plot_asymmetry_(false)
 {
   datasets_.push_back(&dataset);
   pdf_ = dynamic_cast<RooAbsPdf*>(pdfs.first());
@@ -75,7 +76,8 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
   dimension_(dimension),
   datasets_(),
   plot_name_(plot_name),
-  ignore_num_cpu_(false)
+  ignore_num_cpu_(false),
+  plot_asymmetry_(false)
 {
   datasets_.push_back(&dataset);
   pdf_ = &pdf;
@@ -185,6 +187,16 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 
   RooPlot* plot_frame = dimension_.frame(range_arg);
   
+  // I feel so stupid doing this but apparently RooFit leaves me no other way...
+    RooCmdArg arg1, arg2, arg3, arg4, arg5, arg6, arg7;
+    if (plot_args_.size() > 0) arg1 = plot_args_[0];
+    if (plot_args_.size() > 1) arg2 = plot_args_[1];
+    if (plot_args_.size() > 2) arg3 = plot_args_[2];
+    if (plot_args_.size() > 3) arg4 = plot_args_[3];
+    if (plot_args_.size() > 4) arg5 = plot_args_[4];
+    if (plot_args_.size() > 5) arg6 = plot_args_[5];
+    if (plot_args_.size() > 6) arg7 = plot_args_[6];
+    
   RooCmdArg weight_arg;
   RooAbsData* dataset_normalisation = NULL;
   if (dataset_reduced != NULL) {
@@ -196,9 +208,11 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     RooMsgService::instance().setStreamStatus(1, false);
     if (binning != NULL) {
-      dataset_reduced->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+      if(plot_asymmetry_) dataset_reduced->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7)/*, Rescale(1.0/(*it)->sumEntries())*/);
+      else dataset_reduced->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
     } else {
-      dataset_reduced->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+      if(plot_asymmetry_) dataset_reduced->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg, weight_arg, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7)/*, Rescale(1.0/(*it)->sumEntries())*/);
+      else dataset_reduced->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
     }
     RooMsgService::instance().setStreamStatus(1, true);
   } else {
@@ -212,9 +226,11 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
       
       RooMsgService::instance().setStreamStatus(1, false);
       if (binning != NULL) {
-        (*it)->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+        if(plot_asymmetry_) (*it)->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7)/*, Rescale(1.0/(*it)->sumEntries())*/);
+        else (*it)->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
       } else {
-        (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
+        if(plot_asymmetry_) (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg, weight_arg, MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7)/*, Rescale(1.0/(*it)->sumEntries())*/);
+        else (*it)->plotOn(plot_frame, Binning(dimension_.getBinning()), cut_range_arg, weight_arg/*, Rescale(1.0/(*it)->sumEntries())*/);
       }
       RooMsgService::instance().setStreamStatus(1, true);
     }
@@ -242,16 +258,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   config_plot_.OnDemandOpenPlotStack();
   if (pdf_ != NULL) {
 //    RooPlot* plot_frame_pull = dimension_.frame(range_arg);
-    
-    // I feel so stupid doing this but apparently RooFit leaves me no other way...
-    RooCmdArg arg1, arg2, arg3, arg4, arg5, arg6, arg7;
-    if (plot_args_.size() > 0) arg1 = plot_args_[0];
-    if (plot_args_.size() > 1) arg2 = plot_args_[1];
-    if (plot_args_.size() > 2) arg3 = plot_args_[2];
-    if (plot_args_.size() > 3) arg4 = plot_args_[3];
-    if (plot_args_.size() > 4) arg5 = plot_args_[4];
-    if (plot_args_.size() > 5) arg6 = plot_args_[5];
-    if (plot_args_.size() > 6) arg7 = plot_args_[6];
+
     
 //    if (dataset_reduced != NULL) {
 //      serr << "Reduced dataset available. Plotting this." << endmsg;
@@ -297,7 +304,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooCmdArg arg_num_cpu;
     if (config_plot_.num_cpu() > 1 && !ignore_num_cpu_) {
       arg_num_cpu = NumCPU(config_plot_.num_cpu());
-    } else if (ignore_num_cpu_ && config_plot_.num_cpu() > 1) {
+    } else if (ignore_num_cpu_) {
       swarn << "Warning in Plot::PlotHandler(...): Multicore plotting is requested but intentionally disabled for this plot to avoid nasty RooFit plotting bugs." << endmsg;
     }
     
@@ -352,9 +359,14 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     plot_frame->SetMinimum(0.0);
     plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
+    if(plot_asymmetry_) {
+      plot_frame->SetMinimum(-1.0);
+      plot_frame->SetMaximum(1.0);
+    }
     
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
     ylabel.ReplaceAll("Events","Candidates");
+    if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
     
     if (sc_y == kLinear || sc_y == kBoth) {
@@ -370,6 +382,10 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     plot_frame->SetMinimum(0.5);
     plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
+    if(plot_asymmetry_) {
+      plot_frame->SetMinimum(-1.0);
+      plot_frame->SetMaximum(1.0);
+    }
     
 //    TString ylabel = plot_frame->GetYaxis()->GetTitle();
 //    ylabel.ReplaceAll("Events","Candidates");
@@ -394,9 +410,14 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   } else {
     plot_frame->SetMinimum(0.0);
     plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
-    
+    if(plot_asymmetry_) {
+      plot_frame->SetMinimum(-1.0);
+      plot_frame->SetMaximum(1.0);
+    }
+
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
     ylabel.ReplaceAll("Events","Candidates");
+    if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
     
     if (sc_y == kLinear || sc_y == kBoth) {

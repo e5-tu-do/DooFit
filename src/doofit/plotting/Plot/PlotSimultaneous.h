@@ -64,6 +64,15 @@ class PlotSimultaneous : public Plot {
    */
   virtual ~PlotSimultaneous() {}
   
+  /**
+   *  @brief Set asymmetry plotting mode
+   *
+   *  Set true, if an asymmetry shall be plotted. The y-axis  range will be set
+   *  from -1 to 1 
+   *  
+   *  @param plot_asymmetry set true for plotting asymmetry
+   */
+  void set_plot_asymmetry(bool plot_asymmetry) { plot_asym_ = plot_asymmetry; }
  protected:
   /**
    *  @brief Internal plotting handler
@@ -81,6 +90,8 @@ class PlotSimultaneous : public Plot {
    *  @brief Components to plot as regular expressions
    */
   const std::vector<std::string> components_regexps_;
+
+  bool plot_asym_;
 };
 } // namespace plotting
 } // namespace doofit
