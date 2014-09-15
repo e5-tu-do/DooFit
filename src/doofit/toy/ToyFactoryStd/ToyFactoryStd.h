@@ -257,7 +257,7 @@ namespace toy {
      *  @param master_dataset first dataset to append the second dataset to
      *  @param slave_dataset second dataset to append to the first
      */
-    void AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
+    RooDataSet* AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
     
     /**
      *  @brief Merge dataset vector into new dataset
