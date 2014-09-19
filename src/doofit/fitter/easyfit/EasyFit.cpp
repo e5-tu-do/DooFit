@@ -53,6 +53,7 @@ EasyFit::EasyFit(const string& fit_name)
     , fc_conditional_observables_(NULL)
     , fc_strategy_(1)
     , fc_optimize_(true)
+    , fc_offset_(false)
     , fc_sumw2err_(false)
     , fc_minimizer_type_("Minuit2")
     , fc_minimizer_algo_("minimize")
@@ -86,7 +87,9 @@ EasyFit::EasyFit(const string& fit_name)
 }
 
 EasyFit::~EasyFit() {
-
+  // if (fit_result_ != nullptr) {
+  //   delete fit_result_;
+  // }
 }
 
 void EasyFit::SetPdfAndDataSet(RooAbsPdf* pdf, RooAbsData* data) {
@@ -127,10 +130,15 @@ void EasyFit::PrepareFit() {
   
   if (fc_conditional_observables_set_) {
     fc_map_["ConditionalObservables"] = RooFit::ConditionalObservables(*fc_conditional_observables_);
+    sinfo << "EasyFit::PrepareFit(): Using the following conditional observables: " << *fc_conditional_observables_ << endmsg;
+  } else {
+    sinfo << "EasyFit::PrepareFit(): Using no conditional observables." << endmsg;
   }
+
   
   fc_map_["Strategy"]    = RooFit::Strategy(fc_strategy_);
   fc_map_["Optimize"]    = RooFit::Optimize(fc_optimize_);
+  fc_map_["Offset"]      = RooFit::Offset(fc_offset_);
 
   fc_map_["SumW2Err"]    = RooFit::SumW2Error(fc_sumw2err_);
 
@@ -330,6 +338,13 @@ EasyFit& EasyFit::SetStrategy(int fc_strategy) {
       serr << "Fit " << fit_name_ << ": Cannot set Strategy to " << fc_strategy 
            << ". Allowed valued are 0, 1, 2." << endmsg;
     }
+  }
+  return *this;
+}
+
+EasyFit& EasyFit::SetOffset(int fc_offset) {
+  if (CheckSettingOptionsOk()) {
+    fc_offset_ = fc_offset;
   }
   return *this;
 }

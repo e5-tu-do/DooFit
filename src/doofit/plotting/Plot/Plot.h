@@ -229,7 +229,9 @@ enum ScaleType {
      *  @param suffix suffix to put after file names for log plots (if sc_y == kBoth)
      */
     virtual void PlotHandler(ScaleType sc_y, std::string suffix="") const;
-    
+
+    void set_ignore_num_cpu(bool ignore_num_cpu) { ignore_num_cpu_ = ignore_num_cpu; }
+
     /**
      *  @brief Dimension to plot in
      */
@@ -264,6 +266,11 @@ enum ScaleType {
      *  @brief Vector containing additional RooCmdArgs for plotting
      */
     std::vector<RooCmdArg> plot_args_;
+
+    /**
+     *  @brief Flag to ignore setting of NumCPU to avoid plotting problems
+     */
+    bool ignore_num_cpu_;
     
   private:
   };  

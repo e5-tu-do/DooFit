@@ -225,19 +225,48 @@ namespace toy {
      *                      yes)
      */
     void MergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset, const std::vector<RooDataSet*>* ignore_sets=NULL, bool delete_slave=true) const;
+
+    /**
+     *  @brief Mix two datasets with overlapping columns
+     *
+     *  This functions merges a dataset into another. A full overlap of 
+     *  variables is assumed and the slave dataset must be smaller or of equal
+     *  size compared to the master dataset.
+     *
+     *  In case the slave is smaller only a fraction of its events is mixed into
+     *  the master set.
+     *
+     *  @warning Both individual datasets will not be changed or deleted!
+     *
+     *  @param master_dataset first dataset to merge the second dataset into
+     *  @param slave_dataset second dataset to merge into the first
+     *                      yes)
+     *
+     *  @return the merged dataset
+     */
+    RooDataSet* MixMergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
     
     /**
      *  @brief Append a dataset to another
      *
      *  This functions appends a dataset to another. A sanity check for 
      *  compatibility is applied (i.e. if datasets contain identical columns; if
-     *  not, a DatasetsNotAppendableException is thrown). After appending, the 
-     *  second or slave dataset is deleted.
+     *  not, a DatasetsNotAppendableException is thrown). 
+     * 
+     *  The new dataset will be returned with mixed entries, i.e. for any random
+     *  drawn sample the expected distribution of master vs. slave entries is 
+     *  according the ratio of both sample sizes. This is done to avoid samples
+     *  where only a few entries are drawn (e.g. from proto datasets) and 
+     *  drawing from only master or slave will bias the results. Example:
+     *  The sets MMMMMM and SSSSS will be merged to MSSMMSMSSMM and not 
+     *  MMMMMMSSSSS.
+     *
+     *  @warning Both individual datasets will not be changed or deleted!
      *
      *  @param master_dataset first dataset to append the second dataset to
      *  @param slave_dataset second dataset to append to the first
      */
-    void AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
+    RooDataSet* AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
     
     /**
      *  @brief Merge dataset vector into new dataset
