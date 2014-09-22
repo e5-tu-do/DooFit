@@ -3,6 +3,8 @@
 
 // STL
 #include <tuple>
+#include <vector>
+#include <map>
 
 // BOOST
 #include <boost/thread.hpp>
@@ -31,7 +33,7 @@ namespace doofit {
   
 namespace toy {
   
-  typedef std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double> FitResultContainer;
+  typedef std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double,int,int> FitResultContainer;
   
   
   /** @class ToyStudyStd
@@ -129,9 +131,11 @@ namespace toy {
      *  @param stopwatch2 second stop watch to save fit times (optional)
      */
     void StoreFitResult(const RooFitResult* fit_result1, 
-                        const RooFitResult* fit_result2=NULL,
-                        TStopwatch* stopwatch1=NULL,
-                        TStopwatch* stopwatch2=NULL);
+                        const RooFitResult* fit_result2 = NULL,
+                        TStopwatch* stopwatch1 = NULL,
+                        TStopwatch* stopwatch2 = NULL,
+                        int seed = 0,
+                        int run_id = 0);
     
     /**
      *  @brief End the save fit result worker thread and wait for it to save everything
@@ -342,6 +346,12 @@ namespace toy {
      *  \brief Container for read in and active fit results
      */
     std::vector<FitResultContainer> fit_results_;
+
+    /**
+     *  @brief Container for read in and active fit results with key as seed
+     */
+    std::multimap<int, FitResultContainer> fit_results_by_seed_;
+
     /**
      *  \brief Container for all ever read in fit results
      */
