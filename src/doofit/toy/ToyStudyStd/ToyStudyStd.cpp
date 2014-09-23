@@ -202,17 +202,19 @@ namespace toy {
       // sdebug << "is end (1st attempt): " << (it_results == fit_results_by_seed_.end()) << endmsg;
     }
     
+    int i(0);
+
     // loop over fit results and fill all values into RooDataSet
     if (evaluated_values_ != NULL) delete evaluated_values_;
     if (parameter_set->getSize() > 0) {
       evaluated_values_ = new RooDataSet("evaluated_values", "evaluated_values", *parameter_set);
       // sdebug << "Adding first!" << endmsg;
       evaluated_values_->add(*parameter_set);
+      i = 1;
     }
     delete parameter_set;
     parameter_set = nullptr;
 
-    int i = 1;
     // sdebug << "is end (before loop): " << (it_results == fit_results_by_seed_.end()) << endmsg;
     if (fit_results_.size() > 1 && it_results != fit_results_by_seed_.end()) {
       ++it_results;
@@ -251,7 +253,7 @@ namespace toy {
   }
   
   void ToyStudyStd::PlotEvaluatedParameters() {
-    if (evaluated_values_->numEntries() <= 0) {
+    if (evaluated_values_ == nullptr || evaluated_values_->numEntries() <= 0) {
       serr << "Cannot plot as no fit results are evaluated." << endmsg;
       throw ExceptionCannotEvaluateFitResults();
     }
@@ -446,8 +448,8 @@ namespace toy {
     int seed                        = std::get<6>(fit_results);
     int run_id                      = std::get<7>(fit_results);
     
-    int run_id_reference            = 0;
-    bool evaluate_reference_toys    = true;
+    int run_id_reference            = config_toystudy_.reference_toys_id();
+    bool evaluate_reference_toys    = config_toystudy_.evaluate_reference_toys();
 
     // sdebug << "run_id = " << run_id << endmsg;
 

@@ -138,6 +138,29 @@ namespace toy {
     bool plot_parameter_vs_error_correlation() const { return plot_parameter_vs_error_correlation_; }
 
     /**
+     *  @brief Getter for reference toy analysis
+     *
+     *  This setting allows to perform a reference toy analysis. For each random 
+     *  seed two toy fits need to be stored with a different run id. Then for 
+     *  each parameter the residual between both results will also be evaluated 
+     *  and plotted. This allows for clever systematic studies.
+     *
+     *  @return current value of evaluate_reference_toys_
+     */
+    bool evaluate_reference_toys() const { return evaluate_reference_toys_; }
+
+    /**
+     *  @brief Getter for reference toy analysis base run id
+     *
+     *  When performing a reference toy analysis, this run id sets which toy 
+     *  study is to be regarded as study to evaluate (in order to take the 
+     *  correct difference of results).
+     *
+     *  @return current value of reference_toys_id_
+     */
+    int reference_toys_id() const { return reference_toys_id_; }
+
+    /**
      *  @brief Getter for number of toys to read in
      *
      *  @return current value of num_toys_read_
@@ -284,6 +307,29 @@ namespace toy {
     void set_plot_parameter_vs_error_correlation(bool plot_parameter_vs_error_correlation) {plot_parameter_vs_error_correlation_ = plot_parameter_vs_error_correlation;}
 
     /**
+     *  @brief Setter for reference toy analysis
+     *
+     *  This setting allows to perform a reference toy analysis. For each random 
+     *  seed two toy fits need to be stored with a different run id. Then for 
+     *  each parameter the residual between both results will also be evaluated 
+     *  and plotted. This allows for clever systematic studies.
+     *
+     *  @param evaluate_reference_toys new value for evaluate_reference_toys_
+     */
+    void set_evaluate_reference_toys(bool evaluate_reference_toys) {evaluate_reference_toys_ = evaluate_reference_toys;}
+
+    /**
+     *  @brief Setter for reference toy analysis base run id
+     *
+     *  When performing a reference toy analysis, this run id sets which toy 
+     *  study is to be regarded as study to evaluate (in order to take the 
+     *  correct difference of results).
+     *
+     *  @param reference_toys_id new value for reference_toys_id_
+     */
+    void set_evaluate_reference_toys(int reference_toys_id) {reference_toys_id_ = reference_toys_id;}
+
+    /**
      *  @brief Setter for number of toys to read in
      *
      *  @param num_toys_read new value for num_toys_read_ (set to -1 for all toys)
@@ -408,6 +454,16 @@ namespace toy {
      *  @brief Plot correlation scatter plot of value of parameter vs. its error
      */
     bool plot_parameter_vs_error_correlation_;
+
+    /**
+     *  @brief Do reference toy analysis
+     */
+    bool evaluate_reference_toys_;    
+
+    /**
+     *  @brief Reference toy analysis run id
+     */
+    int reference_toys_id_;    
 
     /**
      *  @brief Number of toys to read in
