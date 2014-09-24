@@ -87,7 +87,9 @@ EasyFit::EasyFit(const string& fit_name)
 }
 
 EasyFit::~EasyFit() {
-
+  // if (fit_result_ != nullptr) {
+  //   delete fit_result_;
+  // }
 }
 
 void EasyFit::SetPdfAndDataSet(RooAbsPdf* pdf, RooAbsData* data) {
@@ -128,7 +130,11 @@ void EasyFit::PrepareFit() {
   
   if (fc_conditional_observables_set_) {
     fc_map_["ConditionalObservables"] = RooFit::ConditionalObservables(*fc_conditional_observables_);
+    sinfo << "EasyFit::PrepareFit(): Using the following conditional observables: " << *fc_conditional_observables_ << endmsg;
+  } else {
+    sinfo << "EasyFit::PrepareFit(): Using no conditional observables." << endmsg;
   }
+
   
   fc_map_["Strategy"]    = RooFit::Strategy(fc_strategy_);
   fc_map_["Optimize"]    = RooFit::Optimize(fc_optimize_);

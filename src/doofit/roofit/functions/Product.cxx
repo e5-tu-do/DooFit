@@ -8,19 +8,19 @@
 
 #include "Riostream.h" 
 
-#include "FunctionProduct.h" 
+#include "Product.h" 
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
 
-ClassImp(doofit::roofit::functions::FunctionProduct) 
+ClassImp(doofit::roofit::functions::Product) 
 
 namespace doofit {
 namespace roofit {
 namespace functions {
 
-FunctionProduct::FunctionProduct(std::string name,
+Product::Product(std::string name,
                                  RooAbsReal& _par_factor1,
                                  RooAbsReal& _par_factor2) :
   RooAbsReal(name.c_str(),name.c_str()),
@@ -30,7 +30,7 @@ FunctionProduct::FunctionProduct(std::string name,
   {
   } 
 
-FunctionProduct::FunctionProduct(const FunctionProduct& other, const char* name) :
+Product::Product(const Product& other, const char* name) :
   RooAbsReal(other,name),
   par_factor1("par_factor1",this,other.par_factor1),
   par_factor2("par_factor2",this,other.par_factor2),
@@ -38,9 +38,9 @@ FunctionProduct::FunctionProduct(const FunctionProduct& other, const char* name)
   {
   } 
 
-Int_t FunctionProduct::getAnalyticalIntegral(RooArgSet& allVars,RooArgSet& analVars, const char* rangeName) const
+Int_t Product::getAnalyticalIntegral(RooArgSet& allVars,RooArgSet& analVars, const char* rangeName) const
 {
-  std::printf("FunctionProduct::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
+  std::printf("Product::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
               __func__, __LINE__, __FILE__);
   analVars.Print();
   allVars.Print();
