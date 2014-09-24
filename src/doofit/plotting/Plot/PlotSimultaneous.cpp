@@ -333,7 +333,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
         
         // Only possible way to avoid plotting problems: Do not use NumCPU for complete fit of whole PDF on all data.
-        //plot.set_ignore_num_cpu(true);
+        plot.set_ignore_num_cpu(true);
 
 //        TStopwatch sw_plot; sw_plot.Start();
         plot.PlotHandler(sc_y, suffix);
