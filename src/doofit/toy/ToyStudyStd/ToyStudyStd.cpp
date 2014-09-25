@@ -561,7 +561,7 @@ namespace toy {
       RooRealVar& init = CopyRooRealVar(*(RooRealVar*)parameter_init_list.find(par.GetName()), std::string(init_name), std::string(init_desc));
 
       std::string ref_residual_name = std::string(parameter->GetName()) + std::string("_refresidual");
-      std::string ref_residual_desc = std::string("Reference residual of ") + parameter->GetTitle();
+      std::string ref_residual_desc = std::string("#mu for ") + parameter->GetTitle();
       std::string ref_name = std::string(parameter->GetName()) + std::string("_reference");
       std::string ref_desc = std::string("Reference value for ") + parameter->GetTitle();
 
