@@ -742,6 +742,12 @@ RooBDecay& doofit::builder::EasyPdf::BDecay(const std::string& name, RooRealVar&
                                                 RooBDecay::SingleSided));
 }
 
+RooBMixDecay& doofit::builder::EasyPdf::BMixDecay(const std::string& name, RooRealVar& t, RooAbsCategory& mixState, RooAbsCategory& tagFlav, RooAbsReal& tau, RooAbsReal& dm, RooAbsReal& mistag, RooAbsReal& delMistag, const RooResolutionModel& model) {
+  return AddPdfToStore<RooBMixDecay>(new RooBDecay(name.c_str(), name.c_str(), t, mixState, tagFlav,
+                                                tau, dm, mistag, delMistag, model,
+                                                RooBMixDecay::SingleSided));
+}
+
 RooKeysPdf& doofit::builder::EasyPdf::KeysPdf(const std::string& name, const std::string& file_name, const std::string& ws_name, const std::string& pdf_name_on_ws) {
   TFile file(file_name.c_str());
   RooWorkspace* ws = dynamic_cast<RooWorkspace*>(file.Get(ws_name.c_str()));

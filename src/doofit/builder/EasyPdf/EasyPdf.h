@@ -42,6 +42,7 @@ class RooDecay;
 class RooResolutionModel;
 class RooEffProd;
 class RooBDecay;
+class RooBMixDecay;
 class RooSimultaneous;
 class RooSuperCategory;
 class RooKeysPdf;
@@ -1306,6 +1307,26 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooBDecay& BDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau, RooAbsReal& dgamma, RooAbsReal& coef_cosh, RooAbsReal& coef_sinh, RooAbsReal& coef_cos, RooAbsReal& coef_sin, RooAbsReal& dm, const RooResolutionModel& model);
+
+  /**
+   *  @brief Add and access a RooBMixDecay PDF
+   *
+   *  Request a RooBMixDecay by a specified name. If the PDF does not yet 
+   *  exist in this EasyPdf pool of PDFs, it is created and returned. 
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param t t variable
+   *  @param mixState mixing state
+   *  @param tagFlav tag decision
+   *  @param tau lifetime
+   *  @param dm delta m
+   *  @param mistag mistag omega
+   *  @param delMistag deltaMistag deltaOmega
+   *  @param model the resolution model to use
+   *  @return the appropriate PDF
+   */
+  RooBMixDecay& BMixDecay(const std::string& name, RooRealVar& t, RooAbsCategory& mixState, RooAbsCategory& tagFlav, RooAbsReal& tau, RooAbsReal& dm, RooAbsReal& mistag, RooAbsReal& delMistag, const RooResolutionModel& model);
   
   /**
    *  @brief Add and access a RooKeysPdf from a file
