@@ -25,6 +25,7 @@
 #include "RooResolutionModel.h"
 #include "RooEffProd.h"
 #include "RooBDecay.h"
+#include "RooBMixDecay.h"
 #include "RooSimultaneous.h"
 #include "RooPolynomial.h"
 #include "RooCBShape.h"
@@ -743,7 +744,7 @@ RooBDecay& doofit::builder::EasyPdf::BDecay(const std::string& name, RooRealVar&
 }
 
 RooBMixDecay& doofit::builder::EasyPdf::BMixDecay(const std::string& name, RooRealVar& t, RooAbsCategory& mixState, RooAbsCategory& tagFlav, RooAbsReal& tau, RooAbsReal& dm, RooAbsReal& mistag, RooAbsReal& delMistag, const RooResolutionModel& model) {
-  return AddPdfToStore<RooBMixDecay>(new RooBDecay(name.c_str(), name.c_str(), t, mixState, tagFlav,
+  return AddPdfToStore<RooBMixDecay>(new RooBMixDecay(name.c_str(), name.c_str(), t, mixState, tagFlav,
                                                 tau, dm, mistag, delMistag, model,
                                                 RooBMixDecay::SingleSided));
 }
