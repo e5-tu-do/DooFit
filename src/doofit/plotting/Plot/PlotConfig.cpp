@@ -36,7 +36,9 @@ PlotConfig::PlotConfig(const std::string& name)
   num_cpu_(1),
   plot_stack_open_(false),
   plot_stack_canvas_(NULL),
-  plot_appendix_("")
+  plot_appendix_(""),
+  simultaneous_plot_all_categories_(false),
+  simultaneous_plot_all_slices_(false)
 {
   pdf_linecolor_map_.Parse("1,214,210,226,222,206,217,94,138,220");
   pdf_linestyle_map_.Parse("1,2,3,4,5,6,7,8,9,10");
@@ -70,7 +72,9 @@ void PlotConfig::DefineOptions() {
   (GetOptionString("pdf_linecolors").c_str(), po::value<config::CommaSeparatedList<int> >(&pdf_linecolor_map_),"Line colors for plotted PDFs (comma-separated as col1,col2,...)")
   (GetOptionString("pdf_linestyles").c_str(), po::value<config::CommaSeparatedList<int> >(&pdf_linestyle_map_),"Line styles for plotted PDFs (comma-separated as style1,style2,...)")
   (GetOptionString("plot_directory").c_str(), po::value<std::string>(&plot_directory_)->default_value("Plot"),"Output directory for plots")
-  (GetOptionString("plot_appendix").c_str(), po::value<std::string>(&plot_appendix_)->default_value(""),"Plot appendix for stacked plots");
+  (GetOptionString("plot_appendix").c_str(), po::value<std::string>(&plot_appendix_)->default_value(""),"Plot appendix for stacked plots")
+  (GetOptionString("simultaneous_plot_all_categories").c_str(), po::value<bool>(&simultaneous_plot_all_categories_)->default_value(false),"Plot all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...) (default: false)")
+  (GetOptionString("simultaneous_plot_all_slices").c_str(), po::value<bool>(&simultaneous_plot_all_slices_)->default_value(false),"Plot each slice of a simultaneous PDF (i.e. all long, all tagged, etc.) (default: false)");
   
   descs_visible_.push_back(generation);
 }
@@ -83,6 +87,8 @@ void PlotConfig::PrintOptions() const {
   scfg << "PDF line styles: " << pdf_linestyle_map_ << endmsg;
   scfg << "Plot output directory: " << plot_directory() << endmsg;
   scfg << "Stacked plot file name appendix: " << plot_appendix_ << endmsg;
+  scfg << "Plotting of all individual simultaneous categories: " << simultaneous_plot_all_categories_ << endmsg;
+  scfg << "Plotting of all simultaneous slices: " << simultaneous_plot_all_slices_ << endmsg;
 }
   
 void PlotConfig::OnDemandOpenPlotStack() const {

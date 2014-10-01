@@ -101,6 +101,15 @@ class PlotConfig : public config::AbsConfig {
    **/
   std::string plot_appendix() const { return plot_appendix_; }
 
+  /**
+   * @brief Getter for plotting of all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
+   **/
+  bool simultaneous_plot_all_categories() const { return simultaneous_plot_all_categories_; }
+
+  /**
+   * @brief Getter for plotting of each slice of a simultaneous PDF (i.e. all long, all tagged, etc.)
+   **/
+  bool simultaneous_plot_all_slices() const { return simultaneous_plot_all_slices_; }
   ///@}
 
   /** @name Setter functions
@@ -178,6 +187,15 @@ class PlotConfig : public config::AbsConfig {
    **/
   void set_plot_appendix(const std::string& plot_appendix) { plot_appendix_ = plot_appendix; }
 
+  /**
+   * @brief Setter for plotting of all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
+   **/
+  void set_simultaneous_plot_all_categories(bool simultaneous_plot_all_categories) { simultaneous_plot_all_categories_ = simultaneous_plot_all_categories; }
+
+  /**
+   * @brief Setter for plotting of each slice of a simultaneous PDF (i.e. all long, all tagged, etc.)
+   **/
+  void set_simultaneous_plot_all_slices(bool simultaneous_plot_all_slices) { simultaneous_plot_all_slices_ = simultaneous_plot_all_slices; }
   ///@}
   
   /** @name Stacked plotting support functions
@@ -271,6 +289,16 @@ class PlotConfig : public config::AbsConfig {
    *  @brief Appendix for stacked plot file name
    */
   std::string plot_appendix_;
+
+  /**
+   *  @brief Plot all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
+   */
+  bool simultaneous_plot_all_categories_;
+
+  /**
+   *  @brief Plot each slice of a simultaneous PDF (i.e. all long, all tagged, etc.)
+   */
+  bool simultaneous_plot_all_slices_;  
 
   ///@}
 };
