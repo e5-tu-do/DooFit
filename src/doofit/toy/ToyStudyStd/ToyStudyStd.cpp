@@ -571,7 +571,11 @@ namespace toy {
         ref_residual = new RooRealVar(ref_residual_name.c_str(), ref_residual_desc.c_str(), 0.0);
 
         const RooArgList& parameter_list_ref = fit_result_ptr_reference->floatParsFinal();
-        par_reference = &CopyRooRealVar(*dynamic_cast<RooRealVar*>(parameter_list_ref.find(par.GetName())), ref_name, ref_desc);
+        RooRealVar*       par_reference_orig = dynamic_cast<RooRealVar*>(parameter_list_ref.find(par.GetName()));
+
+        if (par_reference_orig != nullptr) {
+          par_reference = &CopyRooRealVar(*par_reference_orig, ref_name, ref_desc);
+        }
       }
 
       
@@ -581,7 +585,7 @@ namespace toy {
       double herr_value = 0.0;
 
       double ref_residual_value(0.0);
-      if (fit_result_ptr_reference != nullptr) {
+      if (fit_result_ptr_reference != nullptr && par_reference != nullptr) {
         ref_residual_value = par.getVal() - par_reference->getVal();
         ref_residual->setVal(ref_residual_value);
       }
@@ -661,7 +665,7 @@ namespace toy {
         parameters.addOwned(*herr);
       }
 
-      if (fit_result_ptr_reference != nullptr) {
+      if (fit_result_ptr_reference != nullptr && par_reference != nullptr) {
         parameters.addOwned(*ref_residual);
         parameters.addOwned(*par_reference);
       }
