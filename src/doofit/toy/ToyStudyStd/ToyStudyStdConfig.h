@@ -128,7 +128,44 @@ namespace toy {
      *
      *  @return current value of min_acceptable_cov_matrix_quality_
      */
-    int min_acceptable_cov_matrix_quality() const  { return min_acceptable_cov_matrix_quality_; }
+    int min_acceptable_cov_matrix_quality() const { return min_acceptable_cov_matrix_quality_; }
+
+    /**
+     *  @brief Getter for correlation scatter plots of values of parameters vs. their errors
+     *
+     *  @return current value of plot_parameter_vs_error_correlation_
+     */
+    bool plot_parameter_vs_error_correlation() const { return plot_parameter_vs_error_correlation_; }
+
+    /**
+     *  @brief Getter for reference toy analysis
+     *
+     *  This setting allows to perform a reference toy analysis. For each random 
+     *  seed two toy fits need to be stored with a different run id. Then for 
+     *  each parameter the residual between both results will also be evaluated 
+     *  and plotted. This allows for clever systematic studies.
+     *
+     *  @return current value of evaluate_reference_toys_
+     */
+    bool evaluate_reference_toys() const { return evaluate_reference_toys_; }
+
+    /**
+     *  @brief Getter for reference toy analysis base run id
+     *
+     *  When performing a reference toy analysis, this run id sets which toy 
+     *  study is to be regarded as study to evaluate (in order to take the 
+     *  correct difference of results).
+     *
+     *  @return current value of reference_toys_id_
+     */
+    int reference_toys_id() const { return reference_toys_id_; }
+
+    /**
+     *  @brief Getter for number of toys to read in
+     *
+     *  @return current value of num_toys_read_
+     */
+    int num_toys_read() const { return num_toys_read_; }
     ///@}
 
     /** @name Setter actual options
@@ -263,6 +300,43 @@ namespace toy {
     void set_min_acceptable_cov_matrix_quality(int min_acceptable_cov_matrix_quality) {min_acceptable_cov_matrix_quality_ = min_acceptable_cov_matrix_quality;}
     
     /**
+     *  @brief Setter for correlation scatter plots of values of parameters vs. their errors
+     *
+     *  @param plot_parameter_vs_error_correlation new value for plot_parameter_vs_error_correlation_
+     */
+    void set_plot_parameter_vs_error_correlation(bool plot_parameter_vs_error_correlation) {plot_parameter_vs_error_correlation_ = plot_parameter_vs_error_correlation;}
+
+    /**
+     *  @brief Setter for reference toy analysis
+     *
+     *  This setting allows to perform a reference toy analysis. For each random 
+     *  seed two toy fits need to be stored with a different run id. Then for 
+     *  each parameter the residual between both results will also be evaluated 
+     *  and plotted. This allows for clever systematic studies.
+     *
+     *  @param evaluate_reference_toys new value for evaluate_reference_toys_
+     */
+    void set_evaluate_reference_toys(bool evaluate_reference_toys) {evaluate_reference_toys_ = evaluate_reference_toys;}
+
+    /**
+     *  @brief Setter for reference toy analysis base run id
+     *
+     *  When performing a reference toy analysis, this run id sets which toy 
+     *  study is to be regarded as study to evaluate (in order to take the 
+     *  correct difference of results).
+     *
+     *  @param reference_toys_id new value for reference_toys_id_
+     */
+    void set_evaluate_reference_toys(int reference_toys_id) {reference_toys_id_ = reference_toys_id;}
+
+    /**
+     *  @brief Setter for number of toys to read in
+     *
+     *  @param num_toys_read new value for num_toys_read_ (set to -1 for all toys)
+     */
+    void set_num_toys_read(int num_toys_read) {num_toys_read_ = num_toys_read;}
+
+    /**
      *  @brief Adder for file names and tree names to read fit result from
      *
      *  @param result_file_tree new file and tree name to add to read_results_filename_treename_
@@ -375,6 +449,26 @@ namespace toy {
      *  @brief Minimum acceptable covariance matrix quality for fit results
      */
     int min_acceptable_cov_matrix_quality_;
+
+    /**
+     *  @brief Plot correlation scatter plot of value of parameter vs. its error
+     */
+    bool plot_parameter_vs_error_correlation_;
+
+    /**
+     *  @brief Do reference toy analysis
+     */
+    bool evaluate_reference_toys_;    
+
+    /**
+     *  @brief Reference toy analysis run id
+     */
+    int reference_toys_id_;    
+
+    /**
+     *  @brief Number of toys to read in
+     */
+    int num_toys_read_;
     ///@}
   };
 } // namespace toy

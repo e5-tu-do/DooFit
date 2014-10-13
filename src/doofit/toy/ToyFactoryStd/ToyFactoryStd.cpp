@@ -357,7 +357,7 @@ namespace toy {
     return dataset_new;
   }
   
-  void ToyFactoryStd::AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const {
+  RooDataSet* ToyFactoryStd::AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const {
     // sanity check
     const RooArgSet& master_argset = *master_dataset->get();
     const RooArgSet& slave_argset  = *slave_dataset->get();
@@ -381,8 +381,36 @@ namespace toy {
     delete iter;
     
     // if we reached this, both datasets are compatible
-    master_dataset->append(*slave_dataset);
-    delete slave_dataset;
+    // master_dataset->append(*slave_dataset);
+    // delete slave_dataset;
+
+    // Fisher-Yates shuffle
+    TRandom* rand = RooRandom::randomGenerator();
+
+    int num_shuffle_elements = master_dataset->numEntries() + slave_dataset->numEntries();
+    int num_master = master_dataset->numEntries();
+    std::vector<int> new_order(num_shuffle_elements);
+    new_order[0] = 0;
+    int j;
+    for (int i=1; i<num_shuffle_elements; ++i) {
+      j = rand->Integer(i+1);
+      new_order[i] = new_order[j];
+      new_order[j] = i;
+    }
+
+    const RooArgSet& vars = *master_dataset->get();
+    RooDataSet* dataset_new = new RooDataSet(master_dataset->GetName(), master_dataset->GetTitle(), vars);
+    for (int i=0; i<num_shuffle_elements; ++i) {
+      int num_draw = new_order[i];
+
+      if (num_draw < num_master) {
+        dataset_new->add(*master_dataset->get(num_draw)); 
+      } else {
+        dataset_new->add(*slave_dataset->get(num_draw-num_master)); 
+      }
+    }
+
+    return dataset_new;
   }
   
   RooDataSet* ToyFactoryStd::MergeDatasetVector(const std::vector<RooDataSet*>& datasets) const {
@@ -433,7 +461,12 @@ namespace toy {
           
           yield = pdf.expectedEvents(argset_generation_observables);
         }
-        proto_size = yield+10*TMath::Sqrt(yield);
+
+        // Proto dataset size to be the expected yield + 10*sigma in order to be 
+        // sure it is big enough. Adding another 5% to account for the fact that
+        // fo r addded PDFs later the proto datasets are passed on slightly 
+        // larger (to account for rounding problems).
+        proto_size = (yield+10*TMath::Sqrt(yield))*1.05;
       }
       
       // Store only proto data specific for this PDF (remember, there might be 
@@ -627,33 +660,52 @@ namespace toy {
           sub_yield = coef*expected_yield;
         }
         if (extended) {
+          // sdebug << "Generating sub yield as Poisson random number." << endmsg;
           sub_yield = RooRandom::randomGenerator()->Poisson(sub_yield);
         } 
         
         // check for need to pass proto set
         RooDataSet* sub_proto_dataset = NULL;
         std::vector<RooDataSet*> sub_proto_data;
+
         if (proto_dataset != NULL) {
+          // sdebug << "Checking for need to pass proto set" << endmsg;
+          // sdebug << "proto_dataset_pos = " << proto_dataset_pos << endmsg;
+          // sdebug << "sub_yield         = " << sub_yield << endmsg;
+          // proto_dataset->Print();
+
           sub_proto_dataset = new RooDataSet("sub_proto_dataset","sub_proto_dataset", *proto_dataset->get());
-          for (int i=proto_dataset_pos; i<(proto_dataset_pos+sub_yield); ++i) {
+          
+          // Making the proto dataset slightly larger (5%) to avoid problems 
+          // when proto dataset size in subroutines matters and could be a few 
+          // events too small due to rounding (see yield_lost_due_rounding 
+          // below)
+          for (int i=proto_dataset_pos; i<(proto_dataset_pos+sub_yield*1.05); ++i) {
             sub_proto_dataset->addFast(*proto_dataset->get(i));
           }
           proto_dataset_pos += sub_yield;
           sub_proto_data.push_back(sub_proto_dataset);
         }
-        
+          
+        // The sub_yield is a floating point number and in the next generation
+        // the decimal part will be cut off. Here, the lost yield due to 
+        // rounding is summed up and in case it exceeds 0.5 additional events 
+        // will be generated for the next PDF.
         yield_lost_due_rounding += sub_yield - boost::math::iround(sub_yield);
         int add_roundup_yield = boost::math::iround(yield_lost_due_rounding);
         if (TMath::Abs(add_roundup_yield) >= 1 && TMath::Abs(yield_lost_due_rounding) != 0.5) {
           sub_yield += add_roundup_yield;
-          yield_lost_due_rounding = 0.0;
+          yield_lost_due_rounding = -(add_roundup_yield-yield_lost_due_rounding);
         }
         
         // sdebug << "Sub yield for next PDF " << sub_pdf->GetName() << " is " << sub_yield << endmsg;
 
         if (data) {
           RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield, false, sub_proto_data);
-          AppendDatasets(data, data_temp);
+          RooDataSet* data_mixed = AppendDatasets(data, data_temp);
+          delete data;
+          delete data_temp;
+          data = data_mixed;
         } else {
           data = (GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield, false, sub_proto_data));
         }
@@ -745,7 +797,10 @@ namespace toy {
       }
       
       if (data) {
-        AppendDatasets(data, data_temp);
+        RooDataSet* data_mixed = AppendDatasets(data, data_temp);
+        delete data;
+        delete data_temp;
+        data = data_mixed;
       } else {
         data = data_temp;
       }

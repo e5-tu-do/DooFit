@@ -28,7 +28,11 @@ namespace toy {
   fit_plot_on_quantile_window_(true),
   neglect_parameters_at_limit_(false),
   neglect_minos_problems_(false),
-  min_acceptable_cov_matrix_quality_(3)
+  min_acceptable_cov_matrix_quality_(3),
+  plot_parameter_vs_error_correlation_(false),
+  evaluate_reference_toys_(false),
+  reference_toys_id_(0),
+  num_toys_read_(-1)
   {
     swarn << "Usage of ToyStudyStdConfig::ToyStudyStdConfig() is not recommended!" <<endmsg;
   }
@@ -36,7 +40,11 @@ namespace toy {
   ToyStudyStdConfig::ToyStudyStdConfig(const std::string& name) :
   config::AbsConfig(name),
   handle_asymmetric_errors_(true),
-  min_acceptable_cov_matrix_quality_(3)
+  min_acceptable_cov_matrix_quality_(3),
+  plot_parameter_vs_error_correlation_(false),
+  evaluate_reference_toys_(false),
+  reference_toys_id_(0),
+  num_toys_read_(-1)
   {
   }
   
@@ -65,6 +73,18 @@ namespace toy {
     if (parameter_genvalue_read_file().size()>0) {
       scfg << "Read generation values from:       " << parameter_genvalue_read_file() << endmsg;
     }
+    scfg << "Plotting of parameter vs error:    " << plot_parameter_vs_error_correlation_ << endmsg;
+
+    scfg << "Perform reference toy analysis:    " << evaluate_reference_toys() << endmsg;
+    if (evaluate_reference_toys()) {
+      scfg << "Reference toy base id to evaluate: " << reference_toys_id() << endmsg;
+    }
+
+    if (num_toys_read() >= 0) {
+      scfg << "Number of toys to read in:         " << num_toys_read() << endmsg;
+    } else {
+      scfg << "Number of toys to read in:         " << "all" << endmsg;
+    }
   }
   
   void ToyStudyStdConfig::DefineOptions() {
@@ -82,7 +102,11 @@ namespace toy {
     (GetOptionString("neglect_parameters_at_limit").c_str(), po::value<bool>(&neglect_parameters_at_limit_)->default_value(false),"Neglect any toy fit where at least one parameter is near the defined limits (default: false).")
     (GetOptionString("neglect_minos_problems").c_str(), po::value<bool>(&neglect_minos_problems_)->default_value(false),"Neglect any toy fit where at least one parameter has MINOS problems (default: false; only applies, if MINOS was run).")
     (GetOptionString("parameter_genvalue_read_file").c_str(), po::value<std::string>(&parameter_genvalue_read_file_),"Read in generation values from this file instead of using the init values in the fit results (default: empty, i.e. use init values).")
-    (GetOptionString("min_acceptable_cov_matrix_quality").c_str(), po::value<int>(&min_acceptable_cov_matrix_quality_),"Minimum acceptable covariance matrix quality for fit results.");
+    (GetOptionString("min_acceptable_cov_matrix_quality").c_str(), po::value<int>(&min_acceptable_cov_matrix_quality_),"Minimum acceptable covariance matrix quality for fit results.")
+    (GetOptionString("plot_parameter_vs_error_correlation").c_str(), po::value<bool>(&plot_parameter_vs_error_correlation_)->default_value(false),"Plot correlation scatter plots of values of parameters vs. their errors (default: false)")
+    (GetOptionString("evaluate_reference_toys").c_str(), po::value<bool>(&evaluate_reference_toys_)->default_value(false),"Perform reference toy analysis of each two toys with identical random seeds (default: false)")
+    (GetOptionString("reference_toys_id").c_str(), po::value<int>(&reference_toys_id_)->default_value(0),"Reference toy analysis run id to regard as study to evaluate.")
+    (GetOptionString("num_toys_read").c_str(), po::value<int>(&num_toys_read_)->default_value(-1),"Number of toys to read in (default: -1 meaning all)");
     
     descs_visible_.push_back(generation);
   }
