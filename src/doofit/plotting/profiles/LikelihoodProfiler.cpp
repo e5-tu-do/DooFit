@@ -120,15 +120,6 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   std::map<std::string, std::vector<double>> val_scan;
   std::vector<double> val_nll;
 
-  if (val_scan.size() == 1) {
-    doocore::lutils::setStyle();
-  } else if (val_scan.size() == 2) {
-    doocore::lutils::setStyle("2d");
-    gStyle->SetNumberContours(999);
-    gStyle->SetPadRightMargin(0.16);
-    gStyle->SetTitleOffset(0.75, "z");
-  }
-
   for (auto var : scan_vars_) {
     RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_results_.front()->constPars().find(var->GetName()));
     scan_vars_titles_.push_back(var_fixed->GetTitle());
@@ -162,6 +153,17 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     }
   }
 
+  if (val_scan.size() == 1) {
+    doocore::lutils::setStyle();
+    gStyle->SetPadLeftMargin(0.12);
+    gStyle->SetTitleOffset(0.75, "y");
+  } else if (val_scan.size() == 2) {
+    doocore::lutils::setStyle("2d");
+    gStyle->SetNumberContours(999);
+    gStyle->SetPadRightMargin(0.16);
+    gStyle->SetTitleOffset(0.75, "z");
+  }
+
   TCanvas c("c", "c", 800, 600);
 
   if (val_scan.size() == 1) {
@@ -172,7 +174,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     graph.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
     graph.GetYaxis()->SetTitle("#DeltaLL");
     graph.SetMarkerStyle(1);
-    graph.SetMarkerSize(10);
+    //graph.SetMarkerSize(10);
+    graph.SetMarkerColor(kBlue+3);
 
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "profile", plot_path);
