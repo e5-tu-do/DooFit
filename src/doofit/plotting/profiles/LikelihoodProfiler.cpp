@@ -171,6 +171,9 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     graph.Draw("AP");
     graph.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
     graph.GetYaxis()->SetTitle("#DeltaLL");
+    graph.SetMarkerStyle(1);
+    graph.SetMarkerSize(10);
+
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "profile", plot_path);
   } else if (val_scan.size() == 2) {
