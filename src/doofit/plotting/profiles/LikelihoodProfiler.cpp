@@ -8,6 +8,7 @@
 #include "TGraph.h"
 #include "TH2D.h" 
 #include "TAxis.h"
+#include "TStyle.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -119,7 +120,14 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   std::map<std::string, std::vector<double>> val_scan;
   std::vector<double> val_nll;
 
-  doocore::lutils::setStyle("2d");
+  if (val_scan.size() == 1) {
+    doocore::lutils::setStyle();
+  } else if (val_scan.size() == 2) {
+    doocore::lutils::setStyle("2d");
+    gStyle->SetNumberContours(999);
+    gStyle->SetPadRightMargin(0.16);
+    gStyle->SetTitleOffset(0.75, "z");
+  }
 
   for (auto var : scan_vars_) {
     RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_results_.front()->constPars().find(var->GetName()));
@@ -162,7 +170,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     TGraph graph(val_nll.size(), &val_x[0], &val_nll[0]);
     graph.Draw("AP");
     graph.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
-    graph.GetYaxis()->SetTitle("NLL");
+    graph.GetYaxis()->SetTitle("#DeltaLL");
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "profile", plot_path);
   } else if (val_scan.size() == 2) {
