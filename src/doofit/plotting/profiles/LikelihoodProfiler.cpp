@@ -126,6 +126,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     scan_vars_titles_.push_back(var_fixed->GetTitle());
   }
 
+  double min_nll(0.0);
   for (auto result : fit_results_) {
     if (FitResultOkay(*result)) {
       for (auto var : scan_vars_) {
@@ -140,7 +141,16 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
         val_scan[var->GetName()].push_back(var_fixed->getVal());
       }
 
+      if (min_nll == 0.0 || min_nll > result->minNll()) {
+        min_nll = result->minNll();
+      }
       val_nll.push_back(result->minNll());
+    }
+  }
+
+  for (auto &nll : val_nll) {
+    if (nll != 0.0) {
+      nll -= min_nll;
     }
   }
 
@@ -149,9 +159,12 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   if (val_scan.size() == 1) {
     const std::vector<double>& val_x = val_scan.begin()->second;
 
-    TGraph g(val_nll.size(), &val_x[0], &val_nll[0]);
-    g.Draw("AP");
-    c.SaveAs("profile.pdf");
+    TGraph graph(val_nll.size(), &val_x[0], &val_nll[0]);
+    graph.Draw("AP");
+    graph.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
+    graph.GetYaxis()->SetTitle("NLL");
+    //c.SaveAs("profile.pdf");
+    doocore::lutils::printPlot(&c, "profile", plot_path);
   } else if (val_scan.size() == 2) {
     const std::vector<double>& val_x = val_scan.begin()->second;
     const std::vector<double>& val_y = val_scan.rbegin()->second;
@@ -204,8 +217,10 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     histogram.GetZaxis()->SetRangeUser(min_nll, max_nll);
     histogram.SetXTitle(scan_vars_titles_.at(0).c_str());
     histogram.SetYTitle(scan_vars_titles_.at(1).c_str());
+    histogram.SetZTitle("#DeltaLL");
 
-    c.SaveAs("profile.pdf");
+    //c.SaveAs("profile.pdf");
+    doocore::lutils::printPlot(&c, "profile", plot_path);
   } else {
     serr << "Error in LikelihoodProfiler::PlotHandler(): Cannot (yet) plot 3D likelihood." << endmsg;
     throw;
