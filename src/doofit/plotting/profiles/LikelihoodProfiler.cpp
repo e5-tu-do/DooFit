@@ -15,6 +15,7 @@
 // from DooCore
 #include <doocore/io/MsgStream.h>
 #include <doocore/io/Progress.h>
+#include <doocore/lutils/lutils.h>
 
 // from DooFit
 #include "doofit/fitter/AbsFitter.h"
@@ -118,6 +119,13 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   std::map<std::string, std::vector<double>> val_scan;
   std::vector<double> val_nll;
 
+  doocore::lutils::setStyle("2d");
+
+  for (auto var : scan_vars_) {
+    RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_results_.front()->constPars().find(var->GetName()));
+    scan_vars_titles_.push_back(var_fixed->GetTitle());
+  }
+
   for (auto result : fit_results_) {
     if (FitResultOkay(*result)) {
       for (auto var : scan_vars_) {
@@ -159,6 +167,16 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
       distinct_y.insert(y);
     }
 
+    double min_nll(0.0), max_nll(0.0);
+    for (auto nll : val_nll) {
+      if (nll != 0 && (min_nll == 0.0 || nll < min_nll)) {
+        min_nll = nll;
+      }
+      if (nll != 0 && (max_nll == 0.0 || nll > max_nll)) {
+        max_nll = nll;
+      }
+    }
+
     double min_x = *minmax_x.first  - (*minmax_x.second-*minmax_x.first)/(distinct_x.size()-1)*0.5;
     double max_x = *minmax_x.second + (*minmax_x.second-*minmax_x.first)/(distinct_x.size()-1)*0.5;
     double min_y = *minmax_y.first  - (*minmax_y.second-*minmax_y.first)/(distinct_y.size()-1)*0.5;
@@ -183,6 +201,10 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     }
 
     histogram.Draw("COLZ");
+    histogram.GetZaxis()->SetRangeUser(min_nll, max_nll);
+    histogram.SetXTitle(scan_vars_titles_.at(0).c_str());
+    histogram.SetYTitle(scan_vars_titles_.at(1).c_str());
+
     c.SaveAs("profile.pdf");
   } else {
     serr << "Error in LikelihoodProfiler::PlotHandler(): Cannot (yet) plot 3D likelihood." << endmsg;

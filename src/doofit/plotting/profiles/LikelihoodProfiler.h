@@ -125,6 +125,7 @@ class LikelihoodProfiler {
   doofit::fitter::AbsFitter* fitter_;
 
   std::vector<RooRealVar*> scan_vars_;
+  std::vector<std::string> scan_vars_titles_;
 
   std::map<std::string, double> start_vals_;
 
