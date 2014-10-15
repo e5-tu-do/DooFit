@@ -328,9 +328,9 @@ namespace toy {
       // sdebug << "duration_sort = " << duration_sort*1e-3 << endmsg;
 
       
-      if (param_name == "par_bssig_time_S_err") {
-        minmax.second = 2.3;
-      }
+      // if (param_name == "par_bssig_time_S_err") {
+      //   minmax.second = 2.3;
+      // }
       
       //sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
             
@@ -339,7 +339,8 @@ namespace toy {
       RooGaussian* gauss           = NULL;
       RooPlot* param_frame         = NULL;
       RooDataSet* fit_plot_dataset = NULL;
-      
+      RooArgSet parameters_copy(*parameter);
+
       TString cut = "";
       if (config_toystudy_.fit_plot_on_quantile_window()) {
         cut = param_name + ">" + boost::lexical_cast<std::string>(minmax.first) + "&&" + param_name + "<" + boost::lexical_cast<std::string>(minmax.second);
@@ -347,13 +348,15 @@ namespace toy {
       if (config_toystudy_.neglect_parameters_at_limit()) {
         if (cut.Length() > 0) cut = cut + "&&";
         cut = cut + "parameters_at_limit < 0.5";
+        parameters_copy.add(*parameters->find("parameters_at_limit"));
       }
       if (config_toystudy_.neglect_minos_problems()) {
         if (cut.Length() > 0) cut = cut + "&&";
         cut = cut + "minos_problems < 0.5";
+        parameters_copy.add(*parameters->find("minos_problems"));
       }
       if (cut.Length() > 0) {
-        fit_plot_dataset = new RooDataSet("fit_plot_dataset", "Plotting and fitting dataset for ToyStudyStd", evaluated_values_, RooArgSet(*parameter), cut);
+        fit_plot_dataset = new RooDataSet("fit_plot_dataset", "Plotting and fitting dataset for ToyStudyStd", evaluated_values_, parameters_copy, cut);
       } else {
         fit_plot_dataset = evaluated_values_;
       }
@@ -996,7 +999,7 @@ namespace toy {
           new_wait_time /= deadtimes.size()+1;
           
           wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*new_wait_time+10.0;
-	        wait_time = std::min(wait_time, 900);
+	        wait_time = std::min(wait_time, 300);
           swarn << "File to save fit result to " << filename << " is locked. Will try again in " << wait_time << " s." << endmsg;
           sleep = true;
         } else {
