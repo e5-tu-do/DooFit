@@ -180,6 +180,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "profile", plot_path);
   } else if (val_scan.size() == 2) {
+
     const std::vector<double>& val_x = val_scan.begin()->second;
     const std::vector<double>& val_y = val_scan.rbegin()->second;
 
@@ -235,6 +236,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "profile", plot_path);
+    c.SetLogz(true);
+    doocore::lutils::printPlot(&c, "profile_log", plot_path);
   } else {
     serr << "Error in LikelihoodProfiler::PlotHandler(): Cannot (yet) plot 3D likelihood." << endmsg;
     throw;
