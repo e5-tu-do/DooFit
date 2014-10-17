@@ -131,6 +131,8 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
   if not os.path.exists(bulk_dir):
     os.makedirs(bulk_dir)
 
+  old_min_seed = min_seed
+  new_min_seed = min_seed
   while scan2_value <= options.scan2end:
     scan1_value = options.scan1start
     while scan1_value <= options.scan1end:
@@ -160,14 +162,18 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
         else:
           submit_file.writelines('qsub ' + os.path.join(bulk_dir,settings_dict['job_name']+'.sh\n'))
         job_index += 1
+      new_min_seed = min_seed
+      min_seed = old_min_seed
       scan1_value += options.scan1increment*options.scan1perjob
     scan2_value += options.scan2increment*options.scan2perjob
   control_file_name = os.path.join(jobs_dir,'control_' + job_base_name + '')
   control_file = open(control_file_name, 'w')
-  control_file.writelines(os.path.join(jobs_dir,job_base_name + '_*.sh'))
+  control_file.writelines(os.path.join(bulk_dir,job_base_name + '_*.sh'))
+  
   maxseed_file_name = os.path.join(jobs_dir,'max_seed')
   maxseed_file = open(maxseed_file_name, 'w')
-  maxseed_file.writelines(str(min_seed-1)+'\n')
+  maxseed_file.writelines(str(new_min_seed-1)+'\n')
+  
   maxid_file_name = os.path.join(jobs_dir,'max_id')
   maxid_file = open(maxid_file_name, 'w')
   maxid_file.writelines(str(job_index-1)+'\n')
