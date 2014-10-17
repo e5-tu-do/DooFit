@@ -640,9 +640,9 @@ namespace toy {
       }
 
       double min_distance_to_limits = 
-      TMath::Min(TMath::Abs((par.getVal() - par.getMax())/
+      TMath::Min(TMath::Abs((par.getVal() - par.getMax())*par.getError()/
                             ((par.getMax() - par.getMin())/2)),
-                 TMath::Abs((par.getVal() - par.getMin())/
+                 TMath::Abs((par.getVal() - par.getMin())*par.getError()/
                             ((par.getMax() - par.getMin())/2)));
       
       if (min_distance_to_limits < 1e-5) {
@@ -870,6 +870,9 @@ namespace toy {
           
           tree->StopCacheLearningPhase();
           
+          using namespace doocore::io;
+          std::string title_progress = "Reading fit results from " + (*it_files).first() + ":" + (*it_files).second();
+          Progress p(title_progress, tree->GetEntries());
           for (int i=0; i<tree->GetEntries(); ++i) {
             tree->GetEntry(i);
             
@@ -914,7 +917,10 @@ namespace toy {
             if (config_toystudy_.num_toys_read() > 0 && results_stored >= config_toystudy_.num_toys_read()) {
               break;
             }
+
+            ++p;
           }
+          p.Finish();
 
           delete tree;
           file.Close();
