@@ -60,6 +60,8 @@ class ParameterScannerConfig : public config::AbsConfig {
   ///@{
   std::string name_parameter1() const { return name_parameter1_; }
   double value_parameter1() const { return value_parameter1_; }
+  std::string name_parameter2() const { return name_parameter2_; }
+  double value_parameter2() const { return value_parameter2_; }
   ///@}
 
   /** @name Setter functions
@@ -68,6 +70,8 @@ class ParameterScannerConfig : public config::AbsConfig {
   ///@{
   ParameterScannerConfig& set_name_parameter1(std::string name_parameter1)   { name_parameter1_ = name_parameter1; return *this; }
   ParameterScannerConfig& set_value_parameter1(double value_parameter1) { value_parameter1_ = value_parameter1; return *this; }
+  ParameterScannerConfig& set_name_parameter2(std::string name_parameter2)   { name_parameter2_ = name_parameter2; return *this; }
+  ParameterScannerConfig& set_value_parameter2(double value_parameter2) { value_parameter2_ = value_parameter2; return *this; }
   ///@}
     
  protected:
@@ -117,6 +121,21 @@ class ParameterScannerConfig : public config::AbsConfig {
    * Constness of scan parameter 1
    */
   bool const_parameter1_;
+
+  /**
+   * Name of scan parameter 2
+   */
+  std::string name_parameter2_;
+
+  /**
+   * Value of scan parameter 2
+   */
+  double value_parameter2_;
+
+  /**
+   * Constness of scan parameter 2
+   */
+  bool const_parameter2_;
 };
 
 } // namespace scanning
