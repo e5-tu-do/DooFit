@@ -180,7 +180,7 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
   basename_file_name = os.path.join(jobs_dir,'basename')
   basename_file = open(basename_file_name, 'w')
   basename_file.writelines(job_base_name)
-  print 'Jobs successfully created. Maximum seed used: ' + str(min_seed-1) + ", maximum job id used: " + str(job_index-1)
+  print 'Jobs successfully created. Maximum seed used: ' + str(new_min_seed-1) + ", maximum job id used: " + str(job_index-1)
   print 'Submit jobs via this command:'
   print 'sh ' + submit_file_name
 
