@@ -493,8 +493,26 @@ namespace toy {
     if (PdfIsDecomposable(pdf)) {
       // pdf needs to be decomposed and generated piece-wise 
       if (PdfIsExtended(pdf)) {
-        RooRealVar& yield = *((RooRealVar*)pdf.findServer(1));
-        RooAbsPdf& sub_pdf = *((RooAbsPdf*)pdf.findServer(0));
+        // probe yield and sub PDF in PDF's servers
+        RooRealVar* yield_ptr = dynamic_cast<RooRealVar*>(pdf.findServer(1));
+        if (yield_ptr == nullptr) {
+          yield_ptr = dynamic_cast<RooRealVar*>(pdf.findServer(0));
+        }
+        if (yield_ptr == nullptr) {
+          serr << "ToyFactoryStd::GenerateForPdf(...): Cannot find yield of RooExtendPdf " << pdf.GetName() << endmsg;
+          throw;
+        }
+        RooAbsPdf* sub_pdf_ptr = dynamic_cast<RooAbsPdf*>(pdf.findServer(0));
+        if (sub_pdf_ptr == nullptr) {
+          sub_pdf_ptr = dynamic_cast<RooAbsPdf*>(pdf.findServer(1));
+        }
+        if (sub_pdf_ptr == nullptr) {
+          serr << "ToyFactoryStd::GenerateForPdf(...): Cannot find sub PDF of RooExtendPdf " << pdf.GetName() << endmsg;
+          throw;
+        }
+
+        RooRealVar& yield = *yield_ptr;
+        RooAbsPdf& sub_pdf = *sub_pdf_ptr;
                 
         sinfo << "RooExtendPdf " << pdf.GetName() << "(" << sub_pdf.GetName() << "," << yield.GetName() << "=" << yield.getVal() << ") will be decomposed." << endmsg;
         
