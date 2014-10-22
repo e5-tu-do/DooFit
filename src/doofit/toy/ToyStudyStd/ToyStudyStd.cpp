@@ -708,7 +708,7 @@ namespace toy {
 //           << endmsg;
     
     
-    if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality()) {
+    if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality() && fit_result.covQual() != -1) {
       return false;
     } else if (fit_result.statusCodeHistory(0) < 0) {
       return false;
