@@ -274,6 +274,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     std::vector<double> stops_cl;
     std::vector<int> colours;
 
+    // 2D limits from Numerical Recipies Third Edition Sec 15.6 (p. 815)
+
     stops_cl.push_back(0.0);
     colours.push_back(kGray+2);
     stops_cl.push_back(2.30/2.0);
