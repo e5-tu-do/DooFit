@@ -276,25 +276,25 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
     stops_cl.push_back(0.0);
     colours.push_back(kGray+2);
-    stops_cl.push_back(0.5);
+    stops_cl.push_back(2.30/2.0);
     colours.push_back(kBlue-8);
 
-    if (max_nll >  2.00) {
-      stops_cl.push_back( 2.00);
+    if (max_nll > 6.18/2.0) {
+      stops_cl.push_back(2.00);
       colours.push_back(kYellow-8);
     }
-    if (max_nll >  4.50) {
-      stops_cl.push_back( 4.50);
+    if (max_nll > 11.8/2.0) {
+      stops_cl.push_back(11.8/2.0);
       colours.push_back(kRed-8);
     }
-    if (max_nll >  8.00) {
-      stops_cl.push_back( 8.00);
+    if (max_nll > 18.4/2.0) {
+      stops_cl.push_back(18.4/2.0);
       colours.push_back(kCyan-6);
     }
-    if (max_nll > 12.50) {
-      stops_cl.push_back(12.50);
-      colours.push_back(kGreen-5);
-    }
+    // if (max_nll > 12.50) {
+    //   stops_cl.push_back(12.50);
+    //   colours.push_back(kGreen-5);
+    // }
 
     // const Int_t NRGBs = 6;
     // const Int_t NCont = 6;
