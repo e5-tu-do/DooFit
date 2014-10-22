@@ -24,6 +24,9 @@ namespace scanning {
     
 /** @class ParameterScanner
  *  @brief Helper tool to scan parameters over ranges
+ *
+ *  Right now this class is without any functionality. For all current use 
+ *  cases, please use ParameterScannerConfig directly.
  */
 
 class ParameterScanner {
