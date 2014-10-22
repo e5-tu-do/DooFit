@@ -280,7 +280,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     colours.push_back(kBlue-8);
 
     if (max_nll > 6.18/2.0) {
-      stops_cl.push_back(2.00);
+      stops_cl.push_back(6.18/2.0);
       colours.push_back(kYellow-8);
     }
     if (max_nll > 11.8/2.0) {
