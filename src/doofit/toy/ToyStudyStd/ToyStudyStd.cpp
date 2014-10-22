@@ -322,10 +322,9 @@ namespace toy {
       // double duration_correlation(std::chrono::duration_cast<std::chrono::microseconds>(time_correlation - time_start).count());
       // sdebug << "duration_correlation = " << duration_correlation*1e-3 << endmsg;
 
-      std::vector<double>* sorted_data = nullptr;
+      std::vector<double> sorted_data(evaluated_values_->numEntries());
       double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(evaluated_values_, param_name, 0.16, sorted_data);
       double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84);
-      delete sorted_data;
 
       sinfo << "68-percent CL approx for " << param_name << ": (" << CL_boundary_lo << ", " << CL_boundary_hi << ")" << endmsg;
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
