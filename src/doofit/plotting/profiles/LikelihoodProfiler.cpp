@@ -96,13 +96,13 @@ void doofit::plotting::profiles::LikelihoodProfiler::ReadFitResults(doofit::toy:
 
   FitResultContainer fit_result_container(toy_study.GetFitResult());
   const RooFitResult* fit_result(std::get<0>(fit_result_container));
-  int i = 0;
-  while (fit_result != nullptr && i < 1000) {
+  // int i = 0;
+  while (fit_result != nullptr) { // && i < 10000) {
     fit_results_.push_back(fit_result);
 
     fit_result_container = toy_study.GetFitResult();
     fit_result = std::get<0>(fit_result_container);
-    //++i;
+    // ++i;
   }
 }
 
@@ -128,7 +128,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     scan_vars_titles_.push_back(var_fixed->GetTitle());
   }
 
-  int i = 0;
+  // int i = 0;
   double min_nll(0.0);
 
   Progress p("Processing read in fit results", fit_results_.size());
@@ -169,7 +169,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   } else if (val_scan.size() == 2) {
     doocore::lutils::setStyle("2d");
     //gStyle->SetNumberContours(999);
-    gStyle->SetPadRightMargin(0.16);
+    //gStyle->SetPadRightMargin(0.16);
+    gStyle->SetPadRightMargin(0.06);
     gStyle->SetTitleOffset(0.75, "z");
   }
 
@@ -242,10 +243,63 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
       histogram.SetBinContent(histogram.FindBin(val_x.at(i), val_y.at(i)), val_nll.at(i));
       ++p_hist;
     }
+
+    unsigned int num_interpolated_bins(0);
+    for (int i=1; i<=histogram.GetNbinsX(); ++i) {
+      for (int j=1; j<=histogram.GetNbinsY(); ++j) {
+        if (histogram.GetBinContent(i,j) == 0.0) {
+          int num_interpolation(0);
+          double interpolation(0.0);
+          for (int ii=std::max(i-1,1); ii<std::min(i+1,histogram.GetNbinsX()); ++ii) {
+            for (int jj=std::max(j-1,1); jj<std::min(j+1,histogram.GetNbinsY()); ++jj) {
+              if (histogram.GetBinContent(ii,jj) != 0.0) {
+                // sdebug << ii << " - " << jj << endmsg;
+                interpolation += histogram.GetBinContent(ii,jj);
+                ++num_interpolation;
+              }
+            }
+          }
+
+          interpolation /= num_interpolation;
+          // sdebug << "Bin (" << i << "," << j << ") is zero. Will interpolate with " <<  num_interpolation << " bins to " << interpolation << "." << endmsg;
+          histogram.SetBinContent(i,j, interpolation);
+          ++num_interpolated_bins;
+        }
+      }
+    }
+    sinfo << "LikelihoodProfiler::PlotHandler(...): Number of interpolated bins: " << num_interpolated_bins << endmsg;
+
     p_hist.Finish();
 
-    const Int_t NRGBs = 6;
-    const Int_t NCont = 6;
+    std::vector<double> stops_cl;
+    std::vector<int> colours;
+
+    // 2D limits from Numerical Recipies Third Edition Sec 15.6 (p. 815)
+
+    stops_cl.push_back(0.0);
+    colours.push_back(kGray+2);
+    stops_cl.push_back(2.30/2.0);
+    colours.push_back(kBlue-8);
+
+    if (max_nll > 6.18/2.0) {
+      stops_cl.push_back(6.18/2.0);
+      colours.push_back(kYellow-8);
+    }
+    if (max_nll > 11.8/2.0) {
+      stops_cl.push_back(11.8/2.0);
+      colours.push_back(kRed-8);
+    }
+    if (max_nll > 18.4/2.0) {
+      stops_cl.push_back(18.4/2.0);
+      colours.push_back(kCyan-6);
+    }
+    // if (max_nll > 12.50) {
+    //   stops_cl.push_back(12.50);
+    //   colours.push_back(kGreen-5);
+    // }
+
+    // const Int_t NRGBs = 6;
+    // const Int_t NCont = 6;
     
     // Double_t stops[NRGBs] = { 0.00 , 0.50 , 2.00 , 4.50 , 8.00 , 12.5 };
     // Double_t red[NRGBs]   = { 0.00 , 0.00 , 0.20 , 1.00 , 1.00 , 1.00 };
@@ -255,8 +309,12 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     // gStyle->SetNumberContours(NCont);
     // gStyle->SetPaintTextFormat(".1f");
 
+
+    gStyle->SetPalette(colours.size(), colours.data());
+    histogram.SetContour(stops_cl.size(), stops_cl.data());
+
     sinfo << "LikelihoodProfiler::PlotHandler(): Drawing histogram." << endmsg;
-    histogram.Draw("COLZ");
+    histogram.Draw("CONT1");
     histogram.GetZaxis()->SetRangeUser(min_nll, max_nll);
     histogram.SetXTitle(scan_vars_titles_.at(0).c_str());
     histogram.SetYTitle(scan_vars_titles_.at(1).c_str());
@@ -265,9 +323,9 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     //c.SaveAs("profile.pdf");
     sinfo << "LikelihoodProfiler::PlotHandler(): Saving linear histograms to output files." << endmsg;
     doocore::lutils::printPlot(&c, "profile", plot_path, true);
-    sinfo << "LikelihoodProfiler::PlotHandler(): Saving logarithmic histograms to output files." << endmsg;
-    c.SetLogz(true);
-    doocore::lutils::printPlot(&c, "profile_log", plot_path, true);
+    // sinfo << "LikelihoodProfiler::PlotHandler(): Saving logarithmic histograms to output files." << endmsg;
+    // c.SetLogz(true);
+    // doocore::lutils::printPlot(&c, "profile_log", plot_path, true);
     sinfo << "LikelihoodProfiler::PlotHandler(): All done." << endmsg;
   } else {
     serr << "Error in LikelihoodProfiler::PlotHandler(): Cannot (yet) plot 3D likelihood." << endmsg;
