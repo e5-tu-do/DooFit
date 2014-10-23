@@ -322,6 +322,9 @@ namespace toy {
       // sdebug << "duration_correlation = " << duration_correlation*1e-3 << endmsg;
 
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
+      if (config_toystudy_.plot_on_full_range()) {
+        minmax = doocore::lutils::MinMaxLimitsForDataSet(*evaluated_values_, param_name);
+      }
       
       // std::chrono::high_resolution_clock::time_point time_sort(std::chrono::high_resolution_clock::now());      
       // double duration_sort(std::chrono::duration_cast<std::chrono::microseconds>(time_sort - time_correlation).count());
@@ -332,7 +335,7 @@ namespace toy {
       //   minmax.second = 2.3;
       // }
       
-      //sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
+      // sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
             
       RooRealVar* mean             = NULL;
       RooRealVar* sigma            = NULL;
@@ -340,6 +343,7 @@ namespace toy {
       RooPlot* param_frame         = NULL;
       RooDataSet* fit_plot_dataset = NULL;
       RooArgSet parameters_copy(*parameter);
+      int fit_status = -1;
 
       TString cut = "";
       if (config_toystudy_.fit_plot_on_quantile_window()) {
@@ -392,6 +396,7 @@ namespace toy {
         //sdebug << fit_plot_dataset->numEntries() << " thus " << num_cores << " cores." << endmsg;
         num_cores = 1;
         RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(num_cores), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(0));
+        fit_status = fit_result->status();
 
         // un-supress RooFit spam
         RooMsgService::instance().setStreamStatus(0, true);
@@ -411,11 +416,17 @@ namespace toy {
       parameter->setBins(num_bins);
       
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
-      
+
+      if (config_toystudy_.plot_symmetric_around_mean() && gauss != NULL && param_name.substr(0,4).compare("time") != 0) {
+        // Define plot range symmetrical around mean of Gaussian fit
+        double range_limit = std::max(mean->getVal() - minmax.first, minmax.second - mean->getVal());
+        frame = parameter->frame(Range(mean->getVal() - range_limit, mean->getVal() + range_limit));
+      }
+
       fit_plot_dataset->plotOn(frame);
       if (fit_plot_dataset != evaluated_values_) delete fit_plot_dataset;
       
-      if (gauss != NULL) {
+      if (gauss != NULL && fit_status == 0) {
         gauss->plotOn(frame);
         param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
       }
