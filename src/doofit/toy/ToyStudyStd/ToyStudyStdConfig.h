@@ -172,7 +172,7 @@ namespace toy {
      *
      *  @return current value of additional_variables_
      */
-    const std::map<std::string, std::pair<const RooFormulaVar*, const RooFormulaVar*>>& additional_variables() const {
+    const std::map<std::string, std::tuple<const RooFormulaVar*, const RooFormulaVar*, std::string>>& additional_variables() const {
       return additional_variables_;
     }
 
@@ -359,8 +359,9 @@ namespace toy {
      *
      *  @param formula_var formula describing the variable
      *  @param formula_err formula describing the error propagation
+     *  @param title pretty title for additional variable
      */
-    void AddAdditionalVariable(const RooFormulaVar* formula_var, const RooFormulaVar* formula_err); 
+    void AddAdditionalVariable(const RooFormulaVar* formula_var, const RooFormulaVar* formula_err, std::string title); 
 
     /**
      *  @brief Adder for file names and tree names to read fit result from
@@ -499,7 +500,7 @@ namespace toy {
     /**
      *  @brief Additional variables to evaluate in toys
      */
-    std::map<std::string, std::pair<const RooFormulaVar*,const RooFormulaVar*>> additional_variables_;
+    std::map<std::string, std::tuple<const RooFormulaVar*,const RooFormulaVar*, std::string>> additional_variables_;
     ///@}
   };
 } // namespace toy

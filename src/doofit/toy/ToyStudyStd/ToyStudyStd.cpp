@@ -543,15 +543,16 @@ namespace toy {
       list_parameters_ref.addClone(fit_result_ptr_reference->floatParsFinal());
     }
 
-    const std::map<std::string, std::pair<const RooFormulaVar*,const RooFormulaVar*>>& additional_variables(config_toystudy_.additional_variables());
+    const std::map<std::string, std::tuple<const RooFormulaVar*,const RooFormulaVar*, std::string>>& additional_variables(config_toystudy_.additional_variables());
 
     if (additional_variables.size() > 0) {
       for (auto add_var_container : additional_variables) {
-        const RooFormulaVar* add_var(add_var_container.second.first);
-        const RooFormulaVar* add_var_err(add_var_container.second.second);
-        
+        const RooFormulaVar* add_var(std::get<0>(add_var_container.second));
+        const RooFormulaVar* add_var_err(std::get<1>(add_var_container.second));
+        std::string title(std::get<2>(add_var_container.second));
+
         EvaluateFormula(list_parameters, *add_var);
-        RooRealVar add_var_real(add_var->GetName(), add_var->GetName(), add_var->getVal());
+        RooRealVar add_var_real(add_var->GetName(), title.c_str(), add_var->getVal());
 
         if (add_var_err != nullptr) {
           EvaluateFormula(list_parameters, *add_var_err);
@@ -577,25 +578,6 @@ namespace toy {
       }
     }
 
-    // RooRealVar test("test", "test", 0.0);
-    // RooRealVar* yield_bssig(dynamic_cast<RooRealVar*>(list_parameters.find("par_bssig_yield_ll_t")));
-    // RooRealVar* yield_bdsig(dynamic_cast<RooRealVar*>(list_parameters.find("par_bdsig_yield_ll_t")));
-
-    // RooRealVar test_init("test", "test_init", 0.0);
-    // RooRealVar* yield_bssig_init(dynamic_cast<RooRealVar*>(list_parameters_init.find("par_bssig_yield_ll_t")));
-    // RooRealVar* yield_bdsig_init(dynamic_cast<RooRealVar*>(list_parameters_init.find("par_bdsig_yield_ll_t")));
-
-    // test.setVal(yield_bssig->getVal()/yield_bdsig->getVal());
-    // test.setError(0.1);
-    // list_parameters.addClone(test);
-
-    // test_init.setVal(yield_bssig_init->getVal()/yield_bdsig_init->getVal());
-    // list_parameters_init.addClone(test_init);
-
-    // sdebug << list_parameters << endmsg;
-    // sdebug << list_parameters_init << endmsg;
-
-    // const RooArgList& parameter_list = fit_result.floatParsFinal();
     TIterator* parameter_iter        = list_parameters.createIterator();
     RooRealVar* parameter            = NULL;
     bool problems                    = false;

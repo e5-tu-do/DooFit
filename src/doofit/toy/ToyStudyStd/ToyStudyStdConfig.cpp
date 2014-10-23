@@ -152,8 +152,10 @@ namespace toy {
     }
   }
 
-  void ToyStudyStdConfig::AddAdditionalVariable(const RooFormulaVar* formula_var, const RooFormulaVar* formula_err) {
-    additional_variables_.emplace(formula_var->GetName(), std::make_pair(formula_var, formula_err));
+  void ToyStudyStdConfig::AddAdditionalVariable(const RooFormulaVar* formula_var, const RooFormulaVar* formula_err, std::string title) {
+    std::tuple<const RooFormulaVar*,const RooFormulaVar*, std::string> tpl(formula_var, formula_err, title);
+
+    additional_variables_.emplace(formula_var->GetName(), tpl);
   }
 
 } // namespace toy
