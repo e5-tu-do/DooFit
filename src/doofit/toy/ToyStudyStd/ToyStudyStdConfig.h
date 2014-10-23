@@ -166,6 +166,16 @@ namespace toy {
      *  @return current value of num_toys_read_
      */
     int num_toys_read() const { return num_toys_read_; }
+
+    /**
+     *  @brief Getter for additional variables
+     *
+     *  @return current value of additional_variables_
+     */
+    const std::map<std::string, std::pair<const RooFormulaVar*, const RooFormulaVar*>>& additional_variables() const {
+      return additional_variables_;
+    }
+
     ///@}
 
     /** @name Setter actual options
@@ -337,6 +347,22 @@ namespace toy {
     void set_num_toys_read(int num_toys_read) {num_toys_read_ = num_toys_read;}
 
     /**
+     *  @brief Add an additional formula/variable for evaluation in toys.
+     *
+     *  Additional variables that depend on the toy fit parameters can be added 
+     *  for evaluation. formula_var describes how to calculate the new variable.
+     *  Parameters of the fit are matched by name. formula_err describes how to
+     *  determine the error on the variable. It can contain the same dependents 
+     *  and additionally dependents with a "_err" postfix (e.g. "par_time_tau" 
+     *  and "par_time_tau_err") that will be matched to the error of the 
+     *  according parameter of the fit.
+     *
+     *  @param formula_var formula describing the variable
+     *  @param formula_err formula describing the error propagation
+     */
+    void AddAdditionalVariable(const RooFormulaVar* formula_var, const RooFormulaVar* formula_err); 
+
+    /**
      *  @brief Adder for file names and tree names to read fit result from
      *
      *  @param result_file_tree new file and tree name to add to read_results_filename_treename_
@@ -469,6 +495,11 @@ namespace toy {
      *  @brief Number of toys to read in
      */
     int num_toys_read_;
+
+    /**
+     *  @brief Additional variables to evaluate in toys
+     */
+    std::map<std::string, std::pair<const RooFormulaVar*,const RooFormulaVar*>> additional_variables_;
     ///@}
   };
 } // namespace toy

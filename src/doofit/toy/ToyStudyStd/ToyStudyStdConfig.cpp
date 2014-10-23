@@ -1,6 +1,8 @@
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
 
 // STL
+#include <map>
+#include <utility>
 
 // Boost
 #include "boost/filesystem.hpp"
@@ -9,6 +11,7 @@
 // ROOT
 
 // RooFit
+#include "RooFormulaVar.h"
 
 // from project
 #include "doocore/io/MsgStream.h"
@@ -147,6 +150,10 @@ namespace toy {
         }
       }
     }
+  }
+
+  void ToyStudyStdConfig::AddAdditionalVariable(const RooFormulaVar* formula_var, const RooFormulaVar* formula_err) {
+    additional_variables_.emplace(formula_var->GetName(), std::make_pair(formula_var, formula_err));
   }
 
 } // namespace toy

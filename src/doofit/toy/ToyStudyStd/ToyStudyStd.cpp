@@ -524,10 +524,6 @@ namespace toy {
       parameter_init_list.readFromFile(config_toystudy_.parameter_genvalue_read_file().c_str());
     }
     
-    const RooArgList& parameter_list = fit_result.floatParsFinal();
-    TIterator* parameter_iter        = parameter_list.createIterator();
-    RooRealVar* parameter            = NULL;
-    bool problems                    = false;
     
     RooRealVar* parameters_at_limit = new RooRealVar("parameters_at_limit","number of parameters close to limits", 0.0, 0.0, 100.0);
     RooRealVar* minos_problems      = new RooRealVar("minos_problems","number of parameters with MINOS problems", 0.0, 0.0, 100.0);
@@ -538,6 +534,71 @@ namespace toy {
     *time_cpu  = std::get<2>(fit_results);
     *time_real = std::get<3>(fit_results);
 
+    RooArgList list_parameters;
+    list_parameters.addClone(fit_result.floatParsFinal());
+    RooArgList list_parameters_init;
+    list_parameters_init.addClone(fit_result.floatParsInit());
+    RooArgList list_parameters_ref;
+    if (fit_result_ptr_reference != nullptr) {
+      list_parameters_ref.addClone(fit_result_ptr_reference->floatParsFinal());
+    }
+
+    const std::map<std::string, std::pair<const RooFormulaVar*,const RooFormulaVar*>>& additional_variables(config_toystudy_.additional_variables());
+
+    if (additional_variables.size() > 0) {
+      for (auto add_var_container : additional_variables) {
+        const RooFormulaVar* add_var(add_var_container.second.first);
+        const RooFormulaVar* add_var_err(add_var_container.second.second);
+        
+        EvaluateFormula(list_parameters, *add_var);
+        RooRealVar add_var_real(add_var->GetName(), add_var->GetName(), add_var->getVal());
+
+        if (add_var_err != nullptr) {
+          EvaluateFormula(list_parameters, *add_var_err);
+          add_var_real.setError(add_var_err->getVal());
+        } else {
+          add_var_real.setError(1.0);
+        }
+        list_parameters.addClone(add_var_real);
+
+        EvaluateFormula(list_parameters_init, *add_var);
+        RooRealVar add_var_real_init(add_var->GetName(), add_var->GetName(), add_var->getVal());
+        list_parameters_init.addClone(add_var_real_init);
+
+        if (list_parameters_ref.getSize() > 0) {
+          EvaluateFormula(list_parameters_ref, *add_var);
+
+          // sdebug << list_parameters_ref << endmsg;
+          // sdebug << "add_var->getVal() = " << add_var->getVal() << endmsg;
+
+          RooRealVar add_var_real_ref(add_var->GetName(), add_var->GetName(), add_var->getVal());
+          list_parameters_ref.addClone(add_var_real_ref);
+        }
+      }
+    }
+
+    // RooRealVar test("test", "test", 0.0);
+    // RooRealVar* yield_bssig(dynamic_cast<RooRealVar*>(list_parameters.find("par_bssig_yield_ll_t")));
+    // RooRealVar* yield_bdsig(dynamic_cast<RooRealVar*>(list_parameters.find("par_bdsig_yield_ll_t")));
+
+    // RooRealVar test_init("test", "test_init", 0.0);
+    // RooRealVar* yield_bssig_init(dynamic_cast<RooRealVar*>(list_parameters_init.find("par_bssig_yield_ll_t")));
+    // RooRealVar* yield_bdsig_init(dynamic_cast<RooRealVar*>(list_parameters_init.find("par_bdsig_yield_ll_t")));
+
+    // test.setVal(yield_bssig->getVal()/yield_bdsig->getVal());
+    // test.setError(0.1);
+    // list_parameters.addClone(test);
+
+    // test_init.setVal(yield_bssig_init->getVal()/yield_bdsig_init->getVal());
+    // list_parameters_init.addClone(test_init);
+
+    // sdebug << list_parameters << endmsg;
+    // sdebug << list_parameters_init << endmsg;
+
+    // const RooArgList& parameter_list = fit_result.floatParsFinal();
+    TIterator* parameter_iter        = list_parameters.createIterator();
+    RooRealVar* parameter            = NULL;
+    bool problems                    = false;
     
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       TString pull_name = parameter->GetName() + TString("_pull");
@@ -561,7 +622,7 @@ namespace toy {
       RooRealVar* err  = new RooRealVar(err_name, err_desc, 0.0);
       RooRealVar* lerr = new RooRealVar(lerr_name, lerr_desc, 0.0);
       RooRealVar* herr = new RooRealVar(herr_name, herr_desc, 0.0);
-      RooRealVar& init = CopyRooRealVar(*(RooRealVar*)parameter_init_list.find(par.GetName()), std::string(init_name), std::string(init_desc));
+      RooRealVar& init = CopyRooRealVar(*(RooRealVar*)list_parameters_init.find(par.GetName()), std::string(init_name), std::string(init_desc));
 
       std::string ref_residual_name = std::string(parameter->GetName()) + std::string("_refresidual");
       std::string ref_residual_desc = std::string("#mu for ") + parameter->GetTitle();
@@ -570,11 +631,11 @@ namespace toy {
 
       RooRealVar* ref_residual  = nullptr;
       RooRealVar* par_reference = nullptr;
-      if (fit_result_ptr_reference != nullptr) {
+      if (list_parameters_ref.getSize() > 0) {
         ref_residual = new RooRealVar(ref_residual_name.c_str(), ref_residual_desc.c_str(), 0.0);
 
-        const RooArgList& parameter_list_ref = fit_result_ptr_reference->floatParsFinal();
-        RooRealVar*       par_reference_orig = dynamic_cast<RooRealVar*>(parameter_list_ref.find(par.GetName()));
+        //const RooArgList& parameter_list_ref = fit_result_ptr_reference->floatParsFinal();
+        RooRealVar*       par_reference_orig = dynamic_cast<RooRealVar*>(list_parameters_ref.find(par.GetName()));
 
         if (par_reference_orig != nullptr) {
           par_reference = &CopyRooRealVar(*par_reference_orig, ref_name, ref_desc);
@@ -588,7 +649,7 @@ namespace toy {
       double herr_value = 0.0;
 
       double ref_residual_value(0.0);
-      if (fit_result_ptr_reference != nullptr && par_reference != nullptr) {
+      if (list_parameters_ref.getSize() > 0 && par_reference != nullptr) {
         ref_residual_value = par.getVal() - par_reference->getVal();
         ref_residual->setVal(ref_residual_value);
       }
@@ -596,7 +657,7 @@ namespace toy {
       
       // Log 20131121 (FK): Changing definitions of pulls after a discussion with
       //                    Julian. We agree that a positive pull/residual should
-      //                    reflect a parameter bein overestimated. The previous
+      //                    reflect a parameter being overestimated. The previous
       //                    definition was in accordance with the CDF pull paper.
       
       // asymmetric error handling
@@ -747,6 +808,39 @@ namespace toy {
     }
   }
   
+  void ToyStudyStd::EvaluateFormula(const RooAbsCollection& args, const RooFormulaVar& formula) const {
+    unsigned int i(0);
+    RooAbsArg* arg(formula.getParameter(i));
+
+    while (arg != nullptr) {
+      RooRealVar* var(dynamic_cast<RooRealVar*>(arg));
+      if (var != nullptr) {
+        std::string name_var(var->GetName());
+        if (name_var.substr(name_var.length() - 4) == "_err") {
+          name_var = name_var.substr(0, name_var.length() - 4);
+          RooRealVar* var_result(dynamic_cast<RooRealVar*>(args.find(name_var.c_str())));
+          if (var_result != nullptr) {
+            var->setVal(var_result->getError());
+
+            // sdebug << " " << var->GetName() << " = error of " << var_result->GetName() << " = " << var_result->getError() << endmsg;
+          }
+        } else {
+          RooRealVar* var_result(dynamic_cast<RooRealVar*>(args.find(name_var.c_str())));
+          if (var_result != nullptr) {
+            var->setVal(var_result->getVal());
+
+            // sdebug << " " << var->GetName() << " = " << var_result->getVal() << endmsg;
+          }
+        }
+      }
+
+      ++i;
+      arg = formula.getParameter(i);
+    }
+
+    // sdebug << formula.GetName() << " = " << formula.getVal() << endmsg;
+  }
+
   RooRealVar& ToyStudyStd::CopyRooRealVar(const RooRealVar& other, const std::string& new_name, const std::string& new_title) const {
     RooRealVar* new_var = new RooRealVar(new_name.length()>0 ? new_name.c_str() : other.GetName(),
                                          new_title.length()>0 ? new_title.c_str() : other.GetTitle(),
