@@ -343,7 +343,7 @@ namespace toy {
       RooPlot* param_frame         = nullptr;
       RooDataSet* fit_plot_dataset = nullptr;
       RooArgSet parameters_copy(*parameter);
-      int fit_status = -1;
+      int fit_status = 0;
 
       TString cut = "";
       if (config_toystudy_.fit_plot_on_quantile_window()) {
