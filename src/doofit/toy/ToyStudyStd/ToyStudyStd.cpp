@@ -374,7 +374,7 @@ namespace toy {
           (param_name.substr(param_name.length()-5).compare("_pull") == 0 ||
            param_name.substr(param_name.length()-4).compare("_res") == 0 ||
            param_name.substr(param_name.length()-4).compare("_err") == 0 ||
-           (param_name.length() > 12 && param_name.substr(param_name.length()-12).compare("_refresidual") == 0)) {
+           (param_name.length() > 12 && param_name.substr(param_name.length()-12).compare("_refresidual") == 0))) {
            // || param_name.substr(0,4).compare("time") == 0)) {
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
         sigma = new RooRealVar("s", "sigma of pull", (minmax.second-minmax.first)/10.0,0,minmax.second-minmax.first);
