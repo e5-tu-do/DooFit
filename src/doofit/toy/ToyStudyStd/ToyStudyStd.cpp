@@ -337,11 +337,11 @@ namespace toy {
       
       // sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
             
-      RooRealVar* mean             = NULL;
-      RooRealVar* sigma            = NULL;
-      RooGaussian* gauss           = NULL;
-      RooPlot* param_frame         = NULL;
-      RooDataSet* fit_plot_dataset = NULL;
+      RooRealVar* mean             = nullptr;
+      RooRealVar* sigma            = nullptr;
+      RooGaussian* gauss           = nullptr;
+      RooPlot* param_frame         = nullptr;
+      RooDataSet* fit_plot_dataset = nullptr;
       RooArgSet parameters_copy(*parameter);
       int fit_status = -1;
 
@@ -374,8 +374,8 @@ namespace toy {
           (param_name.substr(param_name.length()-5).compare("_pull") == 0 ||
            param_name.substr(param_name.length()-4).compare("_res") == 0 ||
            param_name.substr(param_name.length()-4).compare("_err") == 0 ||
-           (param_name.length() > 12 && param_name.substr(param_name.length()-12).compare("_refresidual") == 0) ||
-           param_name.substr(0,4).compare("time") == 0)) {
+           (param_name.length() > 12 && param_name.substr(param_name.length()-12).compare("_refresidual") == 0)) {
+           // || param_name.substr(0,4).compare("time") == 0)) {
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
         sigma = new RooRealVar("s", "sigma of pull", (minmax.second-minmax.first)/10.0,0,minmax.second-minmax.first);
         gauss = new RooGaussian("pdf_pull", "Gaussian PDF of pull", *parameter, *mean, *sigma);
@@ -396,7 +396,7 @@ namespace toy {
         //sdebug << fit_plot_dataset->numEntries() << " thus " << num_cores << " cores." << endmsg;
         num_cores = 1;
         RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(num_cores), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(0));
-        fit_status = fit_result->status();
+        fit_status = fit_result->statusCodeHistory(0);
 
         // un-supress RooFit spam
         RooMsgService::instance().setStreamStatus(0, true);
@@ -417,7 +417,7 @@ namespace toy {
       
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
 
-      if (config_toystudy_.plot_symmetric_around_mean() && gauss != NULL && param_name.substr(0,4).compare("time") != 0) {
+      if (config_toystudy_.plot_symmetric_around_mean() && gauss != nullptr /* && param_name.substr(0,4).compare("time") != 0 */) {
         // Define plot range symmetrical around mean of Gaussian fit
         double range_limit = std::max(mean->getVal() - minmax.first, minmax.second - mean->getVal());
         frame = parameter->frame(Range(mean->getVal() - range_limit, mean->getVal() + range_limit));
@@ -429,6 +429,8 @@ namespace toy {
       if (gauss != NULL && fit_status == 0) {
         gauss->plotOn(frame);
         param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
+      } else if (fit_status != 0) {
+        swarn << "ToyStudyStd::PlotEvaluatedParameters(): Gaussian fit for " << parameter->GetName() << " failed. Will not plot." << endmsg;
       }
       frame->Draw();
       TString plot_name = parameter->GetName();
