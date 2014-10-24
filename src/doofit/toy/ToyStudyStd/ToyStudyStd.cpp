@@ -44,6 +44,7 @@
 // from Project
 #include "doofit/config/CommonConfig.h"
 #include "doofit/config/CommaSeparatedPair.h"
+#include "doofit/config/CommaSeparatedList.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
 
 using namespace ROOT;
@@ -626,11 +627,12 @@ namespace toy {
       double res_value = -(init.getVal() - par.getVal());
       res->setVal(res_value);
       
-//      std::string paramname = parameter->GetName();
-//      if (paramname == "par_bdsig_time_C" && TMath::Abs(res->getVal()) < 0.000001) {
-//        swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-(" << par.getVal() << ")" << endmsg;
-//        fit_result.Print();
-//      }
+      // std::string paramname = parameter->GetName();
+      // if (paramname == "par_bdsig_time_C" && TMath::Abs(res->getVal()) < 0.000001) {
+      //   swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-(" << par.getVal() << ")" <<
+      //   fit_result.Print();
+      // }
+
       
       err->setVal(err_value);
             
@@ -657,11 +659,18 @@ namespace toy {
         parameters_at_limit->setVal(parameters_at_limit->getVal() + 1.0);
       }
       
-      if (par.hasAsymError() && (par.getAsymErrorHi() == 0.0 || par.getAsymErrorLo() == 0.0)) {
-        swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
-        problems = true;
-        minos_problems->setVal(minos_problems->getVal() + 1.0);
+      for(int i = 0; i < config_toystudy_.minos_parameters().size(); i++){
+        if(paramname == config_toystudy_.minos_parameters().at(i) && !par.hasAsymError()){
+          swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
+          minos_problems->setVal(minos_problems->getVal() + 1.0);
+        }
       }
+      
+      // if (par.hasAsymError() && (par.getAsymErrorHi() == 0.0 || par.getAsymErrorLo() == 0.0)) {
+      //   swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
+      //   problems = true;
+      //   minos_problems->setVal(minos_problems->getVal() + 1.0);
+      // }
         
       parameters.addOwned(par);
       parameters.addOwned(*pull);
@@ -678,6 +687,7 @@ namespace toy {
         parameters.addOwned(*ref_residual);
         parameters.addOwned(*par_reference);
       }
+        
     }
     if (problems) {
       fit_result.Print("");

@@ -13,6 +13,7 @@
 // from project
 #include "doocore/io/MsgStream.h"
 #include "doofit/config/CommaSeparatedPair.h"
+#include "doofit/config/CommaSeparatedList.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -70,6 +71,9 @@ namespace toy {
     scfg << "Fit/plot parameters on quantile window: " << fit_plot_on_quantile_window_ << endmsg;
     scfg << "Neglect parameters at limit:       " << neglect_parameters_at_limit_ << endmsg;
     scfg << "Neglect MINOS problems:            " << neglect_minos_problems_ << endmsg;
+    for (int i = 0; i<minos_parameters_.size(); i++) {
+      scfg << "MINOS check for parameters:      " << minos_parameters_[i] << endmsg;
+    }
     if (parameter_genvalue_read_file().size()>0) {
       scfg << "Read generation values from:       " << parameter_genvalue_read_file() << endmsg;
     }
@@ -106,7 +110,8 @@ namespace toy {
     (GetOptionString("plot_parameter_vs_error_correlation").c_str(), po::value<bool>(&plot_parameter_vs_error_correlation_)->default_value(false),"Plot correlation scatter plots of values of parameters vs. their errors (default: false)")
     (GetOptionString("evaluate_reference_toys").c_str(), po::value<bool>(&evaluate_reference_toys_)->default_value(false),"Perform reference toy analysis of each two toys with identical random seeds (default: false)")
     (GetOptionString("reference_toys_id").c_str(), po::value<int>(&reference_toys_id_)->default_value(0),"Reference toy analysis run id to regard as study to evaluate.")
-    (GetOptionString("num_toys_read").c_str(), po::value<int>(&num_toys_read_)->default_value(-1),"Number of toys to read in (default: -1 meaning all)");
+    (GetOptionString("num_toys_read").c_str(), po::value<int>(&num_toys_read_)->default_value(-1),"Number of toys to read in (default: -1 meaning all)")
+    (GetOptionString("minos_parameters").c_str(), po::value<config::CommaSeparatedList<std::string>>(&minos_parameters_)->composing(),"List of parameters that MINOS was run on (considered when checking for MINOS problems)");
     
     descs_visible_.push_back(generation);
   }
