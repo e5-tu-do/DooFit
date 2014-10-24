@@ -268,6 +268,19 @@ namespace toy {
     bool FitResultNotVariedParameterSet(const RooFitResult& fit_result) const;
 
     /**
+     *  @brief Evaluate a RooFormulaVar based on a set of variables
+     *
+     *  This function evaluates a formula based on a collection of variables 
+     *  (e.g. a RooArgSet). Every dependent of the formula that is in args is 
+     *  set accordingly. Effectively, the formula can be evaluated for the given
+     *  args.
+     *
+     *  @param args argument collection to use for setting formula's dependents
+     *  @param formula the formula to apply args to
+     */
+    void EvaluateFormula(const RooAbsCollection& args, const RooFormulaVar& formula) const;
+    
+    /**
      *  @brief Copy an existing RooRealVar into a new RooRealVar
      *
      *  This function creates a new RooRealVar based on a given RooRealVar and
@@ -285,6 +298,8 @@ namespace toy {
      *  @return the copied RooRealVar
      */
     RooRealVar& CopyRooRealVar(const RooRealVar& other, const std::string& new_name="", const std::string& new_title="") const;
+
+
     /**
      *  @brief Print an overview of how many pulls are beyond expected range
      *

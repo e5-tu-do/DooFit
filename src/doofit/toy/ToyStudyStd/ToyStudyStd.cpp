@@ -322,6 +322,9 @@ namespace toy {
       // sdebug << "duration_correlation = " << duration_correlation*1e-3 << endmsg;
 
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
+      if (config_toystudy_.plot_on_full_range()) {
+        minmax = doocore::lutils::MinMaxLimitsForDataSet(*evaluated_values_, param_name);
+      }
       
       // std::chrono::high_resolution_clock::time_point time_sort(std::chrono::high_resolution_clock::now());      
       // double duration_sort(std::chrono::duration_cast<std::chrono::microseconds>(time_sort - time_correlation).count());
@@ -332,14 +335,15 @@ namespace toy {
       //   minmax.second = 2.3;
       // }
       
-      //sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
+      // sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
             
-      RooRealVar* mean             = NULL;
-      RooRealVar* sigma            = NULL;
-      RooGaussian* gauss           = NULL;
-      RooPlot* param_frame         = NULL;
-      RooDataSet* fit_plot_dataset = NULL;
+      RooRealVar* mean             = nullptr;
+      RooRealVar* sigma            = nullptr;
+      RooGaussian* gauss           = nullptr;
+      RooPlot* param_frame         = nullptr;
+      RooDataSet* fit_plot_dataset = nullptr;
       RooArgSet parameters_copy(*parameter);
+      int fit_status = -1;
 
       TString cut = "";
       if (config_toystudy_.fit_plot_on_quantile_window()) {
@@ -370,8 +374,8 @@ namespace toy {
           (param_name.substr(param_name.length()-5).compare("_pull") == 0 ||
            param_name.substr(param_name.length()-4).compare("_res") == 0 ||
            param_name.substr(param_name.length()-4).compare("_err") == 0 ||
-           (param_name.length() > 12 && param_name.substr(param_name.length()-12).compare("_refresidual") == 0) ||
-           param_name.substr(0,4).compare("time") == 0)) {
+           (param_name.length() > 12 && param_name.substr(param_name.length()-12).compare("_refresidual") == 0))) {
+           // || param_name.substr(0,4).compare("time") == 0)) {
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
         sigma = new RooRealVar("s", "sigma of pull", (minmax.second-minmax.first)/10.0,0,minmax.second-minmax.first);
         gauss = new RooGaussian("pdf_pull", "Gaussian PDF of pull", *parameter, *mean, *sigma);
@@ -392,6 +396,7 @@ namespace toy {
         //sdebug << fit_plot_dataset->numEntries() << " thus " << num_cores << " cores." << endmsg;
         num_cores = 1;
         RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(num_cores), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(0));
+        fit_status = fit_result->statusCodeHistory(0);
 
         // un-supress RooFit spam
         RooMsgService::instance().setStreamStatus(0, true);
@@ -411,13 +416,21 @@ namespace toy {
       parameter->setBins(num_bins);
       
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
-      
+
+      if (config_toystudy_.plot_symmetric_around_mean() && gauss != nullptr /* && param_name.substr(0,4).compare("time") != 0 */) {
+        // Define plot range symmetrical around mean of Gaussian fit
+        double range_limit = std::max(mean->getVal() - minmax.first, minmax.second - mean->getVal());
+        frame = parameter->frame(Range(mean->getVal() - range_limit, mean->getVal() + range_limit));
+      }
+
       fit_plot_dataset->plotOn(frame);
       if (fit_plot_dataset != evaluated_values_) delete fit_plot_dataset;
       
-      if (gauss != NULL) {
+      if (gauss != NULL && fit_status == 0) {
         gauss->plotOn(frame);
         param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
+      } else if (fit_status != 0) {
+        swarn << "ToyStudyStd::PlotEvaluatedParameters(): Gaussian fit for " << parameter->GetName() << " failed. Will not plot." << endmsg;
       }
       frame->Draw();
       TString plot_name = parameter->GetName();
@@ -524,10 +537,6 @@ namespace toy {
       parameter_init_list.readFromFile(config_toystudy_.parameter_genvalue_read_file().c_str());
     }
     
-    const RooArgList& parameter_list = fit_result.floatParsFinal();
-    TIterator* parameter_iter        = parameter_list.createIterator();
-    RooRealVar* parameter            = NULL;
-    bool problems                    = false;
     
     RooRealVar* parameters_at_limit = new RooRealVar("parameters_at_limit","number of parameters close to limits", 0.0, 0.0, 100.0);
     RooRealVar* minos_problems      = new RooRealVar("minos_problems","number of parameters with MINOS problems", 0.0, 0.0, 100.0);
@@ -538,6 +547,53 @@ namespace toy {
     *time_cpu  = std::get<2>(fit_results);
     *time_real = std::get<3>(fit_results);
 
+    RooArgList list_parameters;
+    list_parameters.addClone(fit_result.floatParsFinal());
+    RooArgList list_parameters_init;
+    list_parameters_init.addClone(fit_result.floatParsInit());
+    RooArgList list_parameters_ref;
+    if (fit_result_ptr_reference != nullptr) {
+      list_parameters_ref.addClone(fit_result_ptr_reference->floatParsFinal());
+    }
+
+    const std::map<std::string, std::tuple<const RooFormulaVar*,const RooFormulaVar*, std::string>>& additional_variables(config_toystudy_.additional_variables());
+
+    if (additional_variables.size() > 0) {
+      for (auto add_var_container : additional_variables) {
+        const RooFormulaVar* add_var(std::get<0>(add_var_container.second));
+        const RooFormulaVar* add_var_err(std::get<1>(add_var_container.second));
+        std::string title(std::get<2>(add_var_container.second));
+
+        EvaluateFormula(list_parameters, *add_var);
+        RooRealVar add_var_real(add_var->GetName(), title.c_str(), add_var->getVal());
+
+        if (add_var_err != nullptr) {
+          EvaluateFormula(list_parameters, *add_var_err);
+          add_var_real.setError(add_var_err->getVal());
+        } else {
+          add_var_real.setError(1.0);
+        }
+        list_parameters.addClone(add_var_real);
+
+        EvaluateFormula(list_parameters_init, *add_var);
+        RooRealVar add_var_real_init(add_var->GetName(), add_var->GetName(), add_var->getVal());
+        list_parameters_init.addClone(add_var_real_init);
+
+        if (list_parameters_ref.getSize() > 0) {
+          EvaluateFormula(list_parameters_ref, *add_var);
+
+          // sdebug << list_parameters_ref << endmsg;
+          // sdebug << "add_var->getVal() = " << add_var->getVal() << endmsg;
+
+          RooRealVar add_var_real_ref(add_var->GetName(), add_var->GetName(), add_var->getVal());
+          list_parameters_ref.addClone(add_var_real_ref);
+        }
+      }
+    }
+
+    TIterator* parameter_iter        = list_parameters.createIterator();
+    RooRealVar* parameter            = NULL;
+    bool problems                    = false;
     
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       TString pull_name = parameter->GetName() + TString("_pull");
@@ -561,7 +617,7 @@ namespace toy {
       RooRealVar* err  = new RooRealVar(err_name, err_desc, 0.0);
       RooRealVar* lerr = new RooRealVar(lerr_name, lerr_desc, 0.0);
       RooRealVar* herr = new RooRealVar(herr_name, herr_desc, 0.0);
-      RooRealVar& init = CopyRooRealVar(*(RooRealVar*)parameter_init_list.find(par.GetName()), std::string(init_name), std::string(init_desc));
+      RooRealVar& init = CopyRooRealVar(*(RooRealVar*)list_parameters_init.find(par.GetName()), std::string(init_name), std::string(init_desc));
 
       std::string ref_residual_name = std::string(parameter->GetName()) + std::string("_refresidual");
       std::string ref_residual_desc = std::string("#mu for ") + parameter->GetTitle();
@@ -570,11 +626,11 @@ namespace toy {
 
       RooRealVar* ref_residual  = nullptr;
       RooRealVar* par_reference = nullptr;
-      if (fit_result_ptr_reference != nullptr) {
+      if (list_parameters_ref.getSize() > 0) {
         ref_residual = new RooRealVar(ref_residual_name.c_str(), ref_residual_desc.c_str(), 0.0);
 
-        const RooArgList& parameter_list_ref = fit_result_ptr_reference->floatParsFinal();
-        RooRealVar*       par_reference_orig = dynamic_cast<RooRealVar*>(parameter_list_ref.find(par.GetName()));
+        //const RooArgList& parameter_list_ref = fit_result_ptr_reference->floatParsFinal();
+        RooRealVar*       par_reference_orig = dynamic_cast<RooRealVar*>(list_parameters_ref.find(par.GetName()));
 
         if (par_reference_orig != nullptr) {
           par_reference = &CopyRooRealVar(*par_reference_orig, ref_name, ref_desc);
@@ -588,7 +644,7 @@ namespace toy {
       double herr_value = 0.0;
 
       double ref_residual_value(0.0);
-      if (fit_result_ptr_reference != nullptr && par_reference != nullptr) {
+      if (list_parameters_ref.getSize() > 0 && par_reference != nullptr) {
         ref_residual_value = par.getVal() - par_reference->getVal();
         ref_residual->setVal(ref_residual_value);
       }
@@ -596,7 +652,7 @@ namespace toy {
       
       // Log 20131121 (FK): Changing definitions of pulls after a discussion with
       //                    Julian. We agree that a positive pull/residual should
-      //                    reflect a parameter bein overestimated. The previous
+      //                    reflect a parameter being overestimated. The previous
       //                    definition was in accordance with the CDF pull paper.
       
       // asymmetric error handling
@@ -747,6 +803,39 @@ namespace toy {
     }
   }
   
+  void ToyStudyStd::EvaluateFormula(const RooAbsCollection& args, const RooFormulaVar& formula) const {
+    unsigned int i(0);
+    RooAbsArg* arg(formula.getParameter(i));
+
+    while (arg != nullptr) {
+      RooRealVar* var(dynamic_cast<RooRealVar*>(arg));
+      if (var != nullptr) {
+        std::string name_var(var->GetName());
+        if (name_var.substr(name_var.length() - 4) == "_err") {
+          name_var = name_var.substr(0, name_var.length() - 4);
+          RooRealVar* var_result(dynamic_cast<RooRealVar*>(args.find(name_var.c_str())));
+          if (var_result != nullptr) {
+            var->setVal(var_result->getError());
+
+            // sdebug << " " << var->GetName() << " = error of " << var_result->GetName() << " = " << var_result->getError() << endmsg;
+          }
+        } else {
+          RooRealVar* var_result(dynamic_cast<RooRealVar*>(args.find(name_var.c_str())));
+          if (var_result != nullptr) {
+            var->setVal(var_result->getVal());
+
+            // sdebug << " " << var->GetName() << " = " << var_result->getVal() << endmsg;
+          }
+        }
+      }
+
+      ++i;
+      arg = formula.getParameter(i);
+    }
+
+    // sdebug << formula.GetName() << " = " << formula.getVal() << endmsg;
+  }
+
   RooRealVar& ToyStudyStd::CopyRooRealVar(const RooRealVar& other, const std::string& new_name, const std::string& new_title) const {
     RooRealVar* new_var = new RooRealVar(new_name.length()>0 ? new_name.c_str() : other.GetName(),
                                          new_title.length()>0 ? new_title.c_str() : other.GetTitle(),
