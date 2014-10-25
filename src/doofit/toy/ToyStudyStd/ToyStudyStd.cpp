@@ -282,6 +282,14 @@ namespace toy {
       std::string param_name = parameter->GetName();
 
       std::vector<std::string> postfixes_error;
+      std::vector<std::string> postfixes{"_err",
+                                         "_lerr",
+                                         "_herr",
+                                         "_init",
+                                         "_res",
+                                         "_refresidual",
+                                         "_pull"
+                                         };
 
       if (config_toystudy_.plot_parameter_vs_error_correlation()) {
         postfixes_error.push_back("_err");
@@ -323,13 +331,22 @@ namespace toy {
       // double duration_correlation(std::chrono::duration_cast<std::chrono::microseconds>(time_correlation - time_start).count());
       // sdebug << "duration_correlation = " << duration_correlation*1e-3 << endmsg;
 
-      std::vector<double> sorted_data(evaluated_values_->numEntries());
-      double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(evaluated_values_, param_name, 0.16, sorted_data);
-      double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84);
+      bool isparameteritself = true;
+      for(auto postfix : postfixes){
+        // sinfo << "checking" << postfix << endmsg;
+        if (param_name.find(postfix) != std::string::npos)
+          isparameteritself = false;
+      }
 
-      sinfo << "68-percent CL approx for " << param_name << ": (" << CL_boundary_lo << ", " << CL_boundary_hi << ")" << endmsg;
+      if(isparameteritself){
+        std::vector<double> sorted_data(evaluated_values_->numEntries());
+        double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(evaluated_values_, param_name, 0.16, sorted_data);
+        double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84);
+
+        sinfo << "68-percent CL approx for " << param_name << ": (" << CL_boundary_lo << ", " << CL_boundary_hi << ")" << endmsg;
+      }
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
-      
+
       // std::chrono::high_resolution_clock::time_point time_sort(std::chrono::high_resolution_clock::now());      
       // double duration_sort(std::chrono::duration_cast<std::chrono::microseconds>(time_sort - time_correlation).count());
       // sdebug << "duration_sort = " << duration_sort*1e-3 << endmsg;
@@ -632,7 +649,6 @@ namespace toy {
       //   swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-(" << par.getVal() << ")" <<
       //   fit_result.Print();
       // }
-
       
       err->setVal(err_value);
             
@@ -660,7 +676,7 @@ namespace toy {
       }
       
       for(int i = 0; i < config_toystudy_.minos_parameters().size(); i++){
-        if(paramname == config_toystudy_.minos_parameters().at(i) && !par.hasAsymError()){
+        if(parameter->GetName() == config_toystudy_.minos_parameters().at(i) && !par.hasAsymError()){
           swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
           minos_problems->setVal(minos_problems->getVal() + 1.0);
         }
