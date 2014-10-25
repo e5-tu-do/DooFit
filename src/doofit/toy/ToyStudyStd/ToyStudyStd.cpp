@@ -343,8 +343,8 @@ namespace toy {
 
       if(isparameteritself){
         std::vector<double> sorted_data(evaluated_values_->numEntries());
-        double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(evaluated_values_, param_name, 0.16, sorted_data);
-        double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84);
+        double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(evaluated_values_, param_name, 0.15865, sorted_data);
+        double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84135);
 
         parameter_cls.insert(std::pair<std::string, std::pair<double, double>>(param_name, std::pair<double,double>(CL_boundary_lo,CL_boundary_hi)));
       }
@@ -471,7 +471,7 @@ namespace toy {
     doocore::lutils::printPlotCloseStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     sinfo.Ruler();
 
-    sinfo << "Quantile-based estimates for symmetric 68% CLs:" << endmsg;
+    sinfo << "Quantile-based estimates for symmetric 68.27% CLs:" << endmsg;
     for(auto i : parameter_cls){
       sinfo << i.first << " :  (" << i.second.first << ", " << i.second.second << ")" << endmsg;
     }
