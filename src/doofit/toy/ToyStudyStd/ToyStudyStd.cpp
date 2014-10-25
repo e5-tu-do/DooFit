@@ -276,20 +276,14 @@ namespace toy {
     using namespace doocore::io;
     Progress p("Evaluating parameter distributions", num_parameters);
     
+    std::map<std::string, std::pair<double, double>> parameter_cls;
+
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       // std::chrono::high_resolution_clock::time_point time_start(std::chrono::high_resolution_clock::now());
 
       std::string param_name = parameter->GetName();
 
       std::vector<std::string> postfixes_error;
-      std::vector<std::string> postfixes{"_err",
-                                         "_lerr",
-                                         "_herr",
-                                         "_init",
-                                         "_res",
-                                         "_refresidual",
-                                         "_pull"
-                                         };
 
       if (config_toystudy_.plot_parameter_vs_error_correlation()) {
         postfixes_error.push_back("_err");
@@ -331,10 +325,19 @@ namespace toy {
       // double duration_correlation(std::chrono::duration_cast<std::chrono::microseconds>(time_correlation - time_start).count());
       // sdebug << "duration_correlation = " << duration_correlation*1e-3 << endmsg;
 
+      std::vector<std::string> ignore_for_cls{"_err",
+                                              "_lerr",
+                                              "_herr",
+                                              "_init",
+                                              "_res",
+                                              "_refresidual",
+                                              "_pull",
+                                              "minos_problems",
+                                              "parameters_at_limit"
+                                              };
       bool isparameteritself = true;
-      for(auto postfix : postfixes){
-        // sinfo << "checking" << postfix << endmsg;
-        if (param_name.find(postfix) != std::string::npos)
+      for(auto i : ignore_for_cls){
+        if (param_name.find(i) != std::string::npos)
           isparameteritself = false;
       }
 
@@ -343,7 +346,7 @@ namespace toy {
         double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(evaluated_values_, param_name, 0.16, sorted_data);
         double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84);
 
-        sinfo << "68-percent CL approx for " << param_name << ": (" << CL_boundary_lo << ", " << CL_boundary_hi << ")" << endmsg;
+        parameter_cls.insert(std::pair<std::string, std::pair<double, double>>(param_name, std::pair<double,double>(CL_boundary_lo,CL_boundary_hi)));
       }
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
 
@@ -467,6 +470,11 @@ namespace toy {
     
     doocore::lutils::printPlotCloseStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     sinfo.Ruler();
+
+    sinfo << "Quantile-based estimates for symmetric 68% CLs:" << endmsg;
+    for(auto i : parameter_cls){
+      sinfo << i.first << " :  (" << i.second.first << ", " << i.second.second << ")" << endmsg;
+    }
   }
     
   RooArgSet ToyStudyStd::BuildEvaluationArgSet(FitResultContainer fit_results) {
