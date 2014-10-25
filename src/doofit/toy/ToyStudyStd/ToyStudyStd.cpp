@@ -335,19 +335,7 @@ namespace toy {
                                               "minos_problems",
                                               "parameters_at_limit"
                                               };
-      bool isparameteritself = true;
-      for(auto i : ignore_for_cls){
-        if (param_name.find(i) != std::string::npos)
-          isparameteritself = false;
-      }
 
-      if(isparameteritself){
-        std::vector<double> sorted_data(evaluated_values_->numEntries());
-        double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(evaluated_values_, param_name, 0.15865, sorted_data);
-        double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84135);
-
-        parameter_cls.insert(std::pair<std::string, std::pair<double, double>>(param_name, std::pair<double,double>(CL_boundary_lo,CL_boundary_hi)));
-      }
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
 
       // std::chrono::high_resolution_clock::time_point time_sort(std::chrono::high_resolution_clock::now());      
@@ -386,6 +374,20 @@ namespace toy {
         fit_plot_dataset = new RooDataSet("fit_plot_dataset", "Plotting and fitting dataset for ToyStudyStd", evaluated_values_, parameters_copy, cut);
       } else {
         fit_plot_dataset = evaluated_values_;
+      }
+
+      //CL calculation 
+      bool isparameteritself = true;
+      for(auto i : ignore_for_cls){
+        if (param_name.find(i) != std::string::npos)
+          isparameteritself = false;
+      }
+      if(isparameteritself){
+        std::vector<double> sorted_data(fit_plot_dataset->numEntries());
+        double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(fit_plot_dataset, param_name, 0.15865, sorted_data);
+        double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84135);
+
+        parameter_cls.insert(std::pair<std::string, std::pair<double, double>>(param_name, std::pair<double,double>(CL_boundary_lo,CL_boundary_hi)));
       }
 
       // std::chrono::high_resolution_clock::time_point time_prefit(std::chrono::high_resolution_clock::now());      
