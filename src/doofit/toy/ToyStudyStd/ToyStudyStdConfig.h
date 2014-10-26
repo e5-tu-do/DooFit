@@ -102,6 +102,18 @@ namespace toy {
      */
     bool fit_plot_on_quantile_window() const {return fit_plot_on_quantile_window_;}
     /**
+     *  @brief Getter for plotting pulls centred around mean of Gaussian fit
+     *
+     *  @return current value of plot_symmetric_around_mean_
+     */
+    bool plot_symmetric_around_mean() const {return plot_symmetric_around_mean_;}
+    /**
+     *  @brief Getter for plotting pulls on full range
+     *
+     *  @return current value of plot_on_full_range_
+     */
+    bool plot_on_full_range() const {return plot_on_full_range_;}
+    /**
      *  @brief Getter for neglecting all toy fits where at least one parameter is at/near limit
      *
      *  @return current value of neglect_parameters_at_limit_
@@ -168,6 +180,16 @@ namespace toy {
      *  @return current value of num_toys_read_
      */
     int num_toys_read() const { return num_toys_read_; }
+
+    /**
+     *  @brief Getter for additional variables
+     *
+     *  @return current value of additional_variables_
+     */
+    const std::map<std::string, std::tuple<const RooFormulaVar*, const RooFormulaVar*, std::string>>& additional_variables() const {
+      return additional_variables_;
+    }
+
     ///@}
 
     /** @name Setter actual options
@@ -265,6 +287,18 @@ namespace toy {
      */
     void set_fit_plot_on_quantile_window(bool& fit_plot_on_quantile_window) {fit_plot_on_quantile_window_ = fit_plot_on_quantile_window;}
     /**
+     *  @brief Setter for plotting pulls on centered window around mean of Gaussian fit
+     *
+     *  @param plot_symmetric_around_mean new value for plot_symmetric_around_mean_
+     */
+    void set_plot_symmetric_around_mean(bool& plot_symmetric_around_mean) {plot_symmetric_around_mean_ = plot_symmetric_around_mean;}
+    /**
+     *  @brief Setter for plotting pulls on full range
+     *
+     *  @param plot_on_full_range new value for plot_on_full_range_
+     */
+    void set_plot_on_full_range(bool& plot_on_full_range) {plot_on_full_range_ = plot_on_full_range;}
+    /**
      *  @brief Setter for neglecting all toy fits where at least one parameter is at/near limit
      *
      *  @param neglect_parameters_at_limit new value for neglect_parameters_at_limit_
@@ -337,6 +371,23 @@ namespace toy {
      *  @param num_toys_read new value for num_toys_read_ (set to -1 for all toys)
      */
     void set_num_toys_read(int num_toys_read) {num_toys_read_ = num_toys_read;}
+
+    /**
+     *  @brief Add an additional formula/variable for evaluation in toys.
+     *
+     *  Additional variables that depend on the toy fit parameters can be added 
+     *  for evaluation. formula_var describes how to calculate the new variable.
+     *  Parameters of the fit are matched by name. formula_err describes how to
+     *  determine the error on the variable. It can contain the same dependents 
+     *  and additionally dependents with a "_err" postfix (e.g. "par_time_tau" 
+     *  and "par_time_tau_err") that will be matched to the error of the 
+     *  according parameter of the fit.
+     *
+     *  @param formula_var formula describing the variable
+     *  @param formula_err formula describing the error propagation
+     *  @param title pretty title for additional variable
+     */
+    void AddAdditionalVariable(const RooFormulaVar* formula_var, const RooFormulaVar* formula_err, std::string title); 
 
     /**
      *  @brief Adder for file names and tree names to read fit result from
@@ -442,6 +493,14 @@ namespace toy {
      */
     bool fit_plot_on_quantile_window_;
     /**
+     *  @brief Plot pulls on a centered window around the mean of the Gaussian fit
+     */
+    bool plot_symmetric_around_mean_;
+    /**
+     *  @brief Plot pulls on full range (including all outliers)
+     */
+    bool plot_on_full_range_;
+    /**
      *  @brief Neglect all toy fits where at least one parameter is at/near limit
      */
     bool neglect_parameters_at_limit_;
@@ -483,6 +542,11 @@ namespace toy {
      *  @brief List of parameters that MINOS was run on
      */
     config::CommaSeparatedList<std::string> minos_parameters_;
+
+    /**
+     *  @brief Additional variables to evaluate in toys
+     */
+    std::map<std::string, std::tuple<const RooFormulaVar*,const RooFormulaVar*, std::string>> additional_variables_;
     ///@}
 
   };
