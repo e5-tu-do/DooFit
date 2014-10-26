@@ -492,6 +492,16 @@ namespace toy {
     sinfo << "Quantile-based estimates for symmetric 68.27% CLs:" << endmsg;
     for(auto i : parameter_cls){
       sinfo << i.first << " : Mean = " << std::get<0>(i.second) << ", Median = " << std::get<1>(i.second) <<  ", Quantiles = (" << std::get<2>(i.second) << ", " << std::get<3>(i.second) << ")" << endmsg;
+      doocore::statistics::general::ValueWithError<double> mean_with_errors(std::get<0>(i.second), (std::fabs(std::get<0>(i.second)-std::get<2>(i.second))+std::fabs(std::get<0>(i.second)-std::get<3>(i.second)))/2., std::fabs(std::get<0>(i.second)-std::get<2>(i.second)), std::fabs(std::get<0>(i.second)-std::get<3>(i.second)));
+      doocore::statistics::general::ValueWithError<double> median_with_errors(std::get<1>(i.second), (std::fabs(std::get<1>(i.second)-std::get<2>(i.second))+std::fabs(std::get<1>(i.second)-std::get<3>(i.second)))/2., std::fabs(std::get<1>(i.second)-std::get<2>(i.second)), std::fabs(std::get<1>(i.second)-std::get<3>(i.second)));
+      sinfo.increment_indent(5);
+      mean_with_errors.set_full_precision_printout(false);
+      median_with_errors.set_full_precision_printout(false);
+      sinfo << "Derived uncertainties on mean (median): " << mean_with_errors << ", (" << median_with_errors << ")" << endmsg;
+      mean_with_errors.set_full_precision_printout(true);
+      median_with_errors.set_full_precision_printout(true);
+      sinfo << "Derived uncertainties on mean (median): " << mean_with_errors << ", (" << median_with_errors << ")" << endmsg;
+      sinfo.increment_indent(-5);
     }
   }
     
