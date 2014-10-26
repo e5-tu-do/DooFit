@@ -276,7 +276,7 @@ namespace toy {
     using namespace doocore::io;
     Progress p("Evaluating parameter distributions", num_parameters);
     
-    std::map<std::string, std::pair<double, double>> parameter_cls;
+    std::map<std::string, std::tuple<double, double, double, double>> parameter_cls;
 
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       // std::chrono::high_resolution_clock::time_point time_start(std::chrono::high_resolution_clock::now());
@@ -389,10 +389,12 @@ namespace toy {
       }
       if(isparameteritself){
         std::vector<double> sorted_data(fit_plot_dataset->numEntries());
+        double mean = doocore::statistics::general::get_mean_from_dataset(fit_plot_dataset, param_name);
+        double median = doocore::statistics::general::get_median_from_dataset(fit_plot_dataset, param_name);
         double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(fit_plot_dataset, param_name, 0.15865, sorted_data);
         double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84135);
 
-        parameter_cls.insert(std::pair<std::string, std::pair<double, double>>(param_name, std::pair<double,double>(CL_boundary_lo,CL_boundary_hi)));
+        parameter_cls.insert(std::pair<std::string, std::tuple<double, double, double, double> >(param_name, std::make_tuple(mean, median, CL_boundary_lo,CL_boundary_hi)));
       }
 
       // std::chrono::high_resolution_clock::time_point time_prefit(std::chrono::high_resolution_clock::now());      
@@ -489,7 +491,7 @@ namespace toy {
 
     sinfo << "Quantile-based estimates for symmetric 68.27% CLs:" << endmsg;
     for(auto i : parameter_cls){
-      sinfo << i.first << " :  (" << i.second.first << ", " << i.second.second << ")" << endmsg;
+      sinfo << i.first << " : Mean = " << std::get<0>(i.second) << ", Median = " << std::get<1>(i.second) <<  ", Quantiles = (" << std::get<2>(i.second) << ", " << std::get<3>(i.second) << ")" << endmsg;
     }
   }
     
