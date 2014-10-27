@@ -723,12 +723,6 @@ namespace toy {
       double res_value = -(init.getVal() - par.getVal());
       res->setVal(res_value);
       
-      // std::string paramname = parameter->GetName();
-      // if (paramname == "par_bdsig_time_C" && TMath::Abs(res->getVal()) < 0.000001) {
-      //   swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-(" << par.getVal() << ")" <<
-      //   fit_result.Print();
-      // }
-      
       err->setVal(err_value);
             
       if (TMath::Abs(pull_value) > 5.0) {
@@ -818,11 +812,22 @@ namespace toy {
 //    //<< fit_result.statusLabelHistory(2) << ": " << fit_result.statusCodeHistory(2) << ", "
 //           << endmsg;
     
+    int max_status_code = 0;
+    std::map<std::string, int> status_codes;
+    for (auto i = 0; i < fit_result.numStatusHistory(); i++){
+      status_codes.insert(std::pair<std::string, int>(fit_result.statusLabelHistory(i), fit_result.statusCodeHistory(i)));
+      if (fit_result.statusCodeHistory(i) > max_status_code) max_status_code = fit_result.statusCodeHistory(i);
+    }
     
     if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality() && fit_result.covQual() != -1) {
+      swarn << "Fit result has insufficient covariance matrix quality." << endmsg;
       return false;
     } else if (fit_result.statusCodeHistory(0) < 0) {
+      swarn << "Fit result has negative status code." << endmsg;
       return false;
+    // } else if (max_status_code > 0) {
+    //   swarn << "Fit result has max status code " << max_status_code << endmsg;
+    //   return false;
     } else if (FitResultNotVariedParameterSet(fit_result)) {
       swarn << "Fit result has more than 80% of nonvaried parameters." << endmsg;
       //fit_result.Print("v");
@@ -843,9 +848,24 @@ namespace toy {
     
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       if (!parameter->isConstant()) {
-        if (TMath::Abs(parameter->getVal()-dynamic_cast<RooRealVar*>(parameter_init_list.find(parameter->GetName()))->getVal())/parameter->getError() < 1e-11) {
+        if (TMath::Abs(parameter->getVal()-dynamic_cast<RooRealVar*>(parameter_init_list.find(parameter->GetName()))->getVal())/parameter->getError() < 8e-3) {
           num_nonvaried++;
         }
+        // else{
+        //   double par_init_value = dynamic_cast<RooRealVar*>(parameter_init_list.find(parameter->GetName()))->getVal();
+        //   double par_fit_value  = parameter->getVal();
+        //   double par_fit_error  = parameter->getError();
+        //   double diff           = std::fabs(par_init_value - par_fit_value)/par_fit_error;
+
+        //   std::string paramname = parameter->GetName();
+        //   if ( paramname == "parSigTimeSin2b_blind" && std::fabs(0.37 - par_fit_value) < 0.003 ){
+        //     if (par_fit_error > 0.1) return false;
+        //     if (par_fit_error < 0.01) return false;
+        //     sinfo << "par_init_value = " << par_init_value << ", par_fit_value = " << par_fit_value << ", par_fit_error = " << par_fit_error << endmsg;
+        //     sinfo << "(par_init_value - par_fit_value)/par_fit_error = " << diff << endmsg;
+        //     fit_result.Print();
+        //   }
+        // }
         num_nonfixed++;
       }
     }
