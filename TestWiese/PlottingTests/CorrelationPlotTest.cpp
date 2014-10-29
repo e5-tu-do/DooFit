@@ -53,7 +53,17 @@ int main(int argc, char *argv[]){
   plot_pars += "parSigTimeCjpsiKS_blind";
   plot_pars += "parSigTimeSin2b_blind";
   plot_pars += "parSigTimeDeltaM";
-  plot_pars += "parSigYield_12_DD_SS_EB";
+  plot_pars += "parSigTimeTau";
+  plot_pars += "parSigEtaDeltaP0_OS";
+  plot_pars += "parSigEtaDeltaP0_SS";
+  plot_pars += "parSigEtaDeltaP1_OS";
+  plot_pars += "parSigEtaDeltaP1_SS";
+  plot_pars += "parSigEtaDeltaProd_11";
+  plot_pars += "parSigEtaDeltaProd_12";
+  plot_pars += "parSigEtaP0_OS";
+  plot_pars += "parSigEtaP0_SS";
+  plot_pars += "parSigEtaP1_OS";
+  plot_pars += "parSigEtaP1_SS";
 
   // plotting the correlation matrix
   doofit::plotting::correlations::CorrelationPlot corr_plot(*fit_result, plot_pars);

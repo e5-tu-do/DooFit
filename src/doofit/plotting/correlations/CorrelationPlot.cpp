@@ -49,30 +49,26 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
     TH2* hist_corr = fit_result_.correlationHist();
 
     // only plot selected pars
-    if (!plot_pars_.empty()){ // pointer exists and is not empty
+    std::vector<std::string> correlated_pars = plot_pars_;
+    if (!plot_pars_.empty()){ // vector is not empty
       
-      // add all pars that have a correlation above the 'correlation_threshold_'
-      // to the list of selected pars
-      std::vector<std::string> correlated_pars;
+      // add all pars that have a correlation above the
+      // 'correlation_threshold_' to the list of selected pars
       if (correlation_threshold_ > 0.0){
         for (unsigned int i = 0; i < par_list_float_final.getSize(); i++){
           std::string par_name_i = par_list_float_final.at(i)->GetName();
           for (auto par_name : plot_pars_){
-            if ((fit_result_.correlation(par_name.c_str(), par_name_i.c_str()) > correlation_threshold_ )) correlated_pars.push_back(par_name_i);
+            if ((fit_result_.correlation(par_name.c_str(), par_name_i.c_str()) > correlation_threshold_ ) && (std::find(plot_pars_.begin(), plot_pars_.end(), par_name_i) == plot_pars_.end())) correlated_pars.push_back(par_name_i);
           }
         }
       }
-
-      // merge all pars
-      correlated_pars.insert(correlated_pars.end(), plot_pars_.begin(), plot_pars_.end());
-      // remove duplicates
-      std::set<std::string> s( correlated_pars.begin(), correlated_pars.end() );
-      correlated_pars.assign( s.begin(), s.end() );
+      // sinfo << correlated_pars << endmsg;
 
       // create new RooArgList with all selected pars
       RooArgList par_list_float_selected;
       for (auto name : correlated_pars){
         if (par_list_float_final.find(name.c_str())!=nullptr){
+          // sinfo << "adding " << name << endmsg;
           par_list_float_selected.add(*par_list_float_final.find(name.c_str()));
         }
       }
