@@ -47,10 +47,12 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
 
     RooArgList par_list_float_final = fit_result_.floatParsFinal();
     TH2* hist_corr = fit_result_.correlationHist();
+    std::string use_selected_pars_appendix = "";
 
     // only plot selected pars
     std::vector<std::string> correlated_pars;
     if (!plot_pars_.empty()){ // vector is not empty
+      use_selected_pars_appendix = "_selected";
       correlated_pars = plot_pars_;
       // add all pars that have a correlation above the
       // 'correlation_threshold_' to the list of selected pars
@@ -142,7 +144,7 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
     canvas.Update();
     pal = (TPaletteAxis*)(hist_corr->GetListOfFunctions()->FindObject("palette"));
     pal->GetAxis()->SetLabelSize(label_size_z_axis);
-    lu::printPlot(&canvas,"FitResultsCorrMatrix_RedBlue",plot_path);
+    lu::printPlot(&canvas,"FitResultsCorrMatrix_RedBlue"+use_selected_pars_appendix,plot_path);
     
   //  lu::setHotColdPalette(hist_corr);
   //  hist_corr->Draw("COLZ");
@@ -170,17 +172,17 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
     canvas.Update();
     pal = (TPaletteAxis*)(hist_corr->GetListOfFunctions()->FindObject("palette"));
     pal->GetAxis()->SetLabelSize(label_size_z_axis);
-    lu::printPlot(&canvas,"FitResultsCorrMatrix_RedBlueDiscete",plot_path);
+    lu::printPlot(&canvas,"FitResultsCorrMatrix_RedBlueDiscrete"+use_selected_pars_appendix,plot_path);
     
     hist_corr->SetMarkerSize(marker_size);
     hist_corr->Draw("COLZTEXT");
     canvas.Update();
     pal = (TPaletteAxis*)(hist_corr->GetListOfFunctions()->FindObject("palette"));
     pal->GetAxis()->SetLabelSize(label_size_z_axis);
-    lu::printPlot(&canvas,"FitResultsCorrMatrix_RedBlueDiscete_wText",plot_path);
+    lu::printPlot(&canvas,"FitResultsCorrMatrix_RedBlueDiscrete_wText"+use_selected_pars_appendix,plot_path);
     
     namespace fs = boost::filesystem;
-    doocore::config::Summary::GetInstance().AddFile(fs::path(plot_path) / fs::path("pdf/FitResultsCorrMatrix_RedBlueDiscete_wText.pdf"));
+    doocore::config::Summary::GetInstance().AddFile(fs::path(plot_path) / fs::path("pdf/FitResultsCorrMatrix_RedBlueDiscrete_wText"+use_selected_pars_appendix+".pdf"));
 
     delete hist_corr;
   }
