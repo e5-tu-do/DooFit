@@ -848,7 +848,7 @@ namespace toy {
     
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       if (!parameter->isConstant()) {
-        if (TMath::Abs(parameter->getVal()-dynamic_cast<RooRealVar*>(parameter_init_list.find(parameter->GetName()))->getVal())/parameter->getError() < 8e-3) {
+        if (TMath::Abs(parameter->getVal()-dynamic_cast<RooRealVar*>(parameter_init_list.find(parameter->GetName()))->getVal())/parameter->getError() < 1e-11) {
           num_nonvaried++;
         }
         // else{
