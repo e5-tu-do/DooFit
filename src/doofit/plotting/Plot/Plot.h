@@ -183,7 +183,7 @@ enum ScaleType {
     virtual ~Plot();
     
     /**
-     *  @brief Add additional RooCmdArgs for plotting
+     *  @brief Add additional RooCmdArgs for plotting (for PDF plotting)
      *
      *  @warning Please note if you want to use ProjWData() as RooCmdArg: 
      *           Unfortunately, RooFit allows you to write very dangerous code
@@ -196,7 +196,14 @@ enum ScaleType {
      *
      *  @param arg RooCmdArg to use for plotting
      */
-    void AddPlotArg(RooCmdArg arg) {plot_args_.push_back(arg);}
+    void AddPlotArg(RooCmdArg arg) {plot_args_pdf_.push_back(arg);}
+
+    /**
+     *  @brief Add additional RooCmdArgs for plotting (for dataset plotting)
+     *
+     *  @param arg RooCmdArg to use for plotting
+     */
+    void AddPlotArgData(RooCmdArg arg) {plot_args_data_.push_back(arg);}
     
     /**
      *  @brief Set plot range to use for this plot
@@ -263,9 +270,14 @@ enum ScaleType {
     std::string plot_range_;
         
     /**
-     *  @brief Vector containing additional RooCmdArgs for plotting
+     *  @brief Vector containing additional RooCmdArgs for plotting (PDF part)
      */
-    std::vector<RooCmdArg> plot_args_;
+    std::vector<RooCmdArg> plot_args_pdf_;
+
+    /**
+     *  @brief Vector containing additional RooCmdArgs for plotting (dataset part)
+     */
+    std::vector<RooCmdArg> plot_args_data_;
 
     /**
      *  @brief Flag to ignore setting of NumCPU to avoid plotting problems

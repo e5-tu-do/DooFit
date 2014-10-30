@@ -108,8 +108,9 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           //plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
           plot_name = plot_name_ + "_" + sim_cat_type->GetName();
           Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
-          plot.plot_args_ = this->plot_args_;
-          plot.plot_range_ = this->plot_range_;
+          plot.plot_args_pdf_  = this->plot_args_pdf_;
+          plot.plot_args_data_ = this->plot_args_data_;
+          plot.plot_range_     = this->plot_range_;
           
           // 20130905 FK: deactivated this manual setting of the plot range as it
           //              can dramatically increase plot time. Maybe need to
@@ -122,8 +123,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           RooAbsData* data_reduced       = NULL;
           const RooAbsData* data_project = NULL;
           bool binned_projection         = false;
-          for (std::vector<RooCmdArg>::iterator it = plot.plot_args_.begin();
-               it != plot.plot_args_.end(); ++it) {
+          for (std::vector<RooCmdArg>::iterator it = plot.plot_args_pdf_.begin();
+               it != plot.plot_args_pdf_.end(); ++it) {
             if (std::string(it->GetName()) == "ProjData") {
               sinfo << "Found ProjWData() argument. Will change projection dataset accordingly." << endmsg;
               project_arg_found = true;
@@ -243,8 +244,9 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
 
           plot_name = plot_name_ + "_" + cat_type->GetName();
           Plot plot(config_plot_, dimension_, sub_data, pdf, components_regexps_, plot_name);
-          plot.plot_args_ = this->plot_args_;
-          plot.plot_range_ = this->plot_range_;
+          plot.plot_args_pdf_  = this->plot_args_pdf_;
+          plot.plot_args_data_ = this->plot_args_data_;
+          plot.plot_range_     = this->plot_range_;
                   
           // go through supplied cmd args and if necessary adapt ProjWData argument
           bool project_arg_found         = false;
@@ -253,7 +255,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           const RooAbsData* data_project = NULL;
           bool binned_projection         = false;
           const RooAbsData* data_all     = NULL;
-          for (std::vector<RooCmdArg>::iterator it = plot.plot_args_.begin(); it != plot.plot_args_.end(); ++it) {
+          for (std::vector<RooCmdArg>::iterator it = plot.plot_args_pdf_.begin(); it != plot.plot_args_pdf_.end(); ++it) {
             if (std::string(it->GetName()) == "ProjData") {
               data_all = dynamic_cast<const RooAbsData*>(it->getObject(1));
               data_all = &sub_data;
@@ -377,8 +379,9 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     //  plot_name = std::string(dimension_.GetName()) + "_summed";
     plot_name = plot_name_ + "_summed";
     Plot plot(config_plot_, dimension_, data, *pdf_, components_regexps_, plot_name);
-    plot.plot_args_ = this->plot_args_;
-    plot.plot_range_ = this->plot_range_;
+    plot.plot_args_pdf_  = this->plot_args_pdf_;
+    plot.plot_args_data_ = this->plot_args_data_;
+    plot.plot_range_     = this->plot_range_;
     
     // go through supplied cmd args and if necessary merge ProjWData arguments
     bool project_arg_found         = false;
@@ -387,8 +390,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     const RooAbsData* data_project = NULL;
     bool binned_projection         = false;
     const RooAbsData* data_all     = NULL;
-    for (std::vector<RooCmdArg>::iterator it = plot.plot_args_.begin();
-         it != plot.plot_args_.end(); ++it) {
+    for (std::vector<RooCmdArg>::iterator it = plot.plot_args_pdf_.begin();
+         it != plot.plot_args_pdf_.end(); ++it) {
       if (std::string(it->GetName()) == "ProjData") {
         data_all = dynamic_cast<const RooAbsData*>(it->getObject(1));
         
