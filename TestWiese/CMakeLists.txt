@@ -2,6 +2,7 @@
 #add_subdirectory(ProgramOptions)
 add_subdirectory(ConfigTest)
 add_subdirectory(ToyTest)
+add_subdirectory(PlottingTests)
 #add_subdirectory(BobTheBuilderTest)
 #add_subdirectory(FitModelBreweryTest)
 #add_subdirectory(NumerobisTest)

@@ -6,5 +6,6 @@ add_subdirectory(data)
 add_subdirectory(plotting)
 add_subdirectory(toy)
 add_subdirectory(roofit)
+add_subdirectory(tools)
 #add_subdirectory(extraroopdfs)
 
