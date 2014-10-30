@@ -95,7 +95,7 @@ class CorrelationPlot {
   
  private:
   const RooFitResult& fit_result_;
-  const std::vector<std::string>& plot_pars_;
+  const std::vector<std::string> plot_pars_;
   double correlation_threshold_;
   double label_scale_;
   double marker_scale_;

@@ -49,9 +49,9 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
     TH2* hist_corr = fit_result_.correlationHist();
 
     // only plot selected pars
-    std::vector<std::string> correlated_pars = plot_pars_;
+    std::vector<std::string> correlated_pars;
     if (!plot_pars_.empty()){ // vector is not empty
-      
+      correlated_pars = plot_pars_;
       // add all pars that have a correlation above the
       // 'correlation_threshold_' to the list of selected pars
       if (correlation_threshold_ > 0.0){
