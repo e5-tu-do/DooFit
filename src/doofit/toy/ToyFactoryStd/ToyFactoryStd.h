@@ -9,6 +9,7 @@
 
 // from RooFit
 #include "RooAbsPdf.h"
+#include "RooArgSet.h"
 
 // from project
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
@@ -106,6 +107,8 @@ namespace toy {
      *          pointer.
      */
     RooDataSet* Generate();
+
+    const RooArgSet& set_constrained_parameters() const { return set_constrained_parameters_; }
     
   protected:
     
@@ -437,6 +440,11 @@ namespace toy {
      *  \brief ToyFactoryStdConfig instance to use
      */
     const ToyFactoryStdConfig& config_toyfactory_;
+
+    /**
+     *  @brief Argset of drawn constrained parameters
+     */
+    RooArgSet set_constrained_parameters_;
   };
   
   /** \struct NotGeneratingDataException
