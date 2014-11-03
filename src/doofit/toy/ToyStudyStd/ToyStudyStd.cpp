@@ -39,10 +39,12 @@
 #include "doocore/lutils/lutils.h"
 #include "doocore/system/FileLock.h"
 #include <doocore/io/Progress.h>
+#include "doocore/statistics/general.h"
 
 // from Project
 #include "doofit/config/CommonConfig.h"
 #include "doofit/config/CommaSeparatedPair.h"
+#include "doofit/config/CommaSeparatedList.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
 
 using namespace ROOT;
@@ -274,6 +276,8 @@ namespace toy {
     using namespace doocore::io;
     Progress p("Evaluating parameter distributions", num_parameters);
     
+    std::map<std::string, std::tuple<double, double, double, double>> parameter_cls;
+
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       // std::chrono::high_resolution_clock::time_point time_start(std::chrono::high_resolution_clock::now());
 
@@ -321,7 +325,19 @@ namespace toy {
       // double duration_correlation(std::chrono::duration_cast<std::chrono::microseconds>(time_correlation - time_start).count());
       // sdebug << "duration_correlation = " << duration_correlation*1e-3 << endmsg;
 
+      std::vector<std::string> ignore_for_cls{"_err",
+                                              "_lerr",
+                                              "_herr",
+                                              "_init",
+                                              "_res",
+                                              "_refresidual",
+                                              "_pull",
+                                              "minos_problems",
+                                              "parameters_at_limit"
+                                              };
+
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
+
       if (config_toystudy_.plot_on_full_range()) {
         minmax = doocore::lutils::MinMaxLimitsForDataSet(*evaluated_values_, param_name);
       }
@@ -363,6 +379,22 @@ namespace toy {
         fit_plot_dataset = new RooDataSet("fit_plot_dataset", "Plotting and fitting dataset for ToyStudyStd", evaluated_values_, parameters_copy, cut);
       } else {
         fit_plot_dataset = evaluated_values_;
+      }
+
+      //CL calculation 
+      bool isparameteritself = true;
+      for(auto i : ignore_for_cls){
+        if (param_name.find(i) != std::string::npos)
+          isparameteritself = false;
+      }
+      if(isparameteritself){
+        std::vector<double> sorted_data(fit_plot_dataset->numEntries());
+        double mean = doocore::statistics::general::get_mean_from_dataset(fit_plot_dataset, param_name);
+        double median = doocore::statistics::general::get_median_from_dataset(fit_plot_dataset, param_name);
+        double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(fit_plot_dataset, param_name, 0.15865, sorted_data);
+        double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84135);
+
+        parameter_cls.insert(std::pair<std::string, std::tuple<double, double, double, double> >(param_name, std::make_tuple(mean, median, CL_boundary_lo,CL_boundary_hi)));
       }
 
       // std::chrono::high_resolution_clock::time_point time_prefit(std::chrono::high_resolution_clock::now());      
@@ -456,6 +488,21 @@ namespace toy {
     
     doocore::lutils::printPlotCloseStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     sinfo.Ruler();
+
+    sinfo << "Quantile-based estimates for symmetric 68.27% CLs:" << endmsg;
+    for(auto i : parameter_cls){
+      sinfo << i.first << " : Mean = " << std::get<0>(i.second) << ", Median = " << std::get<1>(i.second) <<  ", Quantiles = (" << std::get<2>(i.second) << ", " << std::get<3>(i.second) << ")" << endmsg;
+      doocore::statistics::general::ValueWithError<double> mean_with_errors(std::get<0>(i.second), (std::fabs(std::get<0>(i.second)-std::get<2>(i.second))+std::fabs(std::get<0>(i.second)-std::get<3>(i.second)))/2., std::fabs(std::get<0>(i.second)-std::get<2>(i.second)), std::fabs(std::get<0>(i.second)-std::get<3>(i.second)));
+      doocore::statistics::general::ValueWithError<double> median_with_errors(std::get<1>(i.second), (std::fabs(std::get<1>(i.second)-std::get<2>(i.second))+std::fabs(std::get<1>(i.second)-std::get<3>(i.second)))/2., std::fabs(std::get<1>(i.second)-std::get<2>(i.second)), std::fabs(std::get<1>(i.second)-std::get<3>(i.second)));
+      sinfo.increment_indent(5);
+      mean_with_errors.set_full_precision_printout(false);
+      median_with_errors.set_full_precision_printout(false);
+      sinfo << "Derived uncertainties on mean (median): " << mean_with_errors << ", (" << median_with_errors << ")" << endmsg;
+      mean_with_errors.set_full_precision_printout(true);
+      median_with_errors.set_full_precision_printout(true);
+      sinfo << "Derived uncertainties on mean (median): " << mean_with_errors << ", (" << median_with_errors << ")" << endmsg;
+      sinfo.increment_indent(-5);
+    }
   }
     
   RooArgSet ToyStudyStd::BuildEvaluationArgSet(FitResultContainer fit_results) {
@@ -676,12 +723,6 @@ namespace toy {
       double res_value = -(init.getVal() - par.getVal());
       res->setVal(res_value);
       
-//      std::string paramname = parameter->GetName();
-//      if (paramname == "par_bdsig_time_C" && TMath::Abs(res->getVal()) < 0.000001) {
-//        swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-(" << par.getVal() << ")" << endmsg;
-//        fit_result.Print();
-//      }
-      
       err->setVal(err_value);
             
       if (TMath::Abs(pull_value) > 5.0) {
@@ -707,11 +748,18 @@ namespace toy {
         parameters_at_limit->setVal(parameters_at_limit->getVal() + 1.0);
       }
       
-      if (par.hasAsymError() && (par.getAsymErrorHi() == 0.0 || par.getAsymErrorLo() == 0.0)) {
-        swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
-        problems = true;
-        minos_problems->setVal(minos_problems->getVal() + 1.0);
+      for(int i = 0; i < config_toystudy_.minos_parameters().size(); i++){
+        if(parameter->GetName() == config_toystudy_.minos_parameters().at(i) && !par.hasAsymError()){
+          swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
+          minos_problems->setVal(minos_problems->getVal() + 1.0);
+        }
       }
+      
+      // if (par.hasAsymError() && (par.getAsymErrorHi() == 0.0 || par.getAsymErrorLo() == 0.0)) {
+      //   swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
+      //   problems = true;
+      //   minos_problems->setVal(minos_problems->getVal() + 1.0);
+      // }
         
       parameters.addOwned(par);
       parameters.addOwned(*pull);
@@ -728,6 +776,7 @@ namespace toy {
         parameters.addOwned(*ref_residual);
         parameters.addOwned(*par_reference);
       }
+        
     }
     if (problems) {
       fit_result.Print("");
@@ -763,11 +812,22 @@ namespace toy {
 //    //<< fit_result.statusLabelHistory(2) << ": " << fit_result.statusCodeHistory(2) << ", "
 //           << endmsg;
     
+    int max_status_code = 0;
+    std::map<std::string, int> status_codes;
+    for (auto i = 0; i < fit_result.numStatusHistory(); i++){
+      status_codes.insert(std::pair<std::string, int>(fit_result.statusLabelHistory(i), fit_result.statusCodeHistory(i)));
+      if (fit_result.statusCodeHistory(i) > max_status_code) max_status_code = fit_result.statusCodeHistory(i);
+    }
     
     if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality() && fit_result.covQual() != -1) {
+      swarn << "Fit result has insufficient covariance matrix quality." << endmsg;
       return false;
     } else if (fit_result.statusCodeHistory(0) < 0) {
+      swarn << "Fit result has negative status code." << endmsg;
       return false;
+    // } else if (max_status_code > 0) {
+    //   swarn << "Fit result has max status code " << max_status_code << endmsg;
+    //   return false;
     } else if (FitResultNotVariedParameterSet(fit_result)) {
       swarn << "Fit result has more than 80% of nonvaried parameters." << endmsg;
       //fit_result.Print("v");
@@ -791,6 +851,21 @@ namespace toy {
         if (TMath::Abs(parameter->getVal()-dynamic_cast<RooRealVar*>(parameter_init_list.find(parameter->GetName()))->getVal())/parameter->getError() < 1e-11) {
           num_nonvaried++;
         }
+        // else{
+        //   double par_init_value = dynamic_cast<RooRealVar*>(parameter_init_list.find(parameter->GetName()))->getVal();
+        //   double par_fit_value  = parameter->getVal();
+        //   double par_fit_error  = parameter->getError();
+        //   double diff           = std::fabs(par_init_value - par_fit_value)/par_fit_error;
+
+        //   std::string paramname = parameter->GetName();
+        //   if ( paramname == "parSigTimeSin2b_blind" && std::fabs(0.37 - par_fit_value) < 0.003 ){
+        //     if (par_fit_error > 0.1) return false;
+        //     if (par_fit_error < 0.01) return false;
+        //     sinfo << "par_init_value = " << par_init_value << ", par_fit_value = " << par_fit_value << ", par_fit_error = " << par_fit_error << endmsg;
+        //     sinfo << "(par_init_value - par_fit_value)/par_fit_error = " << diff << endmsg;
+        //     fit_result.Print();
+        //   }
+        // }
         num_nonfixed++;
       }
     }

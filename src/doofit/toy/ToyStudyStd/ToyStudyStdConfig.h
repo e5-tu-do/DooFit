@@ -9,10 +9,12 @@
 #ifndef __CINT__
 #include "doofit/config/AbsConfig.h"
 #include "doofit/config/CommaSeparatedPair.h"
+#include "doofit/config/CommaSeparatedList.h"
 #else
 // ROOT Cint hacks...
 #include "../../Config/AbsConfig.h"
 #include "../../Config/CommaSeparatedPair.h"
+#include "../../Config/CommaSeparatedList.h"
 #endif /* __CINT __ */
 
 // forward declarations
@@ -393,6 +395,13 @@ namespace toy {
      *  @param result_file_tree new file and tree name to add to read_results_filename_treename_
      */
     void AddReadResultsFilenameTreename(const config::CommaSeparatedPair& result_file_tree) {read_results_filename_treename_.push_back(result_file_tree);}
+    
+    /**
+     *  @brief Getter for parameters that MINOS was run on
+     *
+     *  @return current value of minos_parameters_
+     */
+    const config::CommaSeparatedList<std::string>& minos_parameters() const {return minos_parameters_;}
     ///@}
     
    protected:
@@ -528,12 +537,18 @@ namespace toy {
      *  @brief Number of toys to read in
      */
     int num_toys_read_;
+    
+    /**
+     *  @brief List of parameters that MINOS was run on
+     */
+    config::CommaSeparatedList<std::string> minos_parameters_;
 
     /**
      *  @brief Additional variables to evaluate in toys
      */
     std::map<std::string, std::tuple<const RooFormulaVar*,const RooFormulaVar*, std::string>> additional_variables_;
     ///@}
+
   };
 } // namespace toy
 } // namespace doofit
