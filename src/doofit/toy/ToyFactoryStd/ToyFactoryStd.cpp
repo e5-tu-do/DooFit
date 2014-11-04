@@ -196,6 +196,8 @@ namespace toy {
   void ToyFactoryStd::DrawConstrainedParameters() {
     const RooArgSet* argset_constraining_pdfs = config_toyfactory_.argset_constraining_pdfs();
     if (argset_constraining_pdfs) {
+      set_constrained_parameters_.removeAll();
+
       sinfo << "Drawing values of constrained parameters." << endmsg;
       sinfo.set_indent(sinfo.indent()+2);
       
@@ -225,6 +227,8 @@ namespace toy {
         while ((par = (RooAbsArg*)par_it->Next())) {
           RooRealVar* par_real = dynamic_cast<RooRealVar*>(par);
           dynamic_cast<RooRealVar*>(parameters->find(par_real->GetName()))->setVal(par_real->getVal());
+        
+          set_constrained_parameters_.addClone(*par_real);
         }
         delete par_it;
         
