@@ -21,7 +21,9 @@
 #include <RooRealProxy.h>
 #include <RooCategoryProxy.h>
 
-/** @brief cosh/sinh/cos/sin coefficients in decay rate equations
+/**@class DecRateCoeff 
+ * 
+ * @brief cosh/sinh/cos/sin coefficients in decay rate equations
  *
  * This class calculates the coefficients which go in front of the
  * cosh/sinh/cos/sin terms in the decay rate equations (RooBDecay). By forming
