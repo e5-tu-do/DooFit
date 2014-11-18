@@ -21,6 +21,9 @@
 #include <RooRealProxy.h>
 #include <RooCategoryProxy.h>
 
+namespace doofit {
+namespace schiller {
+
 /**@class DecRateCoeff 
  * 
  * @brief cosh/sinh/cos/sin coefficients in decay rate equations
@@ -116,8 +119,6 @@
  * @date 2012-10-24
  */
 
-namespace doofit {
-namespace schiller {
 
 class DecRateCoeff : public RooAbsReal
 {
