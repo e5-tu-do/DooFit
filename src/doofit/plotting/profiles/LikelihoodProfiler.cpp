@@ -117,6 +117,7 @@ bool doofit::plotting::profiles::LikelihoodProfiler::FitResultOkay(const RooFitR
   }
 }
 
+
 void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::string& plot_path) {
   using namespace doocore::io;
 
@@ -190,9 +191,24 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   TCanvas c("c", "c", 800, 600);
 
   if (val_scan.size() == 1) {
-    const std::vector<double>& val_x = val_scan.begin()->second;
 
-    TGraph graph(val_nll.size(), &val_x[0], &val_nll[0]);
+    // stupidly sort both x and y vectors simultaneously
+    // to avoid glitches in ROOT's TGraph plotting
+    const std::vector<double>& val_x = val_scan.begin()->second;
+    std::map<double, double> values;
+    for (unsigned int i=0; i<val_nll.size(); ++i) {
+      values.emplace(std::make_pair(val_x[i], val_nll[i]));
+    }
+
+    std::vector<double> val_x_sort, val_nll_sort;
+    val_x_sort.reserve(val_nll.size());
+    val_nll_sort.reserve(val_nll.size());
+    for (auto value : values) {
+      val_x_sort.push_back(value.first);
+      val_nll_sort.push_back(value.second);
+    }
+
+    TGraph graph(val_nll.size(), &val_x_sort[0], &val_nll_sort[0]);
 
     if (val_nll.size() < 50) {
       graph.Draw("APC");
@@ -211,8 +227,6 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
     double x_range_lo = min_scan_val[val_scan.begin()->first] - x_range*0.1;
     double x_range_hi = max_scan_val[val_scan.begin()->first] + x_range*0.1;
-
-    sdebug << x_range_lo << " - " << x_range_hi << endmsg;
 
     graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
     graph.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
@@ -261,7 +275,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     // sdebug << "histogram y: " << *minmax_y.first << " - " <<  *minmax_y.second << endmsg;
 
     Progress p_hist("Filling 2D profile histogram", val_nll.size());
-    for (int i=0; i<val_nll.size(); ++i) {
+    for (unsigned int i=0; i<val_nll.size(); ++i) {
       // sdebug << val_x.at(i) << ", " << val_y.at(i) << " - " << val_nll.at(i) << endmsg;
       // sdebug << "Bin: " << histogram.FindBin(val_x.at(i), val_y.at(i)) << endmsg;
       
