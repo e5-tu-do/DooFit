@@ -130,6 +130,9 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
   // int i = 0;
   double min_nll(0.0);
+  double max_nll(0.0);
+  std::map<std::string, double> min_scan_val;
+  std::map<std::string, double> max_scan_val;
 
   Progress p("Processing read in fit results", fit_results_.size());
   for (auto result : fit_results_) {
@@ -144,10 +147,20 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
         }
 
         val_scan[var->GetName()].push_back(var_fixed->getVal());
+
+        if (min_scan_val.count(var->GetName()) == 0 || min_scan_val[var->GetName()] > var_fixed->getVal()) {
+          min_scan_val[var->GetName()] = var_fixed->getVal();
+        }
+        if (max_scan_val.count(var->GetName()) == 0 || max_scan_val[var->GetName()] < var_fixed->getVal()) {
+          max_scan_val[var->GetName()] = var_fixed->getVal();
+        }
       }
 
       if (min_nll == 0.0 || min_nll > result->minNll()) {
         min_nll = result->minNll();
+      }
+      if (max_nll == 0.0 || max_nll < result->minNll()) {
+        max_nll = result->minNll();
       }
       val_nll.push_back(result->minNll());
 
@@ -180,12 +193,30 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     const std::vector<double>& val_x = val_scan.begin()->second;
 
     TGraph graph(val_nll.size(), &val_x[0], &val_nll[0]);
-    graph.Draw("AP");
+
+    if (val_nll.size() < 50) {
+      graph.Draw("APC");
+      graph.SetMarkerStyle(2);
+      graph.SetMarkerSize(2);
+      graph.SetMarkerColor(kBlue+3);
+      graph.SetLineColor(kBlue+3);
+
+    } else {
+      graph.Draw("AP");
+      graph.SetMarkerStyle(1);
+      graph.SetMarkerColor(kBlue+3);
+    }
+    
+    double x_range = max_scan_val[val_scan.begin()->first] - min_scan_val[val_scan.begin()->first];
+
+    double x_range_lo = min_scan_val[val_scan.begin()->first] - x_range*0.1;
+    double x_range_hi = max_scan_val[val_scan.begin()->first] + x_range*0.1;
+
+    sdebug << x_range_lo << " - " << x_range_hi << endmsg;
+
+    graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
     graph.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
     graph.GetYaxis()->SetTitle("#DeltaLL");
-    graph.SetMarkerStyle(1);
-    //graph.SetMarkerSize(10);
-    graph.SetMarkerColor(kBlue+3);
 
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "profile", plot_path);
