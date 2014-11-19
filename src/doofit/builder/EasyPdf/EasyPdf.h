@@ -1108,7 +1108,7 @@ class EasyPdf {
    *  @param scale_error scale factor for error
    *  @return the appropriate PDF
    */
-  RooGaussEfficiencyModel& GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal &scale_error);
+  RooGaussEfficiencyModel& GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error,  RooAbsReal &scale_mean, RooAbsReal &scale_error);
   
   /**
    *  @brief Add and access a double per-event RooGaussEfficiencyModel

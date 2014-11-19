@@ -225,7 +225,12 @@ Double_t Coefficient::evaluate(double cp_coeff,
 
 bool Coefficient::isTagInRange(const RooCategoryProxy& tag, int tag_state, const char* rangeName) const 
 {
-  return dynamic_cast<const RooCategory&>(tag.arg()).isStateInRange(rangeName, tag.arg().lookupType(tag_state)->GetName());
+  if (tag.arg().lookupType(tag_state) == nullptr){
+    return false;
+  }
+  else{
+    return dynamic_cast<const RooCategory&>(tag.arg()).isStateInRange(rangeName, tag.arg().lookupType(tag_state)->GetName());
+  }
 }
 
 
