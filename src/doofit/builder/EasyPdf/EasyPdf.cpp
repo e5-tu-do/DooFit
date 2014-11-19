@@ -650,8 +650,8 @@ RooEffResAddModel& doofit::builder::EasyPdf::TripleGaussEfficiencyModel(const st
 }
 
 
-RooGaussEfficiencyModel& doofit::builder::EasyPdf::GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal &scale_error) {
-  return AddPdfToStore<RooGaussEfficiencyModel>(new RooGaussEfficiencyModel(name.c_str(), name.c_str(), x, eff, mean, error, RooConst(1.0), scale_error));
+RooGaussEfficiencyModel& doofit::builder::EasyPdf::GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error,  RooAbsReal &scale_mean, RooAbsReal &scale_error) {
+  return AddPdfToStore<RooGaussEfficiencyModel>(new RooGaussEfficiencyModel(name.c_str(), name.c_str(), x, eff, mean, error, scale_mean, scale_error));
 }
 
 RooEffResAddModel& doofit::builder::EasyPdf::DoubleGaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& fraction) {
@@ -659,10 +659,12 @@ RooEffResAddModel& doofit::builder::EasyPdf::DoubleGaussEfficiencyModelPerEvent(
                         RooArgList(GaussEfficiencyModelPerEvent("p1_"+name,
                                                                 x,eff,mean,
                                                                 error,
+                                                                RooConst(1.0),
                                                                 scale_error1),
                                    GaussEfficiencyModelPerEvent("p2_"+name,
                                                                 x,eff,mean,
                                                                 error,
+                                                                RooConst(1.0),
                                                                 scale_error2)),
                         RooArgList(fraction));
 }

@@ -151,7 +151,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
                 }
                 double frac_nonempty = static_cast<double>(num_nonempty_bins)/static_cast<double>(data_project->numEntries());
                 if (frac_nonempty < 0.05) {
-                  swarn << " The binned dataset contains only " << num_nonempty_bins << " non-empty bins, that is only " << frac_nonempty*100.0 << "% of all bins. You might want to optimize the binning of your projection variables." << endmsg;
+                  swarn << " The binned dataset contains only " << num_nonempty_bins << " filled bins (all other bins contain zero events), that is only " << frac_nonempty*100.0 << "% of all bins. You might want to optimize the binning of your projection variables." << endmsg;
                 }
               } else {
                 data_project = data_reduced = sub_data.reduce(*set_project);
@@ -297,7 +297,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
                 }
                 double frac_nonempty = static_cast<double>(num_nonempty_bins)/static_cast<double>(data_project->numEntries());
                 if (frac_nonempty < 0.05) {
-                  swarn << " The binned dataset contains only " << num_nonempty_bins << " non-empty bins, that is only " << frac_nonempty*100.0 << "% of all bins. You might want to optimize the binning of your projection variables." << endmsg;
+                  swarn << " The binned dataset contains only " << num_nonempty_bins << " filled bins (all other bins contain zero events), that is only " << frac_nonempty*100.0 << "% of all bins. You might want to optimize the binning of your projection variables." << endmsg;
                 }
               } else {
                 RooAbsData* data_proj = const_cast<RooAbsData*>(data_all);
@@ -432,7 +432,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           }
           double frac_nonempty = static_cast<double>(num_nonempty_bins)/static_cast<double>(data_project->numEntries());
           if (frac_nonempty < 0.05) {
-            swarn << " The binned dataset contains only " << num_nonempty_bins << " non-empty bins, that is only " << frac_nonempty*100.0 << "% of all bins. You might want to optimize the binning of your projection variables." << endmsg;
+            swarn << " The binned dataset contains only " << num_nonempty_bins << " filled bins (all other bins contain zero events), that is only " << frac_nonempty*100.0 << "% of all bins. You might want to optimize the binning of your projection variables." << endmsg;
           }
         } else {
           RooAbsData* data_proj = const_cast<RooAbsData*>(data_all);
