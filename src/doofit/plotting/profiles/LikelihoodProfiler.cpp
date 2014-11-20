@@ -112,6 +112,8 @@ bool doofit::plotting::profiles::LikelihoodProfiler::FitResultOkay(const RooFitR
     return false;
   } else if (fit_result.statusCodeHistory(0) < 0) {
     return false;
+  } else if(fit_result.minNll() == -1e+30) {
+    return false;
   } else {
     return true;
   }
@@ -147,6 +149,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
           throw;
         }
 
+        // sdebug << var->GetName() << " = " << var_fixed->getVal() << ", ";
+
         val_scan[var->GetName()].push_back(var_fixed->getVal());
 
         if (min_scan_val.count(var->GetName()) == 0 || min_scan_val[var->GetName()] > var_fixed->getVal()) {
@@ -156,6 +160,9 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
           max_scan_val[var->GetName()] = var_fixed->getVal();
         }
       }
+
+      // sdebug << endmsg;
+      // sdebug << "  nll = " << result->minNll() << endmsg;
 
       if (min_nll == 0.0 || min_nll > result->minNll()) {
         min_nll = result->minNll();
@@ -353,6 +360,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     // TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
     // gStyle->SetNumberContours(NCont);
     // gStyle->SetPaintTextFormat(".1f");
+    // histogram.Draw("COLZ");
 
 
     gStyle->SetPalette(colours.size(), colours.data());
@@ -360,6 +368,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
     sinfo << "LikelihoodProfiler::PlotHandler(): Drawing histogram." << endmsg;
     histogram.Draw("CONT1");
+
     histogram.GetZaxis()->SetRangeUser(min_nll, max_nll);
     histogram.SetXTitle(scan_vars_titles_.at(0).c_str());
     histogram.SetYTitle(scan_vars_titles_.at(1).c_str());
