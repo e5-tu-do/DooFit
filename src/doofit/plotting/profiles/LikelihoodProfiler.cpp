@@ -216,11 +216,11 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
       graph.SetMarkerSize(2);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
-
     } else {
-      graph.Draw("AP");
+      graph.Draw("APC");
       graph.SetMarkerStyle(1);
       graph.SetMarkerColor(kBlue+3);
+      graph.SetLineColor(kBlue+3);
     }
     
     double x_range = max_scan_val[val_scan.begin()->first] - min_scan_val[val_scan.begin()->first];
