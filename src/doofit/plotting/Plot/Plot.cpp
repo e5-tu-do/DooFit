@@ -142,7 +142,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 
   sinfo << "Plotting " << dimension_.GetName() << " into directory " << config_plot_.plot_directory() << " as " << plot_name << endmsg;
   
-  doocore::lutils::setStyle("LHCb");
+  doocore::lutils::setStyle("LHCbOptimized");
   
   RooCmdArg range_arg;
   
