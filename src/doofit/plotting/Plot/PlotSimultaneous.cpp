@@ -178,7 +178,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
             }
           }
           
-          doocore::lutils::setStyle("LHCb");
+          doocore::lutils::setStyle("LHCbOptimized");
           config_plot_.OnDemandOpenPlotStack();
           TCanvas c1("c1","c1",900,900);
           std::string label_text1 = std::string("Next plots: dimension ") + dimension_.GetName() + ", category " + sim_cat_type->GetName();
@@ -320,7 +320,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           // RooCmdArg arg_slice = Slice(*category);
           // plot.AddPlotArg(arg_slice);
           
-          doocore::lutils::setStyle("LHCb");
+          doocore::lutils::setStyle("LHCbOptimized");
           config_plot_.OnDemandOpenPlotStack();
           TCanvas c1("c1","c1",900,900);
           std::string label_text1 = std::string("Next plots: dimension ") + dimension_.GetName() + ", category " + cat_type->GetName();

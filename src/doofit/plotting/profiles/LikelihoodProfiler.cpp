@@ -112,10 +112,13 @@ bool doofit::plotting::profiles::LikelihoodProfiler::FitResultOkay(const RooFitR
     return false;
   } else if (fit_result.statusCodeHistory(0) < 0) {
     return false;
+  } else if(fit_result.minNll() == -1e+30) {
+    return false;
   } else {
     return true;
   }
 }
+
 
 void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::string& plot_path) {
   using namespace doocore::io;
@@ -146,6 +149,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
           throw;
         }
 
+        // sdebug << var->GetName() << " = " << var_fixed->getVal() << ", ";
+
         val_scan[var->GetName()].push_back(var_fixed->getVal());
 
         if (min_scan_val.count(var->GetName()) == 0 || min_scan_val[var->GetName()] > var_fixed->getVal()) {
@@ -155,6 +160,9 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
           max_scan_val[var->GetName()] = var_fixed->getVal();
         }
       }
+
+      // sdebug << endmsg;
+      // sdebug << "  nll = " << result->minNll() << endmsg;
 
       if (min_nll == 0.0 || min_nll > result->minNll()) {
         min_nll = result->minNll();
@@ -190,9 +198,24 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   TCanvas c("c", "c", 800, 600);
 
   if (val_scan.size() == 1) {
-    const std::vector<double>& val_x = val_scan.begin()->second;
 
-    TGraph graph(val_nll.size(), &val_x[0], &val_nll[0]);
+    // stupidly sort both x and y vectors simultaneously
+    // to avoid glitches in ROOT's TGraph plotting
+    const std::vector<double>& val_x = val_scan.begin()->second;
+    std::map<double, double> values;
+    for (unsigned int i=0; i<val_nll.size(); ++i) {
+      values.emplace(std::make_pair(val_x[i], val_nll[i]));
+    }
+
+    std::vector<double> val_x_sort, val_nll_sort;
+    val_x_sort.reserve(val_nll.size());
+    val_nll_sort.reserve(val_nll.size());
+    for (auto value : values) {
+      val_x_sort.push_back(value.first);
+      val_nll_sort.push_back(value.second);
+    }
+
+    TGraph graph(val_nll.size(), &val_x_sort[0], &val_nll_sort[0]);
 
     if (val_nll.size() < 50) {
       graph.Draw("APC");
@@ -200,19 +223,17 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
       graph.SetMarkerSize(2);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
-
     } else {
-      graph.Draw("AP");
+      graph.Draw("APC");
       graph.SetMarkerStyle(1);
       graph.SetMarkerColor(kBlue+3);
+      graph.SetLineColor(kBlue+3);
     }
     
     double x_range = max_scan_val[val_scan.begin()->first] - min_scan_val[val_scan.begin()->first];
 
     double x_range_lo = min_scan_val[val_scan.begin()->first] - x_range*0.1;
     double x_range_hi = max_scan_val[val_scan.begin()->first] + x_range*0.1;
-
-    sdebug << x_range_lo << " - " << x_range_hi << endmsg;
 
     graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
     graph.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
@@ -261,7 +282,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     // sdebug << "histogram y: " << *minmax_y.first << " - " <<  *minmax_y.second << endmsg;
 
     Progress p_hist("Filling 2D profile histogram", val_nll.size());
-    for (int i=0; i<val_nll.size(); ++i) {
+    for (unsigned int i=0; i<val_nll.size(); ++i) {
       // sdebug << val_x.at(i) << ", " << val_y.at(i) << " - " << val_nll.at(i) << endmsg;
       // sdebug << "Bin: " << histogram.FindBin(val_x.at(i), val_y.at(i)) << endmsg;
       
@@ -339,6 +360,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     // TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
     // gStyle->SetNumberContours(NCont);
     // gStyle->SetPaintTextFormat(".1f");
+    // histogram.Draw("COLZ");
 
 
     gStyle->SetPalette(colours.size(), colours.data());
@@ -346,6 +368,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
     sinfo << "LikelihoodProfiler::PlotHandler(): Drawing histogram." << endmsg;
     histogram.Draw("CONT1");
+
     histogram.GetZaxis()->SetRangeUser(min_nll, max_nll);
     histogram.SetXTitle(scan_vars_titles_.at(0).c_str());
     histogram.SetYTitle(scan_vars_titles_.at(1).c_str());
