@@ -100,7 +100,7 @@ class LikelihoodProfiler {
   }
   
  protected:
-  
+
   /**
    *  @brief Plot likelihood profile (internal handler)
    *
