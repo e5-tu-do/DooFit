@@ -25,6 +25,7 @@
 #include "RooResolutionModel.h"
 #include "RooEffProd.h"
 #include "RooBDecay.h"
+#include "RooBMixDecay.h"
 #include "RooSimultaneous.h"
 #include "RooPolynomial.h"
 #include "RooCBShape.h"
@@ -649,8 +650,8 @@ RooEffResAddModel& doofit::builder::EasyPdf::TripleGaussEfficiencyModel(const st
 }
 
 
-RooGaussEfficiencyModel& doofit::builder::EasyPdf::GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal &scale_error) {
-  return AddPdfToStore<RooGaussEfficiencyModel>(new RooGaussEfficiencyModel(name.c_str(), name.c_str(), x, eff, mean, error, RooConst(1.0), scale_error));
+RooGaussEfficiencyModel& doofit::builder::EasyPdf::GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error,  RooAbsReal &scale_mean, RooAbsReal &scale_error) {
+  return AddPdfToStore<RooGaussEfficiencyModel>(new RooGaussEfficiencyModel(name.c_str(), name.c_str(), x, eff, mean, error, scale_mean, scale_error));
 }
 
 RooEffResAddModel& doofit::builder::EasyPdf::DoubleGaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal& scale_error1, RooAbsReal& scale_error2, RooAbsReal& fraction) {
@@ -658,10 +659,12 @@ RooEffResAddModel& doofit::builder::EasyPdf::DoubleGaussEfficiencyModelPerEvent(
                         RooArgList(GaussEfficiencyModelPerEvent("p1_"+name,
                                                                 x,eff,mean,
                                                                 error,
+                                                                RooConst(1.0),
                                                                 scale_error1),
                                    GaussEfficiencyModelPerEvent("p2_"+name,
                                                                 x,eff,mean,
                                                                 error,
+                                                                RooConst(1.0),
                                                                 scale_error2)),
                         RooArgList(fraction));
 }
@@ -740,6 +743,12 @@ RooBDecay& doofit::builder::EasyPdf::BDecay(const std::string& name, RooRealVar&
   return AddPdfToStore<RooBDecay>(new RooBDecay(name.c_str(), name.c_str(), t, tau, dgamma,
                                                 coef_cosh, coef_sinh, coef_cos, coef_sin, dm, model,
                                                 RooBDecay::SingleSided));
+}
+
+RooBMixDecay& doofit::builder::EasyPdf::BMixDecay(const std::string& name, RooRealVar& t, RooAbsCategory& mixState, RooAbsCategory& tagFlav, RooAbsReal& tau, RooAbsReal& dm, RooAbsReal& mistag, RooAbsReal& delMistag, const RooResolutionModel& model) {
+  return AddPdfToStore<RooBMixDecay>(new RooBMixDecay(name.c_str(), name.c_str(), t, mixState, tagFlav,
+                                                tau, dm, mistag, delMistag, model,
+                                                RooBMixDecay::SingleSided));
 }
 
 RooKeysPdf& doofit::builder::EasyPdf::KeysPdf(const std::string& name, const std::string& file_name, const std::string& ws_name, const std::string& pdf_name_on_ws) {

@@ -28,12 +28,12 @@ class AbsFitter {
   /**
    *  @brief Constructor
    */
-  AbsFitter() : identifier_(""), num_cpu_(1) {}
+  AbsFitter() : fit_result_(nullptr), identifier_(""), num_cpu_(1), preserve_state_(false), shutup_(false) {}
   
   /**
    *  @brief Constructor with name
    */
-  AbsFitter(std::string identifier) : identifier_(identifier), num_cpu_(1) {}
+  AbsFitter(std::string identifier) : fit_result_(nullptr), identifier_(identifier), num_cpu_(1), preserve_state_(false), shutup_(false) {}
   
   /**
    *  @brief Destructor
@@ -92,6 +92,13 @@ class AbsFitter {
    *  @return background yield (if applicable)
    */
   virtual double BackgroundYield() const { return 0.0; }
+
+  /**
+   *  @brief Get negative log likelihood after fit
+   *
+   *  @return NLL (if applicable)
+   */
+  virtual double NegativeLogLikelihood() const { return 0.0; }
   
   /**
    *  @brief Write parameters to file
@@ -160,7 +167,7 @@ class AbsFitter {
   /**
    *  @brief Get identifier
    */
-  std::string identifier() { return identifier_; }
+  std::string identifier() const { return identifier_; }
   
   /**
    *  @brief Set identifier
@@ -170,12 +177,47 @@ class AbsFitter {
   /**
    *  @brief Get number of available CPUs
    */
-  unsigned int num_cpu() { return num_cpu_; }
+  unsigned int num_cpu() const { return num_cpu_; }
   
   /**
    *  @brief Set identifier
    */
   void set_num_cpu(unsigned int num_cpu) { num_cpu_ = num_cpu; }
+
+  /**
+   *  @brief Get option whether to preserve objects and values
+   *
+   *  A fitter can rebuild all objects in the Fit() function. This option 
+   *  defines if the fitter is requested to re-use existing objects (such as 
+   *  PDFs) and not overwrite parameter values (e.g. from a file).
+   */
+  bool preserve_state() const { return preserve_state_; }
+
+  /**
+   *  @brief Set preservation of objects and values
+   *
+   *  A fitter can rebuild all objects in the Fit() function. Using this option
+   *  the fitter is requested to re-use existing objects (such as PDFs) and not 
+   *  overwrite parameter values (e.g. from a file).
+   */
+  void set_preserve_state(bool preserve_state) { preserve_state_ = preserve_state; }
+
+  /**
+   *  @brief Get silent mode
+   */
+  bool shutup() const { return shutup_; }
+
+  /**
+   *  @brief Set silent mode
+   */
+  void set_shutup(bool shutup) { shutup_ = shutup; }
+
+  /**
+   *  @brief Get fit result after full fit
+   *
+   *  @return fit result
+   */
+  const RooFitResult* fit_result() const { return fit_result_; }
 
 protected:
   /**
@@ -198,6 +240,11 @@ protected:
    */
   std::string file_parameters_;
 
+  /**
+   *  @brief Fit result of full fit
+   */
+  const RooFitResult* fit_result_;
+
  private:
   /**
    *  @brief Identifier
@@ -208,6 +255,16 @@ protected:
    *  @brief Number of available CPUs
    */
   unsigned int num_cpu_;
+
+  /**
+   *  @brief Preserve objects and values (for fitting)
+   */
+  bool preserve_state_;
+
+  /**
+   *  @brief Fitter shutup mode (a.k.a. silent)
+   */
+  bool shutup_;
 };
 } // namespace fitter
 } // namespace doofit

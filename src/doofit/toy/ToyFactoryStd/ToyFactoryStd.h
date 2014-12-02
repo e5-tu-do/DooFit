@@ -9,6 +9,7 @@
 
 // from RooFit
 #include "RooAbsPdf.h"
+#include "RooArgSet.h"
 
 // from project
 #include "doofit/toy/ToyFactoryStd/ToyFactoryStdConfig.h"
@@ -106,6 +107,8 @@ namespace toy {
      *          pointer.
      */
     RooDataSet* Generate();
+
+    const RooArgSet& set_constrained_parameters() const { return set_constrained_parameters_; }
     
   protected:
     
@@ -251,13 +254,22 @@ namespace toy {
      *
      *  This functions appends a dataset to another. A sanity check for 
      *  compatibility is applied (i.e. if datasets contain identical columns; if
-     *  not, a DatasetsNotAppendableException is thrown). After appending, the 
-     *  second or slave dataset is deleted.
+     *  not, a DatasetsNotAppendableException is thrown). 
+     * 
+     *  The new dataset will be returned with mixed entries, i.e. for any random
+     *  drawn sample the expected distribution of master vs. slave entries is 
+     *  according the ratio of both sample sizes. This is done to avoid samples
+     *  where only a few entries are drawn (e.g. from proto datasets) and 
+     *  drawing from only master or slave will bias the results. Example:
+     *  The sets MMMMMM and SSSSS will be merged to MSSMMSMSSMM and not 
+     *  MMMMMMSSSSS.
+     *
+     *  @warning Both individual datasets will not be changed or deleted!
      *
      *  @param master_dataset first dataset to append the second dataset to
      *  @param slave_dataset second dataset to append to the first
      */
-    void AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
+    RooDataSet* AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const;
     
     /**
      *  @brief Merge dataset vector into new dataset
@@ -428,6 +440,11 @@ namespace toy {
      *  \brief ToyFactoryStdConfig instance to use
      */
     const ToyFactoryStdConfig& config_toyfactory_;
+
+    /**
+     *  @brief Argset of drawn constrained parameters
+     */
+    RooArgSet set_constrained_parameters_;
   };
   
   /** \struct NotGeneratingDataException

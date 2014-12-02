@@ -39,10 +39,12 @@
 #include "doocore/lutils/lutils.h"
 #include "doocore/system/FileLock.h"
 #include <doocore/io/Progress.h>
+#include "doocore/statistics/general.h"
 
 // from Project
 #include "doofit/config/CommonConfig.h"
 #include "doofit/config/CommaSeparatedPair.h"
+#include "doofit/config/CommaSeparatedList.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
 
 using namespace ROOT;
@@ -84,7 +86,9 @@ namespace toy {
   void ToyStudyStd::StoreFitResult(const RooFitResult* fit_result1, 
                                    const RooFitResult* fit_result2,
                                    TStopwatch* stopwatch1,
-                                   TStopwatch* stopwatch2) {
+                                   TStopwatch* stopwatch2,
+                                   int seed,
+                                   int run_id) {
     if (!accepting_fit_results_) {
       serr << "No longer accepting fit results." << endmsg;
     } else {
@@ -121,7 +125,9 @@ namespace toy {
                                                    time_cpu1,
                                                    time_real1,
                                                    time_cpu2,
-                                                   time_real2));
+                                                   time_real2,
+                                                   seed, 
+                                                   run_id));
       sinfo << "Accepting fit result 1 for deferred saving" << endmsg;
       if (fit_result2 != NULL) {
         sinfo << "Accepting fit result 2 for deferred saving" << endmsg;
@@ -143,7 +149,7 @@ namespace toy {
   
   FitResultContainer ToyStudyStd::GetFitResult() {
     const RooFitResult* dummy = nullptr;
-    FitResultContainer fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0);
+    FitResultContainer fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0, 0, 0);
     
     if (!fitresult_reader_worker_.joinable()) {
       return fit_results;
@@ -164,13 +170,18 @@ namespace toy {
   
   void ToyStudyStd::EvaluateFitResults() {
     const RooFitResult* dummy = nullptr;
-    FitResultContainer fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0);
+    FitResultContainer fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0, 0, 0);
     do {
       fit_results = GetFitResult();
       
       if (std::get<0>(fit_results) != NULL) {
         fit_results_.push_back(fit_results);
         fit_results_bookkeep_.push_back(fit_results);
+
+        int seed = std::get<6>(fit_results);
+        //if (seed != 0) {
+        fit_results_by_seed_.insert(std::pair<int,FitResultContainer>(seed, fit_results));
+        //}
       }
     } while (std::get<0>(fit_results) != NULL);
     
@@ -182,19 +193,58 @@ namespace toy {
     }
         
     // build list of all parameters, pulls, etc.
-    RooArgSet parameter_set = BuildEvaluationArgSet(fit_results_.front());
+    auto it_results(fit_results_by_seed_.begin());
+    RooArgSet* parameter_set = new RooArgSet(BuildEvaluationArgSet(it_results->second));
+    // sdebug << "#1 size: " << parameter_set->getSize() << endmsg;
+    while (parameter_set->getSize() == 0 && it_results != fit_results_by_seed_.end()) {
+      ++it_results;
+      delete parameter_set;
+      parameter_set = new RooArgSet(BuildEvaluationArgSet(it_results->second));
+      // sdebug << "#1 size: " << parameter_set->getSize() << endmsg;
+      // sdebug << "is end (1st attempt): " << (it_results == fit_results_by_seed_.end()) << endmsg;
+    }
     
+    int i(0);
+
     // loop over fit results and fill all values into RooDataSet
     if (evaluated_values_ != NULL) delete evaluated_values_;
-    evaluated_values_ = new RooDataSet("evaluated_values", "evaluated_values", parameter_set);
-    evaluated_values_->add(parameter_set);
-    int i = 1;
-    if (fit_results_.size() > 1) {
-      for (std::vector<FitResultContainer>::const_iterator it_results = fit_results_.begin()+1; it_results != fit_results_.end(); ++it_results) {
-        RooArgSet params = BuildEvaluationArgSet(*it_results);
-        
-        evaluated_values_->add(params);
-        ++i;
+    if (parameter_set->getSize() > 0) {
+      evaluated_values_ = new RooDataSet("evaluated_values", "evaluated_values", *parameter_set);
+      // sdebug << "Adding first!" << endmsg;
+      evaluated_values_->add(*parameter_set);
+      i = 1;
+    }
+    delete parameter_set;
+    parameter_set = nullptr;
+
+    // sdebug << "is end (before loop): " << (it_results == fit_results_by_seed_.end()) << endmsg;
+    if (fit_results_.size() > 1 && it_results != fit_results_by_seed_.end()) {
+      ++it_results;
+      // sdebug << "is end (in loop): " << (it_results == fit_results_by_seed_.end()) << endmsg;
+      //for (std::vector<FitResultContainer>::const_iterator it_results = fit_results_.begin()+1; it_results != fit_results_.end(); ++it_results) {
+      while (it_results != fit_results_by_seed_.end()) {
+        // sdebug << "#" << i << " seed: " << it_results->first << endmsg;
+        parameter_set = new RooArgSet(BuildEvaluationArgSet(it_results->second));
+        ++it_results;
+        // sdebug << "#" << i << " size: " << parameter_set->getSize() << endmsg;
+        while (parameter_set->getSize() == 0 && it_results != fit_results_by_seed_.end()) {
+          
+          // sdebug << "is end (in looploop): " << (it_results == fit_results_by_seed_.end()) << endmsg;
+          delete parameter_set;
+          parameter_set = new RooArgSet(BuildEvaluationArgSet(it_results->second));
+          ++it_results;
+          // sdebug << "#" << i << " size: " << parameter_set->getSize() << endmsg;
+        }
+
+        if (parameter_set->getSize() > 0) {
+          // sdebug << "Adding one inside loop!" << endmsg;
+          evaluated_values_->add(*parameter_set);
+          ++i;
+        }
+
+        // sdebug << "is end: " << (it_results == fit_results_by_seed_.end()) << endmsg;
+        delete parameter_set;
+        parameter_set = nullptr;
       }
     }
     
@@ -205,7 +255,7 @@ namespace toy {
   }
   
   void ToyStudyStd::PlotEvaluatedParameters() {
-    if (evaluated_values_->numEntries() <= 0) {
+    if (evaluated_values_ == nullptr || evaluated_values_->numEntries() <= 0) {
       serr << "Cannot plot as no fit results are evaluated." << endmsg;
       throw ExceptionCannotEvaluateFitResults();
     }
@@ -226,60 +276,91 @@ namespace toy {
     using namespace doocore::io;
     Progress p("Evaluating parameter distributions", num_parameters);
     
+    std::map<std::string, std::tuple<double, double, double, double>> parameter_cls;
+
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
+      // std::chrono::high_resolution_clock::time_point time_start(std::chrono::high_resolution_clock::now());
+
       std::string param_name = parameter->GetName();
 
       std::vector<std::string> postfixes_error;
 
-      postfixes_error.push_back("_err");
-      postfixes_error.push_back("_lerr");
-      postfixes_error.push_back("_herr");
+      if (config_toystudy_.plot_parameter_vs_error_correlation()) {
+        postfixes_error.push_back("_err");
+        postfixes_error.push_back("_lerr");
+        postfixes_error.push_back("_herr");
 
-      for (auto postfix_error : postfixes_error) {
-        std::string name_error = param_name + postfix_error;
-        const RooRealVar* error = dynamic_cast<const RooRealVar*>(parameters->find(name_error.c_str()));
-        if (error != nullptr) {
-          //sinfo << "Parameter " << param_name << " can be correlated against an error." << endmsg;
+        for (auto postfix_error : postfixes_error) {
+          std::string name_error = param_name + postfix_error;
+          const RooRealVar* error = dynamic_cast<const RooRealVar*>(parameters->find(name_error.c_str()));
+          if (error != nullptr) {
+            //sinfo << "Parameter " << param_name << " can be correlated against an error." << endmsg;
 
-          std::vector<double> values;
-          std::vector<double> errors;
-          values.reserve(evaluated_values_->numEntries());
-          errors.reserve(evaluated_values_->numEntries());
+            std::vector<double> values;
+            std::vector<double> errors;
+            values.reserve(evaluated_values_->numEntries());
+            errors.reserve(evaluated_values_->numEntries());
 
-          for (int i=0; i<evaluated_values_->numEntries(); ++i) {
-            const RooArgSet* params = evaluated_values_->get(i);
-            //sdebug << param_name << " - " << params->getRealValue(param_name.c_str()) << " +/- " << params->getRealValue(name_error.c_str()) << endmsg;
-            values.push_back(params->getRealValue(param_name.c_str()));
-            errors.push_back(params->getRealValue(name_error.c_str()));
+            for (int i=0; i<evaluated_values_->numEntries(); ++i) {
+              const RooArgSet* params = evaluated_values_->get(i);
+              //sdebug << param_name << " - " << params->getRealValue(param_name.c_str()) << " +/- " << params->getRealValue(name_error.c_str()) << endmsg;
+              values.push_back(params->getRealValue(param_name.c_str()));
+              errors.push_back(params->getRealValue(name_error.c_str()));
+            }
+
+            TGraph graph_value_error(evaluated_values_->numEntries(), &values[0], &errors[0]);
+            TCanvas canvas("c", "c", 800, 600);
+            graph_value_error.Draw("AP");
+
+            graph_value_error.GetXaxis()->SetTitle(parameter->GetTitle());
+            graph_value_error.GetYaxis()->SetTitle(error->GetTitle());
+
+            std::string plot_name = param_name + "_err_corr" + postfix_error;
+            doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
           }
-
-          TGraph graph_value_error(evaluated_values_->numEntries(), &values[0], &errors[0]);
-          TCanvas canvas("c", "c", 800, 600);
-          graph_value_error.Draw("AP");
-
-          graph_value_error.GetXaxis()->SetTitle(parameter->GetTitle());
-          graph_value_error.GetYaxis()->SetTitle(error->GetTitle());
-
-          std::string plot_name = param_name + "_err_corr" + postfix_error;
-          doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
         }
       }
 
+      // std::chrono::high_resolution_clock::time_point time_correlation(std::chrono::high_resolution_clock::now());      
+      // double duration_correlation(std::chrono::duration_cast<std::chrono::microseconds>(time_correlation - time_start).count());
+      // sdebug << "duration_correlation = " << duration_correlation*1e-3 << endmsg;
+
+      std::vector<std::string> ignore_for_cls{"_err",
+                                              "_lerr",
+                                              "_herr",
+                                              "_init",
+                                              "_res",
+                                              "_refresidual",
+                                              "_pull",
+                                              "minos_problems",
+                                              "parameters_at_limit"
+                                              };
+
       std::pair<double,double> minmax = doocore::lutils::MedianLimitsForTuple(*evaluated_values_, param_name);
-      
-      
-      if (param_name == "par_bssig_time_S_err") {
-        minmax.second = 2.3;
+
+      if (config_toystudy_.plot_on_full_range()) {
+        minmax = doocore::lutils::MinMaxLimitsForDataSet(*evaluated_values_, param_name);
       }
       
-      //sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
-            
-      RooRealVar* mean             = NULL;
-      RooRealVar* sigma            = NULL;
-      RooGaussian* gauss           = NULL;
-      RooPlot* param_frame         = NULL;
-      RooDataSet* fit_plot_dataset = NULL;
+      // std::chrono::high_resolution_clock::time_point time_sort(std::chrono::high_resolution_clock::now());      
+      // double duration_sort(std::chrono::duration_cast<std::chrono::microseconds>(time_sort - time_correlation).count());
+      // sdebug << "duration_sort = " << duration_sort*1e-3 << endmsg;
+
       
+      // if (param_name == "par_bssig_time_S_err") {
+      //   minmax.second = 2.3;
+      // }
+      
+      // sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
+            
+      RooRealVar* mean             = nullptr;
+      RooRealVar* sigma            = nullptr;
+      RooGaussian* gauss           = nullptr;
+      RooPlot* param_frame         = nullptr;
+      RooDataSet* fit_plot_dataset = nullptr;
+      RooArgSet parameters_copy(*parameter);
+      int fit_status = 0;
+
       TString cut = "";
       if (config_toystudy_.fit_plot_on_quantile_window()) {
         cut = param_name + ">" + boost::lexical_cast<std::string>(minmax.first) + "&&" + param_name + "<" + boost::lexical_cast<std::string>(minmax.second);
@@ -287,23 +368,46 @@ namespace toy {
       if (config_toystudy_.neglect_parameters_at_limit()) {
         if (cut.Length() > 0) cut = cut + "&&";
         cut = cut + "parameters_at_limit < 0.5";
+        parameters_copy.add(*parameters->find("parameters_at_limit"));
       }
       if (config_toystudy_.neglect_minos_problems()) {
         if (cut.Length() > 0) cut = cut + "&&";
         cut = cut + "minos_problems < 0.5";
+        parameters_copy.add(*parameters->find("minos_problems"));
       }
       if (cut.Length() > 0) {
-        fit_plot_dataset = new RooDataSet("fit_plot_dataset", "Plotting and fitting dataset for ToyStudyStd", evaluated_values_, RooArgSet(*parameters), cut);
+        fit_plot_dataset = new RooDataSet("fit_plot_dataset", "Plotting and fitting dataset for ToyStudyStd", evaluated_values_, parameters_copy, cut);
       } else {
         fit_plot_dataset = evaluated_values_;
       }
+
+      //CL calculation 
+      bool isparameteritself = true;
+      for(auto i : ignore_for_cls){
+        if (param_name.find(i) != std::string::npos)
+          isparameteritself = false;
+      }
+      if(isparameteritself){
+        std::vector<double> sorted_data(fit_plot_dataset->numEntries());
+        double mean = doocore::statistics::general::get_mean_from_dataset(fit_plot_dataset, param_name);
+        double median = doocore::statistics::general::get_median_from_dataset(fit_plot_dataset, param_name);
+        double CL_boundary_lo = doocore::statistics::general::get_quantile_from_dataset(fit_plot_dataset, param_name, 0.15865, sorted_data);
+        double CL_boundary_hi = doocore::statistics::general::get_quantile_from_dataset(sorted_data, 0.84135);
+
+        parameter_cls.insert(std::pair<std::string, std::tuple<double, double, double, double> >(param_name, std::make_tuple(mean, median, CL_boundary_lo,CL_boundary_hi)));
+      }
+
+      // std::chrono::high_resolution_clock::time_point time_prefit(std::chrono::high_resolution_clock::now());      
+      // double duration_prefit(std::chrono::duration_cast<std::chrono::microseconds>(time_prefit - time_sort).count());
+      // sdebug << "duration_prefit = " << duration_prefit*1e-3 << endmsg;
 
       // for all pulls fit a gaussian
       if (param_name.length() > 4 &&
           (param_name.substr(param_name.length()-5).compare("_pull") == 0 ||
            param_name.substr(param_name.length()-4).compare("_res") == 0 ||
            param_name.substr(param_name.length()-4).compare("_err") == 0 ||
-           param_name.substr(0,4).compare("time") == 0)) {
+           (param_name.length() > 12 && param_name.substr(param_name.length()-12).compare("_refresidual") == 0))) {
+           // || param_name.substr(0,4).compare("time") == 0)) {
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
         sigma = new RooRealVar("s", "sigma of pull", (minmax.second-minmax.first)/10.0,0,minmax.second-minmax.first);
         gauss = new RooGaussian("pdf_pull", "Gaussian PDF of pull", *parameter, *mean, *sigma);
@@ -319,7 +423,12 @@ namespace toy {
         // supress RooFit spam
         RooMsgService::instance().setStreamStatus(0, false);
         RooMsgService::instance().setStreamStatus(1, false);
-        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(2), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(1));
+
+        int num_cores = std::max(fit_plot_dataset->numEntries() < 200 ? fit_plot_dataset->numEntries()/1000+1 : 1, 8);
+        //sdebug << fit_plot_dataset->numEntries() << " thus " << num_cores << " cores." << endmsg;
+        num_cores = 1;
+        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(num_cores), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(0));
+        fit_status = fit_result->statusCodeHistory(0);
 
         // un-supress RooFit spam
         RooMsgService::instance().setStreamStatus(0, true);
@@ -329,19 +438,31 @@ namespace toy {
         delete fit_result;
         sinfo.increment_indent(-2);
       }
+
+      // std::chrono::high_resolution_clock::time_point time_postfit(std::chrono::high_resolution_clock::now());      
+      // double duration_postfit(std::chrono::duration_cast<std::chrono::microseconds>(time_postfit - time_prefit).count());
+      // sdebug << "duration_postfit = " << duration_postfit*1e-3 << endmsg;
       
       int num_bins = fit_plot_dataset->numEntries() < 1000 ? fit_plot_dataset->numEntries()/10 : 100;
       if (num_bins < 10) num_bins = 10;
       parameter->setBins(num_bins);
       
       RooPlot* frame = parameter->frame(Range(minmax.first,minmax.second));
-      
+
+      if (config_toystudy_.plot_symmetric_around_mean() && gauss != nullptr /* && param_name.substr(0,4).compare("time") != 0 */) {
+        // Define plot range symmetrical around mean of Gaussian fit
+        double range_limit = std::max(mean->getVal() - minmax.first, minmax.second - mean->getVal());
+        frame = parameter->frame(Range(mean->getVal() - range_limit, mean->getVal() + range_limit));
+      }
+
       fit_plot_dataset->plotOn(frame);
       if (fit_plot_dataset != evaluated_values_) delete fit_plot_dataset;
       
-      if (gauss != NULL) {
+      if (gauss != NULL && fit_status == 0) {
         gauss->plotOn(frame);
         param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
+      } else if (fit_status != 0) {
+        swarn << "ToyStudyStd::PlotEvaluatedParameters(): Gaussian fit for " << parameter->GetName() << " failed. Will not plot." << endmsg;
       }
       frame->Draw();
       TString plot_name = parameter->GetName();
@@ -356,6 +477,10 @@ namespace toy {
         delete sigma;
         delete mean;
       }
+
+      // std::chrono::high_resolution_clock::time_point time_plotvars(std::chrono::high_resolution_clock::now());      
+      // double duration_plotvars(std::chrono::duration_cast<std::chrono::microseconds>(time_plotvars - time_correlation).count());
+      // sdebug << "duration_plotvars = " << duration_plotvars*1e-3 << endmsg;
       
       ++p;
     }
@@ -363,31 +488,159 @@ namespace toy {
     
     doocore::lutils::printPlotCloseStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     sinfo.Ruler();
+
+    sinfo << "Quantile-based estimates for symmetric 68.27% CLs:" << endmsg;
+    for(auto i : parameter_cls){
+      sinfo << i.first << " : Mean = " << std::get<0>(i.second) << ", Median = " << std::get<1>(i.second) <<  ", Quantiles = (" << std::get<2>(i.second) << ", " << std::get<3>(i.second) << ")" << endmsg;
+      doocore::statistics::general::ValueWithError<double> mean_with_errors(std::get<0>(i.second), (std::fabs(std::get<0>(i.second)-std::get<2>(i.second))+std::fabs(std::get<0>(i.second)-std::get<3>(i.second)))/2., std::fabs(std::get<0>(i.second)-std::get<2>(i.second)), std::fabs(std::get<0>(i.second)-std::get<3>(i.second)));
+      doocore::statistics::general::ValueWithError<double> median_with_errors(std::get<1>(i.second), (std::fabs(std::get<1>(i.second)-std::get<2>(i.second))+std::fabs(std::get<1>(i.second)-std::get<3>(i.second)))/2., std::fabs(std::get<1>(i.second)-std::get<2>(i.second)), std::fabs(std::get<1>(i.second)-std::get<3>(i.second)));
+      sinfo.increment_indent(5);
+      mean_with_errors.set_full_precision_printout(false);
+      median_with_errors.set_full_precision_printout(false);
+      sinfo << "Derived uncertainties on mean (median): " << mean_with_errors << ", (" << median_with_errors << ")" << endmsg;
+      mean_with_errors.set_full_precision_printout(true);
+      median_with_errors.set_full_precision_printout(true);
+      sinfo << "Derived uncertainties on mean (median): " << mean_with_errors << ", (" << median_with_errors << ")" << endmsg;
+      sinfo.increment_indent(-5);
+    }
   }
     
   RooArgSet ToyStudyStd::BuildEvaluationArgSet(FitResultContainer fit_results) {
     RooArgSet parameters;
     
-    const RooFitResult& fit_result = *std::get<0>(fit_results);
+    int seed                        = std::get<6>(fit_results);
+    int run_id                      = std::get<7>(fit_results);
     
+    int run_id_reference            = config_toystudy_.reference_toys_id();
+    bool evaluate_reference_toys    = config_toystudy_.evaluate_reference_toys();
+
+    // sdebug << "run_id = " << run_id << endmsg;
+
+    int num_toys_with_seed = fit_results_by_seed_.count(seed);
+    const RooFitResult* fit_result_ptr = nullptr;
+    const RooFitResult* fit_result_ptr_reference = nullptr;
+    if (evaluate_reference_toys) {
+      //sdebug << "Seed #" << seed << " is found " << fit_results_by_seed_.count(seed) << " times." << endmsg;
+      
+      if (num_toys_with_seed > 2) {
+        serr << "Seed #" << seed << " is found " << num_toys_with_seed << " times." << endmsg;
+        return parameters;
+      } else if (num_toys_with_seed == 1) {
+        serr << "Seed #" << seed << " is found only once although reference analysis is requested." << endmsg;
+        return parameters;
+      } else {
+        if (run_id == run_id_reference) {
+          fit_result_ptr = std::get<0>(fit_results);
+
+          // sdebug << "Trying to find partner fit result!" << endmsg;
+
+          // pick the correct fit result with the proper id
+          auto it_this_seed = fit_results_by_seed_.lower_bound(seed);
+          auto it_next_seed = fit_results_by_seed_.upper_bound(seed);
+
+          for (auto it = it_this_seed; it != it_next_seed; ++it) {
+            FitResultContainer fit_results_test = it->second;
+            int run_id_test = std::get<7>(fit_results_test);
+            if (run_id_test != run_id) {
+              fit_result_ptr_reference = std::get<0>(fit_results_test);
+            }
+          }
+
+        } // else {
+          // // pick the correct fit result with the proper id
+          // auto it_this_seed = fit_results_by_seed_.lower_bound(seed);
+          // auto it_next_seed = fit_results_by_seed_.upper_bound(seed);
+
+          // for (auto it = it_this_seed; it != it_next_seed; ++it) {
+          //   sdebug << it->first << endmsg;
+
+          //   FitResultContainer fit_results_test = it->second;
+          //   int run_id_test = std::get<7>(fit_results_test);
+          //   if (run_id_test == run_id_reference) {
+          //     fit_result_ptr = std::get<0>(fit_results_test);
+          //   }
+          // }
+        // }
+      } 
+
+      if (fit_result_ptr == nullptr) {
+        return parameters;
+      } else if (fit_result_ptr_reference == nullptr) {
+        swarn << "Cannot find reference fit for fit with seed " << seed << endmsg;
+        return parameters;
+      }
+    } else {
+      fit_result_ptr = std::get<0>(fit_results);
+    }    
+
+    if (fit_result_ptr_reference != nullptr) {
+      // sdebug << "Found company!" << endmsg;
+    }
+
+    const RooFitResult& fit_result = *fit_result_ptr;
+
     RooArgSet parameter_init_list    = fit_result.floatParsInit();
     if (config_toystudy_.parameter_genvalue_read_file().size() > 0) {
       parameter_init_list.readFromFile(config_toystudy_.parameter_genvalue_read_file().c_str());
     }
     
-    const RooArgList& parameter_list = fit_result.floatParsFinal();
-    TIterator* parameter_iter        = parameter_list.createIterator();
-    RooRealVar* parameter            = NULL;
-    bool problems                    = false;
     
     RooRealVar* parameters_at_limit = new RooRealVar("parameters_at_limit","number of parameters close to limits", 0.0, 0.0, 100.0);
     RooRealVar* minos_problems      = new RooRealVar("minos_problems","number of parameters with MINOS problems", 0.0, 0.0, 100.0);
     
     RooRealVar* time_cpu            = new RooRealVar("time_cpu", "Fit time (CPU)", 0.0, "s");
     RooRealVar* time_real           = new RooRealVar("time_real", "Fit time (Real)", 0.0, "s");
-    
+
     *time_cpu  = std::get<2>(fit_results);
     *time_real = std::get<3>(fit_results);
+
+    RooArgList list_parameters;
+    list_parameters.addClone(fit_result.floatParsFinal());
+    RooArgList list_parameters_init;
+    list_parameters_init.addClone(fit_result.floatParsInit());
+    RooArgList list_parameters_ref;
+    if (fit_result_ptr_reference != nullptr) {
+      list_parameters_ref.addClone(fit_result_ptr_reference->floatParsFinal());
+    }
+
+    const std::map<std::string, std::tuple<const RooFormulaVar*,const RooFormulaVar*, std::string>>& additional_variables(config_toystudy_.additional_variables());
+
+    if (additional_variables.size() > 0) {
+      for (auto add_var_container : additional_variables) {
+        const RooFormulaVar* add_var(std::get<0>(add_var_container.second));
+        const RooFormulaVar* add_var_err(std::get<1>(add_var_container.second));
+        std::string title(std::get<2>(add_var_container.second));
+
+        EvaluateFormula(list_parameters, *add_var);
+        RooRealVar add_var_real(add_var->GetName(), title.c_str(), add_var->getVal());
+
+        if (add_var_err != nullptr) {
+          EvaluateFormula(list_parameters, *add_var_err);
+          add_var_real.setError(add_var_err->getVal());
+        } else {
+          add_var_real.setError(1.0);
+        }
+        list_parameters.addClone(add_var_real);
+
+        EvaluateFormula(list_parameters_init, *add_var);
+        RooRealVar add_var_real_init(add_var->GetName(), add_var->GetName(), add_var->getVal());
+        list_parameters_init.addClone(add_var_real_init);
+
+        if (list_parameters_ref.getSize() > 0) {
+          EvaluateFormula(list_parameters_ref, *add_var);
+
+          // sdebug << list_parameters_ref << endmsg;
+          // sdebug << "add_var->getVal() = " << add_var->getVal() << endmsg;
+
+          RooRealVar add_var_real_ref(add_var->GetName(), add_var->GetName(), add_var->getVal());
+          list_parameters_ref.addClone(add_var_real_ref);
+        }
+      }
+    }
+
+    TIterator* parameter_iter        = list_parameters.createIterator();
+    RooRealVar* parameter            = NULL;
+    bool problems                    = false;
     
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       TString pull_name = parameter->GetName() + TString("_pull");
@@ -411,16 +664,42 @@ namespace toy {
       RooRealVar* err  = new RooRealVar(err_name, err_desc, 0.0);
       RooRealVar* lerr = new RooRealVar(lerr_name, lerr_desc, 0.0);
       RooRealVar* herr = new RooRealVar(herr_name, herr_desc, 0.0);
-      RooRealVar& init = CopyRooRealVar(*(RooRealVar*)parameter_init_list.find(par.GetName()), std::string(init_name), std::string(init_desc));
+      RooRealVar& init = CopyRooRealVar(*(RooRealVar*)list_parameters_init.find(par.GetName()), std::string(init_name), std::string(init_desc));
+
+      std::string ref_residual_name = std::string(parameter->GetName()) + std::string("_refresidual");
+      std::string ref_residual_desc = std::string("#mu for ") + parameter->GetTitle();
+      std::string ref_name = std::string(parameter->GetName()) + std::string("_reference");
+      std::string ref_desc = std::string("Reference value for ") + parameter->GetTitle();
+
+      RooRealVar* ref_residual  = nullptr;
+      RooRealVar* par_reference = nullptr;
+      if (list_parameters_ref.getSize() > 0) {
+        ref_residual = new RooRealVar(ref_residual_name.c_str(), ref_residual_desc.c_str(), 0.0);
+
+        //const RooArgList& parameter_list_ref = fit_result_ptr_reference->floatParsFinal();
+        RooRealVar*       par_reference_orig = dynamic_cast<RooRealVar*>(list_parameters_ref.find(par.GetName()));
+
+        if (par_reference_orig != nullptr) {
+          par_reference = &CopyRooRealVar(*par_reference_orig, ref_name, ref_desc);
+        }
+      }
+
       
       double pull_value = 0.0;
       double err_value  = par.getError();
       double lerr_value = 0.0;
       double herr_value = 0.0;
+
+      double ref_residual_value(0.0);
+      if (list_parameters_ref.getSize() > 0 && par_reference != nullptr) {
+        ref_residual_value = par.getVal() - par_reference->getVal();
+        ref_residual->setVal(ref_residual_value);
+      }
+
       
       // Log 20131121 (FK): Changing definitions of pulls after a discussion with
       //                    Julian. We agree that a positive pull/residual should
-      //                    reflect a parameter bein overestimated. The previous
+      //                    reflect a parameter being overestimated. The previous
       //                    definition was in accordance with the CDF pull paper.
       
       // asymmetric error handling
@@ -444,12 +723,6 @@ namespace toy {
       double res_value = -(init.getVal() - par.getVal());
       res->setVal(res_value);
       
-//      std::string paramname = parameter->GetName();
-//      if (paramname == "par_bdsig_time_C" && TMath::Abs(res->getVal()) < 0.000001) {
-//        swarn << "Residual small: " << res->getVal() << " = " << init.getVal() << "-(" << par.getVal() << ")" << endmsg;
-//        fit_result.Print();
-//      }
-      
       err->setVal(err_value);
             
       if (TMath::Abs(pull_value) > 5.0) {
@@ -464,9 +737,9 @@ namespace toy {
       }
 
       double min_distance_to_limits = 
-      TMath::Min(TMath::Abs((par.getVal() - par.getMax())/
+      TMath::Min(TMath::Abs((par.getVal() - par.getMax())*par.getError()/
                             ((par.getMax() - par.getMin())/2)),
-                 TMath::Abs((par.getVal() - par.getMin())/
+                 TMath::Abs((par.getVal() - par.getMin())*par.getError()/
                             ((par.getMax() - par.getMin())/2)));
       
       if (min_distance_to_limits < 1e-5) {
@@ -475,11 +748,18 @@ namespace toy {
         parameters_at_limit->setVal(parameters_at_limit->getVal() + 1.0);
       }
       
-      if (par.hasAsymError() && (par.getAsymErrorHi() == 0.0 || par.getAsymErrorLo() == 0.0)) {
-        swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
-        problems = true;
-        minos_problems->setVal(minos_problems->getVal() + 1.0);
+      for(int i = 0; i < config_toystudy_.minos_parameters().size(); i++){
+        if(parameter->GetName() == config_toystudy_.minos_parameters().at(i) && !par.hasAsymError()){
+          swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
+          minos_problems->setVal(minos_problems->getVal() + 1.0);
+        }
       }
+      
+      // if (par.hasAsymError() && (par.getAsymErrorHi() == 0.0 || par.getAsymErrorLo() == 0.0)) {
+      //   swarn << "MINOS could not determine asymmetric errors for: " << par << endmsg;
+      //   problems = true;
+      //   minos_problems->setVal(minos_problems->getVal() + 1.0);
+      // }
         
       parameters.addOwned(par);
       parameters.addOwned(*pull);
@@ -491,9 +771,15 @@ namespace toy {
         parameters.addOwned(*lerr);
         parameters.addOwned(*herr);
       }
+
+      if (fit_result_ptr_reference != nullptr && par_reference != nullptr) {
+        parameters.addOwned(*ref_residual);
+        parameters.addOwned(*par_reference);
+      }
+        
     }
     if (problems) {
-      fit_result.Print("v");
+      fit_result.Print("");
     }
     
     parameters.addOwned(*parameters_at_limit);
@@ -526,11 +812,22 @@ namespace toy {
 //    //<< fit_result.statusLabelHistory(2) << ": " << fit_result.statusCodeHistory(2) << ", "
 //           << endmsg;
     
+    int max_status_code = 0;
+    std::map<std::string, int> status_codes;
+    for (auto i = 0; i < fit_result.numStatusHistory(); i++){
+      status_codes.insert(std::pair<std::string, int>(fit_result.statusLabelHistory(i), fit_result.statusCodeHistory(i)));
+      if (fit_result.statusCodeHistory(i) > max_status_code) max_status_code = fit_result.statusCodeHistory(i);
+    }
     
-    if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality()) {
+    if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality() && fit_result.covQual() != -1) {
+      swarn << "Fit result has insufficient covariance matrix quality." << endmsg;
       return false;
     } else if (fit_result.statusCodeHistory(0) < 0) {
+      swarn << "Fit result has negative status code." << endmsg;
       return false;
+    // } else if (max_status_code > 0) {
+    //   swarn << "Fit result has max status code " << max_status_code << endmsg;
+    //   return false;
     } else if (FitResultNotVariedParameterSet(fit_result)) {
       swarn << "Fit result has more than 80% of nonvaried parameters." << endmsg;
       //fit_result.Print("v");
@@ -554,6 +851,21 @@ namespace toy {
         if (TMath::Abs(parameter->getVal()-dynamic_cast<RooRealVar*>(parameter_init_list.find(parameter->GetName()))->getVal())/parameter->getError() < 1e-11) {
           num_nonvaried++;
         }
+        // else{
+        //   double par_init_value = dynamic_cast<RooRealVar*>(parameter_init_list.find(parameter->GetName()))->getVal();
+        //   double par_fit_value  = parameter->getVal();
+        //   double par_fit_error  = parameter->getError();
+        //   double diff           = std::fabs(par_init_value - par_fit_value)/par_fit_error;
+
+        //   std::string paramname = parameter->GetName();
+        //   if ( paramname == "parSigTimeSin2b_blind" && std::fabs(0.37 - par_fit_value) < 0.003 ){
+        //     if (par_fit_error > 0.1) return false;
+        //     if (par_fit_error < 0.01) return false;
+        //     sinfo << "par_init_value = " << par_init_value << ", par_fit_value = " << par_fit_value << ", par_fit_error = " << par_fit_error << endmsg;
+        //     sinfo << "(par_init_value - par_fit_value)/par_fit_error = " << diff << endmsg;
+        //     fit_result.Print();
+        //   }
+        // }
         num_nonfixed++;
       }
     }
@@ -566,6 +878,39 @@ namespace toy {
     }
   }
   
+  void ToyStudyStd::EvaluateFormula(const RooAbsCollection& args, const RooFormulaVar& formula) const {
+    unsigned int i(0);
+    RooAbsArg* arg(formula.getParameter(i));
+
+    while (arg != nullptr) {
+      RooRealVar* var(dynamic_cast<RooRealVar*>(arg));
+      if (var != nullptr) {
+        std::string name_var(var->GetName());
+        if (name_var.substr(name_var.length() - 4) == "_err") {
+          name_var = name_var.substr(0, name_var.length() - 4);
+          RooRealVar* var_result(dynamic_cast<RooRealVar*>(args.find(name_var.c_str())));
+          if (var_result != nullptr) {
+            var->setVal(var_result->getError());
+
+            // sdebug << " " << var->GetName() << " = error of " << var_result->GetName() << " = " << var_result->getError() << endmsg;
+          }
+        } else {
+          RooRealVar* var_result(dynamic_cast<RooRealVar*>(args.find(name_var.c_str())));
+          if (var_result != nullptr) {
+            var->setVal(var_result->getVal());
+
+            // sdebug << " " << var->GetName() << " = " << var_result->getVal() << endmsg;
+          }
+        }
+      }
+
+      ++i;
+      arg = formula.getParameter(i);
+    }
+
+    // sdebug << formula.GetName() << " = " << formula.getVal() << endmsg;
+  }
+
   RooRealVar& ToyStudyStd::CopyRooRealVar(const RooRealVar& other, const std::string& new_name, const std::string& new_title) const {
     RooRealVar* new_var = new RooRealVar(new_name.length()>0 ? new_name.c_str() : other.GetName(),
                                          new_title.length()>0 ? new_title.c_str() : other.GetTitle(),
@@ -638,6 +983,8 @@ namespace toy {
           TBranch* time_real1_branch = tree->GetBranch("time_real1");
           TBranch* time_cpu2_branch  = tree->GetBranch("time_cpu2");
           TBranch* time_real2_branch = tree->GetBranch("time_real2");
+          TBranch* seed_branch       = tree->GetBranch("seed");
+          TBranch* run_id_branch     = tree->GetBranch("run_id");
           
           if (result_branch == NULL) {
             serr << "Cannot find branch " << config_toystudy_.fit_result1_branch_name() << " in tree. Cannot read in fit results." << endmsg;
@@ -648,7 +995,9 @@ namespace toy {
           RooFitResult* fit_result2 = NULL;
           double time_cpu1 = 0.0, time_real1 = 0.0;
           double time_cpu2 = 0.0, time_real2 = 0.0;
-          
+          int seed(0);
+          int run_id(0);
+
           tree->SetCacheEntryRange(0,tree->GetEntries());
           
           tree->AddBranchToCache(result_branch, true);
@@ -674,9 +1023,20 @@ namespace toy {
             tree->AddBranchToCache(time_real2_branch, true);
             time_real2_branch->SetAddress(&time_real2);
           }
+          if (seed_branch != NULL) {
+            tree->AddBranchToCache(seed_branch, true);
+            seed_branch->SetAddress(&seed);
+          }
+          if (run_id_branch != NULL) {
+            tree->AddBranchToCache(run_id_branch, true);
+            run_id_branch->SetAddress(&run_id);
+          }
           
           tree->StopCacheLearningPhase();
           
+          using namespace doocore::io;
+          std::string title_progress = "Reading fit results from " + (*it_files).first() + ":" + (*it_files).second();
+          Progress p(title_progress, tree->GetEntries());
           for (int i=0; i<tree->GetEntries(); ++i) {
             tree->GetEntry(i);
             
@@ -687,8 +1047,9 @@ namespace toy {
                                                            time_cpu1,
                                                            time_real1,
                                                            time_cpu2,
-                                                           time_real2
-                                                           ));
+                                                           time_real2,
+                                                           seed,
+                                                           run_id));
               
               results_stored++;
             } else {
@@ -704,23 +1065,34 @@ namespace toy {
                 swarn << "Fit result number " << i << " in file " << *it_files << " neglected." << endmsg;
               }
               results_neglected++;
-              
             }
             fit_result = NULL;
             fit_result2 = NULL;
             
             while (fit_results_release_queue_.size() > 0) {
               const RooFitResult* dummy = nullptr;
-              FitResultContainer fit_results(dummy,dummy,0.0,0.0,0.0,0.0);
+              FitResultContainer fit_results(dummy,dummy,0.0,0.0,0.0,0.0,0,0);
               if (fit_results_release_queue_.wait_and_pop(fit_results)) {
                 if (std::get<0>(fit_results) != NULL) delete std::get<0>(fit_results);
                 if (std::get<1>(fit_results) != NULL) delete std::get<1>(fit_results);
               }
             }
+
+            if (config_toystudy_.num_toys_read() > 0 && results_stored >= config_toystudy_.num_toys_read()) {
+              break;
+            }
+
+            ++p;
           }
-          
+          p.Finish();
+
           delete tree;
           file.Close();
+
+          if (config_toystudy_.num_toys_read() > 0 && results_stored >= config_toystudy_.num_toys_read()) {
+            //sinfo << "Read in " << results_stored << " toys as requested. Finishing." << endmsg;
+            break;
+          }
         }
       }
     }
@@ -797,6 +1169,7 @@ namespace toy {
           new_wait_time /= deadtimes.size()+1;
           
           wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*new_wait_time+10.0;
+	        wait_time = std::min(wait_time, 300);
           swarn << "File to save fit result to " << filename << " is locked. Will try again in " << wait_time << " s." << endmsg;
           sleep = true;
         } else {
@@ -826,6 +1199,8 @@ namespace toy {
                 double time_real1 = std::get<3>(fit_results);
                 double time_cpu2 = std::get<4>(fit_results);
                 double time_real2 = std::get<5>(fit_results);
+                int seed(std::get<6>(fit_results));
+                int run_id(std::get<7>(fit_results));
                 
                 TTree* tree_results = NULL;
                 if (file_existing) {      
@@ -842,6 +1217,8 @@ namespace toy {
                   tree_results->Branch("time_real1", &time_real1, "time_real1/D");
                   tree_results->Branch("time_cpu2",  &time_cpu2,  "time_cpu2/D");
                   tree_results->Branch("time_real2", &time_real2, "time_real2/D");
+                  tree_results->Branch("seed", &seed, "seed/I");
+                  tree_results->Branch("run_id", &run_id, "run_id/I");
                 } else {  
                   if (tree_results->GetBranch(config_toystudy_.fit_result1_branch_name().c_str()) == NULL) {
                     serr << "Cannot store fit result! Tree exists but branch " << config_toystudy_.fit_result1_branch_name() << " is unknown." << endmsg;
@@ -871,6 +1248,12 @@ namespace toy {
                     tree_results->SetBranchAddress("time_real2", &time_real2);
                   }
 
+                  if (tree_results->GetBranch("seed") != NULL) {
+                    tree_results->SetBranchAddress("seed", &seed);
+                  }
+                  if (tree_results->GetBranch("run_id") != NULL) {
+                    tree_results->SetBranchAddress("run_id", &run_id);
+                  }
                 }
                      
                 tree_results->Fill();
@@ -885,10 +1268,12 @@ namespace toy {
                   saver_queue.pop();
                   fit_result1 = std::get<0>(fit_results);
                   fit_result2 = std::get<1>(fit_results);
-                  time_cpu1 = std::get<2>(fit_results);
-                  time_real1 = std::get<3>(fit_results);
-                  time_cpu2 = std::get<4>(fit_results);
-                  time_real2 = std::get<5>(fit_results);
+                  time_cpu1   = std::get<2>(fit_results);
+                  time_real1  = std::get<3>(fit_results);
+                  time_cpu2   = std::get<4>(fit_results);
+                  time_real2  = std::get<5>(fit_results);
+                  seed        = std::get<6>(fit_results);
+                  run_id      = std::get<7>(fit_results);
                   
                   tree_results->Fill();
                   save_counter++;

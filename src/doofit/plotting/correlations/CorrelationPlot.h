@@ -3,6 +3,7 @@
 
 // STL
 #include <string>
+#include <vector>
 
 // BOOST
 
@@ -53,8 +54,10 @@ class CorrelationPlot {
    *  Detailed description.
    *
    *  @param fit_result the fit result to plot the correlation matrix of
+   *  @param plot_pars list of selected variables to include in correlation plot (default: all)
+   *  @param correlation_threshold 
    */
-  CorrelationPlot(const RooFitResult& fit_result);
+  CorrelationPlot(const RooFitResult& fit_result, const std::vector<std::string>& plot_pars=std::vector<std::string>(), double correlation_threshold=0.0, double label_scale=2.0, double marker_scale=2.0);
   
   /**
    *  @brief Destructor for CorrelationPlot
@@ -92,6 +95,10 @@ class CorrelationPlot {
   
  private:
   const RooFitResult& fit_result_;
+  const std::vector<std::string> plot_pars_;
+  double correlation_threshold_;
+  double label_scale_;
+  double marker_scale_;
 };
 
 } // namespace correlations

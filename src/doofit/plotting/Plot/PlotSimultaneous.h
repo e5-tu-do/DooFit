@@ -36,6 +36,9 @@ namespace plotting {
    *  @section usage Usage
    *
    *  Usage is similar to Plot. Regard to Plot documentation for examples.
+   *  Consider using PlotConfig::set_simultaneous_plot_all_categories() and
+   *  PlotConfig::set_simultaneous_plot_all_slices() to enable plotting of
+   *  sub-categories and slices.
    *
    */
   
