@@ -89,6 +89,13 @@ from optparse import OptionParser
 #  will be the number of PBS jobs per scan point.
 #
 
+## Implement touch file functionality
+#
+import os
+def touch(fname, times=None):
+  with open(fname, 'a'):
+    os.utime(fname, times)
+
 ## Generate one job file
 #
 def create_single_job(proto_script, settings_dict, jobs_dir, num_iterations, min_seed):
@@ -97,7 +104,12 @@ def create_single_job(proto_script, settings_dict, jobs_dir, num_iterations, min
   script = file.read() % settings_dict
   file_write = open(os.path.join(jobs_dir,settings_dict['job_name']+'.sh'), 'w')
   file_write.write(script)
+
+  # touch the log file
+  touch(settings_dict['log_file'])
+
   return min_seed + num_iterations
+
 
 ## Generate all job files and the submit script
 #
