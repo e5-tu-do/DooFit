@@ -138,6 +138,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   std::map<std::string, double> max_scan_val;
 
   Progress p("Processing read in fit results", fit_results_.size());
+  unsigned int num_neglected(0);
   for (auto result : fit_results_) {
     if (FitResultOkay(*result)) {
       for (auto var : scan_vars_) {
@@ -173,9 +174,17 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
       val_nll.push_back(result->minNll());
 
       ++p;
-    }
+    } else { // if (FitResultOkay(*result)) {
+      swarn << "Neglecting fit result!" << endmsg;
+      ++num_neglected;
+      //result->Print();
+    } // if (FitResultOkay(*result)) {
   }
   p.Finish();
+
+  if (num_neglected > 0) {
+    swarn << "Number of neglected fit results: " << num_neglected << endmsg;
+  }
 
   for (auto &nll : val_nll) {
     if (nll != 0.0) {
@@ -217,7 +226,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
     TGraph graph(val_nll.size(), &val_x_sort[0], &val_nll_sort[0]);
 
-    if (val_nll.size() < 50) {
+    if (val_nll.size() < 25) {
       graph.Draw("APC");
       graph.SetMarkerStyle(2);
       graph.SetMarkerSize(2);
