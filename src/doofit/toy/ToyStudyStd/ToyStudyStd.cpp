@@ -11,6 +11,7 @@
 #include "boost/filesystem.hpp"
 #include "boost/random/random_device.hpp"
 #include <boost/thread.hpp>
+#include <boost/algorithm/string.hpp>
 
 // ROOT
 #include "TTree.h"
@@ -25,6 +26,7 @@
 #include "TStopwatch.h"
 #include "TGraph.h"
 #include "TAxis.h"
+#include "TPaveText.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -39,7 +41,7 @@
 #include "doocore/lutils/lutils.h"
 #include "doocore/system/FileLock.h"
 #include <doocore/io/Progress.h>
-#include "doocore/statistics/general.h"
+#include <doocore/statistics/general.h>
 
 // from Project
 #include "doofit/config/CommonConfig.h"
@@ -264,7 +266,7 @@ namespace toy {
     sinfo << "Plotting parameter distributions." << endmsg;
     
     gROOT->SetStyle("Plain");
-    doocore::lutils::setStyle();
+    doocore::lutils::setStyle("LHCbOptimized");
     TCanvas canvas("canvas_toystudy", "canvas", 800, 600);
     doocore::lutils::printPlotOpenStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     
@@ -402,6 +404,7 @@ namespace toy {
       // sdebug << "duration_prefit = " << duration_prefit*1e-3 << endmsg;
 
       // for all pulls fit a gaussian
+      RooFitResult* fit_result = nullptr;
       if (param_name.length() > 4 &&
           (param_name.substr(param_name.length()-5).compare("_pull") == 0 ||
            param_name.substr(param_name.length()-4).compare("_res") == 0 ||
@@ -427,7 +430,7 @@ namespace toy {
         int num_cores = std::max(fit_plot_dataset->numEntries() < 200 ? fit_plot_dataset->numEntries()/1000+1 : 1, 8);
         //sdebug << fit_plot_dataset->numEntries() << " thus " << num_cores << " cores." << endmsg;
         num_cores = 1;
-        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(num_cores), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(0));
+        fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(num_cores), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(0));
         fit_status = fit_result->statusCodeHistory(0);
 
         // un-supress RooFit spam
@@ -435,7 +438,6 @@ namespace toy {
         RooMsgService::instance().setStreamStatus(1, true);
 
         //fit_result->Print("v");
-        delete fit_result;
         sinfo.increment_indent(-2);
       }
 
@@ -458,17 +460,75 @@ namespace toy {
       fit_plot_dataset->plotOn(frame);
       if (fit_plot_dataset != evaluated_values_) delete fit_plot_dataset;
       
+      TPaveText* pt = nullptr;
       if (gauss != NULL && fit_status == 0) {
         gauss->plotOn(frame);
-        param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
+        //param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
+
+        const RooArgList& list_fit_params(fit_result->floatParsFinal());
+        RooRealVar* var_mean  = dynamic_cast<RooRealVar*>(list_fit_params.find("m"));
+        RooRealVar* var_sigma = dynamic_cast<RooRealVar*>(list_fit_params.find("s"));
+
+        using namespace doocore::statistics::general;
+        ValueWithError<double> val_mean(var_mean->getVal(), var_mean->getError());
+        ValueWithError<double> val_sigma(var_sigma->getVal(), var_sigma->getError());
+
+        pt = new TPaveText(0.6, 0.78, 0.9, 0.9, "NB NDC");
+        pt->SetFillColor(kWhite);
+        //pt->SetOption("NB");
+        pt->SetTextAlign(12);
+        pt->SetBorderSize(1);
+        pt->SetMargin(0.05);
+        pt->SetTextFont(133);
+        pt->SetTextSize(20);
+
+        std::string str_mean("m = ");
+        str_mean += val_mean.FormatStringTLatex();
+        std::string str_sigma("s = ");
+        str_sigma += val_sigma.FormatStringTLatex();
+
+        if (param_name.length() > 4 &&
+          (param_name.substr(param_name.length()-5).compare("_pull") == 0)) {
+          double pull_mean(val_mean.value/val_mean.error);
+          double pull_sigma((val_sigma.value-1.0)/val_sigma.error);
+
+          std::stringstream sstr_pull_mean;
+          sstr_pull_mean << std::setprecision(2) << std::fixed << pull_mean;
+          std::stringstream sstr_pull_sigma;
+          sstr_pull_sigma << std::setprecision(2) << std::fixed << pull_sigma;
+
+          str_mean  += " (" + sstr_pull_mean.str()  + "#kern[0.3]{#sigma})";
+          str_sigma += " (" + sstr_pull_sigma.str() + "#kern[0.3]{#sigma})";
+
+          boost::replace_all(str_mean,  "-", "#minus");
+          boost::replace_all(str_sigma, "-", "#minus");
+
+          pt->SetX1(0.6);
+        }
+
+        pt->AddText(str_mean.c_str());
+        pt->AddText(str_sigma.c_str());
+
       } else if (fit_status != 0) {
         swarn << "ToyStudyStd::PlotEvaluatedParameters(): Gaussian fit for " << parameter->GetName() << " failed. Will not plot." << endmsg;
       }
       frame->Draw();
+
+      if (pt != nullptr) {
+        pt->Draw();
+      }
+
       TString plot_name = parameter->GetName();
       doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
       doocore::lutils::printPlot(&canvas, "AllPlots", config_toystudy_.plot_directory(), true);
       
+      if (fit_result != nullptr) {
+        delete fit_result;
+      }
+      if (pt != nullptr) {
+        delete pt;
+      }
+
       delete frame;
       
       if (gauss != NULL) {
@@ -742,7 +802,7 @@ namespace toy {
                  TMath::Abs((par.getVal() - par.getMin())*par.getError()/
                             ((par.getMax() - par.getMin())/2)));
       
-      if (min_distance_to_limits < 1e-5) {
+      if (min_distance_to_limits < 1e-5 && !(par.getVal() == 0.0 && par.getError() == 0.0)) {
         swarn << "Parameter distance limit low for: " << par << endmsg;
         problems = true;
         parameters_at_limit->setVal(parameters_at_limit->getVal() + 1.0);
@@ -779,7 +839,7 @@ namespace toy {
         
     }
     if (problems) {
-      fit_result.Print("");
+      fit_result.Print("v");
     }
     
     parameters.addOwned(*parameters_at_limit);
