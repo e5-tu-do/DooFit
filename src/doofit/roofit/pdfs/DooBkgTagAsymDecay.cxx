@@ -109,7 +109,7 @@ Double_t DooBkgTagAsymDecay::coefficient(Int_t /*basisIndex*/) const
 
 
 //_____________________________________________________________________________
-Int_t DooBkgTagAsymDecay::getCoefAnalyticalIntegral(Int_t /*code*/, RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const 
+Int_t DooBkgTagAsymDecay::getCoefAnalyticalIntegral(Int_t /*coef*/, RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const
 {
   if (rangeName) return 0 ;
   if (matchArgs(allVars,analVars,_tag)) return 1 ;
@@ -119,7 +119,7 @@ Int_t DooBkgTagAsymDecay::getCoefAnalyticalIntegral(Int_t /*code*/, RooArgSet& a
 
 
 //_____________________________________________________________________________
-Double_t DooBkgTagAsymDecay::coefAnalyticalIntegral(Int_t code, const char* /*rangeName*/) const 
+Double_t DooBkgTagAsymDecay::coefAnalyticalIntegral(Int_t /*coef*/, Int_t code, const char* /*rangeName*/) const
 {  
   switch(code) {
     // No integration
@@ -127,7 +127,6 @@ Double_t DooBkgTagAsymDecay::coefAnalyticalIntegral(Int_t code, const char* /*ra
 
     // Integration over 'tag'
   case 1: return 2 ;
-    break ;
 
   default:
     assert(0) ;
@@ -166,17 +165,16 @@ void DooBkgTagAsymDecay::generateEvent(Int_t code)
         tval= +_tau*log(rand);
         break ;
       case DoubleSided:
-        tval = (rand<=0.5) ? -_tau*log(2*rand) : +_tau*log(2*(rand-0.5)) ;
+        tval = (rand <= 0.5) ? -_tau*log(2*rand) : +_tau*log(2*(rand-0.5)) ;
         break ;
     }
     
     if (tval<_t.max() && tval>_t.min()) {
       _t = tval ;
       // Generate tag-state
-      if(code==2) {
+      if(code == 2) {
         Double_t rand = RooRandom::uniform() ;
         _tag = (Int_t) ((rand <= ((_hist->GetBinContent(_hist->FindBin(tval))+1)/2)) ?  -1 : 1) ;
-        break ;
       }
       break ;
     }

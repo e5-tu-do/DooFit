@@ -47,8 +47,8 @@ public:
   
   virtual Double_t coefficient(Int_t basisIndex) const ;
   
-  virtual Int_t getCoefAnalyticalIntegral(Int_t code, RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
-  virtual Double_t coefAnalyticalIntegral(Int_t code, const char* rangeName=0) const ;
+  virtual Int_t getCoefAnalyticalIntegral(Int_t coef, RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
+  virtual Double_t coefAnalyticalIntegral(Int_t coef, Int_t code, const char* rangeName=0) const ;
   
   Int_t getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK=kTRUE) const ;
   void generateEvent(Int_t code) ;
