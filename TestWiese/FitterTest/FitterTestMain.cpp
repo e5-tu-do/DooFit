@@ -188,7 +188,7 @@ void TestFitter(int argc, char *argv[]) {
   cfg_tfac.set_generation_pdf_workspace("pdf_gauss");
   cfg_tfac.set_expected_yield(10000);
 
-  config::CommaSeparatedPair p;
+  config::CommaSeparatedPair<std::string> p;
   p = "bla.root,tree";
   cfg_tstudy.set_read_results_filename_treename(p);
   

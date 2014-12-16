@@ -1003,7 +1003,7 @@ namespace toy {
   void ToyStudyStd::ReadFitResultWorker() {
     TThread this_tthread;
     
-    const std::vector<doofit::config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
+    const std::vector<doofit::config::CommaSeparatedPair<std::string>>& results_files = config_toystudy_.read_results_filename_treename();
     
     sinfo.Ruler();
     
@@ -1020,7 +1020,7 @@ namespace toy {
     int results_stored = 0;
     int results_neglected = 0;
     
-    for (std::vector<doofit::config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
+    for (std::vector<doofit::config::CommaSeparatedPair<std::string>>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
       sinfo << "Loading fit results from " << (*it_files).first() 
       << " from branch " << config_toystudy_.fit_result1_branch_name() << endmsg;
       TFile file((*it_files).first().c_str(), "read");
