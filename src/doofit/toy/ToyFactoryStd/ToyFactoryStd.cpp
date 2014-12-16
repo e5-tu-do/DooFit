@@ -432,11 +432,11 @@ namespace toy {
     return new_dataset;
   }
   
-  std::vector<config::CommaSeparatedPair> ToyFactoryStd::GetPdfProtoSections(const std::string& pdf_name) const {
-    const std::vector<config::CommaSeparatedPair>& proto_sections = config_toyfactory_.proto_sections();
-    std::vector<config::CommaSeparatedPair> matched_sections;
+  std::vector<config::CommaSeparatedPair<std::string>> ToyFactoryStd::GetPdfProtoSections(const std::string& pdf_name) const {
+    const std::vector<config::CommaSeparatedPair<std::string>>& proto_sections = config_toyfactory_.proto_sections();
+    std::vector<config::CommaSeparatedPair<std::string>> matched_sections;
     
-    for (std::vector<config::CommaSeparatedPair>::const_iterator it=proto_sections.begin(); it != proto_sections.end(); ++it) {
+    for (std::vector<config::CommaSeparatedPair<std::string>>::const_iterator it=proto_sections.begin(); it != proto_sections.end(); ++it) {
       if (pdf_name.compare((*it).first()) == 0) {
         matched_sections.push_back(*it);
       }
@@ -448,7 +448,7 @@ namespace toy {
     RooDataSet* data = NULL;
     bool have_to_delete_proto_data = false;
     
-    const std::vector<config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
+    const std::vector<config::CommaSeparatedPair<std::string>>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
     if (matched_proto_sections.size() > 0) {
       // @todo If PDF ist extended AND no yield is set, we need to get yield from
       //       PDF itself for proto.
@@ -477,7 +477,7 @@ namespace toy {
       // proto data already coming along from higher PDFs).
       RooDataSet* proto_data_this_pdf = NULL;
       
-      for (std::vector<config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
+      for (std::vector<config::CommaSeparatedPair<std::string>>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
         RooDataSet* temp_data = GenerateProtoSample(pdf, *it, argset_generation_observables, config_toyfactory_.easypdf(), config_toyfactory_.workspace(), proto_size);
         
         // merge proto sets if necessary
@@ -965,7 +965,7 @@ namespace toy {
     return data_discrete;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const {
+  RooDataSet* ToyFactoryStd::GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair<std::string>& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const {
     
     assert(yield>0);
     sinfo << "Generating proto data for PDF " << pdf.GetName() << " using config section " << proto_section.second() << endmsg;

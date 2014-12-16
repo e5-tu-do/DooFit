@@ -64,7 +64,7 @@ namespace toy {
       scfg << "Branch name fit result 2:          " << fit_result2_branch_name_ << endmsg;
     }
     
-    for (vector<config::CommaSeparatedPair>::const_iterator it = read_results_filename_treename_.begin(); it != read_results_filename_treename_.end(); ++it) {
+    for (vector<config::CommaSeparatedPair<std::string>>::const_iterator it = read_results_filename_treename_.begin(); it != read_results_filename_treename_.end(); ++it) {
       scfg << "File and tree to read result from: " << *it << endmsg;
     }
     
@@ -102,11 +102,11 @@ namespace toy {
     po::options_description* generation = new po::options_description("Toy study options");
     
     generation->add_options()
-    (GetOptionString("store_result_filename_treename").c_str(), po::value<config::CommaSeparatedPair>(&store_result_filename_treename_),"File name and tree name to save fit results to (set as filename,treename)")
+    (GetOptionString("store_result_filename_treename").c_str(), po::value<config::CommaSeparatedPair<std::string>>(&store_result_filename_treename_),"File name and tree name to save fit results to (set as filename,treename)")
     (GetOptionString("fit_result1_branch_name").c_str(), po::value<std::string>(&fit_result1_branch_name_)->default_value("fit_results"),"Fit result 1 branch name in tree")
     (GetOptionString("fit_result2_branch_name").c_str(), po::value<std::string>(&fit_result2_branch_name_)->default_value("fit_results2"),"Fit result 2 branch name in tree")
-    (GetOptionString("read_results_filename_treename").c_str(), po::value<vector<config::CommaSeparatedPair> >(&read_results_filename_treename_)->composing(), "File names and tree names to read fit results from (set as filename,treename)")
-    (GetOptionString("read_results_filename_treename_pattern").c_str(), po::value<config::CommaSeparatedPair>(&read_results_filename_treename_pattern_),"File name pattern and tree name to read fit result from (set as regexfilenamepattern,treename)")
+    (GetOptionString("read_results_filename_treename").c_str(), po::value<vector<config::CommaSeparatedPair<std::string>> >(&read_results_filename_treename_)->composing(), "File names and tree names to read fit results from (set as filename,treename)")
+    (GetOptionString("read_results_filename_treename_pattern").c_str(), po::value<config::CommaSeparatedPair<std::string>>(&read_results_filename_treename_pattern_),"File name pattern and tree name to read fit result from (set as regexfilenamepattern,treename)")
     (GetOptionString("plot_directory").c_str(), po::value<std::string>(&plot_directory_), "Plot directory for evaluation of fit results")
     (GetOptionString("handle_asymmetric_errors").c_str(), po::value<bool>(&handle_asymmetric_errors_)->default_value(true),"Set to false to not use asymmetric errors for pull calculation (c.f. CDF/ANAL/PUBLIC/5776). Default is true. If unsure, use asymmetric errors.")
     (GetOptionString("fit_plot_on_quantile_window").c_str(), po::value<bool>(&fit_plot_on_quantile_window_)->default_value(true),"Fit and plot pulls and other distributions on a sensible quantile based window instead of the full dataset (default: true; use this to avoid influence of pull values of obviously failed fits and other outliers).")
@@ -155,7 +155,7 @@ namespace toy {
           if(!boost::regex_match(i->path().filename().string(), what, filename_pattern_regex)) continue;
           
           std::string result_file_tree_str = i->path().string() + "," + treename;
-          config::CommaSeparatedPair result_file_tree;
+          config::CommaSeparatedPair<std::string> result_file_tree;
           result_file_tree.Parse(result_file_tree_str);
           AddReadResultsFilenameTreename(result_file_tree);
         }
