@@ -20,11 +20,13 @@
 #include <doocore/lutils/lutils.h>
 
 // from DooFit
+#include "doofit/plotting/Plot/PlotConfig.h"
 #include "doofit/fitter/AbsFitter.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStd.h"
 
-doofit::plotting::profiles::LikelihoodProfiler::LikelihoodProfiler()
-: num_samples_(30)
+doofit::plotting::profiles::LikelihoodProfiler::LikelihoodProfiler(const PlotConfig& cfg_plot)
+: config_plot_(cfg_plot),
+  num_samples_(30)
 {}
 
 std::vector<double> doofit::plotting::profiles::LikelihoodProfiler::SetSamplePoint(unsigned int step) {
@@ -324,8 +326,17 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     double min_y = *minmax_y.first  - min_step_y;
     double max_y = *minmax_y.second + min_step_y;
 
-    unsigned int num_bins_x((*minmax_x.second-*minmax_x.first)/min_step_x+1);
-    unsigned int num_bins_y((*minmax_y.second-*minmax_y.first)/min_step_y+1);
+    if (config_plot_.plot_range_x().first != 0.0 || config_plot_.plot_range_x().second != 0.0) {
+      min_x = config_plot_.plot_range_x().first;
+      max_x = config_plot_.plot_range_x().second;
+    }
+    if (config_plot_.plot_range_y().first != 0.0 || config_plot_.plot_range_y().second != 0.0) {
+      min_y = config_plot_.plot_range_y().first;
+      max_y = config_plot_.plot_range_y().second;
+    }
+
+    unsigned int num_bins_x((max_x - min_x)/min_step_x+1);
+    unsigned int num_bins_y((max_y - min_y)/min_step_y+1);
 
     // sdebug << "num_bins_x        = " << num_bins_x << endmsg;
     // sdebug << "distinct_x.size() = " << distinct_x.size() << endmsg;

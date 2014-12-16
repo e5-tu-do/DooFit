@@ -15,6 +15,7 @@
 // from DooCore
 
 // from project
+#include "doofit/plotting/Plot/PlotConfig.h"
 
 // forward declarations
 namespace doofit { namespace fitter {
@@ -62,7 +63,7 @@ class LikelihoodProfiler {
   /**
    *  @brief Default constructor for LikelihoodProfiler
    */
-  LikelihoodProfiler();
+  LikelihoodProfiler(const PlotConfig& cfg_plot);
   
   /**
    *  @brief Destructor for LikelihoodProfiler
@@ -122,6 +123,11 @@ class LikelihoodProfiler {
   bool FitResultOkay(const RooFitResult& fit_result) const;
 
  private:
+  /**
+   *  @brief PlotConfig instance to use
+   */
+  const PlotConfig& config_plot_;
+
   doofit::fitter::AbsFitter* fitter_;
 
   std::vector<RooRealVar*> scan_vars_;
