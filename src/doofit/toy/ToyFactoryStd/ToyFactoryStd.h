@@ -299,7 +299,7 @@ namespace toy {
      *  @param pdf_name The PDF name to be tested
      *  @return the sub vector of sections for this PDF name
      */
-    std::vector<config::CommaSeparatedPair> GetPdfProtoSections(const std::string& pdf_name) const;
+    std::vector<config::CommaSeparatedPair<std::string>> GetPdfProtoSections(const std::string& pdf_name) const;
     ///@}
     
     /** @name Generator functions
@@ -429,7 +429,7 @@ namespace toy {
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const;
+    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair<std::string>& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const;
     ///@}
     
     /**

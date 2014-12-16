@@ -63,7 +63,7 @@ namespace toy {
      *
      *  @return current value of store_result_filename_treename_
      */
-    const config::CommaSeparatedPair& store_result_filename_treename() const {return store_result_filename_treename_;}
+    const config::CommaSeparatedPair<std::string>& store_result_filename_treename() const {return store_result_filename_treename_;}
     /**
      *  @brief Getter for fit result 1 branch name
      *
@@ -81,7 +81,7 @@ namespace toy {
      *
      *  @return current value of read_results_filename_treename_
      */
-    const std::vector<config::CommaSeparatedPair>& read_results_filename_treename() const {return read_results_filename_treename_;}
+    const std::vector<config::CommaSeparatedPair<std::string>>& read_results_filename_treename() const {return read_results_filename_treename_;}
     /**
      *  @brief Getter for plot directory for evaluation of fit results
      *
@@ -212,7 +212,7 @@ namespace toy {
      *
      *  @param result_file_tree new value for store_result_filename_treename_
      */
-    void set_store_result_filename_treename(const config::CommaSeparatedPair& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
+    void set_store_result_filename_treename(const config::CommaSeparatedPair<std::string>& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
     /**
      *  @brief Setter for fit result 1 branch name
      *
@@ -237,7 +237,7 @@ namespace toy {
      *
      *  @param result_file_tree new value for store_result_filename_treename_ as comma-separated string "pattern,treename"
      */
-    void set_read_results_filename_treename_pattern(const config::CommaSeparatedPair& read_results_filename_treename_pattern) {read_results_filename_treename_pattern_ = read_results_filename_treename_pattern;}
+    void set_read_results_filename_treename_pattern(const config::CommaSeparatedPair<std::string>& read_results_filename_treename_pattern) {read_results_filename_treename_pattern_ = read_results_filename_treename_pattern;}
     /**
      *  @brief Setter for file names and tree names to read fit result from
      *
@@ -247,7 +247,7 @@ namespace toy {
      *
      *  @param result_file_tree new value for read_results_filename_treename_
      */
-    void set_read_results_filename_treename(const std::vector<config::CommaSeparatedPair>& results_file_tree) {read_results_filename_treename_ = results_file_tree;}
+    void set_read_results_filename_treename(const std::vector<config::CommaSeparatedPair<std::string>>& results_file_tree) {read_results_filename_treename_ = results_file_tree;}
     /**
      *  @brief Setter for one file and tree to read fit result from
      *
@@ -257,8 +257,8 @@ namespace toy {
      *
      *  @param result_file_tree file and tree name to read
      */
-    void set_read_results_filename_treename(config::CommaSeparatedPair results_file_tree) {
-      read_results_filename_treename_ = std::vector<config::CommaSeparatedPair>();
+    void set_read_results_filename_treename(config::CommaSeparatedPair<std::string> results_file_tree) {
+      read_results_filename_treename_ = std::vector<config::CommaSeparatedPair<std::string>>();
       read_results_filename_treename_.push_back(results_file_tree);
     }
     /**
@@ -394,7 +394,7 @@ namespace toy {
      *
      *  @param result_file_tree new file and tree name to add to read_results_filename_treename_
      */
-    void AddReadResultsFilenameTreename(const config::CommaSeparatedPair& result_file_tree) {read_results_filename_treename_.push_back(result_file_tree);}
+    void AddReadResultsFilenameTreename(const config::CommaSeparatedPair<std::string>& result_file_tree) {read_results_filename_treename_.push_back(result_file_tree);}
     
     /**
      *  @brief Getter for parameters that MINOS was run on
@@ -454,7 +454,7 @@ namespace toy {
      *
      *  @see ToyStudyStdConfig::set_store_result_filename_treename()
      */
-    config::CommaSeparatedPair store_result_filename_treename_;
+    config::CommaSeparatedPair<std::string> store_result_filename_treename_;
     /**
      *  @brief Fit result 1 branch name
      *
@@ -470,7 +470,7 @@ namespace toy {
     /**
      *  @brief File names and tree names to read fit result from
      */
-    std::vector<config::CommaSeparatedPair> read_results_filename_treename_;
+    std::vector<config::CommaSeparatedPair<std::string>> read_results_filename_treename_;
     /**
      *  @brief File name pattern and tree name to read fit result from
      *
@@ -479,7 +479,7 @@ namespace toy {
      *
      *  @see ToyStudyStdConfig::set_read_results_filename_treename_pattern()
      */
-    config::CommaSeparatedPair read_results_filename_treename_pattern_;
+    config::CommaSeparatedPair<std::string> read_results_filename_treename_pattern_;
     /**
      *  @brief Plot directory for evaluation of fit results
      */
