@@ -119,7 +119,7 @@ namespace toy {
      *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<config::CommaSeparatedPair>&)
      *  @see ToyFactoryStdConfig::AddProtoSections(const config::CommaSeparatedPair&)
      */
-    const std::vector<config::CommaSeparatedPair>& proto_sections() const {return proto_sections_;}
+    const std::vector<config::CommaSeparatedPair<std::string>>& proto_sections() const {return proto_sections_;}
     /**
      *  \brief Getter for RooArgSet* with all constraining PDFs to draw from
      */
@@ -137,14 +137,14 @@ namespace toy {
      *  @see ToyFactoryStd::set_workspace_filename_name(config::CommaSeparatedPair)
      *  @return current value of workspace_filename_name_
      */
-    const config::CommaSeparatedPair& workspace_filename_name() const {return workspace_filename_name_;}
+    const config::CommaSeparatedPair<std::string>& workspace_filename_name() const {return workspace_filename_name_;}
     /**
      *  @brief Getter for file name to save dataset to (and name of dataset on file)
      *
      *  @see ToyFactoryStd::set_dataset_filename_name(config::CommaSeparatedPair)
      *  @return current value of dataset_filename_name_
      */
-    const config::CommaSeparatedPair& dataset_filename_name() const {return dataset_filename_name_;}
+    const config::CommaSeparatedPair<std::string>& dataset_filename_name() const {return dataset_filename_name_;}
     /**
      *  @brief Getter for file to read parameters from before generation
      *
@@ -304,7 +304,7 @@ namespace toy {
      *
      *  @param proto_sections vector of config::CommaSeparatedPair to use
      */
-    void set_proto_sections(const std::vector<config::CommaSeparatedPair>& proto_sections) {proto_sections_ = proto_sections;}
+    void set_proto_sections(const std::vector<config::CommaSeparatedPair<std::string>>& proto_sections) {proto_sections_ = proto_sections;}
     /**
      *  \brief Setter for RooArgSet* with all constraining PDFs to draw from
      */
@@ -334,7 +334,7 @@ namespace toy {
      *  @param ws_filename_name ROOT file containing workspace and workspace 
      *                          name in this file as config::CommaSeparatedPair
      */
-    void set_workspace_filename_name(config::CommaSeparatedPair ws_filename_name) {workspace_filename_name_ = ws_filename_name;} 
+    void set_workspace_filename_name(config::CommaSeparatedPair<std::string> ws_filename_name) {workspace_filename_name_ = ws_filename_name;} 
     /**
      *  @brief Setter for file name to save dataset to (and name of dataset on file)
      *
@@ -346,7 +346,7 @@ namespace toy {
      *                               name in this file as 
      *                               config::CommaSeparatedPair
      */
-    void set_dataset_filename_name(config::CommaSeparatedPair dataset_filename_name) {dataset_filename_name_ = dataset_filename_name;}
+    void set_dataset_filename_name(config::CommaSeparatedPair<std::string> dataset_filename_name) {dataset_filename_name_ = dataset_filename_name;}
     /**
      *  @brief Setter for file to read parameters from before generation
      *
@@ -387,7 +387,7 @@ namespace toy {
      *
      *  @param proto_section config::CommaSeparatedPair to add
      */
-    void AddProtoSections(const config::CommaSeparatedPair& proto_section) {proto_sections_.push_back(proto_section);}
+    void AddProtoSections(const config::CommaSeparatedPair<std::string>& proto_section) {proto_sections_.push_back(proto_section);}
     ///@}
     
   protected:
@@ -507,7 +507,7 @@ namespace toy {
      *  @see ToyFactoryStdConfig::set_proto_sections(const std::vector<config::CommaSeparatedPair>&)
      *  @see ToyFactoryStdConfig::AddProtoSections(const config::CommaSeparatedPair&)
      */
-    std::vector<config::CommaSeparatedPair> proto_sections_;
+    std::vector<config::CommaSeparatedPair<std::string>> proto_sections_;
     /**
      *  @brief RooArgSet with all constraining PDFs to generate constrained parameters from
      *
@@ -527,11 +527,11 @@ namespace toy {
     /**
      *  @brief File name to get workspace from (and name of workspace on file)
      */
-    config::CommaSeparatedPair workspace_filename_name_;
+    config::CommaSeparatedPair<std::string> workspace_filename_name_;
     /**
      *  @brief File name to save dataset to (and name of dataset on file)
      */
-    config::CommaSeparatedPair dataset_filename_name_;
+    config::CommaSeparatedPair<std::string> dataset_filename_name_;
     /**
      *  @brief File to read parameters from before generation
      */
