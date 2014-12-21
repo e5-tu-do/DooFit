@@ -247,8 +247,17 @@ namespace toy {
     const RooArgSet& master_argset = *master_dataset->get();
     const RooArgSet& slave_argset  = *slave_dataset->get();
     
+    // master_dataset->Print();
+    // slave_dataset->Print();
+    // if (ignore_sets != nullptr) {
+    //   for (auto ignore_set : *ignore_sets) {
+    //     ignore_set->Print();
+    //   }
+    // }
+
     if (master_dataset->numEntries() != slave_dataset->numEntries()) {
       serr << "Attempting two merge two datasets without equal size. Unable to cope with that. Giving up." << endmsg;
+      serr << "The dataset sizes are: " << master_dataset->numEntries() << " vs. " << slave_dataset->numEntries() << endmsg;
       throw DatasetsNotDisjointException();
     }
     
@@ -259,7 +268,7 @@ namespace toy {
       // First assume datasets are not mergable.
       bool not_mergable = true;
       
-      if (ignore_sets != NULL) {
+      if (ignore_sets != nullptr) {
         // there is an ignore argset, might be mergable
         not_mergable = false;
         // Happy fun time using TIterator, yay!
@@ -383,23 +392,25 @@ namespace toy {
       }
     }
     delete iter;
-    
-    // if we reached this, both datasets are compatible
-    // master_dataset->append(*slave_dataset);
-    // delete slave_dataset;
 
-    // Fisher-Yates shuffle
+    // if we reached this, both datasets are compatible
+
+    // Perform Fisher-Yates shuffle
     TRandom* rand = RooRandom::randomGenerator();
 
     int num_shuffle_elements = master_dataset->numEntries() + slave_dataset->numEntries();
     int num_master = master_dataset->numEntries();
     std::vector<int> new_order(num_shuffle_elements);
-    new_order[0] = 0;
-    int j;
-    for (int i=1; i<num_shuffle_elements; ++i) {
-      j = rand->Integer(i+1);
-      new_order[i] = new_order[j];
-      new_order[j] = i;
+
+    // only possible pitfall: both datasets empty
+    if (num_shuffle_elements > 0) {
+      new_order[0] = 0;
+      int j;
+      for (int i=1; i<num_shuffle_elements; ++i) {
+        j = rand->Integer(i+1);
+        new_order[i] = new_order[j];
+        new_order[j] = i;
+      }  
     }
 
     const RooArgSet& vars = *master_dataset->get();
@@ -469,8 +480,9 @@ namespace toy {
         // Proto dataset size to be the expected yield + 10*sigma in order to be 
         // sure it is big enough. Adding another 5% to account for the fact that
         // fo r addded PDFs later the proto datasets are passed on slightly 
-        // larger (to account for rounding problems).
-        proto_size = (yield+10*TMath::Sqrt(yield))*1.05;
+        // larger (to account for rounding problems) plus additional 100 events
+        // to cover any problems where small yields are to be generated.
+        proto_size = (yield+10*TMath::Sqrt(yield))*1.05+100;
       }
       
       // Store only proto data specific for this PDF (remember, there might be 
