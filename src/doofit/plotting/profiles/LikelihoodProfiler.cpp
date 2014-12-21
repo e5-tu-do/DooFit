@@ -275,8 +275,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     }
     p_distinct.Finish();
 
-    // sinfo << "Scanned x values: " << distinct_x << endmsg;
-    // sinfo << "Scanned y values: " << distinct_y << endmsg;
+    sinfo << "Scanned x values: " << distinct_x << endmsg;
+    sinfo << "Scanned y values: " << distinct_y << endmsg;
 
     double min_nll(0.0), max_nll(0.0);
     for (auto nll : val_nll) {
@@ -315,8 +315,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
       }
     }
 
-    // sinfo << "Smallest x stepping: " << min_step_x << endmsg;
-    // sinfo << "Smallest y stepping: " << min_step_y << endmsg;
+    sinfo << "Smallest x stepping: " << min_step_x << endmsg;
+    sinfo << "Smallest y stepping: " << min_step_y << endmsg;
 
     // sdebug << "(*minmax_x.second-*minmax_x.first)/(distinct_x.size()-1) = " << (*minmax_x.second-*minmax_x.first)/(distinct_x.size()-1) << endmsg;
     // sdebug << "(*minmax_y.second-*minmax_y.first)/(distinct_y.size()-1) = " << (*minmax_y.second-*minmax_y.first)/(distinct_y.size()-1) << endmsg;
@@ -393,7 +393,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
         }
       }
     }
-    sinfo << "LikelihoodProfiler::PlotHandler(...): Number of interpolated bins: " << num_interpolated_bins << "(" << static_cast<double>(num_interpolated_bins)/static_cast<double>(num_bins_x*num_bins_y) << "%)" << endmsg;
+    sinfo << "LikelihoodProfiler::PlotHandler(...): Number of interpolated bins: " << num_interpolated_bins << " (" << static_cast<double>(num_interpolated_bins)/static_cast<double>(num_bins_x*num_bins_y)*100.0 << "%)" << endmsg;
 
     std::vector<double> stops_cl;
     std::vector<int> colours;
