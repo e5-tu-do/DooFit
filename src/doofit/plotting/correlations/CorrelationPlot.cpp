@@ -133,9 +133,9 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
     
     TCanvas canvas("canvas","canvas",800,600);
     canvas.SetRightMargin(0.1);
-    canvas.SetLeftMargin(max_xsize*0.3); 
+    canvas.SetLeftMargin(max_xsize*0.35); 
     canvas.SetTopMargin(0.05);
-    canvas.SetBottomMargin(max_xsize*0.4);
+    canvas.SetBottomMargin(max_xsize*0.45);
     
     TPaletteAxis *pal = NULL;
     

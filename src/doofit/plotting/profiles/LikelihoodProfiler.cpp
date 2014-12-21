@@ -20,11 +20,13 @@
 #include <doocore/lutils/lutils.h>
 
 // from DooFit
+#include "doofit/plotting/Plot/PlotConfig.h"
 #include "doofit/fitter/AbsFitter.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStd.h"
 
-doofit::plotting::profiles::LikelihoodProfiler::LikelihoodProfiler()
-: num_samples_(30)
+doofit::plotting::profiles::LikelihoodProfiler::LikelihoodProfiler(const PlotConfig& cfg_plot)
+: config_plot_(cfg_plot),
+  num_samples_(30)
 {}
 
 std::vector<double> doofit::plotting::profiles::LikelihoodProfiler::SetSamplePoint(unsigned int step) {
@@ -129,6 +131,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   for (auto var : scan_vars_) {
     RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_results_.front()->constPars().find(var->GetName()));
     scan_vars_titles_.push_back(var_fixed->GetTitle());
+    scan_vars_names_.push_back(var_fixed->GetName());
   }
 
   // int i = 0;
@@ -138,6 +141,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   std::map<std::string, double> max_scan_val;
 
   Progress p("Processing read in fit results", fit_results_.size());
+  unsigned int num_neglected(0);
   for (auto result : fit_results_) {
     if (FitResultOkay(*result)) {
       for (auto var : scan_vars_) {
@@ -173,9 +177,17 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
       val_nll.push_back(result->minNll());
 
       ++p;
-    }
+    } else { // if (FitResultOkay(*result)) {
+      //swarn << "Neglecting fit result!" << endmsg;
+      ++num_neglected;
+      //result->Print();
+    } // if (FitResultOkay(*result)) {
   }
   p.Finish();
+
+  if (num_neglected > 0) {
+    swarn << "Number of neglected fit results: " << num_neglected << " (" << static_cast<double>(num_neglected)/val_nll.size()*100.0 << "%)" << endmsg;
+  }
 
   for (auto &nll : val_nll) {
     if (nll != 0.0) {
@@ -217,7 +229,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
     TGraph graph(val_nll.size(), &val_x_sort[0], &val_nll_sort[0]);
 
-    if (val_nll.size() < 50) {
+    if (val_nll.size() < 25) {
       graph.Draw("APC");
       graph.SetMarkerStyle(2);
       graph.SetMarkerSize(2);
@@ -242,9 +254,11 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "profile", plot_path);
   } else if (val_scan.size() == 2) {
+    const std::vector<double>& val_x = val_scan[scan_vars_names_.at(0)];
+    const std::vector<double>& val_y = val_scan[scan_vars_names_.at(1)];
 
-    const std::vector<double>& val_x = val_scan.begin()->second;
-    const std::vector<double>& val_y = val_scan.rbegin()->second;
+    // sdebug << val_x << endmsg;
+    // sdebug << val_y << endmsg;
 
     auto minmax_x = std::minmax_element(val_x.begin(), val_x.end());
     auto minmax_y = std::minmax_element(val_y.begin(), val_y.end());
@@ -261,6 +275,9 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     }
     p_distinct.Finish();
 
+    sinfo << "Scanned x values: " << distinct_x << endmsg;
+    sinfo << "Scanned y values: " << distinct_y << endmsg;
+
     double min_nll(0.0), max_nll(0.0);
     for (auto nll : val_nll) {
       if (nll != 0 && (min_nll == 0.0 || nll < min_nll)) {
@@ -271,12 +288,66 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
       }
     }
 
-    double min_x = *minmax_x.first  - (*minmax_x.second-*minmax_x.first)/(distinct_x.size()-1)*0.5;
-    double max_x = *minmax_x.second + (*minmax_x.second-*minmax_x.first)/(distinct_x.size()-1)*0.5;
-    double min_y = *minmax_y.first  - (*minmax_y.second-*minmax_y.first)/(distinct_y.size()-1)*0.5;
-    double max_y = *minmax_y.second + (*minmax_y.second-*minmax_y.first)/(distinct_y.size()-1)*0.5;
+    // find smallest stepping in x and y
+    std::set<double>::const_iterator it_x(distinct_x.begin());
+    std::set<double>::const_iterator it_y(distinct_y.begin());
+    double val_x_before(*it_x), val_y_before(*it_y);
+    ++it_x; ++it_y;
+    double step_x(*it_x - val_x_before),
+           step_y(*it_y - val_y_before);
+    val_x_before = *it_x;
+    val_y_before = *it_y;
+    ++it_x; ++it_y;
+    double min_step_x(step_x), min_step_y(step_y);
 
-    TH2D histogram("histogram", "histogram", distinct_x.size(), min_x, max_x, distinct_y.size(), min_y, max_y);
+    for (; it_x != distinct_x.end(); ++it_x) {
+      step_x = *it_x - val_x_before;
+
+      if (step_x < min_step_x) {
+        min_step_x = step_x;
+      }
+    }
+    for (; it_y != distinct_y.end(); ++it_y) {
+      step_y = *it_y - val_y_before;
+
+      if (step_y < min_step_y) {
+        min_step_y = step_y;
+      }
+    }
+
+    sinfo << "Smallest x stepping: " << min_step_x << endmsg;
+    sinfo << "Smallest y stepping: " << min_step_y << endmsg;
+
+    // sdebug << "(*minmax_x.second-*minmax_x.first)/(distinct_x.size()-1) = " << (*minmax_x.second-*minmax_x.first)/(distinct_x.size()-1) << endmsg;
+    // sdebug << "(*minmax_y.second-*minmax_y.first)/(distinct_y.size()-1) = " << (*minmax_y.second-*minmax_y.first)/(distinct_y.size()-1) << endmsg;
+
+    double min_x = *minmax_x.first  - min_step_x*0.5;
+    double max_x = *minmax_x.second + min_step_x*0.5;
+    double min_y = *minmax_y.first  - min_step_y*0.5;
+    double max_y = *minmax_y.second + min_step_y*0.5;
+
+    if (config_plot_.plot_range_x().first != 0.0 || config_plot_.plot_range_x().second != 0.0) {
+      min_x = config_plot_.plot_range_x().first  - min_step_x*0.5;
+      max_x = config_plot_.plot_range_x().second + min_step_x*0.5;
+    }
+    if (config_plot_.plot_range_y().first != 0.0 || config_plot_.plot_range_y().second != 0.0) {
+      min_y = config_plot_.plot_range_y().first  - min_step_y*0.5;
+      max_y = config_plot_.plot_range_y().second + min_step_y*0.5;
+    }
+
+    double num_bins_x((max_x - min_x)/min_step_x);
+    double num_bins_y((max_y - min_y)/min_step_y);
+
+    // sdebug << "x range for histogram: " << min_x << " - " << max_x << ", stepping: " << min_step_x << ", nbins: " << num_bins_x << endmsg;
+    // sdebug << "y range for histogram: " << min_y << " - " << max_y << ", stepping: " << min_step_y << ", nbins: " << num_bins_y << endmsg;
+
+    // sdebug << "num_bins_x        = " << num_bins_x << endmsg;
+    // sdebug << "distinct_x.size() = " << distinct_x.size() << endmsg;
+    // sdebug << "num_bins_y        = " << num_bins_y << endmsg;
+    // sdebug << "distinct_y.size() = " << distinct_y.size() << endmsg;
+
+    TH2D histogram("histogram", "histogram", num_bins_x, min_x, max_x, num_bins_y, min_y, max_y);
+    TH2D histogram_dbg("histogram_dbg", "histogram_dbg", num_bins_x, min_x, max_x, num_bins_y, min_y, max_y);
 
     // sdebug << "histogram x: " << *minmax_x.first << " - " <<  *minmax_x.second << endmsg;
     // sdebug << "histogram y: " << *minmax_y.first << " - " <<  *minmax_y.second << endmsg;
@@ -288,13 +359,16 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
       
       int nbin_x, nbin_y, nbin_z;
       histogram.GetBinXYZ(histogram.FindBin(val_x.at(i), val_y.at(i)), nbin_x, nbin_y, nbin_z);
+      histogram_dbg.GetBinXYZ(histogram_dbg.FindBin(val_x.at(i), val_y.at(i)), nbin_x, nbin_y, nbin_z);
 
       // sdebug << "Bin center x: " << histogram.GetXaxis()->GetBinCenter(nbin_x) << endmsg;
       // sdebug << "Bin center y: " << histogram.GetYaxis()->GetBinCenter(nbin_y) << endmsg;
 
       histogram.SetBinContent(histogram.FindBin(val_x.at(i), val_y.at(i)), val_nll.at(i));
+      histogram_dbg.SetBinContent(histogram_dbg.FindBin(val_x.at(i), val_y.at(i)), val_nll.at(i));
       ++p_hist;
     }
+    p_hist.Finish();
 
     unsigned int num_interpolated_bins(0);
     for (int i=1; i<=histogram.GetNbinsX(); ++i) {
@@ -319,9 +393,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
         }
       }
     }
-    sinfo << "LikelihoodProfiler::PlotHandler(...): Number of interpolated bins: " << num_interpolated_bins << endmsg;
-
-    p_hist.Finish();
+    sinfo << "LikelihoodProfiler::PlotHandler(...): Number of interpolated bins: " << num_interpolated_bins << " (" << static_cast<double>(num_interpolated_bins)/static_cast<double>(num_bins_x*num_bins_y)*100.0 << "%)" << endmsg;
 
     std::vector<double> stops_cl;
     std::vector<int> colours;
@@ -350,22 +422,22 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     //   colours.push_back(kGreen-5);
     // }
 
-    // const Int_t NRGBs = 6;
-    // const Int_t NCont = 6;
-    
-    // Double_t stops[NRGBs] = { 0.00 , 0.50 , 2.00 , 4.50 , 8.00 , 12.5 };
-    // Double_t red[NRGBs]   = { 0.00 , 0.00 , 0.20 , 1.00 , 1.00 , 1.00 };
-    // Double_t green[NRGBs] = { 0.00 , 0.00 , 0.20 , 1.00 , 1.00 , 1.00 };
-    // Double_t blue[NRGBs]  = { 0.20 , 1.00 , 1.00 , 1.00 , 1.00 , 1.00 };
-    // TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
-    // gStyle->SetNumberContours(NCont);
-    // gStyle->SetPaintTextFormat(".1f");
-    // histogram.Draw("COLZ");
+    // debug plot
+    const Int_t NRGBs = 6;
+    const Int_t NCont = 6;    
+    Double_t stops[NRGBs] = { 0.00 , 0.50 , 2.00 , 4.50 , 8.00 , 12.5 };
+    Double_t red[NRGBs]   = { 0.00 , 0.00 , 0.20 , 1.00 , 1.00 , 1.00 };
+    Double_t green[NRGBs] = { 0.00 , 0.00 , 0.20 , 1.00 , 1.00 , 1.00 };
+    Double_t blue[NRGBs]  = { 0.20 , 1.00 , 1.00 , 1.00 , 1.00 , 1.00 };
+    TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+    gStyle->SetNumberContours(NCont);
+    gStyle->SetPaintTextFormat(".1f");
+    histogram_dbg.Draw("COLZ");
+    doocore::lutils::printPlot(&c, "profile_dbg", plot_path, true);
 
-
+    // fancy plot
     gStyle->SetPalette(colours.size(), colours.data());
     histogram.SetContour(stops_cl.size(), stops_cl.data());
-
     sinfo << "LikelihoodProfiler::PlotHandler(): Drawing histogram." << endmsg;
     histogram.Draw("CONT1");
 
