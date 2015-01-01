@@ -196,16 +196,6 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   if (plot_args_data_.size() > 6) arg_data7 = plot_args_data_[6];
 
   RooPlot* plot_frame = dimension_.frame(range_arg);
-  
-  // I feel so stupid doing this but apparently RooFit leaves me no other way...
-    RooCmdArg arg1, arg2, arg3, arg4, arg5, arg6, arg7;
-    if (plot_args_.size() > 0) arg1 = plot_args_[0];
-    if (plot_args_.size() > 1) arg2 = plot_args_[1];
-    if (plot_args_.size() > 2) arg3 = plot_args_[2];
-    if (plot_args_.size() > 3) arg4 = plot_args_[3];
-    if (plot_args_.size() > 4) arg5 = plot_args_[4];
-    if (plot_args_.size() > 5) arg6 = plot_args_[5];
-    if (plot_args_.size() > 6) arg7 = plot_args_[6];
     
   RooCmdArg weight_arg;
   RooAbsData* dataset_normalisation = NULL;
