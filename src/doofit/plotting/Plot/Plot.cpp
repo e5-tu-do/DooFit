@@ -364,6 +364,10 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     plot_frame->SetMinimum(0.0);
     plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
+    if(plot_asymmetry_) {
+      plot_frame->SetMinimum(-1.0);
+      plot_frame->SetMaximum(1.0);
+    }
 
     // plot_frame->SetMinimum(-1.0);
     // plot_frame->SetMaximum(+1.0);
