@@ -53,7 +53,8 @@ Coefficient2::Coefficient2(const std::string& name,
   delta_p1_ss_("delta_p1_ss_","delta_p1_ss_",this,_delta_p1_ss_),
   production_asym_("production_asym_","production_asym_",this,_production_asym_),
   tag_sign_os_(_tag_sign_os_),
-  tag_sign_ss_(_tag_sign_ss_)
+  tag_sign_ss_(_tag_sign_ss_),
+  num_protected_(0)
 { 
 } 
 
@@ -78,7 +79,8 @@ Coefficient2::Coefficient2(const Coefficient2& other, const char* name) :
   delta_p1_ss_("delta_p1_ss_",this,other.delta_p1_ss_),
   production_asym_("production_asym_",this,other.production_asym_),
   tag_sign_os_(other.tag_sign_os_),
-  tag_sign_ss_(other.tag_sign_ss_)
+  tag_sign_ss_(other.tag_sign_ss_),
+  num_protected_(other.num_protected_)
 { 
 } 
 
@@ -253,6 +255,23 @@ std::pair<double, double> Coefficient2::calibrate(double eta, double avg_eta, do
   return std::make_pair(eta_cal_b, eta_cal_bbar);
 }
 
+double Coefficient2::Protect(double x) const {
+  // def fun(x):
+  //   y = np.where(np.logical_and(x>=-0.9, x<=0.9), x, 0.0)
+  //   y = np.where(x>0.9, 0.1*2/pi*arctan( (10*(x-0.9))*pi/2 ) + 0.9 , y)
+  //   y = np.where(x<-0.9, 0.1*2/pi*arctan( (10*(x+0.9))*pi/2 ) - 0.9 , y)
+  //   return y
+  if (x>=-0.9 && x<=0.9) {
+    return x;
+  } else if (x>0.9) {
+    ++num_protected_;
+    return 0.063661977*atan((15.707963268*(x-0.9))) + 0.9;
+  } else if (x<-0.9) {
+    ++num_protected_;
+    return 0.063661977*atan((15.707963268*(x+0.9))) - 0.9;
+  }
+}
+
 
 Double_t Coefficient2::evaluate(double cp_coeff,
                                 CoeffType coeff_type,
@@ -299,23 +318,32 @@ Double_t Coefficient2::evaluate(double cp_coeff,
                             + tag_sign_os * tag_os * ( 1. - eta_os_b - eta_os_bbar ) 
                             + tag_sign_ss * tag_ss * ( 1. - eta_ss_b - eta_ss_bbar ) );
 
+  double val(0.0);
+
   // calculate and return coefficients
   if (coeff_type == kSin){
-    return -0.5 * cp_coeff * ( difference - production_asym * sum );
+    val = -0.5 * cp_coeff * ( difference - production_asym * sum );
   }
   else if (coeff_type == kCos){
-    return +0.5 * cp_coeff * ( difference - production_asym * sum );
+    val = +0.5 * cp_coeff * ( difference - production_asym * sum );
   }
   else if (coeff_type == kSinh){
-    return +0.5 * cp_coeff * ( sum - production_asym * difference );
+    val = +0.5 * cp_coeff * ( sum - production_asym * difference );
   }
   else if (coeff_type == kCosh){
-    return +0.5 * cp_coeff * ( sum - production_asym * difference );
+    val = +0.5 * cp_coeff * ( sum - production_asym * difference );
   }
   else{
     std::cout << "ERROR\t" << "Coefficient2::evaluate(...): No valid coefficient type!" << std::endl;
     abort();
   }
+  // if ((coeff_type == kCos || coeff_type == kSin) && (val > 1.0 || val < -1.0)) {
+  //   //std::cout << "WOOOW, too large or small: " << val << " - " << Protect(val) << ", coeff type = " << coeff_type << std::endl; 
+  // }
+  // if (coeff_type == kCos || coeff_type == kSin) {
+  //   val = Protect(val);
+  // }
+  return val;
 }
 
 

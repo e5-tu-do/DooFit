@@ -1,6 +1,7 @@
 #ifndef DOOFIT_ROOFIT_FUNCTIONS_BDECAY_COEFFICIENT2
 #define DOOFIT_ROOFIT_FUNCTIONS_BDECAY_COEFFICIENT2
 
+#include <iostream>
 #include "RooAbsReal.h"
 #include "RooRealProxy.h"
 #include "RooAbsCategory.h"
@@ -42,7 +43,9 @@ public:
         int         _tag_sign_ss_=+1);
   Coefficient2(const Coefficient2& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new Coefficient2(*this,newname); }
-  inline virtual ~Coefficient2() { }
+  inline virtual ~Coefficient2() { 
+    // std::cout << "Coefficient2::~Coefficient2(): Number of protected evaluations: " << num_protected_ << std::endl;
+  }
 
   Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
   Int_t getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName=0) const ;
@@ -74,6 +77,8 @@ protected:
   int tag_sign_os_ ;
   int tag_sign_ss_ ;
 
+  mutable unsigned int num_protected_;
+
   Double_t evaluate() const ;
 
 private:
@@ -103,6 +108,8 @@ private:
   bool isTagInRange(const RooCategoryProxy& tag, int tag_state, const char* rangeName) const ;
   bool hasTagState(const RooCategoryProxy& tag, int tag_state) const;
   int  getIndex(const RooCategoryProxy& tag) const;
+
+  double Protect(double x) const;
 
   ClassDef(Coefficient2,1) // CP coefficient for RooBDecay PDF
 };

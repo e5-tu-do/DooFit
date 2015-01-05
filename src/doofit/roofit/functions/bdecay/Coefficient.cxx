@@ -37,7 +37,8 @@ Coefficient::Coefficient(const std::string& name,
   delta_p0_("delta_p0_","delta_p0_",this,_delta_p0_),
   delta_p1_("delta_p1_","delta_p1_",this,_delta_p1_),
   production_asym_("production_asym_","production_asym_",this,_production_asym_),
-  tag_sign_(_tag_sign_)
+  tag_sign_(_tag_sign_),
+  num_protected_(0)
 { 
 } 
 
@@ -54,7 +55,8 @@ Coefficient::Coefficient(const Coefficient& other, const char* name) :
   delta_p0_("delta_p0_",this,other.delta_p0_),
   delta_p1_("delta_p1_",this,other.delta_p1_),
   production_asym_("production_asym_",this,other.production_asym_),
-  tag_sign_(other.tag_sign_)
+  tag_sign_(other.tag_sign_),
+  num_protected_(other.num_protected_)
 { 
 } 
 
@@ -184,6 +186,17 @@ std::pair<double, double> Coefficient::calibrate(double eta, double avg_eta, dou
   return std::make_pair(eta_cal_b, eta_cal_bbar);
 }
 
+double Coefficient::Protect(double x) const {
+  if (x>=-0.9 && x<=0.9) {
+    return x;
+  } else if (x>0.9) {
+    ++num_protected_;
+    return 0.063661977*atan((15.707963268*(x-0.9))) + 0.9;
+  } else if (x<-0.9) {
+    ++num_protected_;
+    return 0.063661977*atan((15.707963268*(x+0.9))) - 0.9;
+  }
+}
 
 Double_t Coefficient::evaluate(double cp_coeff,
                                CoeffType coeff_type,
@@ -203,23 +216,32 @@ Double_t Coefficient::evaluate(double cp_coeff,
   double eta_b    = calibrated_mistag.first;
   double eta_bbar = calibrated_mistag.second;
 
+  double val(0.0);
+
   // calculate coefficients
   if (coeff_type == kSin){
-    return -1.0 * cp_coeff * ( tag_sign * tag - production_asym * ( 1.0 - tag_sign * tag * eta_b + tag_sign * tag * eta_bbar ) - tag_sign * tag * ( eta_b + eta_bbar ) );
+    val = -1.0 * cp_coeff * ( tag_sign * tag - production_asym * ( 1.0 - tag_sign * tag * eta_b + tag_sign * tag * eta_bbar ) - tag_sign * tag * ( eta_b + eta_bbar ) );
   }
   else if (coeff_type == kCos){
-    return +1.0 * cp_coeff * ( tag_sign * tag - production_asym * ( 1.0 - tag_sign * tag * eta_b + tag_sign * tag * eta_bbar ) - tag_sign * tag * ( eta_b + eta_bbar ) );
+    val = +1.0 * cp_coeff * ( tag_sign * tag - production_asym * ( 1.0 - tag_sign * tag * eta_b + tag_sign * tag * eta_bbar ) - tag_sign * tag * ( eta_b + eta_bbar ) );
   }
   else if (coeff_type == kSinh){
-    return cp_coeff * ( 1.0 - tag_sign * tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - tag_sign * tag * ( eta_b - eta_bbar ) );
+    val = cp_coeff * ( 1.0 - tag_sign * tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - tag_sign * tag * ( eta_b - eta_bbar ) );
   }
   else if (coeff_type == kCosh){
-    return cp_coeff * ( 1.0 - tag_sign * tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - tag_sign * tag * ( eta_b - eta_bbar ) );
+    val = cp_coeff * ( 1.0 - tag_sign * tag * production_asym * ( 1.0 - eta_b - eta_bbar ) - tag_sign * tag * ( eta_b - eta_bbar ) );
   }
   else{
     std::cout << "ERROR\t" << "Coefficient::evaluate(): No valid coefficient type!" << std::endl;
     abort();
   }
+  // if ((coeff_type == kCos || coeff_type == kSin) && (val > 1.0 || val < -1.0)) {
+  //   //std::cout << "WOOOW, too large or small: " << val << " - " << Protect(val) << ", coeff type = " << coeff_type << std::endl; 
+  // }
+  // if (coeff_type == kCos || coeff_type == kSin) {
+  //   val = Protect(val);
+  // }
+  return val;
 }
 
 
