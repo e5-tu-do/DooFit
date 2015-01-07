@@ -1272,8 +1272,8 @@ namespace toy {
           sw_lock.Start(false);
           new_wait_time /= deadtimes.size()+1;
           
-          wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*new_wait_time+10.0;
-	        wait_time = std::min(wait_time, 300);
+          wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*new_wait_time+1.0;
+	        wait_time = std::min(wait_time, 180);
           swarn << "File to save fit result to " << filename << " is locked. Will try again in " << wait_time << " s." << endmsg;
           sleep = true;
         } else {

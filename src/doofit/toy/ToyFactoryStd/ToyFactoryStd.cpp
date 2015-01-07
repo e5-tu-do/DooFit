@@ -564,9 +564,13 @@ namespace toy {
       if (proto_set != NULL) {
         proto_arg = ProtoData(*proto_set);
       }
+
+      // sdebug << "expected_yield = " << expected_yield << endmsg;
       
       // correct rounding of number of events to generate
       int yield_to_generate = boost::math::iround(expected_yield);
+
+      // sdebug << "yield_to_generate = " << yield_to_generate << endmsg;
       
       RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
 
@@ -585,11 +589,23 @@ namespace toy {
         
         data = dynamic_cast<RooDataSet*>(proto_set->reduce(EventRange(0, yield_to_generate)));
       } else {
+        if (yield_to_generate > 0.0) {
 #if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
-        data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
+          data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
 #else
-        data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
+          data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
 #endif
+        } else {
+          // in case expected yield is zero, RooFit will still generate 1 event. Fix that with an empty dataset.
+
+          RooArgSet args(*obs_argset);
+          args.add(*proto_set->get());
+          // args.Print();
+
+          data = new RooDataSet("data_empty", "data_empty", args);
+
+          // data->Print();
+        }
       }
       
       // bugfix for a RooFit bug: if no events are to be generated, the empty
@@ -686,6 +702,7 @@ namespace toy {
             sum_coef += coef;
           }
         }
+
         std::cout.precision(15);
         
         if (!add_pdf_extended && pdf.mustBeExtended()) {
@@ -693,6 +710,7 @@ namespace toy {
         } else {
           sub_yield = coef*expected_yield;
         }
+
         if (extended) {
           // sdebug << "Generating sub yield as Poisson random number." << endmsg;
           sub_yield = RooRandom::randomGenerator()->Poisson(sub_yield);
@@ -726,12 +744,17 @@ namespace toy {
         // rounding is summed up and in case it exceeds 0.5 additional events 
         // will be generated for the next PDF.
         yield_lost_due_rounding += sub_yield - boost::math::iround(sub_yield);
+
+        // sdebug << sub_pdf->GetName() << " - sub_yield = " << sub_yield << " (before rounding correction), yield_lost_due_rounding = " << yield_lost_due_rounding << endmsg;
+
         int add_roundup_yield = boost::math::iround(yield_lost_due_rounding);
         if (TMath::Abs(add_roundup_yield) >= 1 && TMath::Abs(yield_lost_due_rounding) != 0.5) {
           sub_yield += add_roundup_yield;
           yield_lost_due_rounding = -(add_roundup_yield-yield_lost_due_rounding);
         }
         
+        // sdebug << sub_pdf->GetName() << " - sub_yield = " << sub_yield << endmsg;
+
         // sdebug << "Sub yield for next PDF " << sub_pdf->GetName() << " is " << sub_yield << endmsg;
 
         if (data) {
