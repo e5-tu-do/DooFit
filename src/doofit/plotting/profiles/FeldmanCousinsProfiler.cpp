@@ -280,13 +280,13 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     TGraphErrors graph(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
 
     if (cls.size() < 200) {
-      graph.Draw("APC");
+      graph.Draw("APL");
       graph.SetMarkerStyle(2);
       graph.SetMarkerSize(1);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
     } else {
-      graph.Draw("APC");
+      graph.Draw("APL");
       graph.SetMarkerStyle(1);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
