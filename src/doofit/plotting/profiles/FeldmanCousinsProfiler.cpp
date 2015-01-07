@@ -6,10 +6,13 @@
 // from ROOT
 #include "TCanvas.h"
 #include "TGraph.h"
+#include "TGraphErrors.h"
 #include "TH2D.h" 
+#include "TH1F.h" 
 #include "TAxis.h"
 #include "TStyle.h"
 #include "TColor.h"
+#include "TLine.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -91,9 +94,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
   while (fit_result_0 != nullptr) { 
     
     if (fit_result_1 == nullptr) {
-      swarn << "Only one fit result stored, expected a pair. Ignoring." << endmsg;
+      swarn << "Only one fit result stored, expected a pair. The result tree might be broken!" << endmsg;
     } else {
-      sdebug << "This is fine!" << endmsg;
       std::vector<double> scan_vals;
       for (auto var : scan_vars_) {
         RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result_1->constPars().find(var->GetName()));
@@ -131,14 +133,64 @@ bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const Roo
   }
 }
 
+double doofit::plotting::profiles::FeldmanCousinsProfiler::FindGraphXValues(TGraph& graph, double value, double direction) const {
+  using namespace doocore::io;
+  TAxis* xaxis = graph.GetXaxis();
+
+  double x_lo(xaxis->GetXmin());
+  double x_hi(xaxis->GetXmax());
+
+  double x_start(xaxis->GetXmin());
+  double x_end(xaxis->GetXmax());
+  if (direction < 0.0) {
+    x_start = xaxis->GetXmax();
+    x_end = xaxis->GetXmin();
+  }
+
+  // sdebug << (x_end - x_start)/100.0 << endmsg;
+  // sdebug << x_start*direction << endmsg;
+  // sdebug << x_end*direction << endmsg;
+
+  for (double x=x_start; x*direction<x_end*direction; x+=(x_end - x_start)/300.0) {
+    double y(graph.Eval(x, nullptr, "S"));
+    // sdebug << "x = " << x << ", y = " << y << endmsg;
+
+    if (y < value) {
+      x_lo = x;
+    } else if (y > value) {
+      x_hi = x;
+      break;
+    }
+  }
+
+  double eps(1e-5);
+  double x_test, y;
+  unsigned int num_it(0);
+  while (std::abs(x_hi-x_lo) > eps && num_it < 1000000) {
+    x_test = (x_lo+x_hi)/2.0;
+    y = graph.Eval(x_test, nullptr, "S");
+    
+    if (y < value) {
+      x_lo = x_test;
+    } else if (y > value) {
+      x_hi = x_test;
+    }
+    ++num_it;
+  }
+
+  // sdebug << "after:  " << x_lo << " - " << x_hi << endmsg;
+  return (x_lo+x_hi)/2.0;
+}
 
 void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::string& plot_path) {
   using namespace doocore::io;
 
   std::vector<std::vector<double>> vals_scan;
   std::vector<double> vals_x;
+  std::vector<double> vals_x_error;
   std::vector<double> vals_y;
   std::vector<double> cls;
+  std::vector<double> cl_errors;
 
   std::map<std::string, double> min_scan_val;
   std::map<std::string, double> max_scan_val;
@@ -161,25 +213,36 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
 
     vals_scan.push_back(delta_nll_data.first);
     vals_x.push_back(delta_nll_data.first[0]);
+    vals_x_error.push_back(0.0);
     if (delta_nll_data.first.size() > 1) {
       vals_y.push_back(delta_nll_data.first[0]);
     }
-    double cl;
+    double cl, cl_error;
     if (num_toys > 0) {
       cl = static_cast<double>(num_toys_exceed)/static_cast<double>(num_toys);
+      cl_error = 1.0/static_cast<double>(num_toys)*std::sqrt(static_cast<double>(num_toys_exceed)*(1-cl));
     } else {
       cl = 0.0;
+      cl_error = 0.0;
     }
     cls.push_back(cl);
+    cl_errors.push_back(cl_error);
 
-    sdebug << "       scan_val = " << delta_nll_data.first << endmsg;
-    sdebug << "       num_toys = " << num_toys << endmsg;
-    sdebug << "num_toys_exceed = " << num_toys_exceed << endmsg;
-    sdebug << "             cl = " << cl << endmsg;
+    if (cl == 0.0) {
+      swarn << "Scan point " << delta_nll_data.first << " has too little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
+    }
+    if (cl_error > 0.02 || num_toys_exceed < 10) {
+      swarn << "Scan point " << delta_nll_data.first << " has little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
+    }
+
+    // sdebug << "       scan_val = " << delta_nll_data.first << endmsg;
+    // sdebug << "       num_toys = " << num_toys << endmsg;
+    // sdebug << "num_toys_exceed = " << num_toys_exceed << endmsg;
+    // sdebug << "             cl = " << cl << endmsg;
   }
 
   if (vals_scan.size() > 0 && vals_scan[0].size() == 1) {
-    doocore::lutils::setStyle();
+    doocore::lutils::setStyle("LHCbOptimized");
     gStyle->SetPadLeftMargin(0.12);
     gStyle->SetTitleOffset(0.75, "y");
   } else if (vals_scan.size() > 0 && vals_scan[0].size() == 2) {
@@ -191,31 +254,35 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
   }
 
   TCanvas c("c", "c", 800, 600);
+  c.SetLogy(true);
 
   if (vals_scan.size() > 0 && vals_scan[0].size() == 1) {
     // stupidly sort both x and y vectors simultaneously
     // to avoid glitches in ROOT's TGraph plotting
 
-    std::map<double, double> values;
+    std::map<double, std::pair<double, double>> values;
     for (unsigned int i=0; i<cls.size(); ++i) {
-      values.emplace(std::make_pair(vals_x[i], cls[i]));
+      if (cls[i] != 0.0) {
+        values.emplace(std::make_pair(vals_x[i], std::make_pair(cls[i], cl_errors[i])));
+      }
     }
 
-    std::vector<double> vals_x_sort, cls_sort;
-    vals_x_sort.reserve(cls.size());
-    cls_sort.reserve(cls.size());
+    std::vector<double> vals_x_sort, cls_sort, cl_errors_sort;
+    vals_x_sort.reserve(values.size());
+    cls_sort.reserve(values.size());
+    cl_errors_sort.reserve(values.size());
     for (auto value : values) {
       vals_x_sort.push_back(value.first);
-      cls_sort.push_back(value.second);
+      cls_sort.push_back(value.second.first);
+      cl_errors_sort.push_back(value.second.second);
     }
 
+    TGraphErrors graph(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
 
-    TGraph graph(cls.size(), &vals_x_sort[0], &cls_sort[0]);
-
-    if (cls.size() < 25) {
+    if (cls.size() < 200) {
       graph.Draw("APC");
       graph.SetMarkerStyle(2);
-      graph.SetMarkerSize(2);
+      graph.SetMarkerSize(1);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
     } else {
@@ -231,8 +298,45 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     // double x_range_hi = max_scan_val[val_scan.begin()->first] + x_range*0.1;
 
     // graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
+    graph.GetYaxis()->SetRangeUser(1e-3, 1.01);
     graph.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
-    graph.GetYaxis()->SetTitle("1 - CL");
+    graph.GetYaxis()->SetTitle("1 #minus CL");
+
+    TAxis* xaxis = graph.GetXaxis();
+
+    double x_lo(xaxis->GetXmin());
+    double x_hi(xaxis->GetXmax());
+
+    double level_1sigma(1-0.682690);
+    double level_2sigma(1-0.954500);
+    double level_3sigma(1-0.997300);
+
+    std::pair<double, double> cl_1sigma(FindGraphXValues(graph, level_1sigma), FindGraphXValues(graph, level_1sigma, -1.0));
+    std::pair<double, double> cl_2sigma(FindGraphXValues(graph, level_2sigma), FindGraphXValues(graph, level_2sigma, -1.0));
+    std::pair<double, double> cl_3sigma(FindGraphXValues(graph, level_3sigma), FindGraphXValues(graph, level_3sigma, -1.0));
+
+    sinfo << "1 sigma interval: [" << cl_1sigma.first << ", " << cl_1sigma.second << "]" << endmsg;
+    sinfo << "2 sigma interval: [" << cl_2sigma.first << ", " << cl_2sigma.second << "]" << endmsg;
+    sinfo << "3 sigma interval: [" << cl_3sigma.first << ", " << cl_3sigma.second << "]" << endmsg;
+
+    TLine line_1sigma(x_lo, level_1sigma, x_hi, level_1sigma);
+    line_1sigma.SetLineColor(kRed-8);
+    line_1sigma.SetLineWidth(2);
+    line_1sigma.SetLineStyle(3);
+    line_1sigma.Draw();
+
+    TLine line_2sigma(x_lo, level_2sigma, x_hi, level_2sigma);
+    line_2sigma.SetLineColor(kRed-8);
+    line_2sigma.SetLineWidth(2);
+    line_2sigma.SetLineStyle(3);
+    line_2sigma.Draw();
+
+    TLine line_3sigma(x_lo, level_3sigma, x_hi, level_3sigma);
+    line_3sigma.SetLineColor(kRed-8);
+    line_3sigma.SetLineWidth(2);
+    line_3sigma.SetLineStyle(3);
+    line_3sigma.Draw();
+
 
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "fc", plot_path);

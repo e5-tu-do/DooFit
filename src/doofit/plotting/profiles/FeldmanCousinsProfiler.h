@@ -26,6 +26,7 @@ namespace doofit { namespace toy {
 }}
 class RooRealVar;
 class RooFitResult;
+class TGraph;
 
 namespace doofit {
 namespace plotting {
@@ -111,6 +112,8 @@ class FeldmanCousinsProfiler {
    *  @return true if fit result is okay, false if not
    */
   bool FitResultOkay(const RooFitResult& fit_result) const;
+
+  double FindGraphXValues(TGraph& graph, double value, double direction=+1.0) const;
 
  private:
   /**
