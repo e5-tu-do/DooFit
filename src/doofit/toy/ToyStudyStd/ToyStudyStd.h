@@ -268,6 +268,18 @@ namespace toy {
     bool FitResultNotVariedParameterSet(const RooFitResult& fit_result) const;
 
     /**
+     *  @brief Check if fit result has no asymmetric errors for at least one parameter
+     *
+     *  For a given fit result evaluate the fit quality in terms of asymmetric 
+     *  errors. If at least one parameter has no asymmetric errors, true is 
+     *  returned.
+     *
+     *  @param fit_result RooFitResult to use for evaluation
+     *  @return true if fit result is problematic, false if not
+     */
+    bool FitResultNoAsymmetricErrors(const RooFitResult& fit_result) const;
+
+    /**
      *  @brief Evaluate a RooFormulaVar based on a set of variables
      *
      *  This function evaluates a formula based on a collection of variables 

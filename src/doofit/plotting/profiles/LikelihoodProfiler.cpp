@@ -321,22 +321,25 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     // sdebug << "(*minmax_x.second-*minmax_x.first)/(distinct_x.size()-1) = " << (*minmax_x.second-*minmax_x.first)/(distinct_x.size()-1) << endmsg;
     // sdebug << "(*minmax_y.second-*minmax_y.first)/(distinct_y.size()-1) = " << (*minmax_y.second-*minmax_y.first)/(distinct_y.size()-1) << endmsg;
 
-    double min_x = *minmax_x.first  - min_step_x;
-    double max_x = *minmax_x.second + min_step_x;
-    double min_y = *minmax_y.first  - min_step_y;
-    double max_y = *minmax_y.second + min_step_y;
+    double min_x = *minmax_x.first  - min_step_x*0.5;
+    double max_x = *minmax_x.second + min_step_x*0.5;
+    double min_y = *minmax_y.first  - min_step_y*0.5;
+    double max_y = *minmax_y.second + min_step_y*0.5;
 
     if (config_plot_.plot_range_x().first != 0.0 || config_plot_.plot_range_x().second != 0.0) {
-      min_x = config_plot_.plot_range_x().first;
-      max_x = config_plot_.plot_range_x().second;
+      min_x = config_plot_.plot_range_x().first  - min_step_x*0.5;
+      max_x = config_plot_.plot_range_x().second + min_step_x*0.5;
     }
     if (config_plot_.plot_range_y().first != 0.0 || config_plot_.plot_range_y().second != 0.0) {
-      min_y = config_plot_.plot_range_y().first;
-      max_y = config_plot_.plot_range_y().second;
+      min_y = config_plot_.plot_range_y().first  - min_step_y*0.5;
+      max_y = config_plot_.plot_range_y().second + min_step_y*0.5;
     }
 
-    unsigned int num_bins_x((max_x - min_x)/min_step_x+1);
-    unsigned int num_bins_y((max_y - min_y)/min_step_y+1);
+    double num_bins_x((max_x - min_x)/min_step_x);
+    double num_bins_y((max_y - min_y)/min_step_y);
+
+    // sdebug << "x range for histogram: " << min_x << " - " << max_x << ", stepping: " << min_step_x << ", nbins: " << num_bins_x << endmsg;
+    // sdebug << "y range for histogram: " << min_y << " - " << max_y << ", stepping: " << min_step_y << ", nbins: " << num_bins_y << endmsg;
 
     // sdebug << "num_bins_x        = " << num_bins_x << endmsg;
     // sdebug << "distinct_x.size() = " << distinct_x.size() << endmsg;
@@ -344,6 +347,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     // sdebug << "distinct_y.size() = " << distinct_y.size() << endmsg;
 
     TH2D histogram("histogram", "histogram", num_bins_x, min_x, max_x, num_bins_y, min_y, max_y);
+    TH2D histogram_dbg("histogram_dbg", "histogram_dbg", num_bins_x, min_x, max_x, num_bins_y, min_y, max_y);
 
     // sdebug << "histogram x: " << *minmax_x.first << " - " <<  *minmax_x.second << endmsg;
     // sdebug << "histogram y: " << *minmax_y.first << " - " <<  *minmax_y.second << endmsg;
@@ -355,13 +359,16 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
       
       int nbin_x, nbin_y, nbin_z;
       histogram.GetBinXYZ(histogram.FindBin(val_x.at(i), val_y.at(i)), nbin_x, nbin_y, nbin_z);
+      histogram_dbg.GetBinXYZ(histogram_dbg.FindBin(val_x.at(i), val_y.at(i)), nbin_x, nbin_y, nbin_z);
 
       // sdebug << "Bin center x: " << histogram.GetXaxis()->GetBinCenter(nbin_x) << endmsg;
       // sdebug << "Bin center y: " << histogram.GetYaxis()->GetBinCenter(nbin_y) << endmsg;
 
       histogram.SetBinContent(histogram.FindBin(val_x.at(i), val_y.at(i)), val_nll.at(i));
+      histogram_dbg.SetBinContent(histogram_dbg.FindBin(val_x.at(i), val_y.at(i)), val_nll.at(i));
       ++p_hist;
     }
+    p_hist.Finish();
 
     unsigned int num_interpolated_bins(0);
     for (int i=1; i<=histogram.GetNbinsX(); ++i) {
@@ -386,9 +393,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
         }
       }
     }
-    sinfo << "LikelihoodProfiler::PlotHandler(...): Number of interpolated bins: " << num_interpolated_bins << endmsg;
-
-    p_hist.Finish();
+    sinfo << "LikelihoodProfiler::PlotHandler(...): Number of interpolated bins: " << num_interpolated_bins << " (" << static_cast<double>(num_interpolated_bins)/static_cast<double>(num_bins_x*num_bins_y)*100.0 << "%)" << endmsg;
 
     std::vector<double> stops_cl;
     std::vector<int> colours;
@@ -418,16 +423,17 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     // }
 
     // debug plot
-    // const Int_t NRGBs = 6;
-    // const Int_t NCont = 6;    
-    // Double_t stops[NRGBs] = { 0.00 , 0.50 , 2.00 , 4.50 , 8.00 , 12.5 };
-    // Double_t red[NRGBs]   = { 0.00 , 0.00 , 0.20 , 1.00 , 1.00 , 1.00 };
-    // Double_t green[NRGBs] = { 0.00 , 0.00 , 0.20 , 1.00 , 1.00 , 1.00 };
-    // Double_t blue[NRGBs]  = { 0.20 , 1.00 , 1.00 , 1.00 , 1.00 , 1.00 };
-    // TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
-    // gStyle->SetNumberContours(NCont);
-    // gStyle->SetPaintTextFormat(".1f");
-    // histogram.Draw("COLZ");
+    const Int_t NRGBs = 6;
+    const Int_t NCont = 6;    
+    Double_t stops[NRGBs] = { 0.00 , 0.50 , 2.00 , 4.50 , 8.00 , 12.5 };
+    Double_t red[NRGBs]   = { 0.00 , 0.00 , 0.20 , 1.00 , 1.00 , 1.00 };
+    Double_t green[NRGBs] = { 0.00 , 0.00 , 0.20 , 1.00 , 1.00 , 1.00 };
+    Double_t blue[NRGBs]  = { 0.20 , 1.00 , 1.00 , 1.00 , 1.00 , 1.00 };
+    TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+    gStyle->SetNumberContours(NCont);
+    gStyle->SetPaintTextFormat(".1f");
+    histogram_dbg.Draw("COLZ");
+    doocore::lutils::printPlot(&c, "profile_dbg", plot_path, true);
 
     // fancy plot
     gStyle->SetPalette(colours.size(), colours.data());

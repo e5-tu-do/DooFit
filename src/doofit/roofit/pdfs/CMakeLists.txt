@@ -1,11 +1,12 @@
 # --------------------------------------------------------------------------------------------------------------
-# Authors: Ulrich Eitschberger (RooBMixAsymDecay), Frank Meier (RooBCPGenUt), Julian Wishahi (BiasDelta),
+# Authors: Ulrich Eitschberger (RooBMixAsymDecay), Frank Meier (RooBCPGenUt, DooBkgTagAsymDecay), Julian Wishahi (BiasDelta),
 # Christophe Cauet (DooCubicSplineKnot, DooCubicSplinePdf, RectangularPdf)
 # 2014-05-16
 # ______________________________________________________________________________________________________________
 
 root_generate_dictionaries_local(dfPdfsDict
 BiasDelta.h
+DooBkgTagAsymDecay.h
 DooCubicSplineKnot.h
 DooCubicSplinePdf.h
 RectangularPdf.h
@@ -14,6 +15,7 @@ RooBMixAsymDecay.h)
 
 add_library(dfPdfs SHARED 
 BiasDelta.h BiasDelta.cxx BiasDelta_dict.h BiasDelta_dict.cc
+DooBkgTagAsymDecay.h DooBkgTagAsymDecay.cxx DooBkgTagAsymDecay_dict.h DooBkgTagAsymDecay_dict.cc
 DooCubicSplineKnot.h DooCubicSplineKnot.cxx DooCubicSplineKnot_dict.h DooCubicSplineKnot_dict.cc
 DooCubicSplinePdf.h DooCubicSplinePdf.cxx DooCubicSplinePdf_dict.h DooCubicSplinePdf_dict.cc
 RectangularPdf.h RectangularPdf.cxx RectangularPdf_dict.h RectangularPdf_dict.cc
@@ -28,6 +30,7 @@ add_dependencies(dfPdfs dfPdfsDict)
 install(TARGETS dfPdfs DESTINATION lib)
 install(FILES 
 BiasDelta.h
+DooBkgTagAsymDecay.h
 DooCubicSplineKnot.h
 DooCubicSplinePdf.h
 RectangularPdf.h
