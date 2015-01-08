@@ -13,6 +13,7 @@
 // from project
 #include "doofit/config/AbsConfig.h"
 #include "doofit/config/CommaSeparatedList.h"
+#include "doofit/config/CommaSeparatedPair.h"
 
 // forward declarations
 class TCanvas;
@@ -101,6 +102,25 @@ class PlotConfig : public config::AbsConfig {
    **/
   std::string plot_appendix() const { return plot_appendix_; }
 
+  /**
+   * @brief Getter for plotting of all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
+   **/
+  bool simultaneous_plot_all_categories() const { return simultaneous_plot_all_categories_; }
+
+  /**
+   * @brief Getter for plotting of each slice of a simultaneous PDF (i.e. all long, all tagged, etc.)
+   **/
+  bool simultaneous_plot_all_slices() const { return simultaneous_plot_all_slices_; }
+
+  /**
+   *  @brief Getter for x plot range (where applicable)
+   */
+  std::pair<double, double> plot_range_x() const { return std::make_pair(plot_range_x_.first(), plot_range_x_.second()); }
+
+  /**
+   *  @brief Getter for y plot range (where applicable)
+   */
+  std::pair<double, double> plot_range_y() const { return std::make_pair(plot_range_y_.first(), plot_range_y_.second()); }
   ///@}
 
   /** @name Setter functions
@@ -178,6 +198,25 @@ class PlotConfig : public config::AbsConfig {
    **/
   void set_plot_appendix(const std::string& plot_appendix) { plot_appendix_ = plot_appendix; }
 
+  /**
+   * @brief Setter for plotting of all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
+   **/
+  void set_simultaneous_plot_all_categories(bool simultaneous_plot_all_categories) { simultaneous_plot_all_categories_ = simultaneous_plot_all_categories; }
+
+  /**
+   * @brief Setter for plotting of each slice of a simultaneous PDF (i.e. all long, all tagged, etc.)
+   **/
+  void set_simultaneous_plot_all_slices(bool simultaneous_plot_all_slices) { simultaneous_plot_all_slices_ = simultaneous_plot_all_slices; }
+
+  /**
+   *  @brief Setter for x plot range (where applicable)
+   */
+  void set_plot_range_x(double min_x, double max_x) { plot_range_x_.set_first(min_x); plot_range_x_.set_second(max_x); } 
+
+  /**
+   *  @brief Setter for y plot range (where applicable)
+   */
+  void set_plot_range_y(double min_y, double max_y) { plot_range_y_.set_first(min_y); plot_range_y_.set_second(max_y); } 
   ///@}
   
   /** @name Stacked plotting support functions
@@ -271,6 +310,26 @@ class PlotConfig : public config::AbsConfig {
    *  @brief Appendix for stacked plot file name
    */
   std::string plot_appendix_;
+
+  /**
+   *  @brief Plot all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
+   */
+  bool simultaneous_plot_all_categories_;
+
+  /**
+   *  @brief Plot each slice of a simultaneous PDF (i.e. all long, all tagged, etc.)
+   */
+  bool simultaneous_plot_all_slices_;  
+
+  /**
+   *  @brief x plot range (where applicable)
+   */
+  config::CommaSeparatedPair<double> plot_range_x_;
+
+  /**
+   *  @brief y plot range (where applicable)
+   */
+  config::CommaSeparatedPair<double> plot_range_y_;
 
   ///@}
 };

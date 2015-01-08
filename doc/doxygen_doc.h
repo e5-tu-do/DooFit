@@ -251,7 +251,7 @@
  *   RooDataSet* data = tfac.Generate();
  *
  *   // fitting on the generated dataset is your responsibility
- *   RooFitResult* fit_result = my_workspace->pdf("mypdf")->fitTo(*data);
+ *   RooFitResult* fit_result = my_workspace->pdf("mypdf")->fitTo(*data, RooFit::Save(true));
  *
  *   // Store the fit result of the toy fit
  *   doofit::toy::ToyStudyStd tstudy(cfg_com, cfg_tstudy);

@@ -104,6 +104,11 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
       // debug
       // std::cout << "Coeff: " << coeff_type_ << " Range: B0barB0 : " << integral << std::endl;
     }
+    if (isTagInRange(tag_, 0, rangeName)){
+      integral += evaluate(cp_coeff_, coeff_type_, 0, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
+      // debug
+      // std::cout << "Coeff: " << coeff_type_ << " Range: B0barB0 : " << integral << std::endl;
+    }
     return integral;
   }
   else{
@@ -111,6 +116,7 @@ Double_t Coefficient::analyticalIntegral(Int_t code, const char* rangeName) cons
       double integral = 0.;
       if (hasTagState(tag_, +1)) integral += evaluate(cp_coeff_, coeff_type_, +1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
       if (hasTagState(tag_, -1)) integral += evaluate(cp_coeff_, coeff_type_, -1, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
+      if (hasTagState(tag_, 0)) integral += evaluate(cp_coeff_, coeff_type_, 0, eta_, avg_eta_, p0_, p1_, delta_p0_, delta_p1_, production_asym_, tag_sign_);
       // debug
       // std::cout << "Coeff: " << coeff_type_ << " : OS Integral : " << integral << std::endl;
       return integral;
@@ -165,10 +171,16 @@ std::pair<double, double> Coefficient::calibrate(double eta, double avg_eta, dou
     eta_cal_bbar = 0.5;
   }
   // if calibrated eta is smaller than 0 return 0
-  if (eta_cal < 0.0 || eta_cal_b < 0.0 || eta_cal_bbar < 0.0){
-    eta_cal_b    = 0.0;
-    eta_cal_bbar = 0.0;
-  }
+  if (eta_cal_b < 0.0)    eta_cal_b = 0;
+  if (eta_cal_bbar < 0.0) eta_cal_bbar = 0;
+
+  // the next few lines set every eta value (avg and high/low from asymmetries) to zero
+  // if only one of them is below zero. This seems to introduce a fit bias on our CP
+  // observables. (CC)
+  // if (eta_cal < 0.0 || eta_cal_b < 0.0 || eta_cal_bbar < 0.0){
+  //   eta_cal_b    = 0.0;
+  //   eta_cal_bbar = 0.0;
+  // }
   return std::make_pair(eta_cal_b, eta_cal_bbar);
 }
 
@@ -213,7 +225,12 @@ Double_t Coefficient::evaluate(double cp_coeff,
 
 bool Coefficient::isTagInRange(const RooCategoryProxy& tag, int tag_state, const char* rangeName) const 
 {
-  return dynamic_cast<const RooCategory&>(tag.arg()).isStateInRange(rangeName, tag.arg().lookupType(tag_state)->GetName());
+  if (tag.arg().lookupType(tag_state) == nullptr){
+    return false;
+  }
+  else{
+    return dynamic_cast<const RooCategory&>(tag.arg()).isStateInRange(rangeName, tag.arg().lookupType(tag_state)->GetName());
+  }
 }
 
 

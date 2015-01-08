@@ -9,10 +9,12 @@
 #ifndef __CINT__
 #include "doofit/config/AbsConfig.h"
 #include "doofit/config/CommaSeparatedPair.h"
+#include "doofit/config/CommaSeparatedList.h"
 #else
 // ROOT Cint hacks...
 #include "../../Config/AbsConfig.h"
 #include "../../Config/CommaSeparatedPair.h"
+#include "../../Config/CommaSeparatedList.h"
 #endif /* __CINT __ */
 
 // forward declarations
@@ -61,7 +63,7 @@ namespace toy {
      *
      *  @return current value of store_result_filename_treename_
      */
-    const config::CommaSeparatedPair& store_result_filename_treename() const {return store_result_filename_treename_;}
+    const config::CommaSeparatedPair<std::string>& store_result_filename_treename() const {return store_result_filename_treename_;}
     /**
      *  @brief Getter for fit result 1 branch name
      *
@@ -79,7 +81,7 @@ namespace toy {
      *
      *  @return current value of read_results_filename_treename_
      */
-    const std::vector<config::CommaSeparatedPair>& read_results_filename_treename() const {return read_results_filename_treename_;}
+    const std::vector<config::CommaSeparatedPair<std::string>>& read_results_filename_treename() const {return read_results_filename_treename_;}
     /**
      *  @brief Getter for plot directory for evaluation of fit results
      *
@@ -99,6 +101,18 @@ namespace toy {
      *  @return current value of fit_plot_on_quantile_window_
      */
     bool fit_plot_on_quantile_window() const {return fit_plot_on_quantile_window_;}
+    /**
+     *  @brief Getter for plotting pulls centred around mean of Gaussian fit
+     *
+     *  @return current value of plot_symmetric_around_mean_
+     */
+    bool plot_symmetric_around_mean() const {return plot_symmetric_around_mean_;}
+    /**
+     *  @brief Getter for plotting pulls on full range
+     *
+     *  @return current value of plot_on_full_range_
+     */
+    bool plot_on_full_range() const {return plot_on_full_range_;}
     /**
      *  @brief Getter for neglecting all toy fits where at least one parameter is at/near limit
      *
@@ -128,7 +142,54 @@ namespace toy {
      *
      *  @return current value of min_acceptable_cov_matrix_quality_
      */
-    int min_acceptable_cov_matrix_quality() const  { return min_acceptable_cov_matrix_quality_; }
+    int min_acceptable_cov_matrix_quality() const { return min_acceptable_cov_matrix_quality_; }
+
+    /**
+     *  @brief Getter for correlation scatter plots of values of parameters vs. their errors
+     *
+     *  @return current value of plot_parameter_vs_error_correlation_
+     */
+    bool plot_parameter_vs_error_correlation() const { return plot_parameter_vs_error_correlation_; }
+
+    /**
+     *  @brief Getter for reference toy analysis
+     *
+     *  This setting allows to perform a reference toy analysis. For each random 
+     *  seed two toy fits need to be stored with a different run id. Then for 
+     *  each parameter the residual between both results will also be evaluated 
+     *  and plotted. This allows for clever systematic studies.
+     *
+     *  @return current value of evaluate_reference_toys_
+     */
+    bool evaluate_reference_toys() const { return evaluate_reference_toys_; }
+
+    /**
+     *  @brief Getter for reference toy analysis base run id
+     *
+     *  When performing a reference toy analysis, this run id sets which toy 
+     *  study is to be regarded as study to evaluate (in order to take the 
+     *  correct difference of results).
+     *
+     *  @return current value of reference_toys_id_
+     */
+    int reference_toys_id() const { return reference_toys_id_; }
+
+    /**
+     *  @brief Getter for number of toys to read in
+     *
+     *  @return current value of num_toys_read_
+     */
+    int num_toys_read() const { return num_toys_read_; }
+
+    /**
+     *  @brief Getter for additional variables
+     *
+     *  @return current value of additional_variables_
+     */
+    const std::map<std::string, std::tuple<const RooFormulaVar*, const RooFormulaVar*, std::string>>& additional_variables() const {
+      return additional_variables_;
+    }
+
     ///@}
 
     /** @name Setter actual options
@@ -151,7 +212,7 @@ namespace toy {
      *
      *  @param result_file_tree new value for store_result_filename_treename_
      */
-    void set_store_result_filename_treename(const config::CommaSeparatedPair& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
+    void set_store_result_filename_treename(const config::CommaSeparatedPair<std::string>& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
     /**
      *  @brief Setter for fit result 1 branch name
      *
@@ -176,7 +237,7 @@ namespace toy {
      *
      *  @param result_file_tree new value for store_result_filename_treename_ as comma-separated string "pattern,treename"
      */
-    void set_read_results_filename_treename_pattern(const config::CommaSeparatedPair& read_results_filename_treename_pattern) {read_results_filename_treename_pattern_ = read_results_filename_treename_pattern;}
+    void set_read_results_filename_treename_pattern(const config::CommaSeparatedPair<std::string>& read_results_filename_treename_pattern) {read_results_filename_treename_pattern_ = read_results_filename_treename_pattern;}
     /**
      *  @brief Setter for file names and tree names to read fit result from
      *
@@ -186,7 +247,7 @@ namespace toy {
      *
      *  @param result_file_tree new value for read_results_filename_treename_
      */
-    void set_read_results_filename_treename(const std::vector<config::CommaSeparatedPair>& results_file_tree) {read_results_filename_treename_ = results_file_tree;}
+    void set_read_results_filename_treename(const std::vector<config::CommaSeparatedPair<std::string>>& results_file_tree) {read_results_filename_treename_ = results_file_tree;}
     /**
      *  @brief Setter for one file and tree to read fit result from
      *
@@ -196,8 +257,8 @@ namespace toy {
      *
      *  @param result_file_tree file and tree name to read
      */
-    void set_read_results_filename_treename(config::CommaSeparatedPair results_file_tree) {
-      read_results_filename_treename_ = std::vector<config::CommaSeparatedPair>();
+    void set_read_results_filename_treename(config::CommaSeparatedPair<std::string> results_file_tree) {
+      read_results_filename_treename_ = std::vector<config::CommaSeparatedPair<std::string>>();
       read_results_filename_treename_.push_back(results_file_tree);
     }
     /**
@@ -225,6 +286,18 @@ namespace toy {
      *  @param fit_plot_on_quantile_window new value for fit_plot_on_quantile_window_
      */
     void set_fit_plot_on_quantile_window(bool& fit_plot_on_quantile_window) {fit_plot_on_quantile_window_ = fit_plot_on_quantile_window;}
+    /**
+     *  @brief Setter for plotting pulls on centered window around mean of Gaussian fit
+     *
+     *  @param plot_symmetric_around_mean new value for plot_symmetric_around_mean_
+     */
+    void set_plot_symmetric_around_mean(bool& plot_symmetric_around_mean) {plot_symmetric_around_mean_ = plot_symmetric_around_mean;}
+    /**
+     *  @brief Setter for plotting pulls on full range
+     *
+     *  @param plot_on_full_range new value for plot_on_full_range_
+     */
+    void set_plot_on_full_range(bool& plot_on_full_range) {plot_on_full_range_ = plot_on_full_range;}
     /**
      *  @brief Setter for neglecting all toy fits where at least one parameter is at/near limit
      *
@@ -263,11 +336,72 @@ namespace toy {
     void set_min_acceptable_cov_matrix_quality(int min_acceptable_cov_matrix_quality) {min_acceptable_cov_matrix_quality_ = min_acceptable_cov_matrix_quality;}
     
     /**
+     *  @brief Setter for correlation scatter plots of values of parameters vs. their errors
+     *
+     *  @param plot_parameter_vs_error_correlation new value for plot_parameter_vs_error_correlation_
+     */
+    void set_plot_parameter_vs_error_correlation(bool plot_parameter_vs_error_correlation) {plot_parameter_vs_error_correlation_ = plot_parameter_vs_error_correlation;}
+
+    /**
+     *  @brief Setter for reference toy analysis
+     *
+     *  This setting allows to perform a reference toy analysis. For each random 
+     *  seed two toy fits need to be stored with a different run id. Then for 
+     *  each parameter the residual between both results will also be evaluated 
+     *  and plotted. This allows for clever systematic studies.
+     *
+     *  @param evaluate_reference_toys new value for evaluate_reference_toys_
+     */
+    void set_evaluate_reference_toys(bool evaluate_reference_toys) {evaluate_reference_toys_ = evaluate_reference_toys;}
+
+    /**
+     *  @brief Setter for reference toy analysis base run id
+     *
+     *  When performing a reference toy analysis, this run id sets which toy 
+     *  study is to be regarded as study to evaluate (in order to take the 
+     *  correct difference of results).
+     *
+     *  @param reference_toys_id new value for reference_toys_id_
+     */
+    void set_evaluate_reference_toys(int reference_toys_id) {reference_toys_id_ = reference_toys_id;}
+
+    /**
+     *  @brief Setter for number of toys to read in
+     *
+     *  @param num_toys_read new value for num_toys_read_ (set to -1 for all toys)
+     */
+    void set_num_toys_read(int num_toys_read) {num_toys_read_ = num_toys_read;}
+
+    /**
+     *  @brief Add an additional formula/variable for evaluation in toys.
+     *
+     *  Additional variables that depend on the toy fit parameters can be added 
+     *  for evaluation. formula_var describes how to calculate the new variable.
+     *  Parameters of the fit are matched by name. formula_err describes how to
+     *  determine the error on the variable. It can contain the same dependents 
+     *  and additionally dependents with a "_err" postfix (e.g. "par_time_tau" 
+     *  and "par_time_tau_err") that will be matched to the error of the 
+     *  according parameter of the fit.
+     *
+     *  @param formula_var formula describing the variable
+     *  @param formula_err formula describing the error propagation
+     *  @param title pretty title for additional variable
+     */
+    void AddAdditionalVariable(const RooFormulaVar* formula_var, const RooFormulaVar* formula_err, std::string title); 
+
+    /**
      *  @brief Adder for file names and tree names to read fit result from
      *
      *  @param result_file_tree new file and tree name to add to read_results_filename_treename_
      */
-    void AddReadResultsFilenameTreename(const config::CommaSeparatedPair& result_file_tree) {read_results_filename_treename_.push_back(result_file_tree);}
+    void AddReadResultsFilenameTreename(const config::CommaSeparatedPair<std::string>& result_file_tree) {read_results_filename_treename_.push_back(result_file_tree);}
+    
+    /**
+     *  @brief Getter for parameters that MINOS was run on
+     *
+     *  @return current value of minos_parameters_
+     */
+    const config::CommaSeparatedList<std::string>& minos_parameters() const {return minos_parameters_;}
     ///@}
     
    protected:
@@ -320,7 +454,7 @@ namespace toy {
      *
      *  @see ToyStudyStdConfig::set_store_result_filename_treename()
      */
-    config::CommaSeparatedPair store_result_filename_treename_;
+    config::CommaSeparatedPair<std::string> store_result_filename_treename_;
     /**
      *  @brief Fit result 1 branch name
      *
@@ -336,7 +470,7 @@ namespace toy {
     /**
      *  @brief File names and tree names to read fit result from
      */
-    std::vector<config::CommaSeparatedPair> read_results_filename_treename_;
+    std::vector<config::CommaSeparatedPair<std::string>> read_results_filename_treename_;
     /**
      *  @brief File name pattern and tree name to read fit result from
      *
@@ -345,7 +479,7 @@ namespace toy {
      *
      *  @see ToyStudyStdConfig::set_read_results_filename_treename_pattern()
      */
-    config::CommaSeparatedPair read_results_filename_treename_pattern_;
+    config::CommaSeparatedPair<std::string> read_results_filename_treename_pattern_;
     /**
      *  @brief Plot directory for evaluation of fit results
      */
@@ -358,6 +492,14 @@ namespace toy {
      *  @brief Fit and plot pulls on a sensible quantile based window instead of full range (neglect outliers)
      */
     bool fit_plot_on_quantile_window_;
+    /**
+     *  @brief Plot pulls on a centered window around the mean of the Gaussian fit
+     */
+    bool plot_symmetric_around_mean_;
+    /**
+     *  @brief Plot pulls on full range (including all outliers)
+     */
+    bool plot_on_full_range_;
     /**
      *  @brief Neglect all toy fits where at least one parameter is at/near limit
      */
@@ -375,7 +517,38 @@ namespace toy {
      *  @brief Minimum acceptable covariance matrix quality for fit results
      */
     int min_acceptable_cov_matrix_quality_;
+
+    /**
+     *  @brief Plot correlation scatter plot of value of parameter vs. its error
+     */
+    bool plot_parameter_vs_error_correlation_;
+
+    /**
+     *  @brief Do reference toy analysis
+     */
+    bool evaluate_reference_toys_;    
+
+    /**
+     *  @brief Reference toy analysis run id
+     */
+    int reference_toys_id_;    
+
+    /**
+     *  @brief Number of toys to read in
+     */
+    int num_toys_read_;
+    
+    /**
+     *  @brief List of parameters that MINOS was run on
+     */
+    config::CommaSeparatedList<std::string> minos_parameters_;
+
+    /**
+     *  @brief Additional variables to evaluate in toys
+     */
+    std::map<std::string, std::tuple<const RooFormulaVar*,const RooFormulaVar*, std::string>> additional_variables_;
     ///@}
+
   };
 } // namespace toy
 } // namespace doofit
