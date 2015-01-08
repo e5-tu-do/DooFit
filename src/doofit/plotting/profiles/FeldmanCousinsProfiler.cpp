@@ -66,21 +66,30 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
 
   FitResultContainer fit_result_container(toy_study.GetFitResult());
   const RooFitResult* fit_result(std::get<0>(fit_result_container));
+
+  unsigned int num_ignored(0);
   while (fit_result != nullptr) { 
-    
-    std::vector<double> scan_vals;
-    for (auto var : scan_vars_) {
-      RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->constPars().find(var->GetName()));
-      scan_vals.push_back(var_fixed->getVal());
+    if (FitResultOkay(*fit_result)) {
+      std::vector<double> scan_vals;
+      for (auto var : scan_vars_) {
+        RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->constPars().find(var->GetName()));
+        scan_vals.push_back(var_fixed->getVal());
+      }
+      delta_nlls_data_scan_[scan_vals] = fit_result->minNll()-nll_data_nominal_;
+      // sdebug << "scan_vals = " << scan_vals << endmsg;
+      // sdebug << "delta_nll = " << delta_nlls_data_scan_[scan_vals] << endmsg;
+    } else {
+      ++num_ignored;
     }
-    delta_nlls_data_scan_[scan_vals] = fit_result->minNll()-nll_data_nominal_;
-    // sdebug << "scan_vals = " << scan_vals << endmsg;
-    // sdebug << "delta_nll = " << delta_nlls_data_scan_[scan_vals] << endmsg;
 
     toy_study.ReleaseFitResult(fit_result_container);
 
     fit_result_container = toy_study.GetFitResult();
     fit_result = std::get<0>(fit_result_container);
+  }
+
+  if (num_ignored > 0) {
+    swarn << "Ignored " << num_ignored << " data scan results due to bad fit quality." << endmsg;
   }
 }
 
@@ -88,36 +97,46 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
   using namespace doofit::toy;
   using namespace doocore::io;
 
+  unsigned int num_ignored(0);
+
   FitResultContainer fit_result_container(toy_study.GetFitResult());
   const RooFitResult* fit_result_0(std::get<0>(fit_result_container));
   const RooFitResult* fit_result_1(std::get<1>(fit_result_container));
   // TODO: Warn if fit_result_0 valid, but fit_result_1 not!
   while (fit_result_0 != nullptr) { 
-    
     if (fit_result_1 == nullptr) {
       swarn << "Only one fit result stored, expected a pair. The result tree might be broken!" << endmsg;
     } else {
-      std::vector<double> scan_vals;
-      for (auto var : scan_vars_) {
-        RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result_1->constPars().find(var->GetName()));
-        scan_vals.push_back(var_fixed->getVal());
-      }
-      double delta_nll(fit_result_1->minNll() - fit_result_0->minNll());
-      if (delta_nlls_toy_scan_.count(scan_vals) > 0) {
-        delta_nlls_toy_scan_[scan_vals].push_back(delta_nll);
+
+      if (FitResultOkay(*fit_result_0) && FitResultOkay(*fit_result_1)) {
+        std::vector<double> scan_vals;
+        for (auto var : scan_vars_) {
+          RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result_1->constPars().find(var->GetName()));
+          scan_vals.push_back(var_fixed->getVal());
+        }
+        double delta_nll(fit_result_1->minNll() - fit_result_0->minNll());
+        if (delta_nlls_toy_scan_.count(scan_vals) > 0) {
+          delta_nlls_toy_scan_[scan_vals].push_back(delta_nll);
+        } else {
+          std::vector<double> vector;
+          vector.push_back(delta_nll);
+          delta_nlls_toy_scan_[scan_vals] = vector;
+        }
+        // sdebug << "scan_vals = " << scan_vals << endmsg;
+        // sdebug << "delta_nll = " << delta_nll << endmsg;
       } else {
-        std::vector<double> vector;
-        vector.push_back(delta_nll);
-        delta_nlls_toy_scan_[scan_vals] = vector;
+        ++num_ignored;
       }
-      // sdebug << "scan_vals = " << scan_vals << endmsg;
-      // sdebug << "delta_nll = " << delta_nll << endmsg;
     }
     toy_study.ReleaseFitResult(fit_result_container);
 
     fit_result_container = toy_study.GetFitResult();
     fit_result_0 = std::get<0>(fit_result_container);
     fit_result_1 = std::get<1>(fit_result_container);
+  }
+
+  if (num_ignored > 0) {
+    swarn << "Ignored " << num_ignored << " toy scan results due to bad fit quality." << endmsg;
   }
 }
 
@@ -352,9 +371,18 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     std::pair<double, double> cl_2sigma(FindGraphXValues(graph, xmin, xmax, level_2sigma), FindGraphXValues(graph, xmin, xmax, level_2sigma, -1.0));
     std::pair<double, double> cl_3sigma(FindGraphXValues(graph, xmin, xmax, level_3sigma), FindGraphXValues(graph, xmin, xmax, level_3sigma, -1.0));
 
-    sinfo << "1 sigma interval: [" << cl_1sigma.first << ", " << cl_1sigma.second << "]" << endmsg;
-    sinfo << "2 sigma interval: [" << cl_2sigma.first << ", " << cl_2sigma.second << "]" << endmsg;
-    sinfo << "3 sigma interval: [" << cl_3sigma.first << ", " << cl_3sigma.second << "]" << endmsg;
+    sinfo << "1 sigma interval (FC): [" << cl_1sigma.first << ", " << cl_1sigma.second << "]" << endmsg;
+    sinfo << "2 sigma interval (FC): [" << cl_2sigma.first << ", " << cl_2sigma.second << "]" << endmsg;
+    sinfo << "3 sigma interval (FC): [" << cl_3sigma.first << ", " << cl_3sigma.second << "]" << endmsg;
+
+    std::pair<double, double> cl_1sigma_wilks(FindGraphXValues(graph_wilks, xmin, xmax, level_1sigma), FindGraphXValues(graph_wilks, xmin, xmax, level_1sigma, -1.0));
+    std::pair<double, double> cl_2sigma_wilks(FindGraphXValues(graph_wilks, xmin, xmax, level_2sigma), FindGraphXValues(graph_wilks, xmin, xmax, level_2sigma, -1.0));
+    std::pair<double, double> cl_3sigma_wilks(FindGraphXValues(graph_wilks, xmin, xmax, level_3sigma), FindGraphXValues(graph_wilks, xmin, xmax, level_3sigma, -1.0));
+
+    sinfo << "1 sigma interval (Wilks): [" << cl_1sigma_wilks.first << ", " << cl_1sigma_wilks.second << "]" << endmsg;
+    sinfo << "2 sigma interval (Wilks): [" << cl_2sigma_wilks.first << ", " << cl_2sigma_wilks.second << "]" << endmsg;
+    sinfo << "3 sigma interval (Wilks): [" << cl_3sigma_wilks.first << ", " << cl_3sigma_wilks.second << "]" << endmsg;
+
 
     TLine line_1sigma(x_lo, level_1sigma, x_hi, level_1sigma);
     line_1sigma.SetLineColor(kRed-8);
