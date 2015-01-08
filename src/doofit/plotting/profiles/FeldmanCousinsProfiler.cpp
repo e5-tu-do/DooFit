@@ -13,6 +13,7 @@
 #include "TStyle.h"
 #include "TColor.h"
 #include "TLine.h"
+#include "TMath.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -133,26 +134,27 @@ bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const Roo
   }
 }
 
-double doofit::plotting::profiles::FeldmanCousinsProfiler::FindGraphXValues(TGraph& graph, double value, double direction) const {
+double doofit::plotting::profiles::FeldmanCousinsProfiler::FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction) const {
   using namespace doocore::io;
   TAxis* xaxis = graph.GetXaxis();
 
-  double x_lo(xaxis->GetXmin());
-  double x_hi(xaxis->GetXmax());
+  double x_lo(xmin);
+  double x_hi(xmax);
 
-  double x_start(xaxis->GetXmin());
-  double x_end(xaxis->GetXmax());
+  double x_start(xmin);
+  double x_end(xmax);
   if (direction < 0.0) {
-    x_start = xaxis->GetXmax();
-    x_end = xaxis->GetXmin();
+    x_start = xmax;
+    x_end = xmin;
   }
 
   // sdebug << (x_end - x_start)/100.0 << endmsg;
-  // sdebug << x_start*direction << endmsg;
-  // sdebug << x_end*direction << endmsg;
+  // sdebug << x_start << endmsg;
+  // sdebug << x_end << endmsg;
+  // sdebug << value << endmsg;
 
-  for (double x=x_start; x*direction<x_end*direction; x+=(x_end - x_start)/300.0) {
-    double y(graph.Eval(x, nullptr, "S"));
+  for (double x=x_start; x*direction<x_end*direction; x+=(x_end - x_start)/100.0) {
+    double y(graph.Eval(x, nullptr, ""));
     // sdebug << "x = " << x << ", y = " << y << endmsg;
 
     if (y < value) {
@@ -163,19 +165,19 @@ double doofit::plotting::profiles::FeldmanCousinsProfiler::FindGraphXValues(TGra
     }
   }
 
-  double eps(1e-5);
+  double eps(1e-6);
   double x_test, y;
-  unsigned int num_it(0);
-  while (std::abs(x_hi-x_lo) > eps && num_it < 1000000) {
+  while (std::abs(x_hi-x_lo) > eps) {
     x_test = (x_lo+x_hi)/2.0;
-    y = graph.Eval(x_test, nullptr, "S");
+    y = graph.Eval(x_test, nullptr, "");
     
+    // sdebug << "it:  " << x_lo << " - " << x_hi << endmsg;
+
     if (y < value) {
       x_lo = x_test;
     } else if (y > value) {
       x_hi = x_test;
     }
-    ++num_it;
   }
 
   // sdebug << "after:  " << x_lo << " - " << x_hi << endmsg;
@@ -191,6 +193,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
   std::vector<double> vals_y;
   std::vector<double> cls;
   std::vector<double> cl_errors;
+  std::vector<double> cls_wilks;
 
   std::map<std::string, double> min_scan_val;
   std::map<std::string, double> max_scan_val;
@@ -230,10 +233,18 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
 
     if (cl == 0.0) {
       swarn << "Scan point " << delta_nll_data.first << " has too little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
-    }
-    if (cl_error > 0.02 || num_toys_exceed < 10) {
+    } else if (cl_error > 0.02 || num_toys_exceed < 10) {
       swarn << "Scan point " << delta_nll_data.first << " has little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
     }
+
+    double cl_wilks(TMath::Prob(2*delta_nll_data.second, delta_nll_data.first.size()));
+    // infinitesimal small DeltaChi2 can become < 0.0, that is the case for the best estimate
+    // set cl_wilks to 1.0 here
+    if (delta_nll_data.second < 0.0 && std::abs(delta_nll_data.second) < 1e-4) {
+      cl_wilks = 1.0;
+    }
+    cls_wilks.push_back(cl_wilks);
+    // sdebug << "x = " << delta_nll_data.first << ", DeltaChi2 = " << delta_nll_data.second << " , 1-CL(Wilk's Theorem) = " << cls_wilks.back() << ", 1-CL(FC) = " << cl << endmsg;
 
     // sdebug << "       scan_val = " << delta_nll_data.first << endmsg;
     // sdebug << "       num_toys = " << num_toys << endmsg;
@@ -266,7 +277,6 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
         values.emplace(std::make_pair(vals_x[i], std::make_pair(cls[i], cl_errors[i])));
       }
     }
-
     std::vector<double> vals_x_sort, cls_sort, cl_errors_sort;
     vals_x_sort.reserve(values.size());
     cls_sort.reserve(values.size());
@@ -277,7 +287,22 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
       cl_errors_sort.push_back(value.second.second);
     }
 
+    std::map<double, double> values_wilks;
+    for (unsigned int i=0; i<cls_wilks.size(); ++i) {
+      if (cls_wilks[i] != 0.0) {
+        values_wilks.emplace(std::make_pair(vals_x[i], cls_wilks[i]));
+      }
+    }
+    std::vector<double> vals_x_wilks_sort, cls_wilks_sort;
+    vals_x_wilks_sort.reserve(values_wilks.size());
+    cls_wilks_sort.reserve(values_wilks.size());
+    for (auto value : values_wilks) {
+      vals_x_wilks_sort.push_back(value.first);
+      cls_wilks_sort.push_back(value.second);
+    }
+
     TGraphErrors graph(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
+    TGraph graph_wilks(cls_wilks_sort.size(), &vals_x_wilks_sort[0], &cls_wilks_sort[0]);
 
     if (cls.size() < 200) {
       graph.Draw("APL");
@@ -285,11 +310,20 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
       graph.SetMarkerSize(1);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
+      graph_wilks.Draw("PL");
+      graph_wilks.SetMarkerStyle(7);
+      graph_wilks.SetMarkerSize(1);
+      // graph_wilks.SetMarkerColor(kBlue+3);
+      // graph_wilks.SetLineColor(kBlue+3);
     } else {
       graph.Draw("APL");
       graph.SetMarkerStyle(1);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
+      graph_wilks.Draw("PL");
+      graph_wilks.SetMarkerStyle(1);
+      // graph_wilks.SetMarkerColor(kBlue+3);
+      // graph_wilks.SetLineColor(kBlue+3);
     }
     
     // double x_range = max_scan_val[val_scan.begin()->first] - min_scan_val[val_scan.begin()->first];
@@ -311,9 +345,12 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     double level_2sigma(1-0.954500);
     double level_3sigma(1-0.997300);
 
-    std::pair<double, double> cl_1sigma(FindGraphXValues(graph, level_1sigma), FindGraphXValues(graph, level_1sigma, -1.0));
-    std::pair<double, double> cl_2sigma(FindGraphXValues(graph, level_2sigma), FindGraphXValues(graph, level_2sigma, -1.0));
-    std::pair<double, double> cl_3sigma(FindGraphXValues(graph, level_3sigma), FindGraphXValues(graph, level_3sigma, -1.0));
+    double xmin(vals_x_sort.front());
+    double xmax(vals_x_sort.back());
+
+    std::pair<double, double> cl_1sigma(FindGraphXValues(graph, xmin, xmax, level_1sigma), FindGraphXValues(graph, xmin, xmax, level_1sigma, -1.0));
+    std::pair<double, double> cl_2sigma(FindGraphXValues(graph, xmin, xmax, level_2sigma), FindGraphXValues(graph, xmin, xmax, level_2sigma, -1.0));
+    std::pair<double, double> cl_3sigma(FindGraphXValues(graph, xmin, xmax, level_3sigma), FindGraphXValues(graph, xmin, xmax, level_3sigma, -1.0));
 
     sinfo << "1 sigma interval: [" << cl_1sigma.first << ", " << cl_1sigma.second << "]" << endmsg;
     sinfo << "2 sigma interval: [" << cl_2sigma.first << ", " << cl_2sigma.second << "]" << endmsg;

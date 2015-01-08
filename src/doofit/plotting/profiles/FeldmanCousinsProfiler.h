@@ -113,7 +113,7 @@ class FeldmanCousinsProfiler {
    */
   bool FitResultOkay(const RooFitResult& fit_result) const;
 
-  double FindGraphXValues(TGraph& graph, double value, double direction=+1.0) const;
+  double FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction=+1.0) const;
 
  private:
   /**
