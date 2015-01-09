@@ -22,6 +22,7 @@
 #include <doocore/io/MsgStream.h>
 #include <doocore/io/Progress.h>
 #include <doocore/lutils/lutils.h>
+#include <doocore/io/Tools.h>
 
 // from DooFit
 #include "doofit/plotting/Plot/PlotConfig.h"
@@ -30,7 +31,8 @@
 
 doofit::plotting::profiles::FeldmanCousinsProfiler::FeldmanCousinsProfiler(const PlotConfig& cfg_plot)
 : config_plot_(cfg_plot),
-  num_samples_(30)
+  num_samples_(30),
+  time_total_(0.0)
 {}
 
 void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultDataNominal(doofit::toy::ToyStudyStd& toy_study) {
@@ -40,6 +42,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultDataNomina
   FitResultContainer fit_result_container(toy_study.GetFitResult());
   const RooFitResult* fit_result(std::get<0>(fit_result_container));
   
+  time_total_ += std::get<2>(fit_result_container);
+
   for (auto var : scan_vars_) {
     RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->floatParsFinal().find(var->GetName()));
     if (var_fixed == nullptr) {
@@ -69,6 +73,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
 
   unsigned int num_ignored(0);
   while (fit_result != nullptr) { 
+    time_total_ += std::get<2>(fit_result_container);
+
     if (FitResultOkay(*fit_result)) {
       std::vector<double> scan_vals;
       for (auto var : scan_vars_) {
@@ -107,6 +113,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
     if (fit_result_1 == nullptr) {
       swarn << "Only one fit result stored, expected a pair. The result tree might be broken!" << endmsg;
     } else {
+      time_total_ += std::get<2>(fit_result_container);
+      time_total_ += std::get<3>(fit_result_container);
 
       if (FitResultOkay(*fit_result_0) && FitResultOkay(*fit_result_1)) {
         std::vector<double> scan_vals;
@@ -405,6 +413,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
 
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "fc", plot_path);
+
+    sinfo << "Total time spent for all Feldman-Cousins fits: " << doocore::io::tools::SecondsToTimeString(time_total_) << endmsg;
   }
 
   // std::map<std::string, std::vector<double>> val_scan;

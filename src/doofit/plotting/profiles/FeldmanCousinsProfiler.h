@@ -130,6 +130,8 @@ class FeldmanCousinsProfiler {
   std::map<std::vector<double>, std::vector<double>> delta_nlls_toy_scan_;
 
   unsigned int num_samples_;
+
+  double time_total_;
 };
 
 } // namespace profiles
