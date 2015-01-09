@@ -82,7 +82,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
         scan_vals.push_back(var_fixed->getVal());
       }
       delta_nlls_data_scan_[scan_vals] = fit_result->minNll()-nll_data_nominal_;
-      scan_vals_data_.push_back(scan_vals);
+      scan_vals_data_.insert(scan_vals);
       // sdebug << "scan_vals = " << scan_vals << endmsg;
       // sdebug << "delta_nll = " << delta_nlls_data_scan_[scan_vals] << endmsg;
     } else {
@@ -133,7 +133,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
           vector.push_back(delta_nll);
           delta_nlls_toy_scan_[scan_vals] = vector;
         }
-        scan_vals_toy_.push_back(scan_vals);
+        scan_vals_toy_.insert(scan_vals);
         // sdebug << "scan_vals = " << scan_vals << endmsg;
         // sdebug << "delta_nll = " << delta_nll << endmsg;
       } else {
@@ -151,7 +151,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
     swarn << "Ignored " << num_ignored << " toy scan results due to bad fit quality." << endmsg;
   }
 
-  sinfo << "Scanned toy scan points: " << scan_vals_data_ << endmsg;
+  sinfo << "Scanned toy scan points: " << scan_vals_toy_ << endmsg;
 }
 
 bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const RooFitResult& fit_result) const {

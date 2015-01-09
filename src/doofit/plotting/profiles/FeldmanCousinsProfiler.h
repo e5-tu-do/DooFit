@@ -127,9 +127,9 @@ class FeldmanCousinsProfiler {
 
   double nll_data_nominal_;
   std::map<std::vector<double>, double> delta_nlls_data_scan_;
-  std::vector<std::vector<double>> scan_vals_data_;
+  std::set<std::vector<double>> scan_vals_data_;
   std::map<std::vector<double>, std::vector<double>> delta_nlls_toy_scan_;
-  std::vector<std::vector<double>> scan_vals_toy_;
+  std::set<std::vector<double>> scan_vals_toy_;
 
   unsigned int num_samples_;
 
