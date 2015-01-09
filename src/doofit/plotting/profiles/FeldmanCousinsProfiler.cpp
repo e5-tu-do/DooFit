@@ -82,6 +82,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
         scan_vals.push_back(var_fixed->getVal());
       }
       delta_nlls_data_scan_[scan_vals] = fit_result->minNll()-nll_data_nominal_;
+      scan_vals_data_.push_back(scan_vals);
       // sdebug << "scan_vals = " << scan_vals << endmsg;
       // sdebug << "delta_nll = " << delta_nlls_data_scan_[scan_vals] << endmsg;
     } else {
@@ -97,6 +98,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
   if (num_ignored > 0) {
     swarn << "Ignored " << num_ignored << " data scan results due to bad fit quality." << endmsg;
   }
+
+  sinfo << "Available data scan points: " << scan_vals_data_ << endmsg;
 }
 
 void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofit::toy::ToyStudyStd& toy_study) {
@@ -130,6 +133,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
           vector.push_back(delta_nll);
           delta_nlls_toy_scan_[scan_vals] = vector;
         }
+        scan_vals_toy_.push_back(scan_vals);
         // sdebug << "scan_vals = " << scan_vals << endmsg;
         // sdebug << "delta_nll = " << delta_nll << endmsg;
       } else {
@@ -146,6 +150,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
   if (num_ignored > 0) {
     swarn << "Ignored " << num_ignored << " toy scan results due to bad fit quality." << endmsg;
   }
+
+  sinfo << "Scanned toy scan points: " << scan_vals_data_ << endmsg;
 }
 
 bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const RooFitResult& fit_result) const {
@@ -414,7 +420,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "fc", plot_path);
 
-    sinfo << "Total time spent for all Feldman-Cousins fits: " << doocore::io::tools::SecondsToTimeString(time_total_) << endmsg;
+    sinfo << "Total time spent for all Feldman-Cousins fits (d:hh:mm:ss): " << doocore::io::tools::SecondsToTimeString(time_total_) << endmsg;
   }
 
   // std::map<std::string, std::vector<double>> val_scan;
