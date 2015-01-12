@@ -310,13 +310,17 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
         values.emplace(std::make_pair(vals_x[i], std::make_pair(cls[i], cl_errors[i])));
       }
     }
-    std::vector<double> vals_x_sort, cls_sort, cl_errors_sort;
+    std::vector<double> vals_x_sort, cls_sort, cl_errors_sort, cls_sort_lower, cls_sort_upper;
     vals_x_sort.reserve(values.size());
     cls_sort.reserve(values.size());
+    cls_sort_lower.reserve(values.size());
+    cls_sort_upper.reserve(values.size());
     cl_errors_sort.reserve(values.size());
     for (auto value : values) {
       vals_x_sort.push_back(value.first);
       cls_sort.push_back(value.second.first);
+      cls_sort_lower.push_back(value.second.first - value.second.second);
+      cls_sort_upper.push_back(value.second.first + value.second.second);
       cl_errors_sort.push_back(value.second.second);
     }
 
@@ -337,24 +341,32 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     TGraphErrors graph(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
     TGraph graph_wilks(cls_wilks_sort.size(), &vals_x_wilks_sort[0], &cls_wilks_sort[0]);
 
+    TGraph graph_lower(cls_sort.size(), &vals_x_sort[0], &cls_sort_lower[0]);
+    TGraph graph_upper(cls_sort.size(), &vals_x_sort[0], &cls_sort_upper[0]);
+
     if (cls.size() < 200) {
-      graph.Draw("APL");
+      graph_wilks.Draw("APL");
+      graph_wilks.SetMarkerStyle(7);
+      graph_wilks.SetMarkerSize(1);
+      graph.Draw("PL");
       graph.SetMarkerStyle(2);
       graph.SetMarkerSize(1);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
-      graph_wilks.Draw("PL");
-      graph_wilks.SetMarkerStyle(7);
-      graph_wilks.SetMarkerSize(1);
+
+      graph_lower.Draw("L");
+      graph_upper.Draw("L");
+
       // graph_wilks.SetMarkerColor(kBlue+3);
       // graph_wilks.SetLineColor(kBlue+3);
     } else {
-      graph.Draw("APL");
+      graph_wilks.Draw("APL");
+      graph_wilks.SetMarkerStyle(1);
+      graph.Draw("PL");
       graph.SetMarkerStyle(1);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
-      graph_wilks.Draw("PL");
-      graph_wilks.SetMarkerStyle(1);
+      
       // graph_wilks.SetMarkerColor(kBlue+3);
       // graph_wilks.SetLineColor(kBlue+3);
     }
@@ -365,11 +377,11 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     // double x_range_hi = max_scan_val[val_scan.begin()->first] + x_range*0.1;
 
     // graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
-    graph.GetYaxis()->SetRangeUser(1e-3, 1.01);
-    graph.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
-    graph.GetYaxis()->SetTitle("1 #minus CL");
+    graph_wilks.GetYaxis()->SetRangeUser(1e-3, 1.01);
+    graph_wilks.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
+    graph_wilks.GetYaxis()->SetTitle("1 #minus CL");
 
-    TAxis* xaxis = graph.GetXaxis();
+    TAxis* xaxis = graph_wilks.GetXaxis();
 
     double x_lo(xaxis->GetXmin());
     double x_hi(xaxis->GetXmax());
