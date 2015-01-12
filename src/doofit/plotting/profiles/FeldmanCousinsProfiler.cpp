@@ -354,15 +354,20 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     }
 
     TGraphErrors graph(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
+    TGraphErrors graph_errband(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
     TGraph graph_wilks(cls_wilks_sort.size(), &vals_x_wilks_sort[0], &cls_wilks_sort[0]);
 
     TGraph graph_lower(cls_sort.size(), &vals_x_sort[0], &cls_sort_lower[0]);
     TGraph graph_upper(cls_sort.size(), &vals_x_sort[0], &cls_sort_upper[0]);
 
-    if (cls.size() < 200) {
-      graph_wilks.Draw("APL");
+    if (cls.size() < 400) {
+      graph_errband.SetFillColor(kBlue-8);
+      graph_errband.Draw("A3");
+
+      graph_wilks.Draw("PL");
       graph_wilks.SetMarkerStyle(7);
       graph_wilks.SetMarkerSize(1);
+
       graph.Draw("PL");
       graph.SetMarkerStyle(2);
       graph.SetMarkerSize(1);
@@ -392,11 +397,11 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     // double x_range_hi = max_scan_val[val_scan.begin()->first] + x_range*0.1;
 
     // graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
-    graph_wilks.GetYaxis()->SetRangeUser(1e-3, 1.01);
-    graph_wilks.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
-    graph_wilks.GetYaxis()->SetTitle("1 #minus CL");
+    graph_errband.GetYaxis()->SetRangeUser(1e-3, 1.01);
+    graph_errband.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
+    graph_errband.GetYaxis()->SetTitle("1 #minus CL");
 
-    TAxis* xaxis = graph_wilks.GetXaxis();
+    TAxis* xaxis = graph_errband.GetXaxis();
 
     double x_lo(xaxis->GetXmin());
     double x_hi(xaxis->GetXmax());
