@@ -398,8 +398,10 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     // double x_range_lo = min_scan_val[val_scan.begin()->first] - x_range*0.1;
     // double x_range_hi = max_scan_val[val_scan.begin()->first] + x_range*0.1;
 
+    auto min_cl_it = std::min_element(cls_sort_lower.begin(), cls_sort_lower.end());
+
     // graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
-    graph_wilks.GetYaxis()->SetRangeUser(1e-3, 1.01);
+    graph_wilks.GetYaxis()->SetRangeUser(*min_cl_it*0.5, 1.01);
     graph_wilks.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
     graph_wilks.GetYaxis()->SetTitle("1 #minus CL");
 
@@ -441,6 +443,10 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     ValueWithError<double> cl_2sigma_hig(cl_2sigma.second, 0.0, std::max(cl_2sigma.second-cl_2sigma_lower.second,0.0), std::max(cl_2sigma_upper.second-cl_2sigma.second,0.0));
     ValueWithError<double> cl_3sigma_low(cl_3sigma.first,  0.0, std::max(cl_3sigma.first-cl_3sigma_upper.first,0.0),   std::max(cl_3sigma_lower.first-cl_3sigma.first,0.0));
     ValueWithError<double> cl_3sigma_hig(cl_3sigma.second, 0.0, std::max(cl_3sigma.second-cl_3sigma_lower.second,0.0), std::max(cl_3sigma_upper.second-cl_3sigma.second,0.0));
+
+    sinfo << "1 sigma interval (FC): [" << cl_1sigma_low << ", " << cl_1sigma_hig << "]" << endmsg;
+    sinfo << "2 sigma interval (FC): [" << cl_2sigma_low << ", " << cl_2sigma_hig << "]" << endmsg;
+    sinfo << "3 sigma interval (FC): [" << cl_3sigma_low << ", " << cl_3sigma_hig << "]" << endmsg;
 
     cl_1sigma_low.set_full_precision_printout(true);
     cl_1sigma_hig.set_full_precision_printout(true);
