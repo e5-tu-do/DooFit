@@ -23,6 +23,7 @@
 #include <doocore/io/Progress.h>
 #include <doocore/lutils/lutils.h>
 #include <doocore/io/Tools.h>
+#include <doocore/statistics/general.h>
 
 // from DooFit
 #include "doofit/plotting/Plot/PlotConfig.h"
@@ -79,7 +80,14 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
       std::vector<double> scan_vals;
       for (auto var : scan_vars_) {
         RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->constPars().find(var->GetName()));
-        scan_vals.push_back(var_fixed->getVal());
+
+        // protection against 0.0 being 1e-16 and not being properly matched
+        double val(var_fixed->getVal());
+        if (std::abs(val) < 1e-14) {
+          val = 0.0;
+        } 
+
+        scan_vals.push_back(val);
       }
       delta_nlls_data_scan_[scan_vals] = fit_result->minNll()-nll_data_nominal_;
       scan_vals_data_.insert(scan_vals);
@@ -123,7 +131,14 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
         std::vector<double> scan_vals;
         for (auto var : scan_vars_) {
           RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result_1->constPars().find(var->GetName()));
-          scan_vals.push_back(var_fixed->getVal());
+
+          // protection against 0.0 being 1e-16 and not being properly matched
+          double val(var_fixed->getVal());
+          if (std::abs(val) < 1e-14) {
+            val = 0.0;
+          } 
+
+          scan_vals.push_back(val);
         }
         double delta_nll(fit_result_1->minNll() - fit_result_0->minNll());
         if (delta_nlls_toy_scan_.count(scan_vals) > 0) {
@@ -354,8 +369,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
 
-      graph_lower.Draw("L");
-      graph_upper.Draw("L");
+      // graph_lower.Draw("L");
+      // graph_upper.Draw("L");
 
       // graph_wilks.SetMarkerColor(kBlue+3);
       // graph_wilks.SetLineColor(kBlue+3);
@@ -397,9 +412,41 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     std::pair<double, double> cl_2sigma(FindGraphXValues(graph, xmin, xmax, level_2sigma), FindGraphXValues(graph, xmin, xmax, level_2sigma, -1.0));
     std::pair<double, double> cl_3sigma(FindGraphXValues(graph, xmin, xmax, level_3sigma), FindGraphXValues(graph, xmin, xmax, level_3sigma, -1.0));
 
-    sinfo << "1 sigma interval (FC): [" << cl_1sigma.first << ", " << cl_1sigma.second << "]" << endmsg;
-    sinfo << "2 sigma interval (FC): [" << cl_2sigma.first << ", " << cl_2sigma.second << "]" << endmsg;
-    sinfo << "3 sigma interval (FC): [" << cl_3sigma.first << ", " << cl_3sigma.second << "]" << endmsg;
+    std::pair<double, double> cl_1sigma_lower(FindGraphXValues(graph_lower, xmin, xmax, level_1sigma), FindGraphXValues(graph_lower, xmin, xmax, level_1sigma, -1.0));
+    std::pair<double, double> cl_2sigma_lower(FindGraphXValues(graph_lower, xmin, xmax, level_2sigma), FindGraphXValues(graph_lower, xmin, xmax, level_2sigma, -1.0));
+    std::pair<double, double> cl_3sigma_lower(FindGraphXValues(graph_lower, xmin, xmax, level_3sigma), FindGraphXValues(graph_lower, xmin, xmax, level_3sigma, -1.0));
+
+    std::pair<double, double> cl_1sigma_upper(FindGraphXValues(graph_upper, xmin, xmax, level_1sigma), FindGraphXValues(graph_upper, xmin, xmax, level_1sigma, -1.0));
+    std::pair<double, double> cl_2sigma_upper(FindGraphXValues(graph_upper, xmin, xmax, level_2sigma), FindGraphXValues(graph_upper, xmin, xmax, level_2sigma, -1.0));
+    std::pair<double, double> cl_3sigma_upper(FindGraphXValues(graph_upper, xmin, xmax, level_3sigma), FindGraphXValues(graph_upper, xmin, xmax, level_3sigma, -1.0));
+
+    // sdebug << cl_1sigma.first << " - " <<  std::max(cl_1sigma.first-cl_1sigma_upper.first,0.0)   << " - " << std::max(cl_1sigma_lower.first-cl_1sigma.first,0.0) << endmsg;
+    // sdebug << cl_1sigma.second << " - " << std::max(cl_1sigma.second-cl_1sigma_lower.second,0.0) << " - " << std::max(cl_1sigma_upper.second-cl_1sigma.second,0.0) << endmsg;
+    // sdebug << cl_2sigma.first << " - " <<  std::max(cl_2sigma.first-cl_2sigma_upper.first,0.0)   << " - " << std::max(cl_2sigma_lower.first-cl_2sigma.first,0.0) << endmsg;
+    // sdebug << cl_2sigma.second << " - " << std::max(cl_2sigma.second-cl_2sigma_lower.second,0.0) << " - " << std::max(cl_2sigma_upper.second-cl_2sigma.second,0.0) << endmsg;
+    // sdebug << cl_3sigma.first << " - " <<  std::max(cl_3sigma.first-cl_3sigma_upper.first,0.0)   << " - " << std::max(cl_3sigma_lower.first-cl_3sigma.first,0.0) << endmsg;
+    // sdebug << cl_3sigma.second << " - " << std::max(cl_3sigma.second-cl_3sigma_lower.second,0.0) << " - " << std::max(cl_3sigma_upper.second-cl_3sigma.second,0.0) << endmsg;
+
+    using namespace doocore::statistics::general;
+    ValueWithError<double> cl_1sigma_low(cl_1sigma.first,  0.0, std::max(cl_1sigma.first-cl_1sigma_upper.first,0.0),   std::max(cl_1sigma_lower.first-cl_1sigma.first,0.0));
+    ValueWithError<double> cl_1sigma_hig(cl_1sigma.second, 0.0, std::max(cl_1sigma.second-cl_1sigma_lower.second,0.0), std::max(cl_1sigma_upper.second-cl_1sigma.second,0.0));
+    ValueWithError<double> cl_2sigma_low(cl_2sigma.first,  0.0, std::max(cl_2sigma.first-cl_2sigma_upper.first,0.0),   std::max(cl_2sigma_lower.first-cl_2sigma.first,0.0));
+    ValueWithError<double> cl_2sigma_hig(cl_2sigma.second, 0.0, std::max(cl_2sigma.second-cl_2sigma_lower.second,0.0), std::max(cl_2sigma_upper.second-cl_2sigma.second,0.0));
+    ValueWithError<double> cl_3sigma_low(cl_3sigma.first,  0.0, std::max(cl_3sigma.first-cl_3sigma_upper.first,0.0),   std::max(cl_3sigma_lower.first-cl_3sigma.first,0.0));
+    ValueWithError<double> cl_3sigma_hig(cl_3sigma.second, 0.0, std::max(cl_3sigma.second-cl_3sigma_lower.second,0.0), std::max(cl_3sigma_upper.second-cl_3sigma.second,0.0));
+
+    cl_1sigma_low.set_full_precision_printout(true);
+    cl_1sigma_hig.set_full_precision_printout(true);
+    cl_2sigma_low.set_full_precision_printout(true);
+    cl_2sigma_hig.set_full_precision_printout(true);
+    cl_3sigma_low.set_full_precision_printout(true);
+    cl_3sigma_hig.set_full_precision_printout(true);
+
+    // sdebug << cl_1sigma.first << endmsg;
+
+    sinfo << "1 sigma interval (FC): [" << cl_1sigma_low << ", " << cl_1sigma_hig << "]" << endmsg;
+    sinfo << "2 sigma interval (FC): [" << cl_2sigma_low << ", " << cl_2sigma_hig << "]" << endmsg;
+    sinfo << "3 sigma interval (FC): [" << cl_3sigma_low << ", " << cl_3sigma_hig << "]" << endmsg;
 
     std::pair<double, double> cl_1sigma_wilks(FindGraphXValues(graph_wilks, xmin, xmax, level_1sigma), FindGraphXValues(graph_wilks, xmin, xmax, level_1sigma, -1.0));
     std::pair<double, double> cl_2sigma_wilks(FindGraphXValues(graph_wilks, xmin, xmax, level_2sigma), FindGraphXValues(graph_wilks, xmin, xmax, level_2sigma, -1.0));
