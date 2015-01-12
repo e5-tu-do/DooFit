@@ -416,6 +416,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
 
     double xmin(vals_x_sort.front());
     double xmax(vals_x_sort.back());
+    double xmin_wilks(vals_x_wilks_sort.front());
+    double xmax_wilks(vals_x_wilks_sort.back());
 
     std::pair<double, double> cl_1sigma(FindGraphXValues(graph, xmin, xmax, level_1sigma), FindGraphXValues(graph, xmin, xmax, level_1sigma, -1.0));
     std::pair<double, double> cl_2sigma(FindGraphXValues(graph, xmin, xmax, level_2sigma), FindGraphXValues(graph, xmin, xmax, level_2sigma, -1.0));
@@ -461,9 +463,9 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     sinfo << "2 sigma interval (FC): [" << cl_2sigma_low << ", " << cl_2sigma_hig << "]" << endmsg;
     sinfo << "3 sigma interval (FC): [" << cl_3sigma_low << ", " << cl_3sigma_hig << "]" << endmsg;
 
-    std::pair<double, double> cl_1sigma_wilks(FindGraphXValues(graph_wilks, xmin, xmax, level_1sigma), FindGraphXValues(graph_wilks, xmin, xmax, level_1sigma, -1.0));
-    std::pair<double, double> cl_2sigma_wilks(FindGraphXValues(graph_wilks, xmin, xmax, level_2sigma), FindGraphXValues(graph_wilks, xmin, xmax, level_2sigma, -1.0));
-    std::pair<double, double> cl_3sigma_wilks(FindGraphXValues(graph_wilks, xmin, xmax, level_3sigma), FindGraphXValues(graph_wilks, xmin, xmax, level_3sigma, -1.0));
+    std::pair<double, double> cl_1sigma_wilks(FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_1sigma), FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_1sigma, -1.0));
+    std::pair<double, double> cl_2sigma_wilks(FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_2sigma), FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_2sigma, -1.0));
+    std::pair<double, double> cl_3sigma_wilks(FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_3sigma), FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_3sigma, -1.0));
 
     sinfo << "1 sigma interval (Wilks): [" << cl_1sigma_wilks.first << ", " << cl_1sigma_wilks.second << "]" << endmsg;
     sinfo << "2 sigma interval (Wilks): [" << cl_2sigma_wilks.first << ", " << cl_2sigma_wilks.second << "]" << endmsg;
