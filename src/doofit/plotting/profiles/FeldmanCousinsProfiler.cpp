@@ -7,6 +7,7 @@
 #include "TCanvas.h"
 #include "TGraph.h"
 #include "TGraphErrors.h"
+#include "TH1D.h" 
 #include "TH2D.h" 
 #include "TH1F.h" 
 #include "TAxis.h"
@@ -89,6 +90,11 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
 
         scan_vals.push_back(val);
       }
+
+      if (std::abs(scan_vals[0]-0.745732) < 1e-3) {
+        sdebug << "@" << scan_vals[0] << ":" << fit_result->minNll() << "-" << nll_data_nominal_ << " = " << fit_result->minNll()-nll_data_nominal_ << endmsg;
+      }
+
       delta_nlls_data_scan_[scan_vals] = fit_result->minNll()-nll_data_nominal_;
       scan_vals_data_.insert(scan_vals);
       // sdebug << "scan_vals = " << scan_vals << endmsg;
@@ -119,6 +125,10 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
   FitResultContainer fit_result_container(toy_study.GetFitResult());
   const RooFitResult* fit_result_0(std::get<0>(fit_result_container));
   const RooFitResult* fit_result_1(std::get<1>(fit_result_container));
+
+  TCanvas c("c", "c", 800, 600);
+  TH1D hist("hist", "#Delta#chi^{2}_{toy}", 250, -2.0, 2.0);
+
   // TODO: Warn if fit_result_0 valid, but fit_result_1 not!
   while (fit_result_0 != nullptr) { 
     if (fit_result_1 == nullptr) {
@@ -141,16 +151,39 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
           scan_vals.push_back(val);
         }
         double delta_nll(fit_result_1->minNll() - fit_result_0->minNll());
-        if (delta_nlls_toy_scan_.count(scan_vals) > 0) {
-          delta_nlls_toy_scan_[scan_vals].push_back(delta_nll);
-        } else {
-          std::vector<double> vector;
-          vector.push_back(delta_nll);
-          delta_nlls_toy_scan_[scan_vals] = vector;
+
+        hist.Fill(delta_nll);
+
+        if (std::abs(scan_vals[0]-0.745732) < 1e-3) {
+          sdebug << "@" << scan_vals[0] << " (toy)  : " << fit_result_1->minNll() << "-" << fit_result_0->minNll() << " = " << delta_nll << endmsg;
+          sdebug << "@" << scan_vals[0] << " (data) : " << delta_nlls_data_scan_[scan_vals] << endmsg;
+
+          if (delta_nll < 0.0) {
+            fit_result_0->Print("v");
+            fit_result_1->Print("v");
+          }
         }
-        scan_vals_toy_.insert(scan_vals);
-        // sdebug << "scan_vals = " << scan_vals << endmsg;
-        // sdebug << "delta_nll = " << delta_nll << endmsg;
+
+        if (delta_nll < 0.0) {
+          if (num_neglected_fits_.count(scan_vals) > 0) {
+            num_neglected_fits_[scan_vals]++;
+          } else {
+            num_neglected_fits_[scan_vals] = 1;
+          }
+
+          ++num_ignored;
+        } else {
+          if (delta_nlls_toy_scan_.count(scan_vals) > 0) {
+            delta_nlls_toy_scan_[scan_vals].push_back(delta_nll);
+          } else {
+            std::vector<double> vector;
+            vector.push_back(delta_nll);
+            delta_nlls_toy_scan_[scan_vals] = vector;
+          }
+          scan_vals_toy_.insert(scan_vals);
+          // sdebug << "scan_vals = " << scan_vals << endmsg;
+          // sdebug << "delta_nll = " << delta_nll << endmsg;
+        }
       } else {
         ++num_ignored;
       }
@@ -161,6 +194,9 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
     fit_result_0 = std::get<0>(fit_result_container);
     fit_result_1 = std::get<1>(fit_result_container);
   }
+
+  hist.Draw();
+  c.SaveAs("delta_chisq.pdf");
 
   if (num_ignored > 0) {
     swarn << "Ignored " << num_ignored << " toy scan results due to bad fit quality." << endmsg;
@@ -255,6 +291,15 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     unsigned int num_toys(0);
     unsigned int num_toys_exceed(0);
     for (auto delta_nll_toy : delta_nlls_toy) {
+
+      if (std::abs(delta_nll_data.first[0]-0.745732) < 1e-3) {
+        if (delta_nll_data.second >= delta_nll_toy) {
+          sdebug << "WHAAAAAAT!" << endmsg;
+          sdebug << "@" << delta_nll_data.first[0] << " (toy)  : " << delta_nll_toy << endmsg;
+          sdebug << "@" << delta_nll_data.first[0] << " (data) : " << delta_nll_data.second << endmsg;
+        }
+      }
+
       // sdebug << delta_nll_data.second << " - " << delta_nll_toy << endmsg;
       ++num_toys;
       if (delta_nll_data.second < delta_nll_toy) {
@@ -279,10 +324,13 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     cls.push_back(cl);
     cl_errors.push_back(cl_error);
 
-    if (cl == 0.0) {
-      swarn << "Scan point " << delta_nll_data.first << " has too little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
-    } else if (cl_error > 0.02 || num_toys_exceed < 10) {
-      swarn << "Scan point " << delta_nll_data.first << " has little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
+    if (num_toys > 0) {
+      if (cl == 0.0) {
+        swarn << "Scan point " << delta_nll_data.first << " has too little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
+      } else if (cl_error > 0.02 || num_toys_exceed < 10) {
+        swarn << "Scan point " << delta_nll_data.first << " has little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
+      }
+      sinfo << "Scan point " << delta_nll_data.first << " with number of neglected toys: " << num_neglected_fits_[delta_nll_data.first] << "/" << num_toys+num_neglected_fits_[delta_nll_data.first] << " (" << static_cast<double>(num_neglected_fits_[delta_nll_data.first])/static_cast<double>(num_toys+num_neglected_fits_[delta_nll_data.first])*100.0 << "%)" << endmsg;
     }
 
     double cl_wilks(TMath::Prob(2*delta_nll_data.second, delta_nll_data.first.size()));
@@ -361,7 +409,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     TGraph graph_upper(cls_sort.size(), &vals_x_sort[0], &cls_sort_upper[0]);
 
     if (cls.size() < 400) {
-      graph_wilks.Draw("APL");
+      graph_wilks.Draw("AL");
       graph_wilks.SetMarkerStyle(7);
       graph_wilks.SetMarkerSize(1);
 
@@ -374,7 +422,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
 
-      graph_wilks.Draw("PL");
+      graph_wilks.Draw("L");
 
       // graph_lower.Draw("L");
       // graph_upper.Draw("L");
@@ -382,7 +430,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
       // graph_wilks.SetMarkerColor(kBlue+3);
       // graph_wilks.SetLineColor(kBlue+3);
     } else {
-      graph_wilks.Draw("APL");
+      graph_wilks.Draw("AL");
       graph_wilks.SetMarkerStyle(1);
       graph.Draw("PL");
       graph.SetMarkerStyle(1);

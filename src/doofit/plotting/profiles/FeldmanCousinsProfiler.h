@@ -130,6 +130,7 @@ class FeldmanCousinsProfiler {
   std::set<std::vector<double>> scan_vals_data_;
   std::map<std::vector<double>, std::vector<double>> delta_nlls_toy_scan_;
   std::set<std::vector<double>> scan_vals_toy_;
+  std::map<std::vector<double>, unsigned int> num_neglected_fits_;
 
   unsigned int num_samples_;
 
