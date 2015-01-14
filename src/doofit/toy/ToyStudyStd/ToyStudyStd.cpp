@@ -419,6 +419,7 @@ namespace toy {
           (param_name.substr(param_name.length()-5).compare("_pull") == 0 ||
            param_name.substr(param_name.length()-4).compare("_res") == 0 ||
            param_name.substr(param_name.length()-4).compare("_err") == 0 ||
+           param_name.substr(param_name.length()-5).compare("_init") == 0 ||
            (param_name.length() > 12 && param_name.substr(param_name.length()-12).compare("_refresidual") == 0))) {
            // || param_name.substr(0,4).compare("time") == 0)) {
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
@@ -470,14 +471,25 @@ namespace toy {
       fit_plot_dataset->plotOn(frame);
       if (fit_plot_dataset != evaluated_values_) delete fit_plot_dataset;
       
+      // get fit pars
+      RooRealVar* var_mean = nullptr;
+      RooRealVar* var_sigma = nullptr;
+
+      // only plot the fit gauss for init distributions for constrained parameters
+      // in the next line we check if the width of the gaussian is wide enough,
+      // if not, then set bool to false.
+      bool plot_gauss_pdf_for_init_distributions = true;
+      if (gauss != NULL && fit_status == 0){
+        const RooArgList& list_fit_params(fit_result->floatParsFinal());
+        var_mean  = dynamic_cast<RooRealVar*>(list_fit_params.find("m"));
+        var_sigma = dynamic_cast<RooRealVar*>(list_fit_params.find("s"));
+        if (var_sigma->getVal()<1e-6) plot_gauss_pdf_for_init_distributions = false;
+      }
+
       TPaveText* pt = nullptr;
       if (gauss != NULL && fit_status == 0) {
-        gauss->plotOn(frame);
+        if (plot_gauss_pdf_for_init_distributions) gauss->plotOn(frame);
         //param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
-
-        const RooArgList& list_fit_params(fit_result->floatParsFinal());
-        RooRealVar* var_mean  = dynamic_cast<RooRealVar*>(list_fit_params.find("m"));
-        RooRealVar* var_sigma = dynamic_cast<RooRealVar*>(list_fit_params.find("s"));
 
         using namespace doocore::statistics::general;
         ValueWithError<double> val_mean(var_mean->getVal(), var_mean->getError());
