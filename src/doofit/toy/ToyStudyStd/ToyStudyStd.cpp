@@ -488,7 +488,7 @@ namespace toy {
 
       TPaveText* pt = nullptr;
       if (gauss != NULL && fit_status == 0) {
-        if (!plot_gauss_pdf_for_init_distributions) gauss->plotOn(frame);
+        if (plot_gauss_pdf_for_init_distributions) gauss->plotOn(frame);
         //param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
 
         using namespace doocore::statistics::general;
