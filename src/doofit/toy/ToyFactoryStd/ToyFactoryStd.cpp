@@ -3,6 +3,7 @@
 // STL
 #include <cstring>
 #include <vector>
+#include <csignal>
 
 // POSIX/UNIX
 #include <unistd.h>
@@ -54,6 +55,7 @@ namespace toy {
     if (cfg_tfac.random_seed()>=0) {
     	RooRandom::randomGenerator()->SetSeed(cfg_tfac.random_seed());
     }
+    signal(SIGABRT, SignalHandler);
   }
   
   ToyFactoryStd::~ToyFactoryStd(){
@@ -455,6 +457,17 @@ namespace toy {
     return matched_sections;
   }
   
+  void ToyFactoryStd::SignalHandler( int signum ) {
+    std::cout << "Interrupt signal (" << signum << ") received.\n" << std::endl;
+
+    // cleanup and close up stuff here  
+    // terminate program  
+
+    exit(signum);
+  }
+
+
+
   RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     RooDataSet* data = NULL;
     bool have_to_delete_proto_data = false;
@@ -590,6 +603,7 @@ namespace toy {
         data = dynamic_cast<RooDataSet*>(proto_set->reduce(EventRange(0, yield_to_generate)));
       } else {
         if (yield_to_generate > 0.0) {
+
 #if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
           data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
 #else

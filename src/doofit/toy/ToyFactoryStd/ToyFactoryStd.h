@@ -432,6 +432,17 @@ namespace toy {
     RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair<std::string>& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const;
     ///@}
     
+    /** @name Helper functions
+     *  Functions to do other helper tasks
+     */
+    ///@{
+    /**
+     *  @brief Signal handler for RooFit raising SIGABRT
+     */    
+    static void SignalHandler(int signum);
+    ///@}
+
+
     /**
      *  \brief CommonConfig instance to use
      */
