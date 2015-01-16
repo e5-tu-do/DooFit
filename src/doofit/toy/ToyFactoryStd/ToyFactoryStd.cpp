@@ -48,14 +48,22 @@ using namespace doocore::io;
 
 namespace doofit {
 namespace toy {
+
+  bool ToyFactoryStd::signal_caught_ = false;
+  jmp_buf ToyFactoryStd::jump_buffer_;
+
   ToyFactoryStd::ToyFactoryStd(const config::CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac) :
   config_common_(cfg_com),
   config_toyfactory_(cfg_tfac)
   {
+    using namespace doocore::io;
     if (cfg_tfac.random_seed()>=0) {
     	RooRandom::randomGenerator()->SetSeed(cfg_tfac.random_seed());
+    // } else {
+    //   swarn << "ToyFactoryStd::ToyFactoryStd(): Random seed set to illegal value " << cfg_tfac.random_seed() << ". Will not touch random generator." << endmsg;
     }
     signal(SIGABRT, SignalHandler);
+    signal_caught_ = false;
   }
   
   ToyFactoryStd::~ToyFactoryStd(){
@@ -457,13 +465,20 @@ namespace toy {
     return matched_sections;
   }
   
+  
+
   void ToyFactoryStd::SignalHandler( int signum ) {
-    std::cout << "Interrupt signal (" << signum << ") received.\n" << std::endl;
-
-    // cleanup and close up stuff here  
-    // terminate program  
-
-    exit(signum);
+    using namespace doocore::io;
+    if (signum == SIGABRT) {
+      swarn << "Caught SIGABRT signal. Problematic generation occured. Will drop the whole sample." << endmsg;
+      signal_caught_ = true;
+      //jmp_buf jump_buffer_;
+      longjmp(jump_buffer_, 1);
+    } else {
+      // cleanup and close up stuff here  
+      // terminate program  
+      exit(signum);
+    }
   }
 
 
@@ -604,11 +619,23 @@ namespace toy {
       } else {
         if (yield_to_generate > 0.0) {
 
+          // set jump point in case RooFit sends SIGABRT (only way to catch this...)
+          int val = setjmp(jump_buffer_);
+          //sdebug << "val = " << val << ", signal_caught_ = " << signal_caught_ << endmsg;
+
+          if (val == 0.0 && !signal_caught_) {
 #if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
-          data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
+            data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
 #else
-          data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
+            data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
 #endif
+          } else {
+            // if SIGABRT is caught, throw a proper exception
+            serr << "ToyFactoryStd::GenerateForPdf(...): RooFit threw SIGABRT signal. Cannot continue." << endmsg;
+            signal(SIGABRT, SIG_DFL);
+            sinfo.set_indent(0);
+            throw RooFitSendingSIGABRTException();
+          }
         } else {
           // in case expected yield is zero, RooFit will still generate 1 event. Fix that with an empty dataset.
 

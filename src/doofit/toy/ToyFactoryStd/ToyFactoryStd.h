@@ -3,6 +3,7 @@
 
 // STL
 #include <cstring>
+#include <csetjmp>
 
 // ROOT
 #include "TClass.h"
@@ -442,7 +443,6 @@ namespace toy {
     static void SignalHandler(int signum);
     ///@}
 
-
     /**
      *  \brief CommonConfig instance to use
      */
@@ -456,6 +456,9 @@ namespace toy {
      *  @brief Argset of drawn constrained parameters
      */
     RooArgSet set_constrained_parameters_;
+
+    static bool signal_caught_;
+    static jmp_buf jump_buffer_;
   };
   
   /** \struct NotGeneratingDataException
@@ -463,6 +466,13 @@ namespace toy {
    */
   struct NotGeneratingDataException: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Not generating any data"; }
+  };
+
+  /** \struct NotGeneratingDataException
+   *  \brief Exception for not generating any data
+   */
+  struct RooFitSendingSIGABRTException: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "RooFit sent SIGABRT"; }
   };
   
   /** \struct NotGeneratingDiscreteData
