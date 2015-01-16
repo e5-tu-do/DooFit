@@ -145,9 +145,17 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
 
   old_min_seed = min_seed
   new_min_seed = min_seed
-  while scan2_value <= options.scan2end:
+
+  scan2_end = options.scan2end
+  scan1_end = options.scan1end
+  if options.scan2increment == 0.0:
+    scan2_end = options.scan2start
+  if options.scan1increment == 0.0:
+    scan1_end = options.scan1start
+
+  while scan2_value <= scan2_end:
     scan1_value = options.scan1start
-    while scan1_value <= options.scan1end:
+    while scan1_value <= scan1_end:
       for i in range(min_id,min_id+num_jobs):
         settings_dict = {
           'job_name'   : job_base_name + '_' + str(job_index),
@@ -176,8 +184,14 @@ def create_jobs(options, proto_script, jobs_dir, num_jobs, num_iterations_per_jo
         job_index += 1
       new_min_seed = min_seed
       min_seed = old_min_seed
-      scan1_value += options.scan1increment*options.scan1perjob
-    scan2_value += options.scan2increment*options.scan2perjob
+      if options.scan1increment == 0.0:
+        scan1_value += 1.0
+      else:
+        scan1_value += options.scan1increment*options.scan1perjob
+    if options.scan2increment == 0.0:
+      scan2_value += 1.0
+    else:
+      scan2_value += options.scan2increment*options.scan2perjob
   control_file_name = os.path.join(jobs_dir,'control_' + job_base_name + '')
   control_file = open(control_file_name, 'w')
   control_file.writelines(os.path.join(bulk_dir,job_base_name + '_*.sh'))
@@ -206,11 +220,11 @@ if __name__ == "__main__":
   parser.add_option("-s", "--minseed", action="store", type="int", dest="minseed", default=1, help="Minimal seed to use")
   parser.add_option("", "--scan1-start", action="store", type="float", dest="scan1start", default=0.0, help="Start value of scan parameter 1")
   parser.add_option("", "--scan1-end", action="store", type="float", dest="scan1end", default=0.0, help="End value of scan parameter 1")
-  parser.add_option("", "--scan1-increment", action="store", type="float", dest="scan1increment", default=1.0, help="Increment value of scan parameter 1")
+  parser.add_option("", "--scan1-increment", action="store", type="float", dest="scan1increment", default=0.0, help="Increment value of scan parameter 1")
   parser.add_option("", "--scan1-per-job", action="store", type="float", dest="scan1perjob", default=1.0, help="Number of scan points per job (default 1) for scan parameter 1")
   parser.add_option("", "--scan2-start", action="store", type="float", dest="scan2start", default=0.0, help="Start value of scan parameter 2")
   parser.add_option("", "--scan2-end", action="store", type="float", dest="scan2end", default=0.0, help="End value of scan parameter 2")
-  parser.add_option("", "--scan2-increment", action="store", type="float", dest="scan2increment", default=1.0, help="Increment value of scan parameter 2")
+  parser.add_option("", "--scan2-increment", action="store", type="float", dest="scan2increment", default=0.0, help="Increment value of scan parameter 2")
   parser.add_option("", "--scan2-per-job", action="store", type="float", dest="scan2perjob", default=1.0, help="Number of scan points per job (default 1) for scan parameter 2")
   parser.add_option("-n", "--parameter-n", action="store", type="int", dest="parametern", default=0, help="Additional arbitrary parameter n (e.g. number of toys)")
   parser.add_option("-m", "--vmem-per-core", action="store", type="int", dest="vmem_per_core", default=3000, help="Required vmem per core in PBS notation (in MB, default 3000)")

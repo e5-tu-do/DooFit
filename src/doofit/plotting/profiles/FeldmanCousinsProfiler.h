@@ -113,7 +113,7 @@ class FeldmanCousinsProfiler {
    */
   bool FitResultOkay(const RooFitResult& fit_result) const;
 
-  double FindGraphXValues(TGraph& graph, double value, double direction=+1.0) const;
+  double FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction=+1.0) const;
 
  private:
   /**
@@ -127,9 +127,14 @@ class FeldmanCousinsProfiler {
 
   double nll_data_nominal_;
   std::map<std::vector<double>, double> delta_nlls_data_scan_;
+  std::set<std::vector<double>> scan_vals_data_;
   std::map<std::vector<double>, std::vector<double>> delta_nlls_toy_scan_;
+  std::set<std::vector<double>> scan_vals_toy_;
+  std::map<std::vector<double>, unsigned int> num_neglected_fits_;
 
   unsigned int num_samples_;
+
+  double time_total_;
 };
 
 } // namespace profiles
