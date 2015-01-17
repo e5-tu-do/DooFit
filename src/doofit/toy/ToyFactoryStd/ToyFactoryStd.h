@@ -3,6 +3,7 @@
 
 // STL
 #include <cstring>
+#include <csetjmp>
 
 // ROOT
 #include "TClass.h"
@@ -432,6 +433,16 @@ namespace toy {
     RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair<std::string>& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const;
     ///@}
     
+    /** @name Helper functions
+     *  Functions to do other helper tasks
+     */
+    ///@{
+    /**
+     *  @brief Signal handler for RooFit raising SIGABRT
+     */    
+    static void SignalHandler(int signum);
+    ///@}
+
     /**
      *  \brief CommonConfig instance to use
      */
@@ -445,6 +456,9 @@ namespace toy {
      *  @brief Argset of drawn constrained parameters
      */
     RooArgSet set_constrained_parameters_;
+
+    static bool signal_caught_;
+    static jmp_buf jump_buffer_;
   };
   
   /** \struct NotGeneratingDataException
@@ -452,6 +466,13 @@ namespace toy {
    */
   struct NotGeneratingDataException: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Not generating any data"; }
+  };
+
+  /** \struct NotGeneratingDataException
+   *  \brief Exception for not generating any data
+   */
+  struct RooFitSendingSIGABRTException: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "RooFit sent SIGABRT"; }
   };
   
   /** \struct NotGeneratingDiscreteData

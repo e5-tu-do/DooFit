@@ -3,6 +3,7 @@
 // STL
 #include <cstring>
 #include <vector>
+#include <csignal>
 
 // POSIX/UNIX
 #include <unistd.h>
@@ -47,13 +48,22 @@ using namespace doocore::io;
 
 namespace doofit {
 namespace toy {
+
+  bool ToyFactoryStd::signal_caught_ = false;
+  jmp_buf ToyFactoryStd::jump_buffer_;
+
   ToyFactoryStd::ToyFactoryStd(const config::CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac) :
   config_common_(cfg_com),
   config_toyfactory_(cfg_tfac)
   {
+    using namespace doocore::io;
     if (cfg_tfac.random_seed()>=0) {
     	RooRandom::randomGenerator()->SetSeed(cfg_tfac.random_seed());
+    // } else {
+    //   swarn << "ToyFactoryStd::ToyFactoryStd(): Random seed set to illegal value " << cfg_tfac.random_seed() << ". Will not touch random generator." << endmsg;
     }
+    signal(SIGABRT, SignalHandler);
+    signal_caught_ = false;
   }
   
   ToyFactoryStd::~ToyFactoryStd(){
@@ -247,8 +257,17 @@ namespace toy {
     const RooArgSet& master_argset = *master_dataset->get();
     const RooArgSet& slave_argset  = *slave_dataset->get();
     
+    // master_dataset->Print();
+    // slave_dataset->Print();
+    // if (ignore_sets != nullptr) {
+    //   for (auto ignore_set : *ignore_sets) {
+    //     ignore_set->Print();
+    //   }
+    // }
+
     if (master_dataset->numEntries() != slave_dataset->numEntries()) {
       serr << "Attempting two merge two datasets without equal size. Unable to cope with that. Giving up." << endmsg;
+      serr << "The dataset sizes are: " << master_dataset->numEntries() << " vs. " << slave_dataset->numEntries() << endmsg;
       throw DatasetsNotDisjointException();
     }
     
@@ -259,7 +278,7 @@ namespace toy {
       // First assume datasets are not mergable.
       bool not_mergable = true;
       
-      if (ignore_sets != NULL) {
+      if (ignore_sets != nullptr) {
         // there is an ignore argset, might be mergable
         not_mergable = false;
         // Happy fun time using TIterator, yay!
@@ -383,23 +402,25 @@ namespace toy {
       }
     }
     delete iter;
-    
-    // if we reached this, both datasets are compatible
-    // master_dataset->append(*slave_dataset);
-    // delete slave_dataset;
 
-    // Fisher-Yates shuffle
+    // if we reached this, both datasets are compatible
+
+    // Perform Fisher-Yates shuffle
     TRandom* rand = RooRandom::randomGenerator();
 
     int num_shuffle_elements = master_dataset->numEntries() + slave_dataset->numEntries();
     int num_master = master_dataset->numEntries();
     std::vector<int> new_order(num_shuffle_elements);
-    new_order[0] = 0;
-    int j;
-    for (int i=1; i<num_shuffle_elements; ++i) {
-      j = rand->Integer(i+1);
-      new_order[i] = new_order[j];
-      new_order[j] = i;
+
+    // only possible pitfall: both datasets empty
+    if (num_shuffle_elements > 0) {
+      new_order[0] = 0;
+      int j;
+      for (int i=1; i<num_shuffle_elements; ++i) {
+        j = rand->Integer(i+1);
+        new_order[i] = new_order[j];
+        new_order[j] = i;
+      }  
     }
 
     const RooArgSet& vars = *master_dataset->get();
@@ -444,6 +465,24 @@ namespace toy {
     return matched_sections;
   }
   
+  
+
+  void ToyFactoryStd::SignalHandler( int signum ) {
+    using namespace doocore::io;
+    if (signum == SIGABRT) {
+      swarn << "Caught SIGABRT signal. Problematic generation occured. Will drop the whole sample." << endmsg;
+      signal_caught_ = true;
+      //jmp_buf jump_buffer_;
+      longjmp(jump_buffer_, 1);
+    } else {
+      // cleanup and close up stuff here  
+      // terminate program  
+      exit(signum);
+    }
+  }
+
+
+
   RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     RooDataSet* data = NULL;
     bool have_to_delete_proto_data = false;
@@ -469,8 +508,9 @@ namespace toy {
         // Proto dataset size to be the expected yield + 10*sigma in order to be 
         // sure it is big enough. Adding another 5% to account for the fact that
         // fo r addded PDFs later the proto datasets are passed on slightly 
-        // larger (to account for rounding problems).
-        proto_size = (yield+10*TMath::Sqrt(yield))*1.05;
+        // larger (to account for rounding problems) plus additional 100 events
+        // to cover any problems where small yields are to be generated.
+        proto_size = (yield+10*TMath::Sqrt(yield))*1.05+100;
       }
       
       // Store only proto data specific for this PDF (remember, there might be 
@@ -552,9 +592,13 @@ namespace toy {
       if (proto_set != NULL) {
         proto_arg = ProtoData(*proto_set);
       }
+
+      // sdebug << "expected_yield = " << expected_yield << endmsg;
       
       // correct rounding of number of events to generate
       int yield_to_generate = boost::math::iround(expected_yield);
+
+      // sdebug << "yield_to_generate = " << yield_to_generate << endmsg;
       
       RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
 
@@ -573,11 +617,36 @@ namespace toy {
         
         data = dynamic_cast<RooDataSet*>(proto_set->reduce(EventRange(0, yield_to_generate)));
       } else {
+        if (yield_to_generate > 0.0) {
+
+          // set jump point in case RooFit sends SIGABRT (only way to catch this...)
+          int val = setjmp(jump_buffer_);
+          //sdebug << "val = " << val << ", signal_caught_ = " << signal_caught_ << endmsg;
+
+          if (val == 0.0 && !signal_caught_) {
 #if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
-        data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
+            data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
 #else
-        data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
+            data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
 #endif
+          } else {
+            // if SIGABRT is caught, throw a proper exception
+            serr << "ToyFactoryStd::GenerateForPdf(...): RooFit threw SIGABRT signal. Cannot continue." << endmsg;
+            signal(SIGABRT, SIG_DFL);
+            sinfo.set_indent(0);
+            throw RooFitSendingSIGABRTException();
+          }
+        } else {
+          // in case expected yield is zero, RooFit will still generate 1 event. Fix that with an empty dataset.
+
+          RooArgSet args(*obs_argset);
+          args.add(*proto_set->get());
+          // args.Print();
+
+          data = new RooDataSet("data_empty", "data_empty", args);
+
+          // data->Print();
+        }
       }
       
       // bugfix for a RooFit bug: if no events are to be generated, the empty
@@ -674,6 +743,7 @@ namespace toy {
             sum_coef += coef;
           }
         }
+
         std::cout.precision(15);
         
         if (!add_pdf_extended && pdf.mustBeExtended()) {
@@ -681,6 +751,7 @@ namespace toy {
         } else {
           sub_yield = coef*expected_yield;
         }
+
         if (extended) {
           // sdebug << "Generating sub yield as Poisson random number." << endmsg;
           sub_yield = RooRandom::randomGenerator()->Poisson(sub_yield);
@@ -714,12 +785,17 @@ namespace toy {
         // rounding is summed up and in case it exceeds 0.5 additional events 
         // will be generated for the next PDF.
         yield_lost_due_rounding += sub_yield - boost::math::iround(sub_yield);
+
+        // sdebug << sub_pdf->GetName() << " - sub_yield = " << sub_yield << " (before rounding correction), yield_lost_due_rounding = " << yield_lost_due_rounding << endmsg;
+
         int add_roundup_yield = boost::math::iround(yield_lost_due_rounding);
         if (TMath::Abs(add_roundup_yield) >= 1 && TMath::Abs(yield_lost_due_rounding) != 0.5) {
           sub_yield += add_roundup_yield;
           yield_lost_due_rounding = -(add_roundup_yield-yield_lost_due_rounding);
         }
         
+        // sdebug << sub_pdf->GetName() << " - sub_yield = " << sub_yield << endmsg;
+
         // sdebug << "Sub yield for next PDF " << sub_pdf->GetName() << " is " << sub_yield << endmsg;
 
         if (data) {
