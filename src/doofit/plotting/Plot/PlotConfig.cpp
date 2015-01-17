@@ -33,6 +33,7 @@ namespace plotting {
 PlotConfig::PlotConfig(const std::string& name)
 : config::AbsConfig(name),
   plot_directory_("Plot"),
+  plot_style_("LHCbOptimized"),
   num_cpu_(1),
   plot_stack_open_(false),
   plot_stack_canvas_(NULL),
@@ -78,8 +79,9 @@ void PlotConfig::DefineOptions() {
   (GetOptionString("simultaneous_plot_all_categories").c_str(), po::value<bool>(&simultaneous_plot_all_categories_)->default_value(false),"Plot all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...) (default: false)")
   (GetOptionString("simultaneous_plot_all_slices").c_str(), po::value<bool>(&simultaneous_plot_all_slices_)->default_value(false),"Plot each slice of a simultaneous PDF (i.e. all long, all tagged, etc.) (default: false)")
   (GetOptionString("plot_range_x").c_str(), po::value<config::CommaSeparatedPair<double>>(&plot_range_x_),"Plot range for x dimension (where applicable)")
-  (GetOptionString("plot_range_y").c_str(), po::value<config::CommaSeparatedPair<double>>(&plot_range_y_),"Plot range for y dimension (where applicable)");
-  
+  (GetOptionString("plot_range_y").c_str(), po::value<config::CommaSeparatedPair<double>>(&plot_range_y_),"Plot range for y dimension (where applicable)")
+  (GetOptionString("plot_style").c_str(), po::value<std::string>(&plot_style_)->default_value("LHCbOptimized"),"Plot style to apply");
+
   descs_visible_.push_back(generation);
 }
   
@@ -95,6 +97,7 @@ void PlotConfig::PrintOptions() const {
   scfg << "Plotting of all simultaneous slices: " << simultaneous_plot_all_slices_ << endmsg;
   scfg << "x plot range:    " << plot_range_x_ << endmsg;
   scfg << "y plot range:    " << plot_range_x_ << endmsg;
+  scfg << "Plot style:      " << plot_style_ << endmsg;
 }
   
 void PlotConfig::OnDemandOpenPlotStack() const {

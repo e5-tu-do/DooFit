@@ -96,6 +96,13 @@ class PlotConfig : public config::AbsConfig {
   std::string plot_directory() const { return plot_directory_; }
 
   /**
+   * @brief Getter for plot_style_
+   *
+   * @see set_plot_style()
+   **/
+  std::string plot_style() const { return plot_style_; }
+
+  /**
    * @brief Getter for plot_appendix_
    *
    * @see set_plot_appendix()
@@ -187,6 +194,17 @@ class PlotConfig : public config::AbsConfig {
    **/
   void set_plot_directory(const std::string& plot_directory) {
     plot_directory_ = plot_directory;
+  }
+
+  /**
+   * @brief Setter for plot_style_
+   *
+   * Set plot output directory.
+   *
+   * @param plot_style the plot output directory to use
+   **/
+  void set_plot_style(const std::string& plot_style) {
+    plot_style_ = plot_style;
   }
 
   /**
@@ -286,6 +304,11 @@ class PlotConfig : public config::AbsConfig {
    *  @brief Plot output directory
    */
   std::string plot_directory_;
+
+  /**
+   *  @brief Plot style to use for plots
+   */
+  std::string plot_style_;
 
   /**
    *  @brief Number of CPUs to use for plotting
