@@ -7,12 +7,14 @@
 #include "TCanvas.h"
 #include "TGraph.h"
 #include "TGraphErrors.h"
+#include "TH1D.h" 
 #include "TH2D.h" 
 #include "TH1F.h" 
 #include "TAxis.h"
 #include "TStyle.h"
 #include "TColor.h"
 #include "TLine.h"
+#include "TMath.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -21,6 +23,8 @@
 #include <doocore/io/MsgStream.h>
 #include <doocore/io/Progress.h>
 #include <doocore/lutils/lutils.h>
+#include <doocore/io/Tools.h>
+#include <doocore/statistics/general.h>
 
 // from DooFit
 #include "doofit/plotting/Plot/PlotConfig.h"
@@ -29,7 +33,8 @@
 
 doofit::plotting::profiles::FeldmanCousinsProfiler::FeldmanCousinsProfiler(const PlotConfig& cfg_plot)
 : config_plot_(cfg_plot),
-  num_samples_(30)
+  num_samples_(30),
+  time_total_(0.0)
 {}
 
 void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultDataNominal(doofit::toy::ToyStudyStd& toy_study) {
@@ -39,6 +44,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultDataNomina
   FitResultContainer fit_result_container(toy_study.GetFitResult());
   const RooFitResult* fit_result(std::get<0>(fit_result_container));
   
+  time_total_ += std::get<2>(fit_result_container);
+
   for (auto var : scan_vars_) {
     RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->floatParsFinal().find(var->GetName()));
     if (var_fixed == nullptr) {
@@ -65,52 +72,121 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
 
   FitResultContainer fit_result_container(toy_study.GetFitResult());
   const RooFitResult* fit_result(std::get<0>(fit_result_container));
+
+  unsigned int num_ignored(0);
   while (fit_result != nullptr) { 
-    
-    std::vector<double> scan_vals;
-    for (auto var : scan_vars_) {
-      RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->constPars().find(var->GetName()));
-      scan_vals.push_back(var_fixed->getVal());
+    time_total_ += std::get<2>(fit_result_container);
+
+    if (FitResultOkay(*fit_result)) {
+      std::vector<double> scan_vals;
+      for (auto var : scan_vars_) {
+        RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->constPars().find(var->GetName()));
+
+        // protection against 0.0 being 1e-16 and not being properly matched
+        double val(var_fixed->getVal());
+        if (std::abs(val) < 1e-14) {
+          val = 0.0;
+        } 
+
+        scan_vals.push_back(val);
+      }
+
+      if (std::abs(scan_vals[0]-0.745732) < 1e-3) {
+        sdebug << "@" << scan_vals[0] << ":" << fit_result->minNll() << "-" << nll_data_nominal_ << " = " << fit_result->minNll()-nll_data_nominal_ << endmsg;
+      }
+
+      delta_nlls_data_scan_[scan_vals] = fit_result->minNll()-nll_data_nominal_;
+      scan_vals_data_.insert(scan_vals);
+      // sdebug << "scan_vals = " << scan_vals << endmsg;
+      // sdebug << "delta_nll = " << delta_nlls_data_scan_[scan_vals] << endmsg;
+    } else {
+      ++num_ignored;
     }
-    delta_nlls_data_scan_[scan_vals] = fit_result->minNll()-nll_data_nominal_;
-    // sdebug << "scan_vals = " << scan_vals << endmsg;
-    // sdebug << "delta_nll = " << delta_nlls_data_scan_[scan_vals] << endmsg;
 
     toy_study.ReleaseFitResult(fit_result_container);
 
     fit_result_container = toy_study.GetFitResult();
     fit_result = std::get<0>(fit_result_container);
   }
+
+  if (num_ignored > 0) {
+    swarn << "Ignored " << num_ignored << " data scan results due to bad fit quality." << endmsg;
+  }
+
+  sinfo << "Available data scan points: " << scan_vals_data_ << endmsg;
 }
 
 void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofit::toy::ToyStudyStd& toy_study) {
   using namespace doofit::toy;
   using namespace doocore::io;
 
+  unsigned int num_ignored(0);
+
   FitResultContainer fit_result_container(toy_study.GetFitResult());
   const RooFitResult* fit_result_0(std::get<0>(fit_result_container));
   const RooFitResult* fit_result_1(std::get<1>(fit_result_container));
+
+  TCanvas c("c", "c", 800, 600);
+  TH1D hist("hist", "#Delta#chi^{2}_{toy}", 250, -2.0, 2.0);
+
   // TODO: Warn if fit_result_0 valid, but fit_result_1 not!
   while (fit_result_0 != nullptr) { 
-    
     if (fit_result_1 == nullptr) {
       swarn << "Only one fit result stored, expected a pair. The result tree might be broken!" << endmsg;
     } else {
-      std::vector<double> scan_vals;
-      for (auto var : scan_vars_) {
-        RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result_1->constPars().find(var->GetName()));
-        scan_vals.push_back(var_fixed->getVal());
-      }
-      double delta_nll(fit_result_1->minNll() - fit_result_0->minNll());
-      if (delta_nlls_toy_scan_.count(scan_vals) > 0) {
-        delta_nlls_toy_scan_[scan_vals].push_back(delta_nll);
+      time_total_ += std::get<2>(fit_result_container);
+      time_total_ += std::get<3>(fit_result_container);
+
+      if (FitResultOkay(*fit_result_0) && FitResultOkay(*fit_result_1)) {
+        std::vector<double> scan_vals;
+        for (auto var : scan_vars_) {
+          RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result_1->constPars().find(var->GetName()));
+
+          // protection against 0.0 being 1e-16 and not being properly matched
+          double val(var_fixed->getVal());
+          if (std::abs(val) < 1e-14) {
+            val = 0.0;
+          } 
+
+          scan_vals.push_back(val);
+        }
+        double delta_nll(fit_result_1->minNll() - fit_result_0->minNll());
+
+        hist.Fill(delta_nll);
+
+        if (std::abs(scan_vals[0]-0.745732) < 1e-3) {
+          sdebug << "@" << scan_vals[0] << " (toy)  : " << fit_result_1->minNll() << "-" << fit_result_0->minNll() << " = " << delta_nll << endmsg;
+          sdebug << "@" << scan_vals[0] << " (data) : " << delta_nlls_data_scan_[scan_vals] << endmsg;
+
+          if (delta_nll < 0.0) {
+            fit_result_0->Print("v");
+            fit_result_1->Print("v");
+          }
+        }
+
+        if (delta_nll < 0.0) {
+          if (num_neglected_fits_.count(scan_vals) > 0) {
+            num_neglected_fits_[scan_vals]++;
+          } else {
+            num_neglected_fits_[scan_vals] = 1;
+          }
+
+          ++num_ignored;
+        } else {
+          if (delta_nlls_toy_scan_.count(scan_vals) > 0) {
+            delta_nlls_toy_scan_[scan_vals].push_back(delta_nll);
+          } else {
+            std::vector<double> vector;
+            vector.push_back(delta_nll);
+            delta_nlls_toy_scan_[scan_vals] = vector;
+          }
+          scan_vals_toy_.insert(scan_vals);
+          // sdebug << "scan_vals = " << scan_vals << endmsg;
+          // sdebug << "delta_nll = " << delta_nll << endmsg;
+        }
       } else {
-        std::vector<double> vector;
-        vector.push_back(delta_nll);
-        delta_nlls_toy_scan_[scan_vals] = vector;
+        ++num_ignored;
       }
-      // sdebug << "scan_vals = " << scan_vals << endmsg;
-      // sdebug << "delta_nll = " << delta_nll << endmsg;
     }
     toy_study.ReleaseFitResult(fit_result_container);
 
@@ -118,6 +194,15 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
     fit_result_0 = std::get<0>(fit_result_container);
     fit_result_1 = std::get<1>(fit_result_container);
   }
+
+  hist.Draw();
+  c.SaveAs("delta_chisq.pdf");
+
+  if (num_ignored > 0) {
+    swarn << "Ignored " << num_ignored << " toy scan results due to bad fit quality." << endmsg;
+  }
+
+  sinfo << "Scanned toy scan points: " << scan_vals_toy_ << endmsg;
 }
 
 bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const RooFitResult& fit_result) const {
@@ -133,26 +218,27 @@ bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const Roo
   }
 }
 
-double doofit::plotting::profiles::FeldmanCousinsProfiler::FindGraphXValues(TGraph& graph, double value, double direction) const {
+double doofit::plotting::profiles::FeldmanCousinsProfiler::FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction) const {
   using namespace doocore::io;
   TAxis* xaxis = graph.GetXaxis();
 
-  double x_lo(xaxis->GetXmin());
-  double x_hi(xaxis->GetXmax());
+  double x_lo(xmin);
+  double x_hi(xmax);
 
-  double x_start(xaxis->GetXmin());
-  double x_end(xaxis->GetXmax());
+  double x_start(xmin);
+  double x_end(xmax);
   if (direction < 0.0) {
-    x_start = xaxis->GetXmax();
-    x_end = xaxis->GetXmin();
+    x_start = xmax;
+    x_end = xmin;
   }
 
   // sdebug << (x_end - x_start)/100.0 << endmsg;
-  // sdebug << x_start*direction << endmsg;
-  // sdebug << x_end*direction << endmsg;
+  // sdebug << x_start << endmsg;
+  // sdebug << x_end << endmsg;
+  // sdebug << value << endmsg;
 
-  for (double x=x_start; x*direction<x_end*direction; x+=(x_end - x_start)/300.0) {
-    double y(graph.Eval(x, nullptr, "S"));
+  for (double x=x_start; x*direction<x_end*direction; x+=(x_end - x_start)/100.0) {
+    double y(graph.Eval(x, nullptr, ""));
     // sdebug << "x = " << x << ", y = " << y << endmsg;
 
     if (y < value) {
@@ -163,19 +249,19 @@ double doofit::plotting::profiles::FeldmanCousinsProfiler::FindGraphXValues(TGra
     }
   }
 
-  double eps(1e-5);
+  double eps(1e-6);
   double x_test, y;
-  unsigned int num_it(0);
-  while (std::abs(x_hi-x_lo) > eps && num_it < 1000000) {
+  while (std::abs(x_hi-x_lo) > eps) {
     x_test = (x_lo+x_hi)/2.0;
-    y = graph.Eval(x_test, nullptr, "S");
+    y = graph.Eval(x_test, nullptr, "");
     
+    // sdebug << "it:  " << x_lo << " - " << x_hi << endmsg;
+
     if (y < value) {
       x_lo = x_test;
     } else if (y > value) {
       x_hi = x_test;
     }
-    ++num_it;
   }
 
   // sdebug << "after:  " << x_lo << " - " << x_hi << endmsg;
@@ -191,6 +277,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
   std::vector<double> vals_y;
   std::vector<double> cls;
   std::vector<double> cl_errors;
+  std::vector<double> cls_wilks;
 
   std::map<std::string, double> min_scan_val;
   std::map<std::string, double> max_scan_val;
@@ -204,6 +291,15 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     unsigned int num_toys(0);
     unsigned int num_toys_exceed(0);
     for (auto delta_nll_toy : delta_nlls_toy) {
+
+      if (std::abs(delta_nll_data.first[0]-0.745732) < 1e-3) {
+        if (delta_nll_data.second >= delta_nll_toy) {
+          sdebug << "WHAAAAAAT!" << endmsg;
+          sdebug << "@" << delta_nll_data.first[0] << " (toy)  : " << delta_nll_toy << endmsg;
+          sdebug << "@" << delta_nll_data.first[0] << " (data) : " << delta_nll_data.second << endmsg;
+        }
+      }
+
       // sdebug << delta_nll_data.second << " - " << delta_nll_toy << endmsg;
       ++num_toys;
       if (delta_nll_data.second < delta_nll_toy) {
@@ -228,12 +324,23 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     cls.push_back(cl);
     cl_errors.push_back(cl_error);
 
-    if (cl == 0.0) {
-      swarn << "Scan point " << delta_nll_data.first << " has too little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
+    if (num_toys > 0) {
+      if (cl == 0.0) {
+        swarn << "Scan point " << delta_nll_data.first << " has too little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
+      } else if (cl_error > 0.02 || num_toys_exceed < 10) {
+        swarn << "Scan point " << delta_nll_data.first << " has little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
+      }
+      sinfo << "Scan point " << delta_nll_data.first << " with number of neglected toys: " << num_neglected_fits_[delta_nll_data.first] << "/" << num_toys+num_neglected_fits_[delta_nll_data.first] << " (" << static_cast<double>(num_neglected_fits_[delta_nll_data.first])/static_cast<double>(num_toys+num_neglected_fits_[delta_nll_data.first])*100.0 << "%)" << endmsg;
     }
-    if (cl_error > 0.02 || num_toys_exceed < 10) {
-      swarn << "Scan point " << delta_nll_data.first << " has little statistics: N(DeltaChi^2(data) < DeltaChi^2(toy))/N_toys = " << num_toys_exceed << "/" << num_toys << endmsg;
+
+    double cl_wilks(TMath::Prob(2*delta_nll_data.second, delta_nll_data.first.size()));
+    // infinitesimal small DeltaChi2 can become < 0.0, that is the case for the best estimate
+    // set cl_wilks to 1.0 here
+    if (delta_nll_data.second < 0.0 && std::abs(delta_nll_data.second) < 1e-4) {
+      cl_wilks = 1.0;
     }
+    cls_wilks.push_back(cl_wilks);
+    // sdebug << "x = " << delta_nll_data.first << ", DeltaChi2 = " << delta_nll_data.second << " , 1-CL(Wilk's Theorem) = " << cls_wilks.back() << ", 1-CL(FC) = " << cl << endmsg;
 
     // sdebug << "       scan_val = " << delta_nll_data.first << endmsg;
     // sdebug << "       num_toys = " << num_toys << endmsg;
@@ -266,30 +373,72 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
         values.emplace(std::make_pair(vals_x[i], std::make_pair(cls[i], cl_errors[i])));
       }
     }
-
-    std::vector<double> vals_x_sort, cls_sort, cl_errors_sort;
+    std::vector<double> vals_x_sort, cls_sort, cl_errors_sort, cls_sort_lower, cls_sort_upper;
     vals_x_sort.reserve(values.size());
     cls_sort.reserve(values.size());
+    cls_sort_lower.reserve(values.size());
+    cls_sort_upper.reserve(values.size());
     cl_errors_sort.reserve(values.size());
     for (auto value : values) {
       vals_x_sort.push_back(value.first);
       cls_sort.push_back(value.second.first);
+      cls_sort_lower.push_back(value.second.first - value.second.second);
+      cls_sort_upper.push_back(value.second.first + value.second.second);
       cl_errors_sort.push_back(value.second.second);
     }
 
-    TGraphErrors graph(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
+    std::map<double, double> values_wilks;
+    for (unsigned int i=0; i<cls_wilks.size(); ++i) {
+      if (cls_wilks[i] != 0.0) {
+        values_wilks.emplace(std::make_pair(vals_x[i], cls_wilks[i]));
+      }
+    }
+    std::vector<double> vals_x_wilks_sort, cls_wilks_sort;
+    vals_x_wilks_sort.reserve(values_wilks.size());
+    cls_wilks_sort.reserve(values_wilks.size());
+    for (auto value : values_wilks) {
+      vals_x_wilks_sort.push_back(value.first);
+      cls_wilks_sort.push_back(value.second);
+    }
 
-    if (cls.size() < 200) {
-      graph.Draw("APL");
+    TGraphErrors graph(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
+    TGraphErrors graph_errband(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
+    TGraph graph_wilks(cls_wilks_sort.size(), &vals_x_wilks_sort[0], &cls_wilks_sort[0]);
+
+    TGraph graph_lower(cls_sort.size(), &vals_x_sort[0], &cls_sort_lower[0]);
+    TGraph graph_upper(cls_sort.size(), &vals_x_sort[0], &cls_sort_upper[0]);
+
+    if (cls.size() < 400) {
+      graph_wilks.Draw("AL");
+      graph_wilks.SetMarkerStyle(7);
+      graph_wilks.SetMarkerSize(1);
+
+      graph_errband.SetFillColor(kBlue-8);
+      graph_errband.Draw("3");
+
+      graph.Draw("PL");
       graph.SetMarkerStyle(2);
       graph.SetMarkerSize(1);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
+
+      graph_wilks.Draw("L");
+
+      // graph_lower.Draw("L");
+      // graph_upper.Draw("L");
+
+      // graph_wilks.SetMarkerColor(kBlue+3);
+      // graph_wilks.SetLineColor(kBlue+3);
     } else {
-      graph.Draw("APL");
+      graph_wilks.Draw("AL");
+      graph_wilks.SetMarkerStyle(1);
+      graph.Draw("PL");
       graph.SetMarkerStyle(1);
       graph.SetMarkerColor(kBlue+3);
       graph.SetLineColor(kBlue+3);
+      
+      // graph_wilks.SetMarkerColor(kBlue+3);
+      // graph_wilks.SetLineColor(kBlue+3);
     }
     
     // double x_range = max_scan_val[val_scan.begin()->first] - min_scan_val[val_scan.begin()->first];
@@ -297,12 +446,14 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     // double x_range_lo = min_scan_val[val_scan.begin()->first] - x_range*0.1;
     // double x_range_hi = max_scan_val[val_scan.begin()->first] + x_range*0.1;
 
-    // graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
-    graph.GetYaxis()->SetRangeUser(1e-3, 1.01);
-    graph.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
-    graph.GetYaxis()->SetTitle("1 #minus CL");
+    auto min_cl_it = std::min_element(cls_sort_lower.begin(), cls_sort_lower.end());
 
-    TAxis* xaxis = graph.GetXaxis();
+    // graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
+    graph_wilks.GetYaxis()->SetRangeUser(*min_cl_it*0.5, 1.01);
+    graph_wilks.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
+    graph_wilks.GetYaxis()->SetTitle("1 #minus CL");
+
+    TAxis* xaxis = graph_wilks.GetXaxis();
 
     double x_lo(xaxis->GetXmin());
     double x_hi(xaxis->GetXmax());
@@ -311,13 +462,63 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     double level_2sigma(1-0.954500);
     double level_3sigma(1-0.997300);
 
-    std::pair<double, double> cl_1sigma(FindGraphXValues(graph, level_1sigma), FindGraphXValues(graph, level_1sigma, -1.0));
-    std::pair<double, double> cl_2sigma(FindGraphXValues(graph, level_2sigma), FindGraphXValues(graph, level_2sigma, -1.0));
-    std::pair<double, double> cl_3sigma(FindGraphXValues(graph, level_3sigma), FindGraphXValues(graph, level_3sigma, -1.0));
+    double xmin(vals_x_sort.front());
+    double xmax(vals_x_sort.back());
+    double xmin_wilks(vals_x_wilks_sort.front());
+    double xmax_wilks(vals_x_wilks_sort.back());
 
-    sinfo << "1 sigma interval: [" << cl_1sigma.first << ", " << cl_1sigma.second << "]" << endmsg;
-    sinfo << "2 sigma interval: [" << cl_2sigma.first << ", " << cl_2sigma.second << "]" << endmsg;
-    sinfo << "3 sigma interval: [" << cl_3sigma.first << ", " << cl_3sigma.second << "]" << endmsg;
+    std::pair<double, double> cl_1sigma(FindGraphXValues(graph, xmin, xmax, level_1sigma), FindGraphXValues(graph, xmin, xmax, level_1sigma, -1.0));
+    std::pair<double, double> cl_2sigma(FindGraphXValues(graph, xmin, xmax, level_2sigma), FindGraphXValues(graph, xmin, xmax, level_2sigma, -1.0));
+    std::pair<double, double> cl_3sigma(FindGraphXValues(graph, xmin, xmax, level_3sigma), FindGraphXValues(graph, xmin, xmax, level_3sigma, -1.0));
+
+    std::pair<double, double> cl_1sigma_lower(FindGraphXValues(graph_lower, xmin, xmax, level_1sigma), FindGraphXValues(graph_lower, xmin, xmax, level_1sigma, -1.0));
+    std::pair<double, double> cl_2sigma_lower(FindGraphXValues(graph_lower, xmin, xmax, level_2sigma), FindGraphXValues(graph_lower, xmin, xmax, level_2sigma, -1.0));
+    std::pair<double, double> cl_3sigma_lower(FindGraphXValues(graph_lower, xmin, xmax, level_3sigma), FindGraphXValues(graph_lower, xmin, xmax, level_3sigma, -1.0));
+
+    std::pair<double, double> cl_1sigma_upper(FindGraphXValues(graph_upper, xmin, xmax, level_1sigma), FindGraphXValues(graph_upper, xmin, xmax, level_1sigma, -1.0));
+    std::pair<double, double> cl_2sigma_upper(FindGraphXValues(graph_upper, xmin, xmax, level_2sigma), FindGraphXValues(graph_upper, xmin, xmax, level_2sigma, -1.0));
+    std::pair<double, double> cl_3sigma_upper(FindGraphXValues(graph_upper, xmin, xmax, level_3sigma), FindGraphXValues(graph_upper, xmin, xmax, level_3sigma, -1.0));
+
+    // sdebug << cl_1sigma.first << " - " <<  std::max(cl_1sigma.first-cl_1sigma_upper.first,0.0)   << " - " << std::max(cl_1sigma_lower.first-cl_1sigma.first,0.0) << endmsg;
+    // sdebug << cl_1sigma.second << " - " << std::max(cl_1sigma.second-cl_1sigma_lower.second,0.0) << " - " << std::max(cl_1sigma_upper.second-cl_1sigma.second,0.0) << endmsg;
+    // sdebug << cl_2sigma.first << " - " <<  std::max(cl_2sigma.first-cl_2sigma_upper.first,0.0)   << " - " << std::max(cl_2sigma_lower.first-cl_2sigma.first,0.0) << endmsg;
+    // sdebug << cl_2sigma.second << " - " << std::max(cl_2sigma.second-cl_2sigma_lower.second,0.0) << " - " << std::max(cl_2sigma_upper.second-cl_2sigma.second,0.0) << endmsg;
+    // sdebug << cl_3sigma.first << " - " <<  std::max(cl_3sigma.first-cl_3sigma_upper.first,0.0)   << " - " << std::max(cl_3sigma_lower.first-cl_3sigma.first,0.0) << endmsg;
+    // sdebug << cl_3sigma.second << " - " << std::max(cl_3sigma.second-cl_3sigma_lower.second,0.0) << " - " << std::max(cl_3sigma_upper.second-cl_3sigma.second,0.0) << endmsg;
+
+    using namespace doocore::statistics::general;
+    ValueWithError<double> cl_1sigma_low(cl_1sigma.first,  0.0, std::max(cl_1sigma.first-cl_1sigma_upper.first,0.0),   std::max(cl_1sigma_lower.first-cl_1sigma.first,0.0));
+    ValueWithError<double> cl_1sigma_hig(cl_1sigma.second, 0.0, std::max(cl_1sigma.second-cl_1sigma_lower.second,0.0), std::max(cl_1sigma_upper.second-cl_1sigma.second,0.0));
+    ValueWithError<double> cl_2sigma_low(cl_2sigma.first,  0.0, std::max(cl_2sigma.first-cl_2sigma_upper.first,0.0),   std::max(cl_2sigma_lower.first-cl_2sigma.first,0.0));
+    ValueWithError<double> cl_2sigma_hig(cl_2sigma.second, 0.0, std::max(cl_2sigma.second-cl_2sigma_lower.second,0.0), std::max(cl_2sigma_upper.second-cl_2sigma.second,0.0));
+    ValueWithError<double> cl_3sigma_low(cl_3sigma.first,  0.0, std::max(cl_3sigma.first-cl_3sigma_upper.first,0.0),   std::max(cl_3sigma_lower.first-cl_3sigma.first,0.0));
+    ValueWithError<double> cl_3sigma_hig(cl_3sigma.second, 0.0, std::max(cl_3sigma.second-cl_3sigma_lower.second,0.0), std::max(cl_3sigma_upper.second-cl_3sigma.second,0.0));
+
+    sinfo << "1 sigma interval (FC): [" << cl_1sigma_low << ", " << cl_1sigma_hig << "]" << endmsg;
+    sinfo << "2 sigma interval (FC): [" << cl_2sigma_low << ", " << cl_2sigma_hig << "]" << endmsg;
+    sinfo << "3 sigma interval (FC): [" << cl_3sigma_low << ", " << cl_3sigma_hig << "]" << endmsg;
+
+    cl_1sigma_low.set_full_precision_printout(true);
+    cl_1sigma_hig.set_full_precision_printout(true);
+    cl_2sigma_low.set_full_precision_printout(true);
+    cl_2sigma_hig.set_full_precision_printout(true);
+    cl_3sigma_low.set_full_precision_printout(true);
+    cl_3sigma_hig.set_full_precision_printout(true);
+
+    // sdebug << cl_1sigma.first << endmsg;
+
+    sinfo << "1 sigma interval (FC): [" << cl_1sigma_low << ", " << cl_1sigma_hig << "]" << endmsg;
+    sinfo << "2 sigma interval (FC): [" << cl_2sigma_low << ", " << cl_2sigma_hig << "]" << endmsg;
+    sinfo << "3 sigma interval (FC): [" << cl_3sigma_low << ", " << cl_3sigma_hig << "]" << endmsg;
+
+    std::pair<double, double> cl_1sigma_wilks(FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_1sigma), FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_1sigma, -1.0));
+    std::pair<double, double> cl_2sigma_wilks(FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_2sigma), FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_2sigma, -1.0));
+    std::pair<double, double> cl_3sigma_wilks(FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_3sigma), FindGraphXValues(graph_wilks, xmin_wilks, xmax_wilks, level_3sigma, -1.0));
+
+    sinfo << "1 sigma interval (Wilks): [" << cl_1sigma_wilks.first << ", " << cl_1sigma_wilks.second << "]" << endmsg;
+    sinfo << "2 sigma interval (Wilks): [" << cl_2sigma_wilks.first << ", " << cl_2sigma_wilks.second << "]" << endmsg;
+    sinfo << "3 sigma interval (Wilks): [" << cl_3sigma_wilks.first << ", " << cl_3sigma_wilks.second << "]" << endmsg;
+
 
     TLine line_1sigma(x_lo, level_1sigma, x_hi, level_1sigma);
     line_1sigma.SetLineColor(kRed-8);
@@ -340,6 +541,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
 
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "fc", plot_path);
+
+    sinfo << "Total time spent for all Feldman-Cousins fits (d:hh:mm:ss): " << doocore::io::tools::SecondsToTimeString(time_total_) << endmsg;
   }
 
   // std::map<std::string, std::vector<double>> val_scan;
