@@ -34,6 +34,7 @@ PlotConfig::PlotConfig(const std::string& name)
 : config::AbsConfig(name),
   plot_directory_("Plot"),
   plot_style_("LHCbOptimized"),
+  label_text_("LHCb"),
   num_cpu_(1),
   plot_stack_open_(false),
   plot_stack_canvas_(NULL),
@@ -74,6 +75,7 @@ void PlotConfig::DefineOptions() {
   (GetOptionString("num_cpu").c_str(), po::value<int>(&num_cpu_)->default_value(1),"Number of CPUs for plotting")
   (GetOptionString("pdf_linecolors").c_str(), po::value<config::CommaSeparatedList<int> >(&pdf_linecolor_map_),"Line colors for plotted PDFs (comma-separated as col1,col2,...)")
   (GetOptionString("pdf_linestyles").c_str(), po::value<config::CommaSeparatedList<int> >(&pdf_linestyle_map_),"Line styles for plotted PDFs (comma-separated as style1,style2,...)")
+  (GetOptionString("label_text").c_str(), po::value<std::string>(&label_text_)->default_value("LHCb"),"Label for plots")
   (GetOptionString("plot_directory").c_str(), po::value<std::string>(&plot_directory_)->default_value("Plot"),"Output directory for plots")
   (GetOptionString("plot_appendix").c_str(), po::value<std::string>(&plot_appendix_)->default_value(""),"Plot appendix for stacked plots")
   (GetOptionString("simultaneous_plot_all_categories").c_str(), po::value<bool>(&simultaneous_plot_all_categories_)->default_value(false),"Plot all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...) (default: false)")
