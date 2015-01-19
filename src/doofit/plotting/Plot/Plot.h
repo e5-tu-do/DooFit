@@ -206,6 +206,15 @@ enum ScaleType {
     void AddPlotArgData(RooCmdArg arg) {plot_args_data_.push_back(arg);}
     
     /**
+     *  @brief Set additional plot label (to be added as splitline under label from PlotConfig)
+     *
+     *  @param plot_label_additional label as TLatex string
+     */
+    void set_plot_label_additional(std::string plot_label_additional) {
+      plot_label_additional_ = plot_label_additional;
+    }
+
+    /**
      *  @brief Set plot range to use for this plot
      *
      *  Set a range to be used for plotting. This range has to be defined on the
@@ -264,6 +273,11 @@ enum ScaleType {
      */
     std::string plot_name_;
     
+    /**
+     *  @brief Additional plot label (splitlined with label from PlotConfig)
+     */
+    std::string plot_label_additional_;
+
     /**
      *  @brief Plot range
      */
