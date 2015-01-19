@@ -142,7 +142,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 
   sinfo << "Plotting " << dimension_.GetName() << " into directory " << config_plot_.plot_directory() << " as " << plot_name << endmsg;
   
-  doocore::lutils::setStyle("LHCbOptimized");
+  doocore::lutils::setStyle(config_plot_.plot_style());
   
   RooCmdArg range_arg;
   
@@ -247,7 +247,27 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //  sdebug << "minimum entry in histogram: " << min_data_entry << endmsg;
 //  sdebug << "minimum for plot range: " << min_plot << endmsg;
   
-  TLatex label(0.65,0.85,"LHCb");
+  std::string label_string(config_plot_.label_text());
+  double label_x(0.65), label_y(0.85);
+  TLatex label_add(0,0,plot_label_additional_.c_str());
+  double xsize = label_add.GetXsize();
+  // sdebug << "additional label x size: " << xsize << endmsg;
+  if (label_string.length() > 0 && plot_label_additional_.length() > 0) {
+    label_string = "#splitline{" + label_string + "}{" + plot_label_additional_ + "}";
+    label_y = 0.82;
+  } else if (plot_label_additional_.length() > 0) {
+    label_string = plot_label_additional_;
+  }
+  if (xsize > 0.25) {
+    if (config_plot_.plot_style().find("Enlarged") != std::string::npos) {
+      // Enlarged plot needs different treatment
+      label_x = 0.65 - (std::max(0.0, xsize-0.4)*0.8);
+    } else {
+      label_x = 0.65 - (std::max(0.0, xsize-0.25)*0.8);
+    }
+  }
+
+  TLatex label(label_x, label_y, label_string.c_str());
   
   config_plot_.OnDemandOpenPlotStack();
   if (pdf_ != NULL) {

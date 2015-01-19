@@ -3,6 +3,8 @@
 
 // STL
 #include <vector>
+#include <map>
+#include <string>
 
 // BOOST
 
@@ -96,21 +98,25 @@ class PlotConfig : public config::AbsConfig {
   std::string plot_directory() const { return plot_directory_; }
 
   /**
+   * @brief Getter for plot_style_
+   *
+   * @see set_plot_style()
+   **/
+  std::string plot_style() const { return plot_style_; }
+
+  /**
+   * @brief Getter for label_text_
+   *
+   * @see set_label_text()
+   **/
+  std::string label_text() const { return label_text_; }
+
+  /**
    * @brief Getter for plot_appendix_
    *
    * @see set_plot_appendix()
    **/
   std::string plot_appendix() const { return plot_appendix_; }
-
-  /**
-   * @brief Getter for plotting of all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
-   **/
-  bool simultaneous_plot_all_categories() const { return simultaneous_plot_all_categories_; }
-
-  /**
-   * @brief Getter for plotting of each slice of a simultaneous PDF (i.e. all long, all tagged, etc.)
-   **/
-  bool simultaneous_plot_all_slices() const { return simultaneous_plot_all_slices_; }
 
   /**
    *  @brief Getter for x plot range (where applicable)
@@ -122,6 +128,27 @@ class PlotConfig : public config::AbsConfig {
    */
   std::pair<double, double> plot_range_y() const { return std::make_pair(plot_range_y_.first(), plot_range_y_.second()); }
   ///@}
+
+  /** @name Simultaneous PDF plotting getters
+   *  Functions to setup plotting of simultaneous PDFs
+   */
+  ///@{
+  /**
+   * @brief Getter for plotting of all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
+   **/
+  bool simultaneous_plot_all_categories() const { return simultaneous_plot_all_categories_; }
+
+  /**
+   * @brief Getter for plotting of each slice of a simultaneous PDF (i.e. all long, all tagged, etc.)
+   **/
+  bool simultaneous_plot_all_slices() const { return simultaneous_plot_all_slices_; }
+
+  /**
+   * @brief Getter for simultaneous category labels
+   **/
+  const std::map<std::string, std::string>& simultaneous_category_labels() const { return simultaneous_category_labels_; }
+  ///@}
+
 
   /** @name Setter functions
    *  Implementation of setter functions.
@@ -190,6 +217,28 @@ class PlotConfig : public config::AbsConfig {
   }
 
   /**
+   * @brief Setter for plot_style_
+   *
+   * Set plot output directory.
+   *
+   * @param plot_style the plot output directory to use
+   **/
+  void set_plot_style(const std::string& plot_style) {
+    plot_style_ = plot_style;
+  }
+
+  /**
+   * @brief Setter for label_text_
+   *
+   * Set plot output directory.
+   *
+   * @param label_text the plot output directory to use
+   **/
+  void set_label_text(const std::string& label_text) {
+    label_text_ = label_text;
+  }
+
+  /**
    * @brief Setter for plot_appendix_ 
    *
    * Set appendix for stacked plot output file name
@@ -197,16 +246,6 @@ class PlotConfig : public config::AbsConfig {
    * @param pdf_linecolors colors to use in same order as PDFs are supplied
    **/
   void set_plot_appendix(const std::string& plot_appendix) { plot_appendix_ = plot_appendix; }
-
-  /**
-   * @brief Setter for plotting of all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
-   **/
-  void set_simultaneous_plot_all_categories(bool simultaneous_plot_all_categories) { simultaneous_plot_all_categories_ = simultaneous_plot_all_categories; }
-
-  /**
-   * @brief Setter for plotting of each slice of a simultaneous PDF (i.e. all long, all tagged, etc.)
-   **/
-  void set_simultaneous_plot_all_slices(bool simultaneous_plot_all_slices) { simultaneous_plot_all_slices_ = simultaneous_plot_all_slices; }
 
   /**
    *  @brief Setter for x plot range (where applicable)
@@ -218,6 +257,32 @@ class PlotConfig : public config::AbsConfig {
    */
   void set_plot_range_y(double min_y, double max_y) { plot_range_y_.set_first(min_y); plot_range_y_.set_second(max_y); } 
   ///@}
+
+  /** @name Simultaneous PDF plotting setters/configuration
+   *  Functions to setup plotting of simultaneous PDFs
+   */
+  ///@{
+  /**
+   * @brief Setter for plotting of all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
+   **/
+  void set_simultaneous_plot_all_categories(bool simultaneous_plot_all_categories) { simultaneous_plot_all_categories_ = simultaneous_plot_all_categories; }
+
+  /**
+   * @brief Setter for plotting of each slice of a simultaneous PDF (i.e. all long, all tagged, etc.)
+   **/
+  void set_simultaneous_plot_all_slices(bool simultaneous_plot_all_slices) { simultaneous_plot_all_slices_ = simultaneous_plot_all_slices; }
+
+  /**
+   * @brief Add simultaneous category or slice label
+   *
+   * @param category string identifying simultaneous category or slice
+   * @param label as TLatex string to add on plots
+   **/
+  void AddSimultaneousCategoryLabel(std::string category, std::string label) { 
+    simultaneous_category_labels_.emplace(category, label);
+  }
+  ///@}
+
   
   /** @name Stacked plotting support functions
    *  Functions to support stacked plotting into one file
@@ -288,6 +353,16 @@ class PlotConfig : public config::AbsConfig {
   std::string plot_directory_;
 
   /**
+   *  @brief Plot style to use for plots
+   */
+  std::string plot_style_;
+
+  /**
+   *  @brief TLatex plot label text
+   */
+  std::string label_text_;
+
+  /**
    *  @brief Number of CPUs to use for plotting
    */
   int num_cpu_;
@@ -310,6 +385,7 @@ class PlotConfig : public config::AbsConfig {
    *  @brief Appendix for stacked plot file name
    */
   std::string plot_appendix_;
+  ///@}
 
   /**
    *  @brief Plot all individual sub categories of a simultaneous PDF (i.e. long,tagged,2011 vs. down,tagged,2011 vs. ...)
@@ -322,6 +398,11 @@ class PlotConfig : public config::AbsConfig {
   bool simultaneous_plot_all_slices_;  
 
   /**
+   *  @brief Map for labels for simultaneous categories and slices
+   */
+  std::map<std::string,std::string> simultaneous_category_labels_;
+
+  /**
    *  @brief x plot range (where applicable)
    */
   config::CommaSeparatedPair<double> plot_range_x_;
@@ -331,7 +412,6 @@ class PlotConfig : public config::AbsConfig {
    */
   config::CommaSeparatedPair<double> plot_range_y_;
 
-  ///@}
 };
 
 } // namespace plotting
