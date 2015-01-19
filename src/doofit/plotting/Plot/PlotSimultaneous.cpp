@@ -108,6 +108,14 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           //plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
           plot_name = plot_name_ + "_" + sim_cat_type->GetName();
           Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
+
+          std::string name_category(sim_cat_type->GetName());
+          const std::map<std::string, std::string>& label_map(config_plot_.simultaneous_category_labels());
+          if (label_map.count(name_category) > 0) {
+            //sdebug << name_category << " - " << label_map.at(name_category) << endmsg;
+            plot.set_plot_label_additional(label_map.at(name_category));
+          }
+
           plot.plot_args_pdf_  = this->plot_args_pdf_;
           plot.plot_args_data_ = this->plot_args_data_;
           plot.plot_range_     = this->plot_range_;
@@ -178,7 +186,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
             }
           }
           
-          doocore::lutils::setStyle("LHCbOptimized");
+          doocore::lutils::setStyle(config_plot_.plot_style());
           config_plot_.OnDemandOpenPlotStack();
           TCanvas c1("c1","c1",900,900);
           std::string label_text1 = std::string("Next plots: dimension ") + dimension_.GetName() + ", category " + sim_cat_type->GetName();
@@ -244,6 +252,15 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
 
           plot_name = plot_name_ + "_" + cat_type->GetName();
           Plot plot(config_plot_, dimension_, sub_data, pdf, components_regexps_, plot_name);
+
+          std::string name_category(cat_type->GetName());
+          const std::map<std::string, std::string>& label_map(config_plot_.simultaneous_category_labels());
+          if (label_map.count(name_category) > 0) {
+            //sdebug << name_category << " - " << label_map.at(name_category) << endmsg;
+            plot.set_plot_label_additional(label_map.at(name_category));
+          }
+
+
           plot.plot_args_pdf_  = this->plot_args_pdf_;
           plot.plot_args_data_ = this->plot_args_data_;
           plot.plot_range_     = this->plot_range_;
@@ -320,7 +337,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           // RooCmdArg arg_slice = Slice(*category);
           // plot.AddPlotArg(arg_slice);
           
-          doocore::lutils::setStyle("LHCbOptimized");
+          doocore::lutils::setStyle(config_plot_.plot_style());
           config_plot_.OnDemandOpenPlotStack();
           TCanvas c1("c1","c1",900,900);
           std::string label_text1 = std::string("Next plots: dimension ") + dimension_.GetName() + ", category " + cat_type->GetName();
