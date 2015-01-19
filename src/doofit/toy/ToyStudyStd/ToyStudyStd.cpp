@@ -153,13 +153,21 @@ namespace toy {
     const RooFitResult* dummy = nullptr;
     FitResultContainer fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0, 0, 0);
     
+    // std::cout << "fitresult_reader_worker_.joinable(): " << fitresult_reader_worker_.joinable() << std::endl;
+    // std::cout << "fit_results_read_queue_.size(): " << fit_results_read_queue_.size() << " entries" << std::endl;
+    // std::cout << "reading_fit_results_ : " << reading_fit_results_ << std::endl;
+
     if (!fitresult_reader_worker_.joinable()) {
       return fit_results;
     } else {
       bool got_one = false;
-      while (!got_one && reading_fit_results_) {
+      while (!got_one && (reading_fit_results_ || fit_results_read_queue_.size() > 0)) {
         got_one = fit_results_read_queue_.wait_and_pop(fit_results);
       }
+
+      // std::cout << std::get<0>(fit_results) << std::endl;
+      // std::cout << std::get<1>(fit_results) << std::endl;
+
       // if we got_one, return, if not return default NULL pointer pair
       // (this will happen if the worker stopped)
       return fit_results;
@@ -1158,6 +1166,10 @@ namespace toy {
             
             // save a copy
             if (fit_result != NULL && FitResultOkay(*fit_result)) {
+
+              // std::cout << "pushing " << fit_result << std::endl;
+              // std::cout << "pushing " << fit_result2 << std::endl;
+
               fit_results_read_queue_.push(std::make_tuple(fit_result,
                                                            fit_result2,
                                                            time_cpu1,
@@ -1167,10 +1179,13 @@ namespace toy {
                                                            seed,
                                                            run_id));
               
+              // fit_result->Print();
+              //fit_result2->Print();
+
               results_stored++;
             } else {
               if (fit_result == NULL) {
-                serr << "Fit result number " << i << " in file " << *it_files << " is NULL and therefore negelected. This indicates corrupted files and should never happen." << endmsg;
+                serr << "Fit result number " << i << " in file " << *it_files << " is NULL and therefore neglected. This indicates corrupted files and should never happen." << endmsg;
                 while (true) {}
               } else {
                 delete fit_result;
