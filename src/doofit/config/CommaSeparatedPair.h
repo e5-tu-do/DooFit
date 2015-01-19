@@ -1,6 +1,18 @@
 #ifndef COMMASEPARATEDPAIR_h
 #define COMMASEPARATEDPAIR_h
 
+// from STL
+#include <vector>
+#include <string>
+#include <iostream>
+
+// from Boost
+#include <boost/lexical_cast.hpp>
+
+// from DooFit
+#include <doocore/io/MsgStream.h>
+
+
 // from project
 #ifndef __CINT__
 #include "doofit/config/AbsTypeCommaSeparated.h"
@@ -27,12 +39,18 @@ namespace config {
    *  @see ConfigTestAbstractType
    */
   
+  template <class T>
   class CommaSeparatedPair : public AbsTypeCommaSeparated {
   public:
     /**
      *  @brief Default constructor for CommaSeparatedPair
      */
     CommaSeparatedPair() {}
+
+    CommaSeparatedPair(const T& first, const T& second) 
+     : first_(first),
+       second_(second)
+    {}
     
     /**
      *  @brief Destructor for CommaSeparatedPair
@@ -53,7 +71,19 @@ namespace config {
      *
      *  @param str string to parse
      */
-    void Parse(const std::string& str);
+    void Parse(const std::string& str) {
+      using namespace doocore::io;
+      std::vector<std::string> elements = DecomposeString(str);
+      
+      // number of elements must be two
+      if (elements.size() != 2) {
+        serr << "ERROR in CommaSeparatedPair::Parse(const std::string&): String '" << str << "' does not contain exactly two comma-separated strings." << endmsg;
+        throw;
+      }
+      
+      first_ = boost::lexical_cast<T>(elements[0]);
+      second_ = boost::lexical_cast<T>(elements[1]);
+    }
     
     /**
      *  @brief Print this object to an std::ostream
@@ -64,7 +94,9 @@ namespace config {
      *
      *  @param os ostream to print to
      */
-    virtual void Print(std::ostream& os) const;
+    virtual void Print(std::ostream& os) const {
+      os << first_ << "->" << second_;
+    }
     
     
     /** @name getter Getter
@@ -74,12 +106,12 @@ namespace config {
     /**
      *  @brief Getter for first string
      */
-    const std::string& first() const {return first_;}
+    const T& first() const {return first_;}
     
     /**
      *  @brief Getter for second string
      */
-    const std::string& second() const {return second_;}
+    const T& second() const {return second_;}
     ///@}
     
     /** @name setter Setter
@@ -89,12 +121,12 @@ namespace config {
     /**
      *  @brief Setter for first string
      */
-    void set_first(const std::string& str) { first_ = str; }
+    void set_first(const T& str) { first_ = str; }
     
     /**
      *  @brief Setter for second string
      */
-    void set_second(const std::string& str) { second_ = str; }
+    void set_second(const T& str) { second_ = str; }
     ///@}
     
     /**
@@ -119,12 +151,12 @@ namespace config {
     /**
      *  @brief First string
      */
-    std::string first_;
+    T first_;
     
     /**
      *  @brief Second string
      */
-    std::string second_;
+    T second_;
     
     /**
      *  @brief ClassDef statement for CINT dictionary generation

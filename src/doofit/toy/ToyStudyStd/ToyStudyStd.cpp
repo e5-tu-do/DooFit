@@ -11,6 +11,7 @@
 #include "boost/filesystem.hpp"
 #include "boost/random/random_device.hpp"
 #include <boost/thread.hpp>
+#include <boost/algorithm/string.hpp>
 
 // ROOT
 #include "TTree.h"
@@ -25,6 +26,7 @@
 #include "TStopwatch.h"
 #include "TGraph.h"
 #include "TAxis.h"
+#include "TPaveText.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -39,7 +41,7 @@
 #include "doocore/lutils/lutils.h"
 #include "doocore/system/FileLock.h"
 #include <doocore/io/Progress.h>
-#include "doocore/statistics/general.h"
+#include <doocore/statistics/general.h>
 
 // from Project
 #include "doofit/config/CommonConfig.h"
@@ -264,7 +266,7 @@ namespace toy {
     sinfo << "Plotting parameter distributions." << endmsg;
     
     gROOT->SetStyle("Plain");
-    doocore::lutils::setStyle();
+    doocore::lutils::setStyle("LHCbOptimized");
     TCanvas canvas("canvas_toystudy", "canvas", 800, 600);
     doocore::lutils::printPlotOpenStack(&canvas, "AllPlots", config_toystudy_.plot_directory());
     
@@ -365,6 +367,16 @@ namespace toy {
       if (config_toystudy_.fit_plot_on_quantile_window()) {
         cut = param_name + ">" + boost::lexical_cast<std::string>(minmax.first) + "&&" + param_name + "<" + boost::lexical_cast<std::string>(minmax.second);
       }
+      //sdebug << cut << endmsg;
+
+      // if (param_name == "par_bssig_time_S_pull") {
+      //   //cut = param_name + ">" + boost::lexical_cast<std::string>(minmax.first) + "&&" + param_name + "<0.75"; 
+      //   parameters_copy.add(*parameters->find("par_bssig_time_S_herr"));
+      //   cut = cut + "&&" + "par_bssig_time_S_herr<0.4";
+      // }
+      // parameters_copy.Print();
+      // sdebug << cut << endmsg;
+
       if (config_toystudy_.neglect_parameters_at_limit()) {
         if (cut.Length() > 0) cut = cut + "&&";
         cut = cut + "parameters_at_limit < 0.5";
@@ -402,10 +414,12 @@ namespace toy {
       // sdebug << "duration_prefit = " << duration_prefit*1e-3 << endmsg;
 
       // for all pulls fit a gaussian
+      RooFitResult* fit_result = nullptr;
       if (param_name.length() > 4 &&
           (param_name.substr(param_name.length()-5).compare("_pull") == 0 ||
            param_name.substr(param_name.length()-4).compare("_res") == 0 ||
            param_name.substr(param_name.length()-4).compare("_err") == 0 ||
+           param_name.substr(param_name.length()-5).compare("_init") == 0 ||
            (param_name.length() > 12 && param_name.substr(param_name.length()-12).compare("_refresidual") == 0))) {
            // || param_name.substr(0,4).compare("time") == 0)) {
         mean  = new RooRealVar("m", "mean of pull", (minmax.first+minmax.second)/2.0,minmax.first,minmax.second);
@@ -427,7 +441,7 @@ namespace toy {
         int num_cores = std::max(fit_plot_dataset->numEntries() < 200 ? fit_plot_dataset->numEntries()/1000+1 : 1, 8);
         //sdebug << fit_plot_dataset->numEntries() << " thus " << num_cores << " cores." << endmsg;
         num_cores = 1;
-        RooFitResult* fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(num_cores), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(0));
+        fit_result = gauss->fitTo(*fit_plot_dataset, NumCPU(num_cores), Verbose(false), PrintLevel(-1), PrintEvalErrors(-1), Warnings(false), Save(true),  Minimizer("Minuit2","minimize"), Optimize(0));
         fit_status = fit_result->statusCodeHistory(0);
 
         // un-supress RooFit spam
@@ -435,7 +449,6 @@ namespace toy {
         RooMsgService::instance().setStreamStatus(1, true);
 
         //fit_result->Print("v");
-        delete fit_result;
         sinfo.increment_indent(-2);
       }
 
@@ -458,17 +471,86 @@ namespace toy {
       fit_plot_dataset->plotOn(frame);
       if (fit_plot_dataset != evaluated_values_) delete fit_plot_dataset;
       
+      // get fit pars
+      RooRealVar* var_mean = nullptr;
+      RooRealVar* var_sigma = nullptr;
+
+      // only plot the fit gauss for init distributions for constrained parameters
+      // in the next line we check if the width of the gaussian is wide enough,
+      // if not, then set bool to false.
+      bool plot_gauss_pdf_for_init_distributions = true;
+      if (gauss != NULL && fit_status == 0){
+        const RooArgList& list_fit_params(fit_result->floatParsFinal());
+        var_mean  = dynamic_cast<RooRealVar*>(list_fit_params.find("m"));
+        var_sigma = dynamic_cast<RooRealVar*>(list_fit_params.find("s"));
+        if (var_sigma->getVal()<1e-6) plot_gauss_pdf_for_init_distributions = false;
+      }
+
+      TPaveText* pt = nullptr;
       if (gauss != NULL && fit_status == 0) {
-        gauss->plotOn(frame);
-        param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
+        if (plot_gauss_pdf_for_init_distributions) gauss->plotOn(frame);
+        //param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
+
+        using namespace doocore::statistics::general;
+        ValueWithError<double> val_mean(var_mean->getVal(), var_mean->getError());
+        ValueWithError<double> val_sigma(var_sigma->getVal(), var_sigma->getError());
+
+        pt = new TPaveText(0.6, 0.78, 0.9, 0.9, "NB NDC");
+        pt->SetFillColor(kWhite);
+        //pt->SetOption("NB");
+        pt->SetTextAlign(12);
+        pt->SetBorderSize(1);
+        pt->SetMargin(0.05);
+        pt->SetTextFont(133);
+        pt->SetTextSize(20);
+
+        std::string str_mean("m = ");
+        str_mean += val_mean.FormatStringTLatex();
+        std::string str_sigma("s = ");
+        str_sigma += val_sigma.FormatStringTLatex();
+
+        if (param_name.length() > 4 &&
+          (param_name.substr(param_name.length()-5).compare("_pull") == 0)) {
+          double pull_mean(val_mean.value/val_mean.error);
+          double pull_sigma((val_sigma.value-1.0)/val_sigma.error);
+
+          std::stringstream sstr_pull_mean;
+          sstr_pull_mean << std::setprecision(2) << std::fixed << pull_mean;
+          std::stringstream sstr_pull_sigma;
+          sstr_pull_sigma << std::setprecision(2) << std::fixed << pull_sigma;
+
+          str_mean  += " (" + sstr_pull_mean.str()  + "#kern[0.3]{#sigma})";
+          str_sigma += " (" + sstr_pull_sigma.str() + "#kern[0.3]{#sigma})";
+
+          boost::replace_all(str_mean,  "-", "#minus");
+          boost::replace_all(str_sigma, "-", "#minus");
+
+          pt->SetX1(0.6);
+        }
+
+        pt->AddText(str_mean.c_str());
+        pt->AddText(str_sigma.c_str());
+
       } else if (fit_status != 0) {
         swarn << "ToyStudyStd::PlotEvaluatedParameters(): Gaussian fit for " << parameter->GetName() << " failed. Will not plot." << endmsg;
       }
       frame->Draw();
+
+      if (pt != nullptr) {
+        pt->Draw();
+      }
+
       TString plot_name = parameter->GetName();
       doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
       doocore::lutils::printPlot(&canvas, "AllPlots", config_toystudy_.plot_directory(), true);
       
+      if (fit_result != nullptr) {
+        delete fit_result;
+      }
+      if (pt != nullptr) {
+        delete pt;
+      }
+
       delete frame;
       
       if (gauss != NULL) {
@@ -702,11 +784,17 @@ namespace toy {
       //                    reflect a parameter being overestimated. The previous
       //                    definition was in accordance with the CDF pull paper.
       
+      std::string name_parameter(parameter->GetName());
+
       // asymmetric error handling
       if (par.hasAsymError() && config_toystudy_.handle_asymmetric_errors()) {
         lerr_value = par.getErrorLo();
         herr_value = par.getErrorHi();
         
+        // if (name_parameter == "par_bdsig_time_C") {
+        //   sdebug << "lerr_value = " << lerr_value << " -- herr_value = " << herr_value << endmsg;
+        // }
+
         lerr->setVal(lerr_value);
         herr->setVal(herr_value);
         
@@ -716,6 +804,9 @@ namespace toy {
           pull_value = -(par.getVal() - init.getVal())/lerr_value;
         }
       } else {
+        // if (name_parameter == "par_bdsig_time_C") {
+        //   sdebug << "parameter par_bdsig_time_C ain't got no asymmetric errors." << endmsg;
+        // }
         pull_value = -(init.getVal() - par.getVal())/err_value;
       }
       pull->setVal(pull_value);
@@ -725,6 +816,13 @@ namespace toy {
       
       err->setVal(err_value);
             
+      // if (name_parameter == "par_bssig_time_S") {
+      //   if (herr_value > 0.6) {
+      //     swarn << "Upper error of par_bssig_time_S is >0.6" << endmsg;
+      //     problems = true;
+      //   }
+      // }
+
       if (TMath::Abs(pull_value) > 5.0) {
         swarn << "Pull for \"" << parameter->GetName() << "\" is " << pull_value
               << " (too large deviation from expectation)" << endmsg;
@@ -742,7 +840,7 @@ namespace toy {
                  TMath::Abs((par.getVal() - par.getMin())*par.getError()/
                             ((par.getMax() - par.getMin())/2)));
       
-      if (min_distance_to_limits < 1e-5) {
+      if (min_distance_to_limits < 1e-5 && !(par.getVal() == 0.0 && par.getError() == 0.0)) {
         swarn << "Parameter distance limit low for: " << par << endmsg;
         problems = true;
         parameters_at_limit->setVal(parameters_at_limit->getVal() + 1.0);
@@ -779,7 +877,7 @@ namespace toy {
         
     }
     if (problems) {
-      fit_result.Print("");
+      fit_result.Print("v");
     }
     
     parameters.addOwned(*parameters_at_limit);
@@ -832,11 +930,29 @@ namespace toy {
       swarn << "Fit result has more than 80% of nonvaried parameters." << endmsg;
       //fit_result.Print("v");
       return false;
+    // } else if (FitResultNoAsymmetricErrors(fit_result)) {
+    //   return false;
     } else {
       return true;
     }
   }
   
+  bool ToyStudyStd::FitResultNoAsymmetricErrors(const RooFitResult& fit_result) const {
+    //const RooArgSet& parameter_init_list = fit_result.floatParsInit();
+    const RooArgList& parameter_list     = fit_result.floatParsFinal();
+    
+    TIterator* parameter_iter        = parameter_list.createIterator();
+    RooRealVar* parameter            = NULL;
+
+    bool all_asymm = true;
+    while ((parameter = (RooRealVar*)parameter_iter->Next())) {
+      if (!parameter->isConstant()) {
+        all_asymm &= parameter->hasAsymError();
+      }
+    }
+    return !all_asymm;
+  }
+
   bool ToyStudyStd::FitResultNotVariedParameterSet(const RooFitResult& fit_result) const {
     const RooArgSet& parameter_init_list = fit_result.floatParsInit();
     const RooArgList& parameter_list     = fit_result.floatParsFinal();
@@ -943,7 +1059,7 @@ namespace toy {
   void ToyStudyStd::ReadFitResultWorker() {
     TThread this_tthread;
     
-    const std::vector<doofit::config::CommaSeparatedPair>& results_files = config_toystudy_.read_results_filename_treename();
+    const std::vector<doofit::config::CommaSeparatedPair<std::string>>& results_files = config_toystudy_.read_results_filename_treename();
     
     sinfo.Ruler();
     
@@ -960,7 +1076,7 @@ namespace toy {
     int results_stored = 0;
     int results_neglected = 0;
     
-    for (std::vector<doofit::config::CommaSeparatedPair>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
+    for (std::vector<doofit::config::CommaSeparatedPair<std::string>>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
       sinfo << "Loading fit results from " << (*it_files).first() 
       << " from branch " << config_toystudy_.fit_result1_branch_name() << endmsg;
       TFile file((*it_files).first().c_str(), "read");
@@ -1168,8 +1284,8 @@ namespace toy {
           sw_lock.Start(false);
           new_wait_time /= deadtimes.size()+1;
           
-          wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*new_wait_time+10.0;
-	        wait_time = std::min(wait_time, 300);
+          wait_time = (static_cast<double>(rnd())/static_cast<double>(rnd.max()-rnd.min())-rnd.min())*new_wait_time+1.0;
+	        wait_time = std::min(wait_time, 180);
           swarn << "File to save fit result to " << filename << " is locked. Will try again in " << wait_time << " s." << endmsg;
           sleep = true;
         } else {

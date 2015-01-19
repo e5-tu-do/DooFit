@@ -1,5 +1,5 @@
-#ifndef DOOFIT_PLOTTING_PROFILES_LIKELIHOODPROFILER_H
-#define DOOFIT_PLOTTING_PROFILES_LIKELIHOODPROFILER_H
+#ifndef DOOFIT_PLOTTING_PROFILES_FELDMANCOUSINSPROFILER_H
+#define DOOFIT_PLOTTING_PROFILES_FELDMANCOUSINSPROFILER_H
 
 // STL
 #include <string>
@@ -26,21 +26,13 @@ namespace doofit { namespace toy {
 }}
 class RooRealVar;
 class RooFitResult;
+class TGraph;
 
 namespace doofit {
 namespace plotting {
-
-/** @namespace doofit::plotting::profiles
- *
- *  @brief Plotting namespace for profiles.
- *
- *  This namespace is responsible for plotting profiles.
- *
- */
-
 namespace profiles {
   
-/** @class LikelihoodProfiler
+/** @class FeldmanCousinsProfiler
  *  @brief Plotter for likelihood profiles for a given AbsFitter
  *
  *  This class plots a likelihood profile for a given AbsFitter and one or more
@@ -58,38 +50,39 @@ namespace profiles {
  *  @author Florian Kruse
  */
 
-class LikelihoodProfiler {
+class FeldmanCousinsProfiler {
  public:
   /**
-   *  @brief Default constructor for LikelihoodProfiler
+   *  @brief Default constructor for FeldmanCousinsProfiler
    */
-  LikelihoodProfiler(const PlotConfig& cfg_plot);
+  FeldmanCousinsProfiler(const PlotConfig& cfg_plot);
   
   /**
-   *  @brief Destructor for LikelihoodProfiler
+   *  @brief Destructor for FeldmanCousinsProfiler
    *
    *  Detailed description.
    *
    */
-  ~LikelihoodProfiler() {}
+  ~FeldmanCousinsProfiler() {}
   
-  void set_fitter(doofit::fitter::AbsFitter& fitter) {
-    fitter_ = &fitter;
-  }
-
   void AddScanVariable(RooRealVar* variable) {
     scan_vars_.push_back(variable);
   }
 
   /**
-   *  @brief Perform likelihood profile scan.
+   *  @brief Read the nominal data fit result from a ToyStudyStd
    */
-  void Scan();
+  void ReadFitResultDataNominal(doofit::toy::ToyStudyStd& toy_study);
 
   /**
-   *  @brief Read fit results from a ToyStudyStd
+   *  @brief Read the scanned data fit results from a ToyStudyStd
    */
-  void ReadFitResults(doofit::toy::ToyStudyStd& toy_study);
+  void ReadFitResultsDataScan(doofit::toy::ToyStudyStd& toy_study);
+
+  /**
+   *  @brief Read the scanned toy fit results from a ToyStudyStd
+   */
+  void ReadFitResultsToy(doofit::toy::ToyStudyStd& toy_study);
 
   /**
    *  @brief Plot likelihood profile
@@ -108,8 +101,6 @@ class LikelihoodProfiler {
    *  @param plot_path path for the plots
    */
   void PlotHandler(const std::string& plot_path);
-
-  std::vector<double> SetSamplePoint(unsigned int step);
   
   /**
    *  @brief Evaluate fit result quality
@@ -122,27 +113,32 @@ class LikelihoodProfiler {
    */
   bool FitResultOkay(const RooFitResult& fit_result) const;
 
+  double FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction=+1.0) const;
+
  private:
   /**
    *  @brief PlotConfig instance to use
    */
   const PlotConfig& config_plot_;
 
-  doofit::fitter::AbsFitter* fitter_;
-
   std::vector<RooRealVar*> scan_vars_;
   std::vector<std::string> scan_vars_titles_;
   std::vector<std::string> scan_vars_names_;
 
-  std::map<std::string, double> start_vals_;
-
-  std::vector<const RooFitResult*> fit_results_;
+  double nll_data_nominal_;
+  std::map<std::vector<double>, double> delta_nlls_data_scan_;
+  std::set<std::vector<double>> scan_vals_data_;
+  std::map<std::vector<double>, std::vector<double>> delta_nlls_toy_scan_;
+  std::set<std::vector<double>> scan_vals_toy_;
+  std::map<std::vector<double>, unsigned int> num_neglected_fits_;
 
   unsigned int num_samples_;
+
+  double time_total_;
 };
 
 } // namespace profiles
 } // namespace plotting
 } // namespace doofit
 
-#endif //DOOFIT_PLOTTING_PROFILES_LIKELIHOODPROFILER_H
+#endif //DOOFIT_PLOTTING_PROFILES_FELDMANCOUSINSPROFILER_H

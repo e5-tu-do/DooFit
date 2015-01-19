@@ -3,6 +3,7 @@
 
 // STL
 #include <cstring>
+#include <csetjmp>
 
 // ROOT
 #include "TClass.h"
@@ -299,7 +300,7 @@ namespace toy {
      *  @param pdf_name The PDF name to be tested
      *  @return the sub vector of sections for this PDF name
      */
-    std::vector<config::CommaSeparatedPair> GetPdfProtoSections(const std::string& pdf_name) const;
+    std::vector<config::CommaSeparatedPair<std::string>> GetPdfProtoSections(const std::string& pdf_name) const;
     ///@}
     
     /** @name Generator functions
@@ -429,9 +430,19 @@ namespace toy {
      *          ownership of this sample. Therefore, the invoker of this function
      *          must take care of proper deletion afterwards.
      */
-    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const;
+    RooDataSet* GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair<std::string>& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const;
     ///@}
     
+    /** @name Helper functions
+     *  Functions to do other helper tasks
+     */
+    ///@{
+    /**
+     *  @brief Signal handler for RooFit raising SIGABRT
+     */    
+    static void SignalHandler(int signum);
+    ///@}
+
     /**
      *  \brief CommonConfig instance to use
      */
@@ -445,6 +456,9 @@ namespace toy {
      *  @brief Argset of drawn constrained parameters
      */
     RooArgSet set_constrained_parameters_;
+
+    static bool signal_caught_;
+    static jmp_buf jump_buffer_;
   };
   
   /** \struct NotGeneratingDataException
@@ -452,6 +466,13 @@ namespace toy {
    */
   struct NotGeneratingDataException: public virtual boost::exception, public virtual std::exception { 
     virtual const char* what() const throw() { return "Not generating any data"; }
+  };
+
+  /** \struct NotGeneratingDataException
+   *  \brief Exception for not generating any data
+   */
+  struct RooFitSendingSIGABRTException: public virtual boost::exception, public virtual std::exception { 
+    virtual const char* what() const throw() { return "RooFit sent SIGABRT"; }
   };
   
   /** \struct NotGeneratingDiscreteData
