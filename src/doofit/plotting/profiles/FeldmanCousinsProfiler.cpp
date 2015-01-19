@@ -131,6 +131,9 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
 
   // TODO: Warn if fit_result_0 valid, but fit_result_1 not!
   while (fit_result_0 != nullptr) { 
+
+    // fit_result_0->Print();
+
     if (fit_result_1 == nullptr) {
       swarn << "Only one fit result stored, expected a pair. The result tree might be broken!" << endmsg;
     } else {
@@ -151,6 +154,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
           scan_vals.push_back(val);
         }
         double delta_nll(fit_result_1->minNll() - fit_result_0->minNll());
+
+        // sdebug << "delta_nll = " << delta_nll << endmsg;
 
         hist.Fill(delta_nll);
 
@@ -193,13 +198,16 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
     fit_result_container = toy_study.GetFitResult();
     fit_result_0 = std::get<0>(fit_result_container);
     fit_result_1 = std::get<1>(fit_result_container);
+
+    // sdebug << "fit_result_0 = " << fit_result_0 << endmsg;
+    // sdebug << "fit_result_1 = " << fit_result_1 << endmsg;
   }
 
   hist.Draw();
   c.SaveAs("delta_chisq.pdf");
 
   if (num_ignored > 0) {
-    swarn << "Ignored " << num_ignored << " toy scan results due to bad fit quality." << endmsg;
+    swarn << "Ignored " << num_ignored << " toy scan result pairs due to bad fit quality." << endmsg;
   }
 
   sinfo << "Scanned toy scan points: " << scan_vals_toy_ << endmsg;
@@ -292,13 +300,13 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     unsigned int num_toys_exceed(0);
     for (auto delta_nll_toy : delta_nlls_toy) {
 
-      if (std::abs(delta_nll_data.first[0]-0.745732) < 1e-3) {
-        if (delta_nll_data.second >= delta_nll_toy) {
-          sdebug << "WHAAAAAAT!" << endmsg;
-          sdebug << "@" << delta_nll_data.first[0] << " (toy)  : " << delta_nll_toy << endmsg;
-          sdebug << "@" << delta_nll_data.first[0] << " (data) : " << delta_nll_data.second << endmsg;
-        }
-      }
+      // if (std::abs(delta_nll_data.first[0]-0.745732) < 1e-3) {
+      //   if (delta_nll_data.second >= delta_nll_toy) {
+      //     sdebug << "WHAAAAAAT!" << endmsg;
+      //     sdebug << "@" << delta_nll_data.first[0] << " (toy)  : " << delta_nll_toy << endmsg;
+      //     sdebug << "@" << delta_nll_data.first[0] << " (data) : " << delta_nll_data.second << endmsg;
+      //   }
+      // }
 
       // sdebug << delta_nll_data.second << " - " << delta_nll_toy << endmsg;
       ++num_toys;
@@ -366,6 +374,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
   if (vals_scan.size() > 0 && vals_scan[0].size() == 1) {
     // stupidly sort both x and y vectors simultaneously
     // to avoid glitches in ROOT's TGraph plotting
+
+    // sdebug << "cls: " << cls << endmsg;
 
     std::map<double, std::pair<double, double>> values;
     for (unsigned int i=0; i<cls.size(); ++i) {
@@ -446,10 +456,13 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     // double x_range_lo = min_scan_val[val_scan.begin()->first] - x_range*0.1;
     // double x_range_hi = max_scan_val[val_scan.begin()->first] + x_range*0.1;
 
-    auto min_cl_it = std::min_element(cls_sort_lower.begin(), cls_sort_lower.end());
+    sdebug << "cls_sort_lower: " << cls_sort_lower << endmsg;
 
-    // graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
-    graph_wilks.GetYaxis()->SetRangeUser(*min_cl_it*0.5, 1.01);
+    if (cls_sort_lower.size() > 0) {
+      auto min_cl_it = std::min_element(cls_sort_lower.begin(), cls_sort_lower.end());
+      // graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
+      graph_wilks.GetYaxis()->SetRangeUser(*min_cl_it*0.5, 1.01);
+    }
     graph_wilks.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
     graph_wilks.GetYaxis()->SetTitle("1 #minus CL");
 
