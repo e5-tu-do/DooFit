@@ -902,26 +902,7 @@ namespace toy {
     return parameters;
   }
   
-  bool ToyStudyStd::FitResultOkay(const RooFitResult& fit_result) const {
-//#if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
-//    sdebug << "Fit status report: ";
-//    for (int i=0;i<fit_result.numStatusHistory();++i) {
-//      sdebug << fit_result.statusLabelHistory(i) << ": " << fit_result.statusCodeHistory(i) << ", ";
-//    }
-//    sdebug << "Covariance quality: " << fit_result.covQual() << endmsg;
-//    
-//    if (fit_result.covQual() != 3) {
-//      fit_result.Print("v");
-//    }
-//    
-//#endif
-    
-//    sdebug << "Covariance quality: " << fit_result.covQual() << ", "
-//           << fit_result.statusLabelHistory(0) << ": " << fit_result.statusCodeHistory(0) << ", "
-//           << fit_result.statusLabelHistory(1) << ": " << fit_result.statusCodeHistory(1) << ", "
-//    //<< fit_result.statusLabelHistory(2) << ": " << fit_result.statusCodeHistory(2) << ", "
-//           << endmsg;
-    
+  bool FitResultOkay(const RooFitResult& fit_result, int min_acceptable_cov_matrix_quality) {    
     int max_status_code = 0;
     std::map<std::string, int> status_codes;
     for (auto i = 0; i < fit_result.numStatusHistory(); i++){
@@ -929,7 +910,7 @@ namespace toy {
       if (fit_result.statusCodeHistory(i) > max_status_code) max_status_code = fit_result.statusCodeHistory(i);
     }
     
-    if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality() && fit_result.covQual() != -1) {
+    if (fit_result.covQual() < min_acceptable_cov_matrix_quality && fit_result.covQual() != -1) {
       swarn << "Fit result has insufficient covariance matrix quality." << endmsg;
       return false;
     } else if (fit_result.statusCodeHistory(0) < 0) {
@@ -948,8 +929,13 @@ namespace toy {
       return true;
     }
   }
+
+
+  bool ToyStudyStd::FitResultOkay(const RooFitResult& fit_result) const {    
+    return doofit::toy::FitResultOkay(fit_result, config_toystudy_.min_acceptable_cov_matrix_quality());
+  }
   
-  bool ToyStudyStd::FitResultNoAsymmetricErrors(const RooFitResult& fit_result) const {
+  bool FitResultNoAsymmetricErrors(const RooFitResult& fit_result) {
     //const RooArgSet& parameter_init_list = fit_result.floatParsInit();
     const RooArgList& parameter_list     = fit_result.floatParsFinal();
     
@@ -965,7 +951,7 @@ namespace toy {
     return !all_asymm;
   }
 
-  bool ToyStudyStd::FitResultNotVariedParameterSet(const RooFitResult& fit_result) const {
+  bool FitResultNotVariedParameterSet(const RooFitResult& fit_result) {
     const RooArgSet& parameter_init_list = fit_result.floatParsInit();
     const RooArgList& parameter_list     = fit_result.floatParsFinal();
     
