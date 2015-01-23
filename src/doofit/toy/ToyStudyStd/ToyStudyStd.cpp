@@ -144,9 +144,12 @@ namespace toy {
     FinishFitResultSaving();
     
     reading_fit_results_ = true;
-    if (!fitresult_reader_worker_.joinable()) {
-      fitresult_reader_worker_ = boost::thread(&ToyStudyStd::ReadFitResultWorker, this);
-    }
+
+    ReadFitResultWorker();
+
+    // if (!fitresult_reader_worker_.joinable()) {
+    //   fitresult_reader_worker_ = boost::thread(&ToyStudyStd::ReadFitResultWorker, this);
+    // }
   }
   
   FitResultContainer ToyStudyStd::GetFitResult() {
@@ -157,11 +160,12 @@ namespace toy {
     // std::cout << "fit_results_read_queue_.size(): " << fit_results_read_queue_.size() << " entries" << std::endl;
     // std::cout << "reading_fit_results_ : " << reading_fit_results_ << std::endl;
 
-    if (!fitresult_reader_worker_.joinable()) {
-      return fit_results;
-    } else {
+    // if (!fitresult_reader_worker_.joinable()) {
+    //   return fit_results;
+    // } else {
       bool got_one = false;
-      while (!got_one && (reading_fit_results_ || fit_results_read_queue_.size() > 0)) {
+      // while (!got_one && (reading_fit_results_ || fit_results_read_queue_.size() > 0)) {
+      while (!got_one && (fit_results_read_queue_.size() > 0)) {
         got_one = fit_results_read_queue_.wait_and_pop(fit_results);
       }
 
@@ -171,7 +175,7 @@ namespace toy {
       // if we got_one, return, if not return default NULL pointer pair
       // (this will happen if the worker stopped)
       return fit_results;
-    }
+    // }
   }
   
   void ToyStudyStd::ReleaseFitResult(FitResultContainer fit_results) {
@@ -898,26 +902,7 @@ namespace toy {
     return parameters;
   }
   
-  bool ToyStudyStd::FitResultOkay(const RooFitResult& fit_result) const {
-//#if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
-//    sdebug << "Fit status report: ";
-//    for (int i=0;i<fit_result.numStatusHistory();++i) {
-//      sdebug << fit_result.statusLabelHistory(i) << ": " << fit_result.statusCodeHistory(i) << ", ";
-//    }
-//    sdebug << "Covariance quality: " << fit_result.covQual() << endmsg;
-//    
-//    if (fit_result.covQual() != 3) {
-//      fit_result.Print("v");
-//    }
-//    
-//#endif
-    
-//    sdebug << "Covariance quality: " << fit_result.covQual() << ", "
-//           << fit_result.statusLabelHistory(0) << ": " << fit_result.statusCodeHistory(0) << ", "
-//           << fit_result.statusLabelHistory(1) << ": " << fit_result.statusCodeHistory(1) << ", "
-//    //<< fit_result.statusLabelHistory(2) << ": " << fit_result.statusCodeHistory(2) << ", "
-//           << endmsg;
-    
+  bool FitResultOkay(const RooFitResult& fit_result, int min_acceptable_cov_matrix_quality) {    
     int max_status_code = 0;
     std::map<std::string, int> status_codes;
     for (auto i = 0; i < fit_result.numStatusHistory(); i++){
@@ -925,7 +910,7 @@ namespace toy {
       if (fit_result.statusCodeHistory(i) > max_status_code) max_status_code = fit_result.statusCodeHistory(i);
     }
     
-    if (fit_result.covQual() < config_toystudy_.min_acceptable_cov_matrix_quality() && fit_result.covQual() != -1) {
+    if (fit_result.covQual() < min_acceptable_cov_matrix_quality && fit_result.covQual() != -1) {
       swarn << "Fit result has insufficient covariance matrix quality." << endmsg;
       return false;
     } else if (fit_result.statusCodeHistory(0) < 0) {
@@ -944,8 +929,13 @@ namespace toy {
       return true;
     }
   }
+
+
+  bool ToyStudyStd::FitResultOkay(const RooFitResult& fit_result) const {    
+    return doofit::toy::FitResultOkay(fit_result, config_toystudy_.min_acceptable_cov_matrix_quality());
+  }
   
-  bool ToyStudyStd::FitResultNoAsymmetricErrors(const RooFitResult& fit_result) const {
+  bool FitResultNoAsymmetricErrors(const RooFitResult& fit_result) {
     //const RooArgSet& parameter_init_list = fit_result.floatParsInit();
     const RooArgList& parameter_list     = fit_result.floatParsFinal();
     
@@ -961,7 +951,7 @@ namespace toy {
     return !all_asymm;
   }
 
-  bool ToyStudyStd::FitResultNotVariedParameterSet(const RooFitResult& fit_result) const {
+  bool FitResultNotVariedParameterSet(const RooFitResult& fit_result) {
     const RooArgSet& parameter_init_list = fit_result.floatParsInit();
     const RooArgList& parameter_list     = fit_result.floatParsFinal();
     
