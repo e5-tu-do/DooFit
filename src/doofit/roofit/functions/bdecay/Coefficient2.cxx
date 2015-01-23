@@ -6,6 +6,8 @@
 #include "RooCategory.h" 
 #include <math.h> 
 #include "TMath.h" 
+#include "RooRealConstant.h"
+#include "RooConstVar.h"
 
 ClassImp(doofit::roofit::functions::bdecay::Coefficient2) 
 
@@ -36,7 +38,7 @@ Coefficient2::Coefficient2(const std::string& name,
                        int         _tag_sign_ss_) :
   RooAbsReal(name.c_str(),name.c_str()), 
   cp_coeff_("cp_coeff_","cp_coeff_",this,_cp_coeff_),
-  cp_coeff_shift_("cp_coeff_shift_","cp_coeff_shift_",this,(RooRealVar&)RooRealConstant::value(0.0)),
+  cp_coeff_shift_("cp_coeff_shift_","cp_coeff_shift_",this,RooRealConstant::value(0.0)),
   coeff_type_(_coeff_type_),
   tag_os_("tag_os_","tag_os_",this,_tag_os_),
   eta_os_("eta_os_","eta_os_",this,_eta_os_),
