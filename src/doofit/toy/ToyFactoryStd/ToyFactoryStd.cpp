@@ -219,6 +219,8 @@ namespace toy {
         RooAbsPdf* constr_pdf    = dynamic_cast<RooAbsPdf*>(arg);
         RooArgSet* constr_params = constr_pdf->getObservables(parameters);
         
+        // constr_pdf->getParameters(parameters)->Print();
+
         sinfo << "Drawing for " << *constr_params << " with PDF " << constr_pdf->GetName() << endmsg;
         
         if (config_toyfactory_.parameter_read_file().size() > 0) {

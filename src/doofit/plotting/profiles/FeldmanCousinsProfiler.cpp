@@ -99,11 +99,13 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
       scan_vals_data_.insert(scan_vals);
       // sdebug << "scan_vals = " << scan_vals << endmsg;
       // sdebug << "delta_nll = " << delta_nlls_data_scan_[scan_vals] << endmsg;
+
+      fit_results_data_scan_[scan_vals] = fit_result_container; 
     } else {
       ++num_ignored;
     }
 
-    toy_study.ReleaseFitResult(fit_result_container);
+    //toy_study.ReleaseFitResult(fit_result_container);
 
     fit_result_container = toy_study.GetFitResult();
     fit_result = std::get<0>(fit_result_container);
@@ -212,6 +214,27 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
 
   sinfo << "Scanned toy scan points: " << scan_vals_toy_ << endmsg;
 }
+
+const RooFitResult& doofit::plotting::profiles::FeldmanCousinsProfiler::GetDataScanResult(const std::vector<double>& scan_point) const {
+  using namespace doofit::toy;
+  using namespace doocore::io;
+
+  if (fit_results_data_scan_.count(scan_point) > 0) {
+    FitResultContainer container = fit_results_data_scan_.at(scan_point);
+    const RooFitResult& fit_result(*std::get<0>(container));
+    return fit_result;
+  } 
+}
+
+void doofit::plotting::profiles::FeldmanCousinsProfiler::ReleaseAllFitResults(doofit::toy::ToyStudyStd& toy_study) {
+  using namespace doofit::toy;
+  using namespace doocore::io;
+
+  for (auto fit_results_data : fit_results_data_scan_) {
+    toy_study.ReleaseFitResult(fit_results_data.second);
+  }
+}
+
 
 bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const RooFitResult& fit_result) const {
   using namespace doocore::io;
