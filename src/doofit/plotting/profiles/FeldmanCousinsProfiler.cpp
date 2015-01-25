@@ -129,8 +129,9 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
   const RooFitResult* fit_result_1(std::get<1>(fit_result_container));
 
   TCanvas c("c", "c", 800, 600);
-  TH1D hist("hist", "#Delta#chi^{2}_{toy}", 250, -2.0, 2.0);
+  TH1D hist("hist", "#Delta#chi^{2}_{toy}", 250, -2.0, 6.0);
 
+  std::map<double, TH1D*> hists_dchisq;
   // TODO: Warn if fit_result_0 valid, but fit_result_1 not!
   while (fit_result_0 != nullptr) { 
 
@@ -171,6 +172,17 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
           }
         }
 
+        if (scan_vals.size() == 1) {
+          if (hists_dchisq.count(scan_vals.front()) > 0) {
+            hists_dchisq[scan_vals.front()]->Fill(delta_nll);
+          } else {
+            std::string name_hist = "hist" + std::to_string(scan_vals.front());
+            std::string title_hist = "#Delta#chi^{2}_{toy} @" + std::to_string(scan_vals.front());
+            hists_dchisq[scan_vals.front()] = new TH1D(name_hist.c_str(), title_hist.c_str(), 250, -2.0, 6.0);
+            hists_dchisq[scan_vals.front()]->Fill(delta_nll);
+          }
+        }
+
         if (delta_nll < 0.0) {
           if (num_neglected_fits_.count(scan_vals) > 0) {
             num_neglected_fits_[scan_vals]++;
@@ -207,6 +219,12 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
 
   hist.Draw();
   c.SaveAs("delta_chisq.pdf");
+
+  for (auto hist : hists_dchisq) {
+    hist.second->Draw();
+    std::string name_hist = "delta_chisq_" + std::to_string(hist.first) + ".pdf";
+    c.SaveAs(name_hist.c_str());
+  }
 
   if (num_ignored > 0) {
     swarn << "Ignored " << num_ignored << " toy scan result pairs due to bad fit quality." << endmsg;
