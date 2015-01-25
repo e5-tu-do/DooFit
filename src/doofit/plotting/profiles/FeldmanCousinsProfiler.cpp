@@ -161,7 +161,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
 
         hist.Fill(delta_nll);
 
-        if (std::abs(scan_vals[0]-0.745732) < 1e-3) {
+        if (std::abs(scan_vals[0]+0.4) < 1e-3) {
           sdebug << "@" << scan_vals[0] << " (toy)  : " << fit_result_1->minNll() << "-" << fit_result_0->minNll() << " = " << delta_nll << endmsg;
           sdebug << "@" << scan_vals[0] << " (data) : " << delta_nlls_data_scan_[scan_vals] << endmsg;
 
