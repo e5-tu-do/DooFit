@@ -237,8 +237,15 @@ const RooFitResult& doofit::plotting::profiles::FeldmanCousinsProfiler::GetDataS
   using namespace doofit::toy;
   using namespace doocore::io;
 
-  if (fit_results_data_scan_.count(scan_point) > 0) {
-    FitResultContainer container = fit_results_data_scan_.at(scan_point);
+  std::vector<double> scan_point_copy(scan_point);
+  for (auto& value : scan_point_copy) {
+    if (std::abs(value) < 1e-14) {
+      value = 0.0;
+    } 
+  }
+
+  if (fit_results_data_scan_.count(scan_point_copy) > 0) {
+    FitResultContainer container = fit_results_data_scan_.at(scan_point_copy);
     const RooFitResult& fit_result(*std::get<0>(container));
     return fit_result;
   } 
