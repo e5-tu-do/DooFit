@@ -162,15 +162,15 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
 
         hist.Fill(delta_nll);
 
-        if (std::abs(scan_vals[0]+0.4) < 1e-3) {
-          sdebug << "@" << scan_vals[0] << " (toy)  : " << fit_result_1->minNll() << "-" << fit_result_0->minNll() << " = " << delta_nll << endmsg;
-          sdebug << "@" << scan_vals[0] << " (data) : " << delta_nlls_data_scan_[scan_vals] << endmsg;
+        // if (std::abs(scan_vals[0]+0.4) < 1e-3) {
+        //   sdebug << "@" << scan_vals[0] << " (toy)  : " << fit_result_1->minNll() << "-" << fit_result_0->minNll() << " = " << delta_nll << endmsg;
+        //   sdebug << "@" << scan_vals[0] << " (data) : " << delta_nlls_data_scan_[scan_vals] << endmsg;
 
-          if (delta_nll < 0.0) {
-            fit_result_0->Print("v");
-            fit_result_1->Print("v");
-          }
-        }
+        //   if (delta_nll < 0.0) {
+        //     fit_result_0->Print("v");
+        //     fit_result_1->Print("v");
+        //   }
+        // }
 
         if (scan_vals.size() == 1) {
           if (hists_dchisq.count(scan_vals.front()) > 0) {
@@ -509,7 +509,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     if (cls_sort_lower.size() > 0) {
       auto min_cl_it = std::min_element(cls_sort_lower.begin(), cls_sort_lower.end());
       // graph.GetXaxis()->SetRangeUser(x_range_lo, x_range_hi);
-      graph_wilks.GetYaxis()->SetRangeUser(*min_cl_it*0.5, 1.01);
+      graph_wilks.GetYaxis()->SetRangeUser(std::max(*min_cl_it*0.5, 1e-3), 1.01);
     }
     graph_wilks.GetXaxis()->SetTitle(scan_vars_titles_.at(0).c_str());
     graph_wilks.GetYaxis()->SetTitle("1 #minus CL");
