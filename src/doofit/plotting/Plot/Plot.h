@@ -206,6 +206,15 @@ enum ScaleType {
     void AddPlotArgData(RooCmdArg arg) {plot_args_data_.push_back(arg);}
     
     /**
+     *  @brief Set additional plot label (to be added as splitline under label from PlotConfig)
+     *
+     *  @param plot_label_additional label as TLatex string
+     */
+    void set_plot_label_additional(std::string plot_label_additional) {
+      plot_label_additional_ = plot_label_additional;
+    }
+
+    /**
      *  @brief Set plot range to use for this plot
      *
      *  Set a range to be used for plotting. This range has to be defined on the
@@ -215,6 +224,16 @@ enum ScaleType {
      */
     void set_plot_range(const std::string& plot_range) { plot_range_ = plot_range; }
     
+    /**
+     *  @brief Set asymmetry plotting mode
+     *
+     *  Set true, if an asymmetry shall be plotted. The y-axis  range will be set
+     *  from -1 to 1 
+     *  
+     *  @param plot_asymmetry set true for plotting asymmetry
+     */
+     void set_plot_asymmetry(bool plot_asymmetry) { plot_asymmetry_ = plot_asymmetry; }
+
     /**
      *  @brief Friend class PlotSimultaneous
      */
@@ -265,6 +284,11 @@ enum ScaleType {
     std::string plot_name_;
     
     /**
+     *  @brief Additional plot label (splitlined with label from PlotConfig)
+     */
+    std::string plot_label_additional_;
+
+    /**
      *  @brief Plot range
      */
     std::string plot_range_;
@@ -283,6 +307,8 @@ enum ScaleType {
      *  @brief Flag to ignore setting of NumCPU to avoid plotting problems
      */
     bool ignore_num_cpu_;
+
+    bool plot_asymmetry_;
     
   private:
   };  

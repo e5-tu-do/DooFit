@@ -7,12 +7,17 @@
 // from boost
 #include <boost/foreach.hpp>
 
+// from ROOT
+// #include "Fit/Fitter.h"
+
 // from RooFit
 #include "RooAbsData.h"
 #include "RooAbsPdf.h"
 #include "RooFit.h"
 #include "RooFitResult.h"
 #include "RooWorkspace.h"
+// #include "RooMinimizer.h"
+// #include "RooMinimizerFcn.h"
 
 // from project - Utils
 #include <doocore/io/MsgStream.h>
@@ -188,6 +193,39 @@ void EasyFit::ExecuteFit() {
     std::clock_t c_start = std::clock();
     auto t_start = std::chrono::high_resolution_clock::now();
     
+    // RooAbsReal* nll(pdf_->createNLL(*data_, RooFit::NumCPU(fc_num_cpu_), RooFit::Extended(fc_extended_), RooFit::ExternalConstraints(*fc_external_constraints_), RooFit::ConditionalObservables(*fc_conditional_observables_), RooFit::Optimize(fc_optimize_)));
+    // RooMinimizer minimizer(*nll);
+
+    // ROOT::Fit::Fitter fitter;
+    // RooMinimizerFcn fcn(nll, &minimizer);
+
+    // // fitter.Config().MinimizerOptions().SetPrecision(1.0);
+    // fitter.Config().MinimizerOptions().SetTolerance(1.0);
+    // fitter.Config().MinimizerOptions().SetStrategy(2);
+    // // default max number of calls
+    // fitter.Config().MinimizerOptions().SetMaxIterations(500*fcn.NDim());
+    // fitter.Config().MinimizerOptions().SetMaxFunctionCalls(500*fcn.NDim());
+
+    // // Shut up for now
+    // fitter.Config().MinimizerOptions().SetPrintLevel(0);
+
+    // // Use +0.5 for 1-sigma errors
+    // fitter.Config().MinimizerOptions().SetErrorDef(nll->defaultErrorLevel());
+
+
+    // fitter.Config().MinimizerOptions().SetPrintLevel(2);    
+
+    // fcn.Synchronize(fitter.Config().ParamsSettings(), false, false);
+    // fitter.Config().SetMinimizer("Minuit2", "minimize");
+
+    // RooAbsReal::setEvalErrorLoggingMode(RooAbsReal::CollectErrors) ;
+    // RooAbsReal::clearEvalErrorLog() ;
+
+    // sinfo << "Fitting myself: The magic begins." << endmsg;
+    // bool ret = fitter.FitFCN(fcn);
+
+    // fit_result_ = minimizer.save(pdf_->GetName(), pdf_->GetTitle());
+
     fit_result_ = pdf_->fitTo(*data_,fc_linklist_);
     
     std::clock_t c_end = std::clock();
