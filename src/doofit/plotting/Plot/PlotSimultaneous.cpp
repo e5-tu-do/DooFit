@@ -38,7 +38,8 @@ namespace plotting {
 
 PlotSimultaneous::PlotSimultaneous(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooSimultaneous& pdf, const std::vector<std::string>& components, const std::string& plot_name)
 : Plot(cfg_plot, dimension, dataset, pdf, components, plot_name),
-  components_regexps_(components)
+  components_regexps_(components),
+  plot_asym_(false)
 {
   
 }
@@ -61,8 +62,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooAbsPdf& sub_pdf = *(pdf.getPdf(sim_cat_type->GetName()));
     if (&sub_pdf != NULL) {
       //RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
-      // sim_cat.Print();
-      // sdebug << sim_cat_type->getVal() << endmsg;
+      
+      
       sim_cat.setIndex(sim_cat_type->getVal());
       
       std::string cut_string = "";

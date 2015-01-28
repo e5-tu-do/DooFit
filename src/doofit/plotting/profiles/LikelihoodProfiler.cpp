@@ -128,6 +128,10 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   std::map<std::string, std::vector<double>> val_scan;
   std::vector<double> val_nll;
 
+  if (fit_results_.empty()) {
+    serr << "LikelihoodProfiler::PlotHandler(...): No fit results loaded. Cannot plot!" << endmsg;
+    throw;
+  }
   for (auto var : scan_vars_) {
     RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_results_.front()->constPars().find(var->GetName()));
     scan_vars_titles_.push_back(var_fixed->GetTitle());
