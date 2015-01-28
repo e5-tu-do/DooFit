@@ -169,7 +169,7 @@ void TestToys(int argc, char *argv[]) {
   RooAbsPdf& pdf = BuildPDF(epdf);
   cfg_tfac.set_workspace(ws);
 
-  config::CommaSeparatedPair p;
+  config::CommaSeparatedPair<std::string> p;
   p = "bla.root,tree";
   cfg_tstudy.set_read_results_filename_treename(p);
   

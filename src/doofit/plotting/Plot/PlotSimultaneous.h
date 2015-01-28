@@ -36,6 +36,9 @@ namespace plotting {
    *  @section usage Usage
    *
    *  Usage is similar to Plot. Regard to Plot documentation for examples.
+   *  Consider using PlotConfig::set_simultaneous_plot_all_categories() and
+   *  PlotConfig::set_simultaneous_plot_all_slices() to enable plotting of
+   *  sub-categories and slices.
    *
    */
   
@@ -64,6 +67,15 @@ class PlotSimultaneous : public Plot {
    */
   virtual ~PlotSimultaneous() {}
   
+  /**
+   *  @brief Set asymmetry plotting mode
+   *
+   *  Set true, if an asymmetry shall be plotted. The y-axis  range will be set
+   *  from -1 to 1 
+   *  
+   *  @param plot_asymmetry set true for plotting asymmetry
+   */
+  void set_plot_asymmetry(bool plot_asymmetry) { plot_asym_ = plot_asymmetry; }
  protected:
   /**
    *  @brief Internal plotting handler
@@ -81,6 +93,8 @@ class PlotSimultaneous : public Plot {
    *  @brief Components to plot as regular expressions
    */
   const std::vector<std::string> components_regexps_;
+
+  bool plot_asym_;
 };
 } // namespace plotting
 } // namespace doofit
