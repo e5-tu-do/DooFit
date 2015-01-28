@@ -580,25 +580,31 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     sinfo << "2 sigma interval (Wilks): [" << cl_2sigma_wilks.first << ", " << cl_2sigma_wilks.second << "]" << endmsg;
     sinfo << "3 sigma interval (Wilks): [" << cl_3sigma_wilks.first << ", " << cl_3sigma_wilks.second << "]" << endmsg;
 
+    double y_min(graph_wilks.GetHistogram()->GetMinimum());
 
     TLine line_1sigma(x_lo, level_1sigma, x_hi, level_1sigma);
     line_1sigma.SetLineColor(kRed-8);
     line_1sigma.SetLineWidth(2);
     line_1sigma.SetLineStyle(3);
-    line_1sigma.Draw();
+    if (level_1sigma > y_min) {
+      line_1sigma.Draw();
+    }
 
     TLine line_2sigma(x_lo, level_2sigma, x_hi, level_2sigma);
     line_2sigma.SetLineColor(kRed-8);
     line_2sigma.SetLineWidth(2);
     line_2sigma.SetLineStyle(3);
-    line_2sigma.Draw();
+    if (level_2sigma > y_min) {
+      line_2sigma.Draw();
+    }
 
     TLine line_3sigma(x_lo, level_3sigma, x_hi, level_3sigma);
     line_3sigma.SetLineColor(kRed-8);
     line_3sigma.SetLineWidth(2);
     line_3sigma.SetLineStyle(3);
-    line_3sigma.Draw();
-
+    if (level_3sigma > y_min) {
+      line_3sigma.Draw();
+    }
 
     //c.SaveAs("profile.pdf");
     doocore::lutils::printPlot(&c, "fc", plot_path);
