@@ -6,7 +6,7 @@
 // from ROOT
 #include "TCanvas.h"
 #include "TGraph.h"
-#include "TGraphErrors.h"
+#include "TGraphAsymmErrors.h"
 #include "TH1D.h" 
 #include "TH2D.h" 
 #include "TH1F.h" 
@@ -15,6 +15,7 @@
 #include "TColor.h"
 #include "TLine.h"
 #include "TMath.h"
+#include "TEfficiency.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -333,6 +334,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
   std::vector<double> vals_y;
   std::vector<double> cls;
   std::vector<double> cl_errors;
+  std::vector<double> cl_lows;
+  std::vector<double> cl_highs;
   std::vector<double> cls_wilks;
 
   std::map<std::string, double> min_scan_val;
@@ -370,15 +373,21 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
       vals_y.push_back(delta_nll_data.first[0]);
     }
     double cl, cl_error;
+    std::pair<double, double> cl_low_high;
     if (num_toys > 0) {
       cl = static_cast<double>(num_toys_exceed)/static_cast<double>(num_toys);
-      cl_error = 1.0/static_cast<double>(num_toys)*std::sqrt(static_cast<double>(num_toys_exceed)*(1-cl));
+      //cl_error = 1.0/static_cast<double>(num_toys)*std::sqrt(static_cast<double>(num_toys_exceed)*(1-cl));
+      cl_error    = doocore::statistics::general::EfficiencyBinomialError(num_toys_exceed, num_toys);
+      cl_low_high = doocore::statistics::general::EfficiencyBayesianErrorClopperPearson(num_toys_exceed, num_toys);
+
     } else {
       cl = 0.0;
       cl_error = 0.0;
     }
     cls.push_back(cl);
     cl_errors.push_back(cl_error);
+    cl_lows.push_back(cl-cl_low_high.first);
+    cl_highs.push_back(cl_low_high.second-cl);
 
     if (num_toys > 0) {
       if (cl == 0.0) {
@@ -425,13 +434,15 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
 
     // sdebug << "cls: " << cls << endmsg;
 
-    std::map<double, std::pair<double, double>> values;
+    std::map<double, std::tuple<double, double, double>> values;
     for (unsigned int i=0; i<cls.size(); ++i) {
       if (cls[i] != 0.0) {
-        values.emplace(std::make_pair(vals_x[i], std::make_pair(cls[i], cl_errors[i])));
+        values.emplace(std::make_pair(vals_x[i], std::make_tuple(cls[i], cl_lows[i], cl_highs[i])));
       }
     }
     std::vector<double> vals_x_sort, cls_sort, cl_errors_sort, cls_sort_lower, cls_sort_upper;
+    std::vector<double> cl_lows_sort, cl_highs_sort;
+
     vals_x_sort.reserve(values.size());
     cls_sort.reserve(values.size());
     cls_sort_lower.reserve(values.size());
@@ -439,10 +450,15 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     cl_errors_sort.reserve(values.size());
     for (auto value : values) {
       vals_x_sort.push_back(value.first);
-      cls_sort.push_back(value.second.first);
-      cls_sort_lower.push_back(value.second.first - value.second.second);
-      cls_sort_upper.push_back(value.second.first + value.second.second);
-      cl_errors_sort.push_back(value.second.second);
+      cls_sort.push_back(std::get<0>(value.second));
+      cl_errors_sort.push_back(0.5*(std::get<1>(value.second) + std::get<2>(value.second)));
+
+      cl_lows_sort.push_back(std::get<1>(value.second));
+      cl_highs_sort.push_back(std::get<2>(value.second));
+
+      cls_sort_lower.push_back(std::get<0>(value.second) - std::get<1>(value.second));
+      cls_sort_upper.push_back(std::get<0>(value.second) + std::get<2>(value.second));
+      
     }
 
     std::map<double, double> values_wilks;
@@ -459,8 +475,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
       cls_wilks_sort.push_back(value.second);
     }
 
-    TGraphErrors graph(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
-    TGraphErrors graph_errband(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &cl_errors_sort[0]);
+    TGraphAsymmErrors graph        (cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &vals_x_error[0], &cl_lows_sort[0], &cl_highs_sort[0]);
+    TGraphAsymmErrors graph_errband(cls_sort.size(), &vals_x_sort[0], &cls_sort[0], &vals_x_error[0], &vals_x_error[0], &cl_lows_sort[0], &cl_highs_sort[0]);
     TGraph graph_wilks(cls_wilks_sort.size(), &vals_x_wilks_sort[0], &cls_wilks_sort[0]);
 
     TGraph graph_lower(cls_sort.size(), &vals_x_sort[0], &cls_sort_lower[0]);
