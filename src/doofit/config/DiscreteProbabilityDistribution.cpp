@@ -27,6 +27,7 @@ namespace config {
     
     double cumuluated_prob = 0.0;
     
+    probabilities_.clear();
     while (it!=elements.end()) {
       double key = atof((*it).c_str());
       double value = atof((*(++it)).c_str());
