@@ -43,7 +43,8 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
   dimension_(dimension),
   datasets_(),
   plot_name_(plot_name),
-  ignore_num_cpu_(false)
+  ignore_num_cpu_(false),
+  plot_asymmetry_(false)
 {
   datasets_.push_back(&dataset);
   pdf_ = dynamic_cast<RooAbsPdf*>(pdfs.first());
@@ -75,7 +76,8 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
   dimension_(dimension),
   datasets_(),
   plot_name_(plot_name),
-  ignore_num_cpu_(false)
+  ignore_num_cpu_(false),
+  plot_asymmetry_(false)
 {
   datasets_.push_back(&dataset);
   pdf_ = &pdf;
@@ -194,7 +196,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   if (plot_args_data_.size() > 6) arg_data7 = plot_args_data_[6];
 
   RooPlot* plot_frame = dimension_.frame(range_arg);
-  
+    
   RooCmdArg weight_arg;
   RooAbsData* dataset_normalisation = NULL;
   if (dataset_reduced != NULL) {
@@ -382,12 +384,17 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     plot_frame->SetMinimum(0.0);
     plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
+    if(plot_asymmetry_) {
+      plot_frame->SetMinimum(-1.0);
+      plot_frame->SetMaximum(1.0);
+    }
 
     // plot_frame->SetMinimum(-1.0);
     // plot_frame->SetMaximum(+1.0);
     
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
     ylabel.ReplaceAll("Events","Candidates");
+    if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
     
     if (sc_y == kLinear || sc_y == kBoth) {
@@ -403,6 +410,10 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     plot_frame->SetMinimum(0.5);
     plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
+    if(plot_asymmetry_) {
+      plot_frame->SetMinimum(-1.0);
+      plot_frame->SetMaximum(1.0);
+    }
     
 //    TString ylabel = plot_frame->GetYaxis()->GetTitle();
 //    ylabel.ReplaceAll("Events","Candidates");
@@ -427,9 +438,14 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   } else {
     plot_frame->SetMinimum(0.0);
     plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
-    
+    if(plot_asymmetry_) {
+      plot_frame->SetMinimum(-1.0);
+      plot_frame->SetMaximum(1.0);
+    }
+
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
     ylabel.ReplaceAll("Events","Candidates");
+    if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
     
     if (sc_y == kLinear || sc_y == kBoth) {
