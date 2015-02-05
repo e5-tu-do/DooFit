@@ -38,6 +38,7 @@ class RooFormulaVar;
 class RooCategory;
 class RooGaussModel;
 class RooAddModel;
+class RooTruthModel;
 class RooDecay;
 class RooResolutionModel;
 class RooEffProd;
@@ -741,6 +742,19 @@ class EasyPdf {
    *  PDF definitions of resolution models
    */
   ///@{
+  /**
+   *  @brief Add and access a RooTruthModel
+   *
+   *  Request a RooGTruthModel by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @return the appropriate PDF
+   */
+  RooTruthModel& TruthModel(const std::string& name, RooRealVar& x);
+  
   /**
    *  @brief Add and access a RooGaussModel
    *

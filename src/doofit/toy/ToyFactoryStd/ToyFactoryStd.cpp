@@ -209,6 +209,9 @@ namespace toy {
       set_constrained_parameters_.removeAll();
 
       sinfo << "Drawing values of constrained parameters." << endmsg;
+      swarn << "WARNING: According to arXiv:1210.7141 this is the wrong way to handle constraints in toy generation!" << endmsg;
+      swarn << "You should not draw new true values of constrained parameters for the generation stage, but rather" << endmsg;
+      swarn << "draw a new constrained mean for the following fit." << endmsg;
       sinfo.set_indent(sinfo.indent()+2);
       
       TIterator* arg_it = argset_constraining_pdfs->createIterator();
@@ -219,6 +222,8 @@ namespace toy {
         RooAbsPdf* constr_pdf    = dynamic_cast<RooAbsPdf*>(arg);
         RooArgSet* constr_params = constr_pdf->getObservables(parameters);
         
+        // constr_pdf->getParameters(parameters)->Print();
+
         sinfo << "Drawing for " << *constr_params << " with PDF " << constr_pdf->GetName() << endmsg;
         
         if (config_toyfactory_.parameter_read_file().size() > 0) {

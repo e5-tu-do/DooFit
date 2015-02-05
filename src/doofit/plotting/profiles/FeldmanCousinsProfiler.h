@@ -16,6 +16,7 @@
 
 // from project
 #include "doofit/plotting/Plot/PlotConfig.h"
+#include "doofit/toy/ToyStudyStd/ToyStudyStd.h"
 
 // forward declarations
 namespace doofit { namespace fitter {
@@ -84,6 +85,10 @@ class FeldmanCousinsProfiler {
    */
   void ReadFitResultsToy(doofit::toy::ToyStudyStd& toy_study);
 
+  const RooFitResult& GetDataScanResult(const std::vector<double>& scan_point) const;
+  
+  void ReleaseAllFitResults(doofit::toy::ToyStudyStd& toy_study);
+
   /**
    *  @brief Plot likelihood profile
    *
@@ -127,6 +132,7 @@ class FeldmanCousinsProfiler {
 
   double nll_data_nominal_;
   std::map<std::vector<double>, double> delta_nlls_data_scan_;
+  std::map<std::vector<double>, doofit::toy::FitResultContainer> fit_results_data_scan_;
   std::set<std::vector<double>> scan_vals_data_;
   std::map<std::vector<double>, std::vector<double>> delta_nlls_toy_scan_;
   std::set<std::vector<double>> scan_vals_toy_;

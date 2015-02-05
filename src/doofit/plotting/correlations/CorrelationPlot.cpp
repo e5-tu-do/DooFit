@@ -99,6 +99,7 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
         bin_x++;
       }
       // hist_corr->Print();
+      delete hist_corr; hist_corr = nullptr;
       hist_corr = hist_selected;
       // hist_corr->Print();
       par_list_float_final.removeAll();
@@ -162,7 +163,12 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
     Double_t blue[NRGBs]  = { 0.20 , 1.00 , 1.00 , 1.00 , 1.00 , 1.00 , 0.20 , 0.00 , 0.00 };
     TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
     gStyle->SetNumberContours(NCont);
-    gStyle->SetPaintTextFormat(".1f");
+
+    if (hist_corr->GetNbinsX() > 15) {
+      gStyle->SetPaintTextFormat(".1f");
+    } else {
+      gStyle->SetPaintTextFormat(".2f");
+    }
     
     float max = hist_corr->GetBinContent(hist_corr->GetMaximumBin());
     float min = hist_corr->GetBinContent(hist_corr->GetMinimumBin());
