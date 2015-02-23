@@ -19,6 +19,7 @@
 #include "RooAddPdf.h"
 #include "RooFormulaVar.h"
 #include "RooCategory.h"
+#include "RooTruthModel.h"
 #include "RooGaussModel.h"
 #include "RooAddModel.h"
 #include "RooDecay.h"
@@ -477,6 +478,10 @@ RooAddPdf& doofit::builder::EasyPdf::Add(const std::string& name, const RooArgLi
 
 RooEffProd& doofit::builder::EasyPdf::EffProd(const std::string& name, RooAbsPdf& pdf, RooAbsReal& efficiency) {
   return AddPdfToStore<RooEffProd>(new RooEffProd(name.c_str(), name.c_str(), pdf, efficiency));
+}
+
+RooTruthModel& doofit::builder::EasyPdf::TruthModel(const std::string& name, RooRealVar& x) {
+  return AddPdfToStore<RooTruthModel>(new RooTruthModel(name.c_str(), name.c_str(), x));
 }
 
 RooGaussModel& doofit::builder::EasyPdf::GaussModel(const std::string& name, RooRealVar& x, RooAbsReal& mean, RooAbsReal& sigma) {

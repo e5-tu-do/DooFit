@@ -233,6 +233,12 @@ namespace toy {
      *  @param fit_results tuple of fit results and respective fit times (CPU and real) to release
      */
     void ReleaseFitResult(FitResultContainer fit_results);
+
+    /**
+     *  @brief Purge previously released fit results
+     */
+    void PurgeReleasedFitResults();
+
     /**
      *  @brief Evaluate read in fit results
      *
@@ -267,6 +273,8 @@ namespace toy {
     
     RooDataSet* evaluated_values() const { return evaluated_values_; }
     
+    void set_debug(bool debug) { debug_ = debug; } 
+
    protected:
     /**
      *  @brief Build an argument set with evaluated parameters
@@ -469,6 +477,8 @@ namespace toy {
      */
     doocore::lutils::concurrent_queue<FitResultContainer > fit_results_release_queue_;
     ///@}
+
+    bool debug_;
   };
   
   /** \struct ExceptionCannotStoreFitResult
