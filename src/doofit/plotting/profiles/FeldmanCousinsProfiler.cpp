@@ -375,7 +375,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::PlotHandler(const std::
     }
     double cl, cl_error;
     std::pair<double, double> cl_low_high;
-    if (num_toys > 0) {
+    if (num_toys > 100) {
       cl = static_cast<double>(num_toys_exceed)/static_cast<double>(num_toys);
       //cl_error = 1.0/static_cast<double>(num_toys)*std::sqrt(static_cast<double>(num_toys_exceed)*(1-cl));
       cl_error    = doocore::statistics::general::EfficiencyBinomialError(num_toys_exceed, num_toys);

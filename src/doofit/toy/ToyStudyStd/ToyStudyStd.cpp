@@ -66,7 +66,8 @@ namespace toy {
   evaluated_values_(NULL),
   accepting_fit_results_(true),
   reading_fit_results_(false),
-  fit_results_read_queue_()
+  fit_results_read_queue_(),
+  debug_(false)
   {
     LockSaveFitResultMutex();
     abort_save_ = false;
@@ -180,6 +181,18 @@ namespace toy {
   
   void ToyStudyStd::ReleaseFitResult(FitResultContainer fit_results) {
     fit_results_release_queue_.push(fit_results);
+  }
+
+  void ToyStudyStd::PurgeReleasedFitResults() {
+    while (fit_results_release_queue_.size() > 0) {
+      const RooFitResult* dummy = nullptr;
+      FitResultContainer fit_results(dummy,dummy,0.0,0.0,0.0,0.0,0,0);
+      if (fit_results_release_queue_.wait_and_pop(fit_results)) {
+        sdebug << "Deleting fit results." << endmsg;
+        if (std::get<0>(fit_results) != nullptr) delete std::get<0>(fit_results);
+        if (std::get<1>(fit_results) != nullptr) delete std::get<1>(fit_results);
+      }
+    }
   }
   
   void ToyStudyStd::EvaluateFitResults() {
@@ -1073,6 +1086,7 @@ namespace toy {
     
     int results_stored = 0;
     int results_neglected = 0;
+    // std::vector<RooFitResult*> vector_debug;
     
     for (std::vector<doofit::config::CommaSeparatedPair<std::string>>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
       sinfo << "Loading fit results from " << (*it_files).first() 
@@ -1145,7 +1159,6 @@ namespace toy {
             tree->AddBranchToCache(run_id_branch, true);
             run_id_branch->SetAddress(&run_id);
           }
-          
           tree->StopCacheLearningPhase();
           
           using namespace doocore::io;
@@ -1154,7 +1167,16 @@ namespace toy {
           for (int i=0; i<tree->GetEntries(); ++i) {
             tree->GetEntry(i);
             
+            // if (debug_) {
+            //   if (fit_result != NULL && FitResultOkay(*fit_result)) {
+            //     RooFitResult* fr = new RooFitResult(*fit_result);
+            //     vector_debug.push_back(fr);
+            //   }
+            // }
+
             // save a copy
+            
+            // if (!debug_) {
             if (fit_result != NULL && FitResultOkay(*fit_result)) {
 
               // std::cout << "pushing " << fit_result << std::endl;
@@ -1182,22 +1204,27 @@ namespace toy {
                 if (fit_result2 != NULL) {
                   delete fit_result2;
                 }
+                fit_result = nullptr;
+                fit_result2 = nullptr;
                 
                 swarn << "Fit result number " << i << " in file " << *it_files << " neglected." << endmsg;
               }
               results_neglected++;
             }
-            fit_result = NULL;
-            fit_result2 = NULL;
-            
-            while (fit_results_release_queue_.size() > 0) {
-              const RooFitResult* dummy = nullptr;
-              FitResultContainer fit_results(dummy,dummy,0.0,0.0,0.0,0.0,0,0);
-              if (fit_results_release_queue_.wait_and_pop(fit_results)) {
-                if (std::get<0>(fit_results) != NULL) delete std::get<0>(fit_results);
-                if (std::get<1>(fit_results) != NULL) delete std::get<1>(fit_results);
-              }
-            }
+            fit_result = nullptr;
+            fit_result2 = nullptr;
+            // }
+
+            // while (fit_results_release_queue_.size() > 0) {
+            //   const RooFitResult* dummy = nullptr;
+            //   FitResultContainer fit_results(dummy,dummy,0.0,0.0,0.0,0.0,0,0);
+            //   if (fit_results_release_queue_.wait_and_pop(fit_results)) {
+            //     sdebug << "Deleting fit results." << endmsg;
+            //     if (std::get<0>(fit_results) != NULL) delete std::get<0>(fit_results);
+            //     if (std::get<1>(fit_results) != NULL) delete std::get<1>(fit_results);
+            //   }
+            // }
+            PurgeReleasedFitResults();
 
             if (config_toystudy_.num_toys_read() > 0 && results_stored >= config_toystudy_.num_toys_read()) {
               break;
@@ -1220,6 +1247,12 @@ namespace toy {
     fit_results_read_queue_.disable_queue();
     sinfo << "Read in " << results_stored << " fit results. (" << results_neglected << " results negelected, that is " << static_cast<double>(results_neglected)/static_cast<double>(results_stored+results_neglected)*100.0 << "%)" << endmsg;
     sinfo.Ruler();
+
+    // if (debug_) {
+    //   for (auto& fr : vector_debug) {
+    //     delete fr;
+    //   }
+    // }
     
     reading_fit_results_ = false;
   }
