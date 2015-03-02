@@ -54,8 +54,11 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultDataNomina
       var_fixed = dynamic_cast<RooRealVar*>(fit_result->constPars().find(var->GetName()));
     }
     if (var_fixed != nullptr) {
-      scan_vars_titles_.push_back(var_fixed->GetTitle());
+      scan_vars_titles_.push_back(var->GetTitle());
       scan_vars_names_.push_back(var_fixed->GetName());
+
+      // sdebug << "We take: " << var_fixed->GetTitle() << endmsg;
+      // sdebug << "while we should take: " << var->GetTitle() << endmsg;
     } else {
       serr << "Cannot get scan parameter " << var->GetName() << " from nominal data fit result!" << endmsg;
       throw;
