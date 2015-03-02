@@ -198,11 +198,13 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   RooPlot* plot_frame = dimension_.frame(range_arg);
     
   RooCmdArg weight_arg;
+  bool weighted_dataset = false;
   RooAbsData* dataset_normalisation = NULL;
   if (dataset_reduced != NULL) {
     if (dataset_reduced->isWeighted()) {
       //sdebug << "Spotted a weighted dataset, setting SumW2 errors." << endmsg;
       weight_arg = DataError(RooAbsData::SumW2);
+      weighted_dataset = true;
     }
     dataset_normalisation = dataset_reduced;
     
@@ -246,6 +248,10 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //  sdebug << "minimum data entry in dataset: " << min_data_entry << endmsg;
   double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.9);
   
+  if (!weighted_dataset && min_plot < 0.5) {
+    min_plot = 0.5;
+  }
+
 //  sdebug << "minimum entry in histogram: " << min_data_entry << endmsg;
 //  sdebug << "minimum for plot range: " << min_plot << endmsg;
   
@@ -348,8 +354,8 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //        sinfo << "Plotting component " << it->first()->GetName() << ", sum entries: " << dataset_normalisation->sumEntries() << endmsg;
         RooMsgService::instance().setStreamStatus(1, false);
         RooMsgService::instance().setStreamStatus(0, false);
-        pdf_->plotOn(plot_frame, MultiArg(Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, arg_num_cpu, normalisation_hack, Precision(1e-4)), MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
-//        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
+        pdf_->plotOn(plot_frame, MultiArg(Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineWidth(4), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg, arg_num_cpu, normalisation_hack, Precision(1e-4)), MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+//        pdf_->plotOn(plot_frame_pull, Components(*it), LineColor(config_plot_.GetPdfLineColor(i)), LineWidth(4), LineStyle(config_plot_.GetPdfLineStyle(i)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
         RooMsgService::instance().setStreamStatus(1, true);
         RooMsgService::instance().setStreamStatus(0, true);
         ++i;
@@ -359,8 +365,8 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     
     RooMsgService::instance().setStreamStatus(1, false);
     RooMsgService::instance().setStreamStatus(0, false);
-    pdf_->plotOn(plot_frame, MultiArg(LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, arg_num_cpu, normalisation_hack, Precision(1e-4)), MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
-//    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
+    pdf_->plotOn(plot_frame, MultiArg(LineColor(config_plot_.GetPdfLineColor(0)), LineWidth(4), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, arg_num_cpu, normalisation_hack, Precision(1e-4)), MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+//    pdf_->plotOn(plot_frame_pull, LineColor(config_plot_.GetPdfLineColor(0)), LineWidth(4), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg/*, NumCPU(8)*/, arg1, arg2, arg3, arg4, arg5, arg6);
     RooMsgService::instance().setStreamStatus(1, true);
     RooMsgService::instance().setStreamStatus(0, true);
     ++p;
