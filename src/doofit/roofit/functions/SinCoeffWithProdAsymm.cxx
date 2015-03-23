@@ -20,10 +20,6 @@ namespace doofit {
 namespace roofit {
 namespace functions {
 
-long long SinCoeffWithProdAsymm::num_calls_evaluate_ = 0;
-long long SinCoeffWithProdAsymm::num_calls_integral_ = 0;
-
-
 SinCoeffWithProdAsymm::SinCoeffWithProdAsymm() :
   type_coeff_(kCType)
   {
@@ -52,46 +48,44 @@ SinCoeffWithProdAsymm::SinCoeffWithProdAsymm(const SinCoeffWithProdAsymm& other,
   par_omega_Bd_("par_omega_Bd_",this,other.par_omega_Bd_),
   par_omega_Bdb_("par_omega_Bdb_",this,other.par_omega_Bdb_),
   cat_tag_("cat_tag_",this,other.cat_tag_),
-  type_coeff_(other.type_coeff_),
-  par_prod_asym_("par_prod_asym_",this,other.par_prod_asym_)
+  par_prod_asym_("par_prod_asym_",this,other.par_prod_asym_),
+  type_coeff_(other.type_coeff_)
   {
   }
 
-Int_t SinCoeffWithProdAsymm::getAnalyticalIntegral(RooArgSet& allVars,
-                                        RooArgSet& analVars, const char* rangeName) const
+Int_t SinCoeffWithProdAsymm::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const
 {
-  #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("SinCoeffWithProdAsymm::getAnalyticalIntegral(): In %s line %u (%s): allVars = ",
-              __func__, __LINE__, __FILE__);
-  //analVars.Print();
-  allVars.Print();
-  if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
-  #endif
-  
-  matchArgs(allVars, analVars, cat_tag_);
-    
-  if (analVars.contains(cat_tag_.arg())) {
-    return 1;
-  }
-  
+  if (rangeName){
+    std::cout << "rangeName: " << rangeName << std::endl;
+    return 0 ;
+  } 
+  if (matchArgs(allVars, analVars, cat_tag_)) return 1 ;
+
   return 0;
 }
 
 
 Int_t SinCoeffWithProdAsymm::getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName) const
 {
-  #ifdef FUNCTIONS_COUNT_CALLS
-  std::printf("SinCoeffWithProdAsymm::getAnalyticalIntegralWN(): In %s line %u (%s): allVars = ",
-              __func__, __LINE__, __FILE__);
-  //analVars.Print();
-  allVars.Print();
   if (normSet) normSet->Print();
   if (rangeName) std::cout << "rangeName: " << rangeName << std::endl;
-  #endif
   
-  //if (matchArgs(allVars, analVars, cat_tag_)) return 1;
+  if (matchArgs(allVars, analVars, cat_tag_)) return 1;
   
   return 0;
+}
+Double_t SinCoeffWithProdAsymm::analyticalIntegral(Int_t code, const char* /*rangeName*/) const
+{
+  // std::cout << "SinCoeffWithProdAsymm::analyticalIntegral(" << code << ", ...): Called." << std::endl;
+  switch(code){
+    case 0: return SinCoeffWithProdAsymm::evaluate() ;
+
+    case 1: return -2.0*par_S_*type_coeff_*par_prod_asym_ ;
+
+    default: assert(0);
+  }
+
+  return 0 ;
 }
 } // namespace functions
 } // namespace roofit

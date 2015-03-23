@@ -46,12 +46,12 @@ public:
 
 protected:
 
+  RooRealProxy par_tag_eta ;
   RooRealProxy par_tag_p0 ;
   RooRealProxy par_tag_p1 ;
-  RooRealProxy par_tag_meaneta ;
-  RooRealProxy par_tag_eta ;
   RooRealProxy par_tag_delta_p0 ;
   RooRealProxy par_tag_delta_p1 ;
+  RooRealProxy par_tag_meaneta ;
   
   const TagType type_tag ;
   
@@ -62,27 +62,19 @@ protected:
     #ifdef FUNCTIONS_COUNT_CALLS
     ++num_calls_evaluate_;
     #endif
-    // ENTER EXPRESSION IN TERMS OF VARIABLE ARGUMENTS HERE
     
-    //std::cout <<  << std::endl;
-    
-    return par_tag_p0 + 0.5*type_tag*par_tag_delta_p0 + (par_tag_p1 + 0.5*type_tag*par_tag_delta_p1) * (par_tag_eta - par_tag_meaneta);
+    if ((par_tag_p0 + par_tag_p1 * (par_tag_eta - par_tag_meaneta)) > 0.5)
+    {
+      return 0.5 ;
+    }
+    else return par_tag_p0 + 0.5*type_tag*par_tag_delta_p0 + (par_tag_p1 + 0.5*type_tag*par_tag_delta_p1) * (par_tag_eta - par_tag_meaneta);
   }
 
-  virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,
-                                      const char* rangeName = 0) const;
+  virtual Int_t	getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName = 0) const;
   
   virtual Int_t	getAnalyticalIntegralWN(RooArgSet& allVars, RooArgSet& analVars, const RooArgSet* normSet, const char* rangeName = 0) const;
   
-  virtual Double_t analyticalIntegral(Int_t code, const char* rangeName = 0) const {
-    
-    if (1 == code) {
-      //std::cout << "SingleMistagCalibrationWithAsymmetries::analyticalIntegral(" << code << ", ...): Called." << std::endl;
-      return 0.0;
-    }
-    // must not get here
-    //assert(1 == 0);
-  }
+  virtual Double_t analyticalIntegral(Int_t code, const char* rangeName = 0) const;
   
 private:
 

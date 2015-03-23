@@ -3,6 +3,7 @@
 // STL
 #include <cstring>
 #include <vector>
+#include <csignal>
 
 // POSIX/UNIX
 #include <unistd.h>
@@ -47,13 +48,22 @@ using namespace doocore::io;
 
 namespace doofit {
 namespace toy {
+
+  bool ToyFactoryStd::signal_caught_ = false;
+  jmp_buf ToyFactoryStd::jump_buffer_;
+
   ToyFactoryStd::ToyFactoryStd(const config::CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac) :
   config_common_(cfg_com),
   config_toyfactory_(cfg_tfac)
   {
+    using namespace doocore::io;
     if (cfg_tfac.random_seed()>=0) {
     	RooRandom::randomGenerator()->SetSeed(cfg_tfac.random_seed());
+    // } else {
+    //   swarn << "ToyFactoryStd::ToyFactoryStd(): Random seed set to illegal value " << cfg_tfac.random_seed() << ". Will not touch random generator." << endmsg;
     }
+    signal(SIGABRT, SignalHandler);
+    signal_caught_ = false;
   }
   
   ToyFactoryStd::~ToyFactoryStd(){
@@ -106,8 +116,28 @@ namespace toy {
       
       // merge if necessary
       if (data != NULL) {
-        MergeDatasets(data, data_discrete);
+        // sdebug << "data_discrete->numEntries() = " << data_discrete->numEntries() << endmsg;
+        // sdebug << "data->numEntries()          = " << data->numEntries() << endmsg;
+        if (data_discrete->numEntries() < data->numEntries()) {
+          RooDataSet* dataset_new = MixMergeDatasets(data, data_discrete);
+
+          //dataset_new->Print();
+
+          delete data;
+          delete data_discrete;
+          data_discrete = nullptr;
+          argset_already_generated = nullptr;
+
+          data = dataset_new;
+        } else {
+          MergeDatasets(data, data_discrete);
+        }
       } else {
+        if (data_discrete->numEntries() < discrete_yield) {
+          serr << "Error in ToyFactoryStd::Generate(): Discrete dataset does not contain enough events. Is the cumulative probability < 1.0?" << endmsg;
+          throw;
+        }
+
         data = data_discrete;
       }
       
@@ -176,7 +206,12 @@ namespace toy {
   void ToyFactoryStd::DrawConstrainedParameters() {
     const RooArgSet* argset_constraining_pdfs = config_toyfactory_.argset_constraining_pdfs();
     if (argset_constraining_pdfs) {
+      set_constrained_parameters_.removeAll();
+
       sinfo << "Drawing values of constrained parameters." << endmsg;
+      swarn << "WARNING: According to arXiv:1210.7141 this is the wrong way to handle constraints in toy generation!" << endmsg;
+      swarn << "You should not draw new true values of constrained parameters for the generation stage, but rather" << endmsg;
+      swarn << "draw a new constrained mean for the following fit." << endmsg;
       sinfo.set_indent(sinfo.indent()+2);
       
       TIterator* arg_it = argset_constraining_pdfs->createIterator();
@@ -187,6 +222,8 @@ namespace toy {
         RooAbsPdf* constr_pdf    = dynamic_cast<RooAbsPdf*>(arg);
         RooArgSet* constr_params = constr_pdf->getObservables(parameters);
         
+        // constr_pdf->getParameters(parameters)->Print();
+
         sinfo << "Drawing for " << *constr_params << " with PDF " << constr_pdf->GetName() << endmsg;
         
         if (config_toyfactory_.parameter_read_file().size() > 0) {
@@ -205,6 +242,8 @@ namespace toy {
         while ((par = (RooAbsArg*)par_it->Next())) {
           RooRealVar* par_real = dynamic_cast<RooRealVar*>(par);
           dynamic_cast<RooRealVar*>(parameters->find(par_real->GetName()))->setVal(par_real->getVal());
+        
+          set_constrained_parameters_.addClone(*par_real);
         }
         delete par_it;
         
@@ -223,8 +262,17 @@ namespace toy {
     const RooArgSet& master_argset = *master_dataset->get();
     const RooArgSet& slave_argset  = *slave_dataset->get();
     
+    // master_dataset->Print();
+    // slave_dataset->Print();
+    // if (ignore_sets != nullptr) {
+    //   for (auto ignore_set : *ignore_sets) {
+    //     ignore_set->Print();
+    //   }
+    // }
+
     if (master_dataset->numEntries() != slave_dataset->numEntries()) {
       serr << "Attempting two merge two datasets without equal size. Unable to cope with that. Giving up." << endmsg;
+      serr << "The dataset sizes are: " << master_dataset->numEntries() << " vs. " << slave_dataset->numEntries() << endmsg;
       throw DatasetsNotDisjointException();
     }
     
@@ -235,7 +283,7 @@ namespace toy {
       // First assume datasets are not mergable.
       bool not_mergable = true;
       
-      if (ignore_sets != NULL) {
+      if (ignore_sets != nullptr) {
         // there is an ignore argset, might be mergable
         not_mergable = false;
         // Happy fun time using TIterator, yay!
@@ -275,8 +323,69 @@ namespace toy {
     master_dataset->merge(slave_dataset);
     if (delete_slave) delete slave_dataset;
   }
+
+  RooDataSet* ToyFactoryStd::MixMergeDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const {
+    int n_slaves(slave_dataset->numEntries());
+
+    // randomly distribute *all* slave entries over the master dataset range
+    int n_master = master_dataset->numEntries();
+    // std::fesetround(FE_TONEAREST);
+    std::set<int> positions_slave;
+    int i = 0;
+    while (i < slave_dataset->numEntries()) {
+      int rnd_pos = static_cast<int>(RooRandom::randomGenerator()->Rndm()*n_master);
+
+      if (positions_slave.count(rnd_pos) == 0) {
+        positions_slave.insert(rnd_pos);
+        ++i;
+      }
+    }
+
+    // for (auto el : positions_slave) {
+    //   sdebug << " el = " << el << endmsg;
+    // }
+    // sdebug << "mix in " << positions_slave.size() << " elements." << endmsg;
+
+    // double mix_fraction = static_cast<double>(n_slaves) / static_cast<double>(master_dataset->numEntries());
+    
+    // sdebug << "mix fraction = " << slave_dataset->numEntries() << "/" << master_dataset->numEntries() << " = " << static_cast<double>(slave_dataset->numEntries()) / static_cast<double>(master_dataset->numEntries()) << endmsg;
+
+    const RooArgSet& vars = *master_dataset->get();
+    RooDataSet* dataset_new = new RooDataSet(master_dataset->GetName(), master_dataset->GetTitle(), vars);
+
+    int n_slave = 0;
+    for (int i=0; i<master_dataset->numEntries(); ++i) {
+      if (positions_slave.count(i) != 0) {
+        dataset_new->add(*slave_dataset->get(n_slave)); 
+        ++n_slave;
+      } else {
+        dataset_new->add(*master_dataset->get(i)); 
+      }
+
+      //double rnd = RooRandom::randomGenerator()->Rndm();
+
+      // sdebug << "i = " << i << endmsg;
+      // sdebug << "n_slave = " << n_slave << endmsg;
+      // sdebug << "rnd = " << rnd << endmsg;
+
+      // if (rnd < mix_fraction && n_slave<n_slaves) {
+      //   dataset_new->add(*slave_dataset->get(n_slave)); 
+      //   ++n_slave;
+      // } else if (rnd < mix_fraction && n_slave>=n_slaves) {
+      //   swarn << "No more slaves although requested!" << endmsg;
+      //   dataset_new->add(*master_dataset->get(i)); 
+      // } else {
+      //   dataset_new->add(*master_dataset->get(i)); 
+      // }
+    }
+    if (n_slave < n_slaves-1) {
+      swarn << "Still " << n_slaves-n_slave-1 << " slaves available!" << endmsg;
+    }
+
+    return dataset_new;
+  }
   
-  void ToyFactoryStd::AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const {
+  RooDataSet* ToyFactoryStd::AppendDatasets(RooDataSet* master_dataset, RooDataSet* slave_dataset) const {
     // sanity check
     const RooArgSet& master_argset = *master_dataset->get();
     const RooArgSet& slave_argset  = *slave_dataset->get();
@@ -298,10 +407,40 @@ namespace toy {
       }
     }
     delete iter;
-    
+
     // if we reached this, both datasets are compatible
-    master_dataset->append(*slave_dataset);
-    delete slave_dataset;
+
+    // Perform Fisher-Yates shuffle
+    TRandom* rand = RooRandom::randomGenerator();
+
+    int num_shuffle_elements = master_dataset->numEntries() + slave_dataset->numEntries();
+    int num_master = master_dataset->numEntries();
+    std::vector<int> new_order(num_shuffle_elements);
+
+    // only possible pitfall: both datasets empty
+    if (num_shuffle_elements > 0) {
+      new_order[0] = 0;
+      int j;
+      for (int i=1; i<num_shuffle_elements; ++i) {
+        j = rand->Integer(i+1);
+        new_order[i] = new_order[j];
+        new_order[j] = i;
+      }  
+    }
+
+    const RooArgSet& vars = *master_dataset->get();
+    RooDataSet* dataset_new = new RooDataSet(master_dataset->GetName(), master_dataset->GetTitle(), vars);
+    for (int i=0; i<num_shuffle_elements; ++i) {
+      int num_draw = new_order[i];
+
+      if (num_draw < num_master) {
+        dataset_new->add(*master_dataset->get(num_draw)); 
+      } else {
+        dataset_new->add(*slave_dataset->get(num_draw-num_master)); 
+      }
+    }
+
+    return dataset_new;
   }
   
   RooDataSet* ToyFactoryStd::MergeDatasetVector(const std::vector<RooDataSet*>& datasets) const {
@@ -319,11 +458,11 @@ namespace toy {
     return new_dataset;
   }
   
-  std::vector<config::CommaSeparatedPair> ToyFactoryStd::GetPdfProtoSections(const std::string& pdf_name) const {
-    const std::vector<config::CommaSeparatedPair>& proto_sections = config_toyfactory_.proto_sections();
-    std::vector<config::CommaSeparatedPair> matched_sections;
+  std::vector<config::CommaSeparatedPair<std::string>> ToyFactoryStd::GetPdfProtoSections(const std::string& pdf_name) const {
+    const std::vector<config::CommaSeparatedPair<std::string>>& proto_sections = config_toyfactory_.proto_sections();
+    std::vector<config::CommaSeparatedPair<std::string>> matched_sections;
     
-    for (std::vector<config::CommaSeparatedPair>::const_iterator it=proto_sections.begin(); it != proto_sections.end(); ++it) {
+    for (std::vector<config::CommaSeparatedPair<std::string>>::const_iterator it=proto_sections.begin(); it != proto_sections.end(); ++it) {
       if (pdf_name.compare((*it).first()) == 0) {
         matched_sections.push_back(*it);
       }
@@ -331,11 +470,29 @@ namespace toy {
     return matched_sections;
   }
   
+  
+
+  void ToyFactoryStd::SignalHandler( int signum ) {
+    using namespace doocore::io;
+    if (signum == SIGABRT) {
+      swarn << "Caught SIGABRT signal. Problematic generation occured. Will drop the whole sample." << endmsg;
+      signal_caught_ = true;
+      //jmp_buf jump_buffer_;
+      longjmp(jump_buffer_, 1);
+    } else {
+      // cleanup and close up stuff here  
+      // terminate program  
+      exit(signum);
+    }
+  }
+
+
+
   RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     RooDataSet* data = NULL;
     bool have_to_delete_proto_data = false;
     
-    const std::vector<config::CommaSeparatedPair>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
+    const std::vector<config::CommaSeparatedPair<std::string>>& matched_proto_sections = GetPdfProtoSections(pdf.GetName());
     if (matched_proto_sections.size() > 0) {
       // @todo If PDF ist extended AND no yield is set, we need to get yield from
       //       PDF itself for proto.
@@ -352,14 +509,20 @@ namespace toy {
           
           yield = pdf.expectedEvents(argset_generation_observables);
         }
-        proto_size = yield+10*TMath::Sqrt(yield);
+
+        // Proto dataset size to be the expected yield + 10*sigma in order to be 
+        // sure it is big enough. Adding another 5% to account for the fact that
+        // fo r addded PDFs later the proto datasets are passed on slightly 
+        // larger (to account for rounding problems) plus additional 100 events
+        // to cover any problems where small yields are to be generated.
+        proto_size = (yield+10*TMath::Sqrt(yield))*1.05+100;
       }
       
       // Store only proto data specific for this PDF (remember, there might be 
       // proto data already coming along from higher PDFs).
       RooDataSet* proto_data_this_pdf = NULL;
       
-      for (std::vector<config::CommaSeparatedPair>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
+      for (std::vector<config::CommaSeparatedPair<std::string>>::const_iterator it=matched_proto_sections.begin(); it != matched_proto_sections.end(); ++it) {
         RooDataSet* temp_data = GenerateProtoSample(pdf, *it, argset_generation_observables, config_toyfactory_.easypdf(), config_toyfactory_.workspace(), proto_size);
         
         // merge proto sets if necessary
@@ -379,8 +542,26 @@ namespace toy {
     if (PdfIsDecomposable(pdf)) {
       // pdf needs to be decomposed and generated piece-wise 
       if (PdfIsExtended(pdf)) {
-        RooRealVar& yield = *((RooRealVar*)pdf.findServer(1));
-        RooAbsPdf& sub_pdf = *((RooAbsPdf*)pdf.findServer(0));
+        // probe yield and sub PDF in PDF's servers
+        RooRealVar* yield_ptr = dynamic_cast<RooRealVar*>(pdf.findServer(1));
+        if (yield_ptr == nullptr) {
+          yield_ptr = dynamic_cast<RooRealVar*>(pdf.findServer(0));
+        }
+        if (yield_ptr == nullptr) {
+          serr << "ToyFactoryStd::GenerateForPdf(...): Cannot find yield of RooExtendPdf " << pdf.GetName() << endmsg;
+          throw;
+        }
+        RooAbsPdf* sub_pdf_ptr = dynamic_cast<RooAbsPdf*>(pdf.findServer(0));
+        if (sub_pdf_ptr == nullptr) {
+          sub_pdf_ptr = dynamic_cast<RooAbsPdf*>(pdf.findServer(1));
+        }
+        if (sub_pdf_ptr == nullptr) {
+          serr << "ToyFactoryStd::GenerateForPdf(...): Cannot find sub PDF of RooExtendPdf " << pdf.GetName() << endmsg;
+          throw;
+        }
+
+        RooRealVar& yield = *yield_ptr;
+        RooAbsPdf& sub_pdf = *sub_pdf_ptr;
                 
         sinfo << "RooExtendPdf " << pdf.GetName() << "(" << sub_pdf.GetName() << "," << yield.GetName() << "=" << yield.getVal() << ") will be decomposed." << endmsg;
         
@@ -416,9 +597,13 @@ namespace toy {
       if (proto_set != NULL) {
         proto_arg = ProtoData(*proto_set);
       }
+
+      // sdebug << "expected_yield = " << expected_yield << endmsg;
       
       // correct rounding of number of events to generate
       int yield_to_generate = boost::math::iround(expected_yield);
+
+      // sdebug << "yield_to_generate = " << yield_to_generate << endmsg;
       
       RooArgSet* obs_argset = pdf.getObservables(argset_generation_observables);
 
@@ -437,11 +622,36 @@ namespace toy {
         
         data = dynamic_cast<RooDataSet*>(proto_set->reduce(EventRange(0, yield_to_generate)));
       } else {
+        if (yield_to_generate > 0.0) {
+
+          // set jump point in case RooFit sends SIGABRT (only way to catch this...)
+          int val = setjmp(jump_buffer_);
+          //sdebug << "val = " << val << ", signal_caught_ = " << signal_caught_ << endmsg;
+
+          if (val == 0.0 && !signal_caught_) {
 #if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
-        data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
+            data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
 #else
-        data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
+            data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
 #endif
+          } else {
+            // if SIGABRT is caught, throw a proper exception
+            serr << "ToyFactoryStd::GenerateForPdf(...): RooFit threw SIGABRT signal. Cannot continue." << endmsg;
+            signal(SIGABRT, SIG_DFL);
+            sinfo.set_indent(0);
+            throw RooFitSendingSIGABRTException();
+          }
+        } else {
+          // in case expected yield is zero, RooFit will still generate 1 event. Fix that with an empty dataset.
+
+          RooArgSet args(*obs_argset);
+          args.add(*proto_set->get());
+          // args.Print();
+
+          data = new RooDataSet("data_empty", "data_empty", args);
+
+          // data->Print();
+        }
       }
       
       // bugfix for a RooFit bug: if no events are to be generated, the empty
@@ -538,6 +748,7 @@ namespace toy {
             sum_coef += coef;
           }
         }
+
         std::cout.precision(15);
         
         if (!add_pdf_extended && pdf.mustBeExtended()) {
@@ -545,34 +756,59 @@ namespace toy {
         } else {
           sub_yield = coef*expected_yield;
         }
+
         if (extended) {
+          // sdebug << "Generating sub yield as Poisson random number." << endmsg;
           sub_yield = RooRandom::randomGenerator()->Poisson(sub_yield);
         } 
         
         // check for need to pass proto set
         RooDataSet* sub_proto_dataset = NULL;
         std::vector<RooDataSet*> sub_proto_data;
+
         if (proto_dataset != NULL) {
+          // sdebug << "Checking for need to pass proto set" << endmsg;
+          // sdebug << "proto_dataset_pos = " << proto_dataset_pos << endmsg;
+          // sdebug << "sub_yield         = " << sub_yield << endmsg;
+          // proto_dataset->Print();
+
           sub_proto_dataset = new RooDataSet("sub_proto_dataset","sub_proto_dataset", *proto_dataset->get());
-          for (int i=proto_dataset_pos; i<(proto_dataset_pos+sub_yield); ++i) {
+          
+          // Making the proto dataset slightly larger (5%) to avoid problems 
+          // when proto dataset size in subroutines matters and could be a few 
+          // events too small due to rounding (see yield_lost_due_rounding 
+          // below)
+          for (int i=proto_dataset_pos; i<(proto_dataset_pos+sub_yield*1.05); ++i) {
             sub_proto_dataset->addFast(*proto_dataset->get(i));
           }
           proto_dataset_pos += sub_yield;
           sub_proto_data.push_back(sub_proto_dataset);
         }
-        
+          
+        // The sub_yield is a floating point number and in the next generation
+        // the decimal part will be cut off. Here, the lost yield due to 
+        // rounding is summed up and in case it exceeds 0.5 additional events 
+        // will be generated for the next PDF.
         yield_lost_due_rounding += sub_yield - boost::math::iround(sub_yield);
+
+        // sdebug << sub_pdf->GetName() << " - sub_yield = " << sub_yield << " (before rounding correction), yield_lost_due_rounding = " << yield_lost_due_rounding << endmsg;
+
         int add_roundup_yield = boost::math::iround(yield_lost_due_rounding);
         if (TMath::Abs(add_roundup_yield) >= 1 && TMath::Abs(yield_lost_due_rounding) != 0.5) {
           sub_yield += add_roundup_yield;
-          yield_lost_due_rounding = 0.0;
+          yield_lost_due_rounding = -(add_roundup_yield-yield_lost_due_rounding);
         }
         
+        // sdebug << sub_pdf->GetName() << " - sub_yield = " << sub_yield << endmsg;
+
         // sdebug << "Sub yield for next PDF " << sub_pdf->GetName() << " is " << sub_yield << endmsg;
 
         if (data) {
           RooDataSet* data_temp = GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield, false, sub_proto_data);
-          AppendDatasets(data, data_temp);
+          RooDataSet* data_mixed = AppendDatasets(data, data_temp);
+          delete data;
+          delete data_temp;
+          data = data_mixed;
         } else {
           data = (GenerateForPdf(*sub_pdf, argset_generation_observables, sub_yield, false, sub_proto_data));
         }
@@ -664,7 +900,10 @@ namespace toy {
       }
       
       if (data) {
-        AppendDatasets(data, data_temp);
+        RooDataSet* data_mixed = AppendDatasets(data, data_temp);
+        delete data;
+        delete data_temp;
+        data = data_mixed;
       } else {
         data = data_temp;
       }
@@ -700,44 +939,46 @@ namespace toy {
         throw NotGeneratingDiscreteData();
       } else {
         if (argset_already_generated.contains(*disc_var)) {
-          serr << "ERROR: Discrete probability for " << (*it).var_name() 
+          swarn << "WARNING: Discrete probability for " << (*it).var_name() 
           << " is requested for generation but was already generated by PDF "
           << config_toyfactory_.generation_pdf()->GetName() 
           << " (" << config_toyfactory_.generation_pdf()->IsA()->GetName() 
-          << ")." << endmsg;
-          throw NotGeneratingDiscreteData();
-        } else {
-          const std::vector<std::pair<double,double> >& prob_map = (*it).probabilities();
-          // create some simple arrays for faster generation (looping over arrays 
-          // faster than looping over complex vectors and stuff).
-          // I tried creating a special case for constant variables 
-          // (num_values == 1), but it's not worth (the overhead through looping 
-          // is irrelevant).
-          int num_values = prob_map.size();
-          double* cum_probs     = new double[num_values];
-          double* values        = new double[num_values];
-          int*    num_generated = new int[num_values];
-                    
-          int j = 0;
-          for (std::vector<std::pair<double,double> >::const_iterator it_prob = prob_map.begin(); it_prob != prob_map.end(); ++it_prob) {
-            cum_probs[j]     = (*it_prob).second;
-            values[j]        = (*it_prob).first;
-            num_generated[j] = 0;
-            ++j;
-          }
-          
-          RooRealVar* disc_realvar = dynamic_cast<RooRealVar*>(disc_var);
-          RooCategory* disc_catvar = dynamic_cast<RooCategory*>(disc_var);
-          
-          if (!disc_realvar && !disc_catvar) {
-            serr << "ERROR: Variable " << disc_var->GetName() << " (" << disc_var->IsA()->GetName() << ") is neither RooRealVar nor RooCategory." << endmsg;
-            throw;
-          }
-          
-          disc_vars.push_back(boost::tuple<RooAbsArg*,double*,double*,int*,int>(disc_var,cum_probs,values,num_generated,num_values));
-          disc_argset.add(*disc_var);
-          if (disc_catvar) disc_cat_argset.add(*disc_catvar);
+          << "). Will overwrite the already generated values or replace based on cumulative probability." << endmsg;
+          //throw NotGeneratingDiscreteData();
+        } //else {
+        const std::vector<std::pair<double,double> >& prob_map = (*it).probabilities();
+        // create some simple arrays for faster generation (looping over arrays 
+        // faster than looping over complex vectors and stuff).
+        // I tried creating a special case for constant variables 
+        // (num_values == 1), but it's not worth (the overhead through looping 
+        // is irrelevant).
+        int num_values = prob_map.size();
+        double* cum_probs     = new double[num_values];
+        double* values        = new double[num_values];
+        int*    num_generated = new int[num_values];
+        double  total_prob    = 0.0;
+                  
+        int j = 0;
+        for (std::vector<std::pair<double,double> >::const_iterator it_prob = prob_map.begin(); it_prob != prob_map.end(); ++it_prob) {
+          cum_probs[j]     = (*it_prob).second;
+          values[j]        = (*it_prob).first;
+          num_generated[j] = 0;
+          total_prob      += (*it_prob).second;
+          ++j;
         }
+
+        RooRealVar* disc_realvar = dynamic_cast<RooRealVar*>(disc_var);
+        RooCategory* disc_catvar = dynamic_cast<RooCategory*>(disc_var);
+        
+        if (!disc_realvar && !disc_catvar) {
+          serr << "ERROR: Variable " << disc_var->GetName() << " (" << disc_var->IsA()->GetName() << ") is neither RooRealVar nor RooCategory." << endmsg;
+          throw;
+        }
+        
+        disc_vars.push_back(boost::tuple<RooAbsArg*,double*,double*,int*,int>(disc_var,cum_probs,values,num_generated,num_values));
+        disc_argset.add(*disc_var);
+        if (disc_catvar) disc_cat_argset.add(*disc_catvar);
+        //}
       }
     }
     
@@ -755,6 +996,9 @@ namespace toy {
     
     // the actual loop generating the dataset
     for (int i=0; i<yield; ++i) {
+
+      bool add_to_argset = false;
+
       // loop over variables (thanks to previous preparations, the only call 
       // consuming relevant CPU time is the call to RooDataSet::addFast(...))
       for (std::vector<boost::tuple<RooAbsArg*,double*,double*,int*,int> >::const_iterator it = disc_vars.begin(); it != disc_vars.end(); ++it) {   
@@ -773,15 +1017,16 @@ namespace toy {
         // a smart binary search does not gain anything even in perfect test 
         // cases.
         for (j=0; j<num_values; ++j) {  
-          if (r < cum_probs[j]) {              
+          if (r < cum_probs[j]) {
             if (disc_realvar) disc_realvar->setVal(values[j]);
             if (disc_catvar) disc_catvar->setIndex(values[j]);
             num_generated[j]++;
+            add_to_argset = true;
             break;
           }
         }
       }
-      data_discrete->addFast(disc_argset);
+      if (add_to_argset) data_discrete->addFast(disc_argset);
     }
     
     // table print and cleanup
@@ -801,7 +1046,7 @@ namespace toy {
     return data_discrete;
   }
   
-  RooDataSet* ToyFactoryStd::GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const {
+  RooDataSet* ToyFactoryStd::GenerateProtoSample(const RooAbsPdf& pdf, const config::CommaSeparatedPair<std::string>& proto_section, const RooArgSet& argset_generation_observables, doofit::builder::EasyPdf* easypdf, RooWorkspace* workspace, int yield) const {
     
     assert(yield>0);
     sinfo << "Generating proto data for PDF " << pdf.GetName() << " using config section " << proto_section.second() << endmsg;

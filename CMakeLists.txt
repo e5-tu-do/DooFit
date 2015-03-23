@@ -43,7 +43,7 @@ find_package(ROOT REQUIRED)
 find_package(DooCore REQUIRED)
 FIND_PACKAGE(GSL REQUIRED)
 
-include_directories(${Boost_INCLUDE_DIR})
+include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIR})
 
 include_directories(${ROOT_INCLUDE_DIR})

@@ -183,7 +183,7 @@ enum ScaleType {
     virtual ~Plot();
     
     /**
-     *  @brief Add additional RooCmdArgs for plotting
+     *  @brief Add additional RooCmdArgs for plotting (for PDF plotting)
      *
      *  @warning Please note if you want to use ProjWData() as RooCmdArg: 
      *           Unfortunately, RooFit allows you to write very dangerous code
@@ -196,8 +196,24 @@ enum ScaleType {
      *
      *  @param arg RooCmdArg to use for plotting
      */
-    void AddPlotArg(RooCmdArg arg) {plot_args_.push_back(arg);}
+    void AddPlotArg(RooCmdArg arg) {plot_args_pdf_.push_back(arg);}
+
+    /**
+     *  @brief Add additional RooCmdArgs for plotting (for dataset plotting)
+     *
+     *  @param arg RooCmdArg to use for plotting
+     */
+    void AddPlotArgData(RooCmdArg arg) {plot_args_data_.push_back(arg);}
     
+    /**
+     *  @brief Set additional plot label (to be added as splitline under label from PlotConfig)
+     *
+     *  @param plot_label_additional label as TLatex string
+     */
+    void set_plot_label_additional(std::string plot_label_additional) {
+      plot_label_additional_ = plot_label_additional;
+    }
+
     /**
      *  @brief Set plot range to use for this plot
      *
@@ -208,6 +224,16 @@ enum ScaleType {
      */
     void set_plot_range(const std::string& plot_range) { plot_range_ = plot_range; }
     
+    /**
+     *  @brief Set asymmetry plotting mode
+     *
+     *  Set true, if an asymmetry shall be plotted. The y-axis  range will be set
+     *  from -1 to 1 
+     *  
+     *  @param plot_asymmetry set true for plotting asymmetry
+     */
+     void set_plot_asymmetry(bool plot_asymmetry) { plot_asymmetry_ = plot_asymmetry; }
+
     /**
      *  @brief Friend class PlotSimultaneous
      */
@@ -229,7 +255,9 @@ enum ScaleType {
      *  @param suffix suffix to put after file names for log plots (if sc_y == kBoth)
      */
     virtual void PlotHandler(ScaleType sc_y, std::string suffix="") const;
-    
+
+    void set_ignore_num_cpu(bool ignore_num_cpu) { ignore_num_cpu_ = ignore_num_cpu; }
+
     /**
      *  @brief Dimension to plot in
      */
@@ -256,14 +284,31 @@ enum ScaleType {
     std::string plot_name_;
     
     /**
+     *  @brief Additional plot label (splitlined with label from PlotConfig)
+     */
+    std::string plot_label_additional_;
+
+    /**
      *  @brief Plot range
      */
     std::string plot_range_;
         
     /**
-     *  @brief Vector containing additional RooCmdArgs for plotting
+     *  @brief Vector containing additional RooCmdArgs for plotting (PDF part)
      */
-    std::vector<RooCmdArg> plot_args_;
+    std::vector<RooCmdArg> plot_args_pdf_;
+
+    /**
+     *  @brief Vector containing additional RooCmdArgs for plotting (dataset part)
+     */
+    std::vector<RooCmdArg> plot_args_data_;
+
+    /**
+     *  @brief Flag to ignore setting of NumCPU to avoid plotting problems
+     */
+    bool ignore_num_cpu_;
+
+    bool plot_asymmetry_;
     
   private:
   };  

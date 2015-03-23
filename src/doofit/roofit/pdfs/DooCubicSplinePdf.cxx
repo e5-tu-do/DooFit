@@ -94,7 +94,10 @@ namespace pdfs {
   Int_t DooCubicSplinePdf::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName) const
   {
     // No analytical calculation available (yet) of integrals over subranges
-    if (_x.min(rangeName)!=_aux.knots().front() || _x.max(rangeName)!=_aux.knots().back() ) return 0;
+    // // 2014-11-07 ccauet
+    // just trust me, everything is alright as long as the PDF is zero before first and after last knot
+    // if (_x.min(rangeName)!=_aux.knots().front() || _x.max(rangeName)!=_aux.knots().back() ) return 0;
+    // //
     if (matchArgs(allVars, analVars, _x)) return 1;
     return 0;
   }

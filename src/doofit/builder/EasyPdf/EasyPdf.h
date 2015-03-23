@@ -13,6 +13,7 @@
 #include "RooGlobalFunc.h"
 #include "RooArgSet.h"
 #include "RooArgList.h"
+#include "TMatrixDSym.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -22,6 +23,8 @@ class RooRealVar;
 class RooAbsCategoryLValue;
 class RooAbsPdf;
 class RooGaussian;
+class RooMultiVarGaussian;
+class RooPolynomial;
 class RooCBShape;
 class RooIpatia;
 class RooIpatia2;
@@ -35,10 +38,12 @@ class RooFormulaVar;
 class RooCategory;
 class RooGaussModel;
 class RooAddModel;
+class RooTruthModel;
 class RooDecay;
 class RooResolutionModel;
 class RooEffProd;
 class RooBDecay;
+class RooBMixDecay;
 class RooSimultaneous;
 class RooSuperCategory;
 class RooKeysPdf;
@@ -455,6 +460,42 @@ class EasyPdf {
   RooGaussian& Gaussian(const std::string& name, RooAbsReal& x, RooAbsReal& mean, RooAbsReal& sigma);
   
   /**
+   *  @brief Add and access a Multivariate Gaussian PDF
+   *
+   *  Request a RooGaussian by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param xvec vector of variables that the MultiVarGaussian is defined on
+   *  @param mu mean values of variables that MultiVarGaussian is defined on
+   *  @param covMatrix covariance Matrix of variables
+   *  @return the appropriate PDF
+   */
+  RooMultiVarGaussian& MultiVarGaussian(const std::string &name, const RooArgList& xvec, const RooArgList& mu, const TMatrixDSym& covMatrix);
+
+  /**
+   *  @brief Add and access a Polynomial PDF
+   *
+   *  Request a RooPolynomial by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  Polynomial implements a polynomial p.d.f of the form
+   *  f(x) = sum_i a_i * x^i
+   *  By default coefficient a_0 is chosen to be 1, as polynomial probability 
+   *  density functions have one degree of freedome less than polynomial 
+   *  functions due to the normalization condition.
+   *
+   *  @param name name of the PDF
+   *  @param x x variable
+   *  @param coefficientList RooArgSet of coefficients
+   *  @param lowestOrder lowest order of polynomial (Default = 1)
+   *  @return the appropriate PDF
+   */
+  RooPolynomial& Polynomial(const std::string& name, RooAbsReal& x, RooArgList& coefficientList, Int_t lowestOrder = 1);
+
+  /**
    *  @brief Add and access a Crystal Ball Shape PDF
    *
    *  Request a RooCBShape by a specified name. If the PDF does not yet
@@ -701,6 +742,19 @@ class EasyPdf {
    *  PDF definitions of resolution models
    */
   ///@{
+  /**
+   *  @brief Add and access a RooTruthModel
+   *
+   *  Request a RooGTruthModel by a specified name. If the PDF does not yet
+   *  exist in this EasyPdf pool of PDFs, it is created and returned.
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param x the x variable
+   *  @return the appropriate PDF
+   */
+  RooTruthModel& TruthModel(const std::string& name, RooRealVar& x);
+  
   /**
    *  @brief Add and access a RooGaussModel
    *
@@ -1068,7 +1122,7 @@ class EasyPdf {
    *  @param scale_error scale factor for error
    *  @return the appropriate PDF
    */
-  RooGaussEfficiencyModel& GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error, RooAbsReal &scale_error);
+  RooGaussEfficiencyModel& GaussEfficiencyModelPerEvent(const std::string& name, RooRealVar& x, RooAbsGaussModelEfficiency &eff, RooAbsReal& mean, RooAbsReal& error,  RooAbsReal &scale_mean, RooAbsReal &scale_error);
   
   /**
    *  @brief Add and access a double per-event RooGaussEfficiencyModel
@@ -1267,6 +1321,26 @@ class EasyPdf {
    *  @return the appropriate PDF
    */
   RooBDecay& BDecay(const std::string& name, RooRealVar& t, RooAbsReal& tau, RooAbsReal& dgamma, RooAbsReal& coef_cosh, RooAbsReal& coef_sinh, RooAbsReal& coef_cos, RooAbsReal& coef_sin, RooAbsReal& dm, const RooResolutionModel& model);
+
+  /**
+   *  @brief Add and access a RooBMixDecay PDF
+   *
+   *  Request a RooBMixDecay by a specified name. If the PDF does not yet 
+   *  exist in this EasyPdf pool of PDFs, it is created and returned. 
+   *  Otherwise an exception ObjectExistsException is thrown.
+   *
+   *  @param name name of the PDF
+   *  @param t t variable
+   *  @param mixState mixing state
+   *  @param tagFlav tag decision
+   *  @param tau lifetime
+   *  @param dm delta m
+   *  @param mistag mistag omega
+   *  @param delMistag deltaMistag deltaOmega
+   *  @param model the resolution model to use
+   *  @return the appropriate PDF
+   */
+  RooBMixDecay& BMixDecay(const std::string& name, RooRealVar& t, RooAbsCategory& mixState, RooAbsCategory& tagFlav, RooAbsReal& tau, RooAbsReal& dm, RooAbsReal& mistag, RooAbsReal& delMistag, const RooResolutionModel& model);
   
   /**
    *  @brief Add and access a RooKeysPdf from a file

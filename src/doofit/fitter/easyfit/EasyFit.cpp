@@ -7,12 +7,17 @@
 // from boost
 #include <boost/foreach.hpp>
 
+// from ROOT
+// #include "Fit/Fitter.h"
+
 // from RooFit
 #include "RooAbsData.h"
 #include "RooAbsPdf.h"
 #include "RooFit.h"
 #include "RooFitResult.h"
 #include "RooWorkspace.h"
+// #include "RooMinimizer.h"
+// #include "RooMinimizerFcn.h"
 
 // from project - Utils
 #include <doocore/io/MsgStream.h>
@@ -53,6 +58,7 @@ EasyFit::EasyFit(const string& fit_name)
     , fc_conditional_observables_(NULL)
     , fc_strategy_(1)
     , fc_optimize_(true)
+    , fc_offset_(false)
     , fc_sumw2err_(false)
     , fc_minimizer_type_("Minuit2")
     , fc_minimizer_algo_("minimize")
@@ -86,7 +92,9 @@ EasyFit::EasyFit(const string& fit_name)
 }
 
 EasyFit::~EasyFit() {
-
+  // if (fit_result_ != nullptr) {
+  //   delete fit_result_;
+  // }
 }
 
 void EasyFit::SetPdfAndDataSet(RooAbsPdf* pdf, RooAbsData* data) {
@@ -127,10 +135,15 @@ void EasyFit::PrepareFit() {
   
   if (fc_conditional_observables_set_) {
     fc_map_["ConditionalObservables"] = RooFit::ConditionalObservables(*fc_conditional_observables_);
+    sinfo << "EasyFit::PrepareFit(): Using the following conditional observables: " << *fc_conditional_observables_ << endmsg;
+  } else {
+    sinfo << "EasyFit::PrepareFit(): Using no conditional observables." << endmsg;
   }
+
   
   fc_map_["Strategy"]    = RooFit::Strategy(fc_strategy_);
   fc_map_["Optimize"]    = RooFit::Optimize(fc_optimize_);
+  fc_map_["Offset"]      = RooFit::Offset(fc_offset_);
 
   fc_map_["SumW2Err"]    = RooFit::SumW2Error(fc_sumw2err_);
 
@@ -180,6 +193,39 @@ void EasyFit::ExecuteFit() {
     std::clock_t c_start = std::clock();
     auto t_start = std::chrono::high_resolution_clock::now();
     
+    // RooAbsReal* nll(pdf_->createNLL(*data_, RooFit::NumCPU(fc_num_cpu_), RooFit::Extended(fc_extended_), RooFit::ExternalConstraints(*fc_external_constraints_), RooFit::ConditionalObservables(*fc_conditional_observables_), RooFit::Optimize(fc_optimize_)));
+    // RooMinimizer minimizer(*nll);
+
+    // ROOT::Fit::Fitter fitter;
+    // RooMinimizerFcn fcn(nll, &minimizer);
+
+    // // fitter.Config().MinimizerOptions().SetPrecision(1.0);
+    // fitter.Config().MinimizerOptions().SetTolerance(1.0);
+    // fitter.Config().MinimizerOptions().SetStrategy(2);
+    // // default max number of calls
+    // fitter.Config().MinimizerOptions().SetMaxIterations(500*fcn.NDim());
+    // fitter.Config().MinimizerOptions().SetMaxFunctionCalls(500*fcn.NDim());
+
+    // // Shut up for now
+    // fitter.Config().MinimizerOptions().SetPrintLevel(0);
+
+    // // Use +0.5 for 1-sigma errors
+    // fitter.Config().MinimizerOptions().SetErrorDef(nll->defaultErrorLevel());
+
+
+    // fitter.Config().MinimizerOptions().SetPrintLevel(2);    
+
+    // fcn.Synchronize(fitter.Config().ParamsSettings(), false, false);
+    // fitter.Config().SetMinimizer("Minuit2", "minimize");
+
+    // RooAbsReal::setEvalErrorLoggingMode(RooAbsReal::CollectErrors) ;
+    // RooAbsReal::clearEvalErrorLog() ;
+
+    // sinfo << "Fitting myself: The magic begins." << endmsg;
+    // bool ret = fitter.FitFCN(fcn);
+
+    // fit_result_ = minimizer.save(pdf_->GetName(), pdf_->GetTitle());
+
     fit_result_ = pdf_->fitTo(*data_,fc_linklist_);
     
     std::clock_t c_end = std::clock();
@@ -330,6 +376,13 @@ EasyFit& EasyFit::SetStrategy(int fc_strategy) {
       serr << "Fit " << fit_name_ << ": Cannot set Strategy to " << fc_strategy 
            << ". Allowed valued are 0, 1, 2." << endmsg;
     }
+  }
+  return *this;
+}
+
+EasyFit& EasyFit::SetOffset(int fc_offset) {
+  if (CheckSettingOptionsOk()) {
+    fc_offset_ = fc_offset;
   }
   return *this;
 }
