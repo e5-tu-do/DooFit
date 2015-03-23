@@ -400,6 +400,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     plot.plot_args_pdf_  = this->plot_args_pdf_;
     plot.plot_args_data_ = this->plot_args_data_;
     plot.plot_range_     = this->plot_range_;
+    plot.plot_label_additional_  = this->plot_label_additional_;
     
     // go through supplied cmd args and if necessary merge ProjWData arguments
     bool project_arg_found         = false;
