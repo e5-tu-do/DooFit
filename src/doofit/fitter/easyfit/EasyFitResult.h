@@ -39,6 +39,8 @@ class EasyFitResult {
  public:
   EasyFitResult(const RooFitResult& fit_result);
 
+  ConvertRooFitResult(const RooFitResult& fit_result);
+
   /** @name Standard getters
    */
   ///@{
@@ -87,6 +89,11 @@ class EasyFitResult {
    * @brief EDM of the fit
    */
   double edm_;
+
+  /**
+   * @brief Fit result already initialized?
+   */
+  bool initialized_;
 }; // class EasyFitResult
 
 

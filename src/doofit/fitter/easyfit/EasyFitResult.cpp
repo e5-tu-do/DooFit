@@ -18,7 +18,8 @@
 doofit::fitter::easyfit::EasyFitResult::EasyFitResult(const RooFitResult& fit_result) :
  quality_covariance_matrix_(fit_result.covQual()),
  fcn_(fit_result.minNll()),
- edm_(fit_result.edm())
+ edm_(fit_result.edm()),
+ initialized_(false)
 {
   // transfer fit status
   for (unsigned int i=0; i<fit_result.numStatusHistory(); ++i) {
@@ -55,5 +56,28 @@ doofit::fitter::easyfit::EasyFitResult::EasyFitResult(const RooFitResult& fit_re
     parameters_float_init_.insert(std::make_pair(evar.name(), evar));
   }
   delete iter;
+}
+
+doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitResult& fit_result) {
+  using namespace doocore::io;
+
+  if (!initialized_) {
+
+    initialized_ = true;
+  }
+
+  quality_covariance_matrix_ = fit_result.covQual();
+  fcn_ = fit_result.minNll();
+  edm_ = fit_result.edm();
+
+  // transfer fit status
+  if (status_.size() == 0) {
+  } else {
+    if (status_.size() != fit_result.numStatusHistory()) {
+      serr << "Stored fit result and new fit result have different number of fit status."
+    } else {
+
+    }
+  }
 }
 
