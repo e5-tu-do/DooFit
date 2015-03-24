@@ -12,7 +12,8 @@
 #include "RooRealVar.h"
 
 // forward declarations
-class RooFitResult; 
+class RooFitResult;
+class TTree;
 
 /** @class doofit::fitter::easyfit::EasyFitResult
  *  @brief Smarter fit result container with no direct RooFit dependencies
@@ -39,7 +40,7 @@ class EasyFitResult {
  public:
   EasyFitResult(const RooFitResult& fit_result);
 
-  ConvertRooFitResult(const RooFitResult& fit_result);
+  void ConvertRooFitResult(const RooFitResult& fit_result);
 
   /** @name Standard getters
    */
@@ -54,7 +55,26 @@ class EasyFitResult {
   const std::map<std::string, EasyFitVariable>& parameters_float_init() const { return parameters_float_init_; }
   ///@}
 
+  /** @name TTree output
+   */
+  ///@{
+  /**
+   * @brief Create branches in new TTree for all relevant leaves
+   *
+   * Based on a new TTree new branches will be created for all variables and 
+   * branch addresses set accordingly.
+   *
+   * @param tree TTree to register branches in
+   * @param prefix prefix for all branch names (useful to distinguish two fit result classes in TTree)
+   */
+  void CreateBranchesInTree(TTree& tree, std::string prefix="");
+  ///@}
+
+
  private:
+  void RegisterBranch(TTree& tree, void* ptr, std::string name, std::string leaflist);
+  void CreateBranchesForVariable(TTree& tree, EasyFitVariable& var, std::string name);
+
   /**
    * @brief All floating parameters (initial state before fit)
    */
@@ -217,6 +237,8 @@ class EasyFitVariable {
   double error_high_;
 
   bool constant_;
+
+  friend class EasyFitResult;
 }; // class EasyFitVariable
 
 
