@@ -96,6 +96,16 @@ class EasyFitResult {
   std::vector<std::pair<std::string, int>> status_;
 
   /**
+   * @brief Status codes of fitting algorithms (TTree compatibility)
+   */
+  std::vector<std::string*> status_ptrs_;
+
+  /**
+   * @brief Number of stored fit status (TTree compatibility)
+   */
+  unsigned char num_status_;
+
+  /**
    * @brief Covariance matrix quality
    */
   int quality_covariance_matrix_;

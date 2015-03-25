@@ -17,11 +17,18 @@
 #include "doocore/io/MsgStream.h"
 
 doofit::fitter::easyfit::EasyFitResult::EasyFitResult(const RooFitResult& fit_result) :
+ num_status_(0),
  quality_covariance_matrix_(fit_result.covQual()),
  fcn_(fit_result.minNll()),
  edm_(fit_result.edm()),
  initialized_(false)
 {
+  status_ptrs_.reserve(10);
+
+  for (unsigned int i=0; i<10; ++i) {
+    status_ptrs_.push_back(new std::string(""));
+  }
+
   ConvertRooFitResult(fit_result);
 }
 
@@ -37,6 +44,9 @@ void doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitRes
     for (unsigned int i=0; i<fit_result.numStatusHistory(); ++i) {
       status_.push_back(std::make_pair(fit_result.statusLabelHistory(i),
                                        fit_result.statusCodeHistory(i)));
+      
+      num_status_ = fit_result.numStatusHistory();
+      status_ptrs_.at(i) = new std::string(fit_result.statusLabelHistory(i));
     }
 
     // transfer constant parameters
@@ -94,6 +104,14 @@ void doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitRes
     for (unsigned int i=0; i<fit_result.numStatusHistory(); ++i) {
       status_.at(i).first  = fit_result.statusLabelHistory(i);
       status_.at(i).second = fit_result.statusCodeHistory(i);
+
+      num_status_ = fit_result.numStatusHistory();
+      delete status_ptrs_.at(i);
+      status_ptrs_.at(i) = new std::string(fit_result.statusLabelHistory(i));
+    }
+    for (unsigned int i=fit_result.numStatusHistory(); i<10; ++i) {
+      delete status_ptrs_.at(i);
+      status_ptrs_.at(i) = new std::string("");
     }
 
     // transfer constant parameters
@@ -140,30 +158,37 @@ void doofit::fitter::easyfit::EasyFitResult::CreateBranchesInTree(TTree& tree, s
   std::string str_name;
   std::string str_leaf;
 
+  RegisterBranch(tree, &num_status_, prefix+"status_num", prefix+"status_num/b");
   RegisterBranch(tree, &quality_covariance_matrix_, prefix+"quality_covariance_matrix", prefix+"quality_covariance_matrix/I");
   RegisterBranch(tree, &fcn_, prefix+"fcn", prefix+"fcn/D");
   RegisterBranch(tree, &edm_, prefix+"edm", prefix+"edm/D");
 
   for (auto it=parameters_const_.begin(), end=parameters_const_.end(); it!=end; ++it) {
-    CreateBranchesForVariable(tree, it->second, prefix+it->first);
+    CreateBranchesForVariable(tree, it->second, prefix+"const_"+it->first);
+  }
+  for (auto it=parameters_float_init_.begin(), end=parameters_float_init_.end(); it!=end; ++it) {
+    CreateBranchesForVariable(tree, it->second, prefix+"init_"+it->first);
+  }
+  for (auto it=parameters_float_final_.begin(), end=parameters_float_final_.end(); it!=end; ++it) {
+    CreateBranchesForVariable(tree, it->second, prefix+"final_"+it->first);
+  }
+
+  for (unsigned int i=0; i<status_.size(); ++i) {
+    RegisterBranch(tree, &status_.at(i).second, prefix+"status_code"+std::to_string(i), prefix+"status_code"+std::to_string(i)+"/I");
   }
 
   if (tree.GetEntries() == 0) {
-    for (unsigned int i=0; i<status_.size(); ++i) {
+    for (unsigned int i=0; i<10; ++i) {
       str_name = prefix+"status_label"+std::to_string(i);
-      tree.Branch(str_name.c_str(), &status_.at(i).first);
-
-      RegisterBranch(tree, &status_.at(i).second, prefix+"status_code"+std::to_string(i), prefix+"status_code"+std::to_string(i)+"/I");
+      tree.Branch(str_name.c_str(), &(status_ptrs_.at(i)));
     }
 
   } else { // if (tree.GetEntries() == 0) {
     // TODO: Check if branches actually exist
 
-    for (unsigned int i=0; i<status_.size(); ++i) {
+    for (unsigned int i=0; i<10; ++i) {
       str_name = prefix+"status_label"+std::to_string(i);
-      tree.SetBranchAddress(str_name.c_str(), &status_.at(i).first);
-
-      RegisterBranch(tree, &status_.at(i).second, prefix+"status_code"+std::to_string(i), prefix+"status_code"+std::to_string(i)+"/I");
+      tree.SetBranchAddress(str_name.c_str(), &(status_ptrs_.at(i)));
     }
   }
 }
