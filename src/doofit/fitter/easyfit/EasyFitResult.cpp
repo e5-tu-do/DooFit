@@ -289,6 +289,10 @@ void doofit::fitter::easyfit::EasyFitResult::RegisterBranch(TTree& tree, void* p
 }
 
 void doofit::fitter::easyfit::EasyFitResult::RegisterStringBranch(TTree& tree, std::string** ptr, std::string name) {
+  using namespace doocore::io;
+
+  sdebug << **ptr << endmsg;
+
   if (tree.GetEntries() == 0) {
     tree.Branch(name.c_str(), ptr);
   } else {

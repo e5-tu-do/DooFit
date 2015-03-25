@@ -188,7 +188,7 @@ namespace toy {
       const RooFitResult* dummy = nullptr;
       FitResultContainer fit_results(dummy,dummy,0.0,0.0,0.0,0.0,0,0);
       if (fit_results_release_queue_.wait_and_pop(fit_results)) {
-        sdebug << "Deleting fit results." << endmsg;
+        //sdebug << "Deleting fit results." << endmsg;
         if (std::get<0>(fit_results) != nullptr) delete std::get<0>(fit_results);
         if (std::get<1>(fit_results) != nullptr) delete std::get<1>(fit_results);
       }

@@ -17,6 +17,7 @@
 #include "TMath.h"
 #include "TEfficiency.h"
 #include "TLatex.h"
+#include "TDirectory.h"
 
 // from RooFit
 #include "RooFitResult.h"
@@ -52,7 +53,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultDataNomina
 
   for (auto var : scan_vars_) {
     //RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->floatParsFinal().find(var->GetName()));
-    EasyFitVar* var_fixed = nullptr;
+    const EasyFitVariable* var_fixed = nullptr;
     if (fit_result.parameters_float_final().count(var->GetName()) > 0) {
       var_fixed = &fit_result.parameters_float_final().at(var->GetName());
     } else if (fit_result.parameters_const().count(var->GetName()) > 0) {
@@ -60,7 +61,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultDataNomina
     }
     if (var_fixed != nullptr) {
       scan_vars_titles_.push_back(var->GetTitle());
-      scan_vars_names_.push_back(var_fixed->GetName());
+      scan_vars_names_.push_back(var_fixed->name());
 
       // sdebug << "We take: " << var_fixed->GetTitle() << endmsg;
       // sdebug << "while we should take: " << var->GetTitle() << endmsg;
@@ -79,21 +80,25 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultDataNomina
 void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(doofit::toy::ToyStudyStd& toy_study) {
   using namespace doofit::toy;
   using namespace doocore::io;
+  using namespace doofit::fitter::easyfit;
 
   FitResultContainer fit_result_container(toy_study.GetFitResult());
-  const RooFitResult* fit_result(std::get<0>(fit_result_container));
+  //const RooFitResult* fit_result(std::get<0>(fit_result_container));
 
   unsigned int num_ignored(0);
-  while (fit_result != nullptr) { 
+  const EasyFitResult* fit_result = nullptr;
+  while (std::get<0>(fit_result_container) != nullptr) { 
+    fit_result = new EasyFitResult(*std::get<0>(fit_result_container));
     time_total_ += std::get<2>(fit_result_container);
 
     if (FitResultOkay(*fit_result)) {
       std::vector<double> scan_vals;
       for (auto var : scan_vars_) {
-        RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->constPars().find(var->GetName()));
+        const EasyFitVariable& var_fixed = fit_result->parameters_const().at(var->GetName());
+        //RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->constPars().find(var->GetName()));
 
         // protection against 0.0 being 1e-16 and not being properly matched
-        double val(var_fixed->getVal());
+        double val(var_fixed.value());
         if (std::abs(val) < 1e-14) {
           val = 0.0;
         } 
@@ -101,24 +106,27 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
         scan_vals.push_back(val);
       }
 
-      if (std::abs(scan_vals[0]-0.745732) < 1e-3) {
-        sdebug << "@" << scan_vals[0] << ":" << fit_result->minNll() << "-" << nll_data_nominal_ << " = " << fit_result->minNll()-nll_data_nominal_ << endmsg;
-      }
+      // if (std::abs(scan_vals[0]-0.745732) < 1e-3) {
+      //   sdebug << "@" << scan_vals[0] << ":" << fit_result->minNll() << "-" << nll_data_nominal_ << " = " << fit_result->minNll()-nll_data_nominal_ << endmsg;
+      // }
 
-      delta_nlls_data_scan_[scan_vals] = fit_result->minNll()-nll_data_nominal_;
+      delta_nlls_data_scan_[scan_vals] = fit_result->fcn()-nll_data_nominal_;
       scan_vals_data_.insert(scan_vals);
       // sdebug << "scan_vals = " << scan_vals << endmsg;
       // sdebug << "delta_nll = " << delta_nlls_data_scan_[scan_vals] << endmsg;
 
-      fit_results_data_scan_[scan_vals] = fit_result_container; 
+      fit_results_data_scan_.emplace(std::make_pair(scan_vals,*fit_result));
     } else {
       ++num_ignored;
     }
 
-    //toy_study.ReleaseFitResult(fit_result_container);
+    toy_study.ReleaseFitResult(fit_result_container);
 
     fit_result_container = toy_study.GetFitResult();
-    fit_result = std::get<0>(fit_result_container);
+    delete fit_result;
+    if (std::get<0>(fit_result_container) != nullptr) {
+      fit_result = new EasyFitResult(*std::get<0>(fit_result_container));
+    }
   }
 
   if (num_ignored > 0) {
@@ -131,42 +139,48 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
 void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofit::toy::ToyStudyStd& toy_study) {
   using namespace doofit::toy;
   using namespace doocore::io;
+  using namespace doofit::fitter::easyfit;
 
   unsigned int num_ignored(0);
 
   FitResultContainer fit_result_container(toy_study.GetFitResult());
-  const RooFitResult* fit_result_0(std::get<0>(fit_result_container));
-  const RooFitResult* fit_result_1(std::get<1>(fit_result_container));
+  // const RooFitResult* fit_result_0(std::get<0>(fit_result_container));
+  // const RooFitResult* fit_result_1(std::get<1>(fit_result_container));
+  const EasyFitResult* fit_result_0 = nullptr;
+  const EasyFitResult* fit_result_1 = nullptr;
+
+  gDirectory->pwd();
 
   TCanvas c("c", "c", 800, 600);
   TH1D hist("hist", "#Delta#chi^{2}_{toy}", 250, -2.0, 6.0);
 
   std::map<double, TH1D*> hists_dchisq;
   // TODO: Warn if fit_result_0 valid, but fit_result_1 not!
-  while (fit_result_0 != nullptr) { 
-
-    // fit_result_0->Print();
-
-    if (fit_result_1 == nullptr) {
+  while (std::get<0>(fit_result_container) != nullptr) { 
+    if (std::get<1>(fit_result_container) == nullptr) {
       swarn << "Only one fit result stored, expected a pair. The result tree might be broken!" << endmsg;
     } else {
+      fit_result_0 = new EasyFitResult(*std::get<0>(fit_result_container));
+      fit_result_1 = new EasyFitResult(*std::get<1>(fit_result_container));
+
       time_total_ += std::get<2>(fit_result_container);
       time_total_ += std::get<3>(fit_result_container);
 
       if (FitResultOkay(*fit_result_0) && FitResultOkay(*fit_result_1)) {
         std::vector<double> scan_vals;
         for (auto var : scan_vars_) {
-          RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result_1->constPars().find(var->GetName()));
+          // RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result_1->constPars().find(var->GetName()));
+          const EasyFitVariable& var_fixed = fit_result_1->parameters_const().at(var->GetName());
 
           // protection against 0.0 being 1e-16 and not being properly matched
-          double val(var_fixed->getVal());
+          double val(var_fixed.value());
           if (std::abs(val) < 1e-14) {
             val = 0.0;
           } 
 
           scan_vals.push_back(val);
         }
-        double delta_nll(fit_result_1->minNll() - fit_result_0->minNll());
+        double delta_nll(fit_result_1->fcn() - fit_result_0->fcn());
 
         // sdebug << "delta_nll = " << delta_nll << endmsg;
 
@@ -220,8 +234,10 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
     toy_study.ReleaseFitResult(fit_result_container);
 
     fit_result_container = toy_study.GetFitResult();
-    fit_result_0 = std::get<0>(fit_result_container);
-    fit_result_1 = std::get<1>(fit_result_container);
+    delete fit_result_0;
+    delete fit_result_1;
+    fit_result_0 = new EasyFitResult(*std::get<0>(fit_result_container));
+    fit_result_1 = new EasyFitResult(*std::get<1>(fit_result_container));
 
     // sdebug << "fit_result_0 = " << fit_result_0 << endmsg;
     // sdebug << "fit_result_1 = " << fit_result_1 << endmsg;
@@ -243,9 +259,10 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
   sinfo << "Scanned toy scan points: " << scan_vals_toy_ << endmsg;
 }
 
-const RooFitResult& doofit::plotting::profiles::FeldmanCousinsProfiler::GetDataScanResult(const std::vector<double>& scan_point) const {
+const doofit::fitter::easyfit::EasyFitResult& doofit::plotting::profiles::FeldmanCousinsProfiler::GetDataScanResult(const std::vector<double>& scan_point) const {
   using namespace doofit::toy;
   using namespace doocore::io;
+  using namespace doofit::fitter::easyfit;
 
   std::vector<double> scan_point_copy(scan_point);
   for (auto& value : scan_point_copy) {
@@ -255,8 +272,7 @@ const RooFitResult& doofit::plotting::profiles::FeldmanCousinsProfiler::GetDataS
   }
 
   if (fit_results_data_scan_.count(scan_point_copy) > 0) {
-    FitResultContainer container = fit_results_data_scan_.at(scan_point_copy);
-    const RooFitResult& fit_result(*std::get<0>(container));
+    const EasyFitResult& fit_result = fit_results_data_scan_.at(scan_point_copy);
     return fit_result;
   } 
 }
@@ -265,17 +281,17 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReleaseAllFitResults(do
   using namespace doofit::toy;
   using namespace doocore::io;
 
-  for (auto fit_results_data : fit_results_data_scan_) {
-    toy_study.ReleaseFitResult(fit_results_data.second);
-  }
+  // for (auto fit_results_data : fit_results_data_scan_) {
+  //   toy_study.ReleaseFitResult(fit_results_data.second);
+  // }
 }
 
 
-bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const doofit::fitter:easyfit::EasyFitResult& fit_result) const {
+bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const doofit::fitter::easyfit::EasyFitResult& fit_result) const {
   using namespace doocore::io;
   if (fit_result.quality_covariance_matrix() < 2) {
     return false;
-  } else if (fit_result.status.at(0).second < 0) {
+  } else if (fit_result.status().at(0).second < 0) {
     return false;
   } else if(fit_result.fcn() == -1e+30) {
     return false;
