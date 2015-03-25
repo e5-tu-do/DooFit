@@ -57,7 +57,6 @@ doofit::fitter::easyfit::EasyFitResult::EasyFitResult(TTree& tree, std::string p
       if (name_leaf.substr(prefix.length(), prefix.length()+6) == "const_") {
         if (name_leaf.substr(name_leaf.length()-6, name_leaf.length()) == "_value") {
           std::string name_var = name_leaf.substr(prefix.length()+6, name_leaf.length()-prefix.length()-12);
-          sdebug << name_var << " is const variable!" << endmsg;
           EasyFitVariable evar(name_var, "", 0.0);
           parameters_const_.insert(std::make_pair(evar.name(), evar));
         }
@@ -65,7 +64,6 @@ doofit::fitter::easyfit::EasyFitResult::EasyFitResult(TTree& tree, std::string p
       if (name_leaf.substr(prefix.length(), prefix.length()+5) == "init_") {
         if (name_leaf.substr(name_leaf.length()-6, name_leaf.length()) == "_value") {
           std::string name_var = name_leaf.substr(prefix.length()+5, name_leaf.length()-prefix.length()-11);
-          sdebug << name_var << " is init variable!" << endmsg;
           EasyFitVariable evar(name_var, "", 0.0);
           parameters_float_init_.insert(std::make_pair(evar.name(), evar));
         }
@@ -73,14 +71,12 @@ doofit::fitter::easyfit::EasyFitResult::EasyFitResult(TTree& tree, std::string p
       if (name_leaf.substr(prefix.length(), prefix.length()+6) == "final_") {
         if (name_leaf.substr(name_leaf.length()-6, name_leaf.length()) == "_value") {
           std::string name_var = name_leaf.substr(prefix.length()+6, name_leaf.length()-prefix.length()-12);
-          sdebug << name_var << " is final variable!" << endmsg;
           EasyFitVariable evar(name_var, "", 0.0);
           parameters_float_final_.insert(std::make_pair(evar.name(), evar));
         }
       }
     }
   }
-
 
   RegisterBranchesInTree(tree, prefix);
 
