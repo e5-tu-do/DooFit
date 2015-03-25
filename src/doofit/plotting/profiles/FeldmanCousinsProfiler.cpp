@@ -32,6 +32,7 @@
 #include "doofit/plotting/Plot/PlotConfig.h"
 #include "doofit/fitter/AbsFitter.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStd.h"
+#include "doofit/fitter/easyfit/EasyFitResult.h"
 
 doofit::plotting::profiles::FeldmanCousinsProfiler::FeldmanCousinsProfiler(const PlotConfig& cfg_plot)
 : config_plot_(cfg_plot),
@@ -42,16 +43,20 @@ doofit::plotting::profiles::FeldmanCousinsProfiler::FeldmanCousinsProfiler(const
 void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultDataNominal(doofit::toy::ToyStudyStd& toy_study) {
   using namespace doofit::toy;
   using namespace doocore::io;
+  using namespace doofit::fitter::easyfit;
 
   FitResultContainer fit_result_container(toy_study.GetFitResult());
-  const RooFitResult* fit_result(std::get<0>(fit_result_container));
-  
+  const EasyFitResult fit_result(*std::get<0>(fit_result_container));
+
   time_total_ += std::get<2>(fit_result_container);
 
   for (auto var : scan_vars_) {
-    RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->floatParsFinal().find(var->GetName()));
-    if (var_fixed == nullptr) {
-      var_fixed = dynamic_cast<RooRealVar*>(fit_result->constPars().find(var->GetName()));
+    //RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result->floatParsFinal().find(var->GetName()));
+    EasyFitVar* var_fixed = nullptr;
+    if (fit_result.parameters_float_final().count(var->GetName()) > 0) {
+      var_fixed = &fit_result.parameters_float_final().at(var->GetName());
+    } else if (fit_result.parameters_const().count(var->GetName()) > 0) {
+      var_fixed = &fit_result.parameters_const().at(var->GetName());
     }
     if (var_fixed != nullptr) {
       scan_vars_titles_.push_back(var->GetTitle());
@@ -65,7 +70,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultDataNomina
     }
   }
 
-  nll_data_nominal_ = fit_result->minNll();
+  nll_data_nominal_ = fit_result.fcn();
   // sdebug << "nll_data_nominal_ = " << nll_data_nominal_ << endmsg;
 
   toy_study.ReleaseFitResult(fit_result_container);
@@ -266,13 +271,13 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReleaseAllFitResults(do
 }
 
 
-bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const RooFitResult& fit_result) const {
+bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const doofit::fitter:easyfit::EasyFitResult& fit_result) const {
   using namespace doocore::io;
-  if (fit_result.covQual() < 2) {
+  if (fit_result.quality_covariance_matrix() < 2) {
     return false;
-  } else if (fit_result.statusCodeHistory(0) < 0) {
+  } else if (fit_result.status.at(0).second < 0) {
     return false;
-  } else if(fit_result.minNll() == -1e+30) {
+  } else if(fit_result.fcn() == -1e+30) {
     return false;
   } else {
     return true;

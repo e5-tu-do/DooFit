@@ -16,7 +16,10 @@
 #include "RooArgList.h"
 
 // from DooCore
-#include "doocore/io/MsgStream.h"
+#include <doocore/io/MsgStream.h>
+
+// from project
+#include "doofit/plotting/fitresult/FitResultPrinter.h"
 
 doofit::fitter::easyfit::EasyFitResult::EasyFitResult(const RooFitResult& fit_result) :
  num_status_(0),
@@ -270,6 +273,11 @@ void doofit::fitter::easyfit::EasyFitResult::RegisterBranchesInTree(TTree& tree,
   } else { // if (tree.GetEntries() == 0) {
     // TODO: Check if branches actually exist
   }
+}
+
+void doofit::fitter::easyfit::EasyFitResult::Print() const {
+  doofit::plotting::fitresult::FitResultPrinter fprinter(*this);
+  fprinter.Print();
 }
 
 void doofit::fitter::easyfit::EasyFitResult::RegisterBranch(TTree& tree, void* ptr, std::string name, std::string leaflist) {

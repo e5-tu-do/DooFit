@@ -21,6 +21,9 @@
 // forward declarations
 namespace doofit { namespace fitter {
   class AbsFitter;
+  namespace easyfit {
+    class EasyFitResult;
+  }
 }}
 namespace doofit { namespace toy {
   class ToyStudyStd;
@@ -113,10 +116,10 @@ class FeldmanCousinsProfiler {
    *  For a given fit result evaluate the fit quality (i.e. convergence, 
    *  covariance matrix quality and so on).
    *
-   *  @param fit_result RooFitResult to use for evaluation
+   *  @param fit_result EasyFitResult to use for evaluation
    *  @return true if fit result is okay, false if not
    */
-  bool FitResultOkay(const RooFitResult& fit_result) const;
+  bool FitResultOkay(const doofit::fitter:easyfit::EasyFitResult& fit_result) const;
 
   double FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction=+1.0) const;
 

@@ -94,6 +94,7 @@ class EasyFitResult {
   void RegisterBranchesInTree(TTree& tree, std::string prefix="");
   ///@}
 
+  void Print() const;
 
  private:
   /**
