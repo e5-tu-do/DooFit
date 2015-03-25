@@ -27,13 +27,13 @@ doofit::fitter::easyfit::EasyFitResult::EasyFitResult(const RooFitResult& fit_re
 {
   status_ptrs_.reserve(10);
   for (unsigned int i=0; i<10; ++i) {
-    status_ptrs_.push_back(new std::string(""));
+    status_ptrs_.push_back(std::make_pair(new std::string(""), 0));
   }
 
   ConvertRooFitResult(fit_result);
 }
 
-doofit::fitter::easyfit::EasyFitResult::EasyFitResult(TTree& fit_result, std::string prefix) :
+doofit::fitter::easyfit::EasyFitResult::EasyFitResult(TTree& tree, std::string prefix) :
  num_status_(0),
  initialized_(false)
 {
@@ -41,42 +41,72 @@ doofit::fitter::easyfit::EasyFitResult::EasyFitResult(TTree& fit_result, std::st
 
   status_ptrs_.reserve(10);
   for (unsigned int i=0; i<10; ++i) {
-    status_ptrs_.push_back(new std::string(""));
+    status_ptrs_.push_back(std::make_pair(new std::string(""), 0));
   }
+
+  sdebug << "Initializing tree: " << endmsg;
 
   TObjArray* list_leaves  = tree.GetListOfLeaves();
   unsigned int num_leaves = list_leaves->GetEntries();
 
   for (unsigned int i=0; i<num_leaves; ++i) {
-    TLeaf& leaf(*(*list_leaves)[i]);
+    TLeaf& leaf(*dynamic_cast<TLeaf*>((*list_leaves)[i]));
     std::string name_leaf(leaf.GetName());
 
-    sdebug << name_leaf << endmsg;
-    sdebug << name_leaf.substr(0,prefix.length()) << endmsg;
     if (name_leaf.substr(0,prefix.length()) == prefix) {
-      sdebug << name_leaf << " matches. Will be processed." << endmsg;
-
       if (name_leaf.substr(prefix.length(), prefix.length()+6) == "const_") {
-        sdebug << name_leaf << " is constant variable." << endmsg;        
+        if (name_leaf.substr(name_leaf.length()-6, name_leaf.length()) == "_value") {
+          std::string name_var = name_leaf.substr(prefix.length()+6, name_leaf.length()-prefix.length()-12);
+          sdebug << name_var << " is const variable!" << endmsg;
+          EasyFitVariable evar(name_var, "", 0.0);
+          parameters_const_.insert(std::make_pair(evar.name(), evar));
+        }
       }
       if (name_leaf.substr(prefix.length(), prefix.length()+5) == "init_") {
-        sdebug << name_leaf << " is init variable." << endmsg;        
+        if (name_leaf.substr(name_leaf.length()-6, name_leaf.length()) == "_value") {
+          std::string name_var = name_leaf.substr(prefix.length()+5, name_leaf.length()-prefix.length()-11);
+          sdebug << name_var << " is init variable!" << endmsg;
+          EasyFitVariable evar(name_var, "", 0.0);
+          parameters_float_init_.insert(std::make_pair(evar.name(), evar));
+        }
       }
       if (name_leaf.substr(prefix.length(), prefix.length()+6) == "final_") {
-        sdebug << name_leaf << " is final variable." << endmsg;        
+        if (name_leaf.substr(name_leaf.length()-6, name_leaf.length()) == "_value") {
+          std::string name_var = name_leaf.substr(prefix.length()+6, name_leaf.length()-prefix.length()-12);
+          sdebug << name_var << " is final variable!" << endmsg;
+          EasyFitVariable evar(name_var, "", 0.0);
+          parameters_float_final_.insert(std::make_pair(evar.name(), evar));
+        }
       }
     }
   }
+
 
   RegisterBranchesInTree(tree, prefix);
 
   initialized_ = true;
 }
 
+doofit::fitter::easyfit::EasyFitResult::EasyFitResult(const EasyFitResult& other) :
+  parameters_float_init_(other.parameters_float_init_),
+  parameters_float_final_(other.parameters_float_final_),
+  parameters_const_(other.parameters_const_),
+  num_status_(other.num_status_),
+  quality_covariance_matrix_(other.quality_covariance_matrix_),
+  fcn_(other.fcn_),
+  edm_(other.edm_),
+  initialized_(other.initialized_)
+{
+  status_ptrs_.reserve(10);
+  for (unsigned int i=0; i<10; ++i) {
+    status_ptrs_.push_back(std::make_pair(new std::string(*other.status_ptrs_.at(i).first), other.status_ptrs_.at(i).second));
+  }
+}
+
 
 doofit::fitter::easyfit::EasyFitResult::~EasyFitResult() {
   for (unsigned int i=0; i<10; ++i) {
-    delete status_ptrs_.at(i);
+    delete status_ptrs_.at(i).first;
   }
 }
 
@@ -90,11 +120,9 @@ void doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitRes
 
     // transfer fit status
     for (unsigned int i=0; i<fit_result.numStatusHistory(); ++i) {
-      status_.push_back(std::make_pair(fit_result.statusLabelHistory(i),
-                                       fit_result.statusCodeHistory(i)));
-      
       num_status_ = fit_result.numStatusHistory();
-      status_ptrs_.at(i) = new std::string(fit_result.statusLabelHistory(i));
+      status_ptrs_.at(i) = std::make_pair(new std::string(fit_result.statusLabelHistory(i)),
+                                          fit_result.statusCodeHistory(i));
     }
 
     // transfer constant parameters
@@ -150,16 +178,15 @@ void doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitRes
 
     // transfer fit status
     for (unsigned int i=0; i<fit_result.numStatusHistory(); ++i) {
-      status_.at(i).first  = fit_result.statusLabelHistory(i);
-      status_.at(i).second = fit_result.statusCodeHistory(i);
-
       num_status_ = fit_result.numStatusHistory();
-      delete status_ptrs_.at(i);
-      status_ptrs_.at(i) = new std::string(fit_result.statusLabelHistory(i));
+      delete status_ptrs_.at(i).first;
+      status_ptrs_.at(i).first = new std::string(fit_result.statusLabelHistory(i));
+      status_ptrs_.at(i).second = fit_result.statusCodeHistory(i);
     }
     for (unsigned int i=fit_result.numStatusHistory(); i<10; ++i) {
-      delete status_ptrs_.at(i);
-      status_ptrs_.at(i) = new std::string("");
+      delete status_ptrs_.at(i).first;
+      status_ptrs_.at(i).first = new std::string("");
+      status_ptrs_.at(i).second = 0;
     }
 
     // transfer constant parameters
@@ -202,6 +229,17 @@ void doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitRes
   }
 }
 
+const std::vector<std::pair<std::string, int>> doofit::fitter::easyfit::EasyFitResult::status() const {
+  std::vector<std::pair<std::string, int>> status;
+
+  for (unsigned int i=0; i<num_status_; ++i) {
+    status.push_back(std::make_pair(*status_ptrs_.at(i).first,
+                                    status_ptrs_.at(i).second));
+  }
+
+  return status;
+}
+
 void doofit::fitter::easyfit::EasyFitResult::RegisterBranchesInTree(TTree& tree, std::string prefix) {
   std::string str_name;
   std::string str_leaf;
@@ -221,14 +259,15 @@ void doofit::fitter::easyfit::EasyFitResult::RegisterBranchesInTree(TTree& tree,
     CreateBranchesForVariable(tree, it->second, prefix+"final_"+it->first);
   }
 
-  for (unsigned int i=0; i<status_.size(); ++i) {
-    RegisterBranch(tree, &status_.at(i).second, prefix+"status_code"+std::to_string(i), prefix+"status_code"+std::to_string(i)+"/I");
-  }
+  // for (unsigned int i=0; i<status_.size(); ++i) {
+  //   RegisterBranch(tree, &status_.at(i).second, prefix+"status_code"+std::to_string(i), prefix+"status_code"+std::to_string(i)+"/I");
+  // }
 
   for (unsigned int i=0; i<10; ++i) {
     // str_name = prefix+"status_label"+std::to_string(i);
     // tree.Branch(str_name.c_str(), &(status_ptrs_.at(i)));
-    RegisterStringBranch(tree, &(status_ptrs_.at(i)), prefix+"status_label"+std::to_string(i));
+    RegisterStringBranch(tree, &(status_ptrs_.at(i).first), prefix+"status_label"+std::to_string(i));
+    RegisterBranch(tree, &status_ptrs_.at(i).second, prefix+"status_code"+std::to_string(i), prefix+"status_code"+std::to_string(i)+"/I");
   }
 
   if (tree.GetEntries() == 0) {

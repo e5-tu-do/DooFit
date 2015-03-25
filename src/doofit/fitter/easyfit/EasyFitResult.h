@@ -54,7 +54,13 @@ class EasyFitResult {
    * @param tree TTree to use
    * @param prefix prefix for all branch names (useful to distinguish two fit result classes in TTree)
    */
-  //EasyFitResult(TTree& fit_result, std::string prefix="");
+  EasyFitResult(TTree& tree, std::string prefix="");
+
+  /**
+   * @brief Copy constructor
+   */
+  EasyFitResult(const EasyFitResult& other);
+
 
   ~EasyFitResult();
 
@@ -66,7 +72,7 @@ class EasyFitResult {
   double fcn() const { return fcn_; }
   double edm() const { return edm_; }
   int quality_covariance_matrix() const { return quality_covariance_matrix_; }
-  const std::vector<std::pair<std::string, int>>& status() const { return status_; }
+  const std::vector<std::pair<std::string, int>> status() const;
 
   const std::map<std::string, EasyFitVariable>& parameters_const() const { return parameters_const_; }
   const std::map<std::string, EasyFitVariable>& parameters_float_final() const { return parameters_float_final_; }
@@ -90,6 +96,11 @@ class EasyFitResult {
 
 
  private:
+  /**
+   * @brief Unimplemented assignment operator
+   */
+  EasyFitResult& operator=(const EasyFitResult& other) {}
+
   void RegisterBranch(TTree& tree, void* ptr, std::string name, std::string leaflist);
   void RegisterStringBranch(TTree& tree, std::string** ptr, std::string name);
   void CreateBranchesForVariable(TTree& tree, EasyFitVariable& var, std::string name);
@@ -112,12 +123,11 @@ class EasyFitResult {
   /**
    * @brief Status codes of fitting algorithms (algorithm name + status code)
    */
-  std::vector<std::pair<std::string, int>> status_;
 
   /**
    * @brief Status codes of fitting algorithms (TTree compatibility)
    */
-  std::vector<std::string*> status_ptrs_;
+  std::vector<std::pair<std::string*, int>> status_ptrs_;
 
   /**
    * @brief Number of stored fit status (TTree compatibility)
@@ -181,6 +191,23 @@ class EasyFitVariable {
     delete unit_;
   }
 
+  EasyFitVariable(const EasyFitVariable& other) :
+    name_(other.name_),
+    title_(new std::string(*other.title_)),
+    unit_(new std::string(*other.unit_)),
+    value_(other.value_),
+    min_(other.min_),
+    max_(other.max_),
+    has_error_(other.has_error_),
+    has_asym_error_(other.has_asym_error_),
+    error_(other.error_),
+    error_low_(other.error_low_),
+    error_high_(other.error_high_),
+    constant_(other.constant_)
+  {
+    //std::cout << "COPY" << std::endl;
+  }
+
   EasyFitVariable(const std::string& name, const std::string& title, 
                   double value, const std::string& unit="") :
     EasyFitVariable(name, title, value, std::numeric_limits<double>::infinity(),
@@ -213,6 +240,31 @@ class EasyFitVariable {
       error_low_ = var.getErrorLo();
       error_high_ = var.getErrorHi();
     }
+  }
+
+  EasyFitVariable& operator=(const EasyFitVariable& other) {
+    if (this == &other) {
+      return *this;
+    }
+
+    std::cout << "ASSIGNMENT" << std::endl;
+
+    name_ = other.name_;
+    delete title_;    
+    title_ = new std::string(*other.title_);
+    delete unit_;
+    unit_ = new std::string(*other.unit_);
+    value_ = other.value_;
+    min_ = other.min_;
+    max_ = other.max_;
+    has_error_ = other.has_error_;
+    has_asym_error_ = other.has_asym_error_;
+    error_ = other.error_;
+    error_low_ = other.error_low_;
+    error_high_ = other.error_high_;
+    constant_ = other.constant_;
+
+    return *this;
   }
 
   /** @name Standard getters
