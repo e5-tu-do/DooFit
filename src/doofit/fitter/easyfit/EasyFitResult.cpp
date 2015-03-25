@@ -7,6 +7,8 @@
 // from ROOT
 #include "TIterator.h"
 #include "TTree.h"
+#include "TLeaf.h"
+#include "TObjArray.h"
 
 // from RooFit
 #include "RooRealVar.h"
@@ -24,12 +26,58 @@ doofit::fitter::easyfit::EasyFitResult::EasyFitResult(const RooFitResult& fit_re
  initialized_(false)
 {
   status_ptrs_.reserve(10);
-
   for (unsigned int i=0; i<10; ++i) {
     status_ptrs_.push_back(new std::string(""));
   }
 
   ConvertRooFitResult(fit_result);
+}
+
+doofit::fitter::easyfit::EasyFitResult::EasyFitResult(TTree& fit_result, std::string prefix) :
+ num_status_(0),
+ initialized_(false)
+{
+  using namespace doocore::io;
+
+  status_ptrs_.reserve(10);
+  for (unsigned int i=0; i<10; ++i) {
+    status_ptrs_.push_back(new std::string(""));
+  }
+
+  TObjArray* list_leaves  = tree.GetListOfLeaves();
+  unsigned int num_leaves = list_leaves->GetEntries();
+
+  for (unsigned int i=0; i<num_leaves; ++i) {
+    TLeaf& leaf(*(*list_leaves)[i]);
+    std::string name_leaf(leaf.GetName());
+
+    sdebug << name_leaf << endmsg;
+    sdebug << name_leaf.substr(0,prefix.length()) << endmsg;
+    if (name_leaf.substr(0,prefix.length()) == prefix) {
+      sdebug << name_leaf << " matches. Will be processed." << endmsg;
+
+      if (name_leaf.substr(prefix.length(), prefix.length()+6) == "const_") {
+        sdebug << name_leaf << " is constant variable." << endmsg;        
+      }
+      if (name_leaf.substr(prefix.length(), prefix.length()+5) == "init_") {
+        sdebug << name_leaf << " is init variable." << endmsg;        
+      }
+      if (name_leaf.substr(prefix.length(), prefix.length()+6) == "final_") {
+        sdebug << name_leaf << " is final variable." << endmsg;        
+      }
+    }
+  }
+
+  RegisterBranchesInTree(tree, prefix);
+
+  initialized_ = true;
+}
+
+
+doofit::fitter::easyfit::EasyFitResult::~EasyFitResult() {
+  for (unsigned int i=0; i<10; ++i) {
+    delete status_ptrs_.at(i);
+  }
 }
 
 void doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitResult& fit_result) {
@@ -154,7 +202,7 @@ void doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitRes
   }
 }
 
-void doofit::fitter::easyfit::EasyFitResult::CreateBranchesInTree(TTree& tree, std::string prefix) {
+void doofit::fitter::easyfit::EasyFitResult::RegisterBranchesInTree(TTree& tree, std::string prefix) {
   std::string str_name;
   std::string str_leaf;
 
@@ -177,19 +225,15 @@ void doofit::fitter::easyfit::EasyFitResult::CreateBranchesInTree(TTree& tree, s
     RegisterBranch(tree, &status_.at(i).second, prefix+"status_code"+std::to_string(i), prefix+"status_code"+std::to_string(i)+"/I");
   }
 
-  if (tree.GetEntries() == 0) {
-    for (unsigned int i=0; i<10; ++i) {
-      str_name = prefix+"status_label"+std::to_string(i);
-      tree.Branch(str_name.c_str(), &(status_ptrs_.at(i)));
-    }
+  for (unsigned int i=0; i<10; ++i) {
+    // str_name = prefix+"status_label"+std::to_string(i);
+    // tree.Branch(str_name.c_str(), &(status_ptrs_.at(i)));
+    RegisterStringBranch(tree, &(status_ptrs_.at(i)), prefix+"status_label"+std::to_string(i));
+  }
 
+  if (tree.GetEntries() == 0) {
   } else { // if (tree.GetEntries() == 0) {
     // TODO: Check if branches actually exist
-
-    for (unsigned int i=0; i<10; ++i) {
-      str_name = prefix+"status_label"+std::to_string(i);
-      tree.SetBranchAddress(str_name.c_str(), &(status_ptrs_.at(i)));
-    }
   }
 }
 
@@ -201,8 +245,31 @@ void doofit::fitter::easyfit::EasyFitResult::RegisterBranch(TTree& tree, void* p
   }
 }
 
+void doofit::fitter::easyfit::EasyFitResult::RegisterStringBranch(TTree& tree, std::string** ptr, std::string name) {
+  if (tree.GetEntries() == 0) {
+    tree.Branch(name.c_str(), ptr);
+  } else {
+    tree.SetBranchAddress(name.c_str(), ptr);
+  }
+}
+
+
 void doofit::fitter::easyfit::EasyFitResult::CreateBranchesForVariable(TTree& tree, EasyFitVariable& var, std::string name) {
+  RegisterStringBranch(tree, &var.title_, name+"_title");
+  RegisterStringBranch(tree, &var.unit_, name+"_unit");
+
   RegisterBranch(tree, &var.value_, name+"_value", name+"_value/D");
+  RegisterBranch(tree, &var.min_, name+"_min", name+"_min/D");
+  RegisterBranch(tree, &var.max_, name+"_max", name+"_max/D");
+
+  RegisterBranch(tree, &var.has_error_, name+"_has_error", name+"_has_error/O");
+  RegisterBranch(tree, &var.has_asym_error_, name+"_has_asym_error", name+"_has_asym_error/O");
+
+  RegisterBranch(tree, &var.error_, name+"_error", name+"_error/D");
+  RegisterBranch(tree, &var.error_low_, name+"_error_low", name+"_error_low/D");
+  RegisterBranch(tree, &var.error_high_, name+"_error_high", name+"_error_high/D");
+
+  RegisterBranch(tree, &var.constant_, name+"_constant", name+"_constant/O");
 }
 
 

@@ -38,7 +38,25 @@ class EasyFitVariable;
 
 class EasyFitResult {
  public:
+  /**
+   * @brief Constructor based on existing RooFitResult
+   *
+   * @param fit_result RooFitResult to convert
+   */
   EasyFitResult(const RooFitResult& fit_result);
+
+  /**
+   * @brief Constructor based on TTree
+   *
+   * This constructor will also register all branches in the TTree with own 
+   * members
+   *
+   * @param tree TTree to use
+   * @param prefix prefix for all branch names (useful to distinguish two fit result classes in TTree)
+   */
+  //EasyFitResult(TTree& fit_result, std::string prefix="");
+
+  ~EasyFitResult();
 
   void ConvertRooFitResult(const RooFitResult& fit_result);
 
@@ -55,11 +73,11 @@ class EasyFitResult {
   const std::map<std::string, EasyFitVariable>& parameters_float_init() const { return parameters_float_init_; }
   ///@}
 
-  /** @name TTree output
+  /** @name TTree input/output
    */
   ///@{
   /**
-   * @brief Create branches in new TTree for all relevant leaves
+   * @brief Create/register branches in new TTree for all relevant leaves
    *
    * Based on a new TTree new branches will be created for all variables and 
    * branch addresses set accordingly.
@@ -67,12 +85,13 @@ class EasyFitResult {
    * @param tree TTree to register branches in
    * @param prefix prefix for all branch names (useful to distinguish two fit result classes in TTree)
    */
-  void CreateBranchesInTree(TTree& tree, std::string prefix="");
+  void RegisterBranchesInTree(TTree& tree, std::string prefix="");
   ///@}
 
 
  private:
   void RegisterBranch(TTree& tree, void* ptr, std::string name, std::string leaflist);
+  void RegisterStringBranch(TTree& tree, std::string** ptr, std::string name);
   void CreateBranchesForVariable(TTree& tree, EasyFitVariable& var, std::string name);
 
   /**
@@ -144,8 +163,8 @@ class EasyFitVariable {
                   double value, double min, double max,
                   const std::string& unit="") :
     name_(name),
-    title_(title),
-    unit_(unit),
+    title_(new std::string(title)),
+    unit_(new std::string(unit)),
     value_(value),
     min_(min),
     max_(max),
@@ -156,6 +175,11 @@ class EasyFitVariable {
     error_high_(std::numeric_limits<double>::quiet_NaN()),
     constant_(false)
   {}
+
+  ~EasyFitVariable() {
+    delete title_;
+    delete unit_;
+  }
 
   EasyFitVariable(const std::string& name, const std::string& title, 
                   double value, const std::string& unit="") :
@@ -195,8 +219,8 @@ class EasyFitVariable {
    */
   ///@{
   const std::string& name() const { return name_; }
-  const std::string& title() const { return title_; }
-  const std::string& unit() const { return unit_; }
+  const std::string& title() const { return *title_; }
+  const std::string& unit() const { return *unit_; }
 
   double value() const { return value_; }
   double min() const { return min_; }
@@ -216,8 +240,8 @@ class EasyFitVariable {
    */
   ///@{
   void set_name(const std::string& name) { name_ = name; }
-  void set_title(const std::string& title) { title_ = title; }
-  void set_unit(const std::string& unit) { unit_ = unit; }
+  void set_title(const std::string& title) { *title_ = title; }
+  void set_unit(const std::string& unit) { *unit_ = unit; }
 
   void set_value(double value) { value_ = value; }
   void set_min(double min) { min_ = min; }
@@ -232,8 +256,8 @@ class EasyFitVariable {
 
  private:
   std::string name_;
-  std::string title_;
-  std::string unit_;
+  std::string* title_;
+  std::string* unit_;
 
   double value_;
   double min_;
