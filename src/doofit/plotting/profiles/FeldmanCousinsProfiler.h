@@ -122,6 +122,8 @@ class FeldmanCousinsProfiler {
   double FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction=+1.0) const;
 
  private:
+  int ProcessToyFitResult(const doofit::fitter::easyfit::EasyFitResult& fr0, const doofit::fitter::easyfit::EasyFitResult& fr1);
+
   /**
    *  @brief PlotConfig instance to use
    */

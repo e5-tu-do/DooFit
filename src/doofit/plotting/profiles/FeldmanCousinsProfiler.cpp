@@ -136,6 +136,64 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsDataScan(
   sinfo << "Available data scan points: " << scan_vals_data_ << endmsg;
 }
 
+int doofit::plotting::profiles::FeldmanCousinsProfiler::ProcessToyFitResult(const doofit::fitter::easyfit::EasyFitResult& fr0, const doofit::fitter::easyfit::EasyFitResult& fr1) {
+  using namespace doofit::fitter::easyfit;
+  using namespace doocore::io;
+
+  int num_ignored=0;
+
+  if (FitResultOkay(fr0) && FitResultOkay(fr1)) {
+    std::vector<double> scan_vals;
+    for (auto var : scan_vars_) {
+      const EasyFitVariable& var_fixed = fr1.parameters_const().at(var->GetName());
+
+      // protection against 0.0 being 1e-16 and not being properly matched
+      double val(var_fixed.value());
+      if (std::abs(val) < 1e-14) {
+        val = 0.0;
+      } 
+
+      scan_vals.push_back(val);
+    }
+    double delta_nll(fr1.fcn() - fr0.fcn());
+
+    // TODO:
+    // hist.Fill(delta_nll);
+    // if (scan_vals.size() == 1) {
+    //   if (hists_dchisq.count(scan_vals.front()) > 0) {
+    //     hists_dchisq[scan_vals.front()]->Fill(delta_nll);
+    //   } else {
+    //     std::string name_hist = "hist" + std::to_string(scan_vals.front());
+    //     std::string title_hist = "#Delta#chi^{2}_{toy} @" + std::to_string(scan_vals.front());
+    //     hists_dchisq[scan_vals.front()] = new TH1D(name_hist.c_str(), title_hist.c_str(), 250, -2.0, 6.0);
+    //     hists_dchisq[scan_vals.front()]->Fill(delta_nll);
+    //   }
+    // }
+
+    if (delta_nll < 0.0) {
+      if (num_neglected_fits_.count(scan_vals) > 0) {
+        num_neglected_fits_[scan_vals]++;
+      } else {
+        num_neglected_fits_[scan_vals] = 1;
+      }
+
+      ++num_ignored;
+    } else {
+      if (delta_nlls_toy_scan_.count(scan_vals) > 0) {
+        delta_nlls_toy_scan_[scan_vals].push_back(delta_nll);
+      } else {
+        std::vector<double> vector;
+        vector.push_back(delta_nll);
+        delta_nlls_toy_scan_[scan_vals] = vector;
+      }
+      scan_vals_toy_.insert(scan_vals);
+    }
+  } else {
+    ++num_ignored;
+  }
+  return num_ignored;
+}
+
 void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofit::toy::ToyStudyStd& toy_study) {
   using namespace doofit::toy;
   using namespace doocore::io;
@@ -149,12 +207,13 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
   const EasyFitResult* fit_result_0 = nullptr;
   const EasyFitResult* fit_result_1 = nullptr;
 
-  gDirectory->pwd();
-
   TCanvas c("c", "c", 800, 600);
   TH1D hist("hist", "#Delta#chi^{2}_{toy}", 250, -2.0, 6.0);
 
   std::map<double, TH1D*> hists_dchisq;
+
+  unsigned long long num_roofitresults = 0;
+
   // TODO: Warn if fit_result_0 valid, but fit_result_1 not!
   while (std::get<0>(fit_result_container) != nullptr) { 
     if (std::get<1>(fit_result_container) == nullptr) {
@@ -166,70 +225,8 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
       time_total_ += std::get<2>(fit_result_container);
       time_total_ += std::get<3>(fit_result_container);
 
-      if (FitResultOkay(*fit_result_0) && FitResultOkay(*fit_result_1)) {
-        std::vector<double> scan_vals;
-        for (auto var : scan_vars_) {
-          // RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_result_1->constPars().find(var->GetName()));
-          const EasyFitVariable& var_fixed = fit_result_1->parameters_const().at(var->GetName());
-
-          // protection against 0.0 being 1e-16 and not being properly matched
-          double val(var_fixed.value());
-          if (std::abs(val) < 1e-14) {
-            val = 0.0;
-          } 
-
-          scan_vals.push_back(val);
-        }
-        double delta_nll(fit_result_1->fcn() - fit_result_0->fcn());
-
-        // sdebug << "delta_nll = " << delta_nll << endmsg;
-
-        hist.Fill(delta_nll);
-
-        // if (std::abs(scan_vals[0]+0.4) < 1e-3) {
-        //   sdebug << "@" << scan_vals[0] << " (toy)  : " << fit_result_1->minNll() << "-" << fit_result_0->minNll() << " = " << delta_nll << endmsg;
-        //   sdebug << "@" << scan_vals[0] << " (data) : " << delta_nlls_data_scan_[scan_vals] << endmsg;
-
-        //   if (delta_nll < 0.0) {
-        //     fit_result_0->Print("v");
-        //     fit_result_1->Print("v");
-        //   }
-        // }
-
-        if (scan_vals.size() == 1) {
-          if (hists_dchisq.count(scan_vals.front()) > 0) {
-            hists_dchisq[scan_vals.front()]->Fill(delta_nll);
-          } else {
-            std::string name_hist = "hist" + std::to_string(scan_vals.front());
-            std::string title_hist = "#Delta#chi^{2}_{toy} @" + std::to_string(scan_vals.front());
-            hists_dchisq[scan_vals.front()] = new TH1D(name_hist.c_str(), title_hist.c_str(), 250, -2.0, 6.0);
-            hists_dchisq[scan_vals.front()]->Fill(delta_nll);
-          }
-        }
-
-        if (delta_nll < 0.0) {
-          if (num_neglected_fits_.count(scan_vals) > 0) {
-            num_neglected_fits_[scan_vals]++;
-          } else {
-            num_neglected_fits_[scan_vals] = 1;
-          }
-
-          ++num_ignored;
-        } else {
-          if (delta_nlls_toy_scan_.count(scan_vals) > 0) {
-            delta_nlls_toy_scan_[scan_vals].push_back(delta_nll);
-          } else {
-            std::vector<double> vector;
-            vector.push_back(delta_nll);
-            delta_nlls_toy_scan_[scan_vals] = vector;
-          }
-          scan_vals_toy_.insert(scan_vals);
-          // sdebug << "scan_vals = " << scan_vals << endmsg;
-          // sdebug << "delta_nll = " << delta_nll << endmsg;
-        }
-      } else {
-        ++num_ignored;
-      }
+      num_ignored += ProcessToyFitResult(*fit_result_0, *fit_result_1);
+      ++num_roofitresults;
     }
     toy_study.ReleaseFitResult(fit_result_container);
 
@@ -244,8 +241,35 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
     // sdebug << "fit_result_0 = " << fit_result_0 << endmsg;
     // sdebug << "fit_result_1 = " << fit_result_1 << endmsg;
   }
+  sinfo << "Read in " << num_roofitresults << " RooFitResults." << endmsg;
 
   toy_study.PurgeReleasedFitResults();
+
+  // Start processing of EasyFitResults
+  // const EasyFitResult* fit_result_0 = nullptr;
+  // const EasyFitResult* fit_result_1 = nullptr;
+  unsigned long long num_easyfitresults = toy_study.NumberOfAvailableEasyFitResults();
+  if (toy_study.NumberOfAvailableEasyFitResults() > 0) {
+    Progress p("Reading EasyFitResults", toy_study.NumberOfAvailableEasyFitResults());
+    EasyFitResultContainer efit_results(toy_study.GetEasyFitResult());
+    const EasyFitResult* fr0(std::get<0>(efit_results));
+    const EasyFitResult* fr1(std::get<1>(efit_results));
+    ++p;
+
+    num_ignored += ProcessToyFitResult(*fr0, *fr1);
+
+    while (toy_study.NumberOfAvailableEasyFitResults() > 0) {
+      efit_results = toy_study.GetEasyFitResult();
+
+      fr0 = std::get<0>(efit_results);
+      fr1 = std::get<1>(efit_results);
+
+      num_ignored += ProcessToyFitResult(*fr0, *fr1);
+      ++p;
+    }
+    p.Finish();
+    sinfo << "Read in " << num_easyfitresults << " EasyFitResults." << endmsg;
+  }
 
   hist.Draw();
   c.SaveAs("delta_chisq.pdf");
@@ -293,11 +317,14 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReleaseAllFitResults(do
 
 bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const doofit::fitter::easyfit::EasyFitResult& fit_result) const {
   using namespace doocore::io;
-  if (fit_result.quality_covariance_matrix() < 2) {
+  if (fit_result.quality_covariance_matrix() < 2 && fit_result.quality_covariance_matrix() != -1) {
+    // sdebug << "rejected for covariance: " << fit_result.quality_covariance_matrix() << endmsg;
     return false;
   } else if (fit_result.status().at(0).second < 0) {
+    // sdebug << "rejected for status " << fit_result.status().at(0).second << endmsg;
     return false;
   } else if(fit_result.fcn() == -1e+30) {
+    // sdebug << "rejected for fcn " << fit_result.fcn() << endmsg;
     return false;
   } else {
     return true;

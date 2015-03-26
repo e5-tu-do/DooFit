@@ -39,7 +39,7 @@ namespace toy {
   typedef std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double,int,int> FitResultContainer;
 
   // fit_result1, fit_result2
-  typedef std::tuple<const doofit::fitter::easyfit::EasyFitResult&,const doofit::fitter::easyfit::EasyFitResult&> EasyFitResultContainer;
+  typedef std::tuple<const doofit::fitter::easyfit::EasyFitResult*,const doofit::fitter::easyfit::EasyFitResult*> EasyFitResultContainer;
   
   /** @class ToyStudyStd
    *  @brief Standard toy study for DooFit to help conduct and evaluate mass toy fits

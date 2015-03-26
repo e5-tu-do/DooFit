@@ -224,7 +224,7 @@ namespace toy {
         delete easyfit_result_1_;
         easyfit_result_1_ = nullptr;
       }
-      return std::forward_as_tuple<const doofit::fitter::easyfit::EasyFitResult&,const doofit::fitter::easyfit::EasyFitResult&>(std::cref(*easyfit_result_0_), std::cref(*easyfit_result_1_));
+      return std::make_tuple(easyfit_result_0_, easyfit_result_1_);
     }
 
     // on demand open new file
@@ -233,6 +233,7 @@ namespace toy {
         doofit::config::CommaSeparatedPair<std::string> file_tree = results_files_easyfit_.front();
         results_files_easyfit_.pop_front();
 
+        sdebug << "Opening " << file_tree.first().c_str() << endmsg;
         file = new TFile(file_tree.first().c_str(), "read");
         tree = dynamic_cast<TTree*>(file->Get(file_tree.second().c_str()));
       }
@@ -270,7 +271,7 @@ namespace toy {
       // sdebug << file_tree_easyfit_.second << endmsg;
     }
 
-    return std::forward_as_tuple<const doofit::fitter::easyfit::EasyFitResult&,const doofit::fitter::easyfit::EasyFitResult&>(std::cref(*easyfit_result_0_), std::cref(*easyfit_result_1_));
+    return std::make_tuple<const doofit::fitter::easyfit::EasyFitResult*,const doofit::fitter::easyfit::EasyFitResult*>(easyfit_result_0_, easyfit_result_1_);
   }
 
   
