@@ -48,6 +48,7 @@
 #include "doofit/config/CommaSeparatedPair.h"
 #include "doofit/config/CommaSeparatedList.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include <doofit/fitter/easyfit/EasyFitResult.h>
 
 using namespace ROOT;
 using namespace RooFit;
@@ -67,6 +68,10 @@ namespace toy {
   accepting_fit_results_(true),
   reading_fit_results_(false),
   fit_results_read_queue_(),
+  file_tree_easyfit_(std::make_pair(nullptr, nullptr)),
+  num_easyfit_results_(0),
+  easyfit_result_0_(nullptr),
+  easyfit_result_1_(nullptr),
   debug_(false)
   {
     LockSaveFitResultMutex();
@@ -83,6 +88,13 @@ namespace toy {
     for (std::vector<FitResultContainer>::const_iterator it_results = fit_results_bookkeep_.begin(); it_results != fit_results_bookkeep_.end(); ++it_results) {
       delete std::get<0>(*it_results);
       if (std::get<1>(*it_results) != NULL) delete std::get<1>(*it_results);
+    }
+
+    if (easyfit_result_0_ != nullptr) {
+      delete easyfit_result_0_;
+    }
+    if (easyfit_result_1_ != nullptr) {
+      delete easyfit_result_1_;
     }
   }
   
@@ -178,6 +190,89 @@ namespace toy {
       return fit_results;
     // }
   }
+
+  unsigned long long ToyStudyStd::NumberOfAvailableEasyFitResults() {
+    using namespace doofit::fitter::easyfit;
+    using namespace doocore::io;
+
+    if (num_easyfit_results_ == 0 && results_files_easyfit_.size() > 0) {
+      for (auto file_tree : results_files_easyfit_) {
+        TFile file(file_tree.first().c_str(), "read");
+        TTree* tree = dynamic_cast<TTree*>(file.Get(file_tree.second().c_str()));
+        if (tree != nullptr) {
+          num_easyfit_results_ += tree->GetEntries();
+        }
+      }
+    }
+
+    return num_easyfit_results_;
+  }
+
+  EasyFitResultContainer ToyStudyStd::GetEasyFitResult() {
+    using namespace doofit::fitter::easyfit;
+    using namespace doocore::io;
+
+    TFile*& file(file_tree_easyfit_.first);
+    TTree*& tree(file_tree_easyfit_.second);
+
+    if (file == nullptr && tree == nullptr && results_files_easyfit_.size() == 0) {
+      if (easyfit_result_0_ != nullptr) {
+        delete easyfit_result_0_;
+        easyfit_result_0_ = nullptr;
+      }
+      if (easyfit_result_1_ != nullptr) {
+        delete easyfit_result_1_;
+        easyfit_result_1_ = nullptr;
+      }
+      return std::forward_as_tuple<const doofit::fitter::easyfit::EasyFitResult&,const doofit::fitter::easyfit::EasyFitResult&>(std::cref(*easyfit_result_0_), std::cref(*easyfit_result_1_));
+    }
+
+    // on demand open new file
+    if (file == nullptr && tree == nullptr) {
+      while (file == nullptr && tree == nullptr) {
+        doofit::config::CommaSeparatedPair<std::string> file_tree = results_files_easyfit_.front();
+        results_files_easyfit_.pop_front();
+
+        file = new TFile(file_tree.first().c_str(), "read");
+        tree = dynamic_cast<TTree*>(file->Get(file_tree.second().c_str()));
+      }
+
+      // sdebug << "Opened new file" << endmsg;
+      // sdebug << file_tree_easyfit_.first << endmsg;
+      // sdebug << file_tree_easyfit_.second << endmsg;
+
+      position_tree_easyfit_ = 0;
+      if (easyfit_result_0_ != nullptr) {
+        delete easyfit_result_0_;
+      }
+      if (easyfit_result_1_ != nullptr) {
+        delete easyfit_result_1_;
+      }
+
+      easyfit_result_0_ = new EasyFitResult(*tree, "fr0_");
+      easyfit_result_1_ = new EasyFitResult(*tree, "fr1_");
+    }
+
+    tree->GetEntry(position_tree_easyfit_);
+    --num_easyfit_results_;
+    ++position_tree_easyfit_;
+    
+    if (position_tree_easyfit_ == tree->GetEntries()) {
+      delete tree;
+      file->Close();
+      delete file;
+
+      tree = nullptr;
+      file = nullptr;
+
+      // sdebug << "Closing and releasing file" << endmsg;
+      // sdebug << file_tree_easyfit_.first << endmsg;
+      // sdebug << file_tree_easyfit_.second << endmsg;
+    }
+
+    return std::forward_as_tuple<const doofit::fitter::easyfit::EasyFitResult&,const doofit::fitter::easyfit::EasyFitResult&>(std::cref(*easyfit_result_0_), std::cref(*easyfit_result_1_));
+  }
+
   
   void ToyStudyStd::ReleaseFitResult(FitResultContainer fit_results) {
     fit_results_release_queue_.push(fit_results);
