@@ -222,6 +222,9 @@ namespace toy {
      *  @return tuple of fit results and respective fit times (CPU and real)
      */
     FitResultContainer GetFitResult();
+
+    unsigned int NumberOfStoredResults() const { return fit_results_read_queue_.size(); }
+
     /**
      *  @brief Release a fit result (pair) for deletion
      *
@@ -476,6 +479,13 @@ namespace toy {
      *  @brief Thread-safe queue for fit results to delete
      */
     doocore::lutils::concurrent_queue<FitResultContainer > fit_results_release_queue_;
+    ///@}
+
+    /** @name EasyFitResult input support
+     *  Member objects for input of EasyFitResult containers
+     */
+    ///@{
+    std::vector<doofit::config::CommaSeparatedPair<std::string>> results_files_easyfit_;
     ///@}
 
     bool debug_;

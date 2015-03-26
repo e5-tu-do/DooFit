@@ -383,7 +383,7 @@ namespace toy {
       RooRealVar* mean             = nullptr;
       RooRealVar* sigma            = nullptr;
       RooGaussian* gauss           = nullptr;
-      RooPlot* param_frame         = nullptr;
+      // RooPlot* param_frame         = nullptr;
       RooDataSet* fit_plot_dataset = nullptr;
       RooArgSet parameters_copy(*parameter);
       int fit_status = 0;
@@ -918,7 +918,7 @@ namespace toy {
   bool FitResultOkay(const RooFitResult& fit_result, int min_acceptable_cov_matrix_quality) {    
     int max_status_code = 0;
     std::map<std::string, int> status_codes;
-    for (auto i = 0; i < fit_result.numStatusHistory(); i++){
+    for (unsigned int i = 0; i < fit_result.numStatusHistory(); i++){
       status_codes.insert(std::pair<std::string, int>(fit_result.statusLabelHistory(i), fit_result.statusCodeHistory(i)));
       if (fit_result.statusCodeHistory(i) > max_status_code) max_status_code = fit_result.statusCodeHistory(i);
     }
@@ -1068,7 +1068,7 @@ namespace toy {
   }
   
   void ToyStudyStd::ReadFitResultWorker() {
-    TThread this_tthread;
+    //TThread this_tthread;
     
     const std::vector<doofit::config::CommaSeparatedPair<std::string>>& results_files = config_toystudy_.read_results_filename_treename();
     
@@ -1101,149 +1101,132 @@ namespace toy {
         if (tree == NULL) {
           serr << "Cannot find tree " << (*it_files).second() << " in file. Cannot read in fit results. Ignoring this file." << endmsg;
           //throw ExceptionCannotReadFitResult();
-        } else {
+        } else { // if (tree == NULL) {
           
           TBranch* result_branch = tree->GetBranch(config_toystudy_.fit_result1_branch_name().c_str());
           TBranch* result2_branch = tree->GetBranch(config_toystudy_.fit_result2_branch_name().c_str());
           
-          // Fit times
-          TBranch* time_cpu1_branch  = tree->GetBranch("time_cpu1");
-          TBranch* time_real1_branch = tree->GetBranch("time_real1");
-          TBranch* time_cpu2_branch  = tree->GetBranch("time_cpu2");
-          TBranch* time_real2_branch = tree->GetBranch("time_real2");
-          TBranch* seed_branch       = tree->GetBranch("seed");
-          TBranch* run_id_branch     = tree->GetBranch("run_id");
-          
           if (result_branch == NULL) {
-            serr << "Cannot find branch " << config_toystudy_.fit_result1_branch_name() << " in tree. Cannot read in fit results." << endmsg;
-            throw ExceptionCannotReadFitResult();
-          }
-          
-          RooFitResult* fit_result  = NULL;
-          RooFitResult* fit_result2 = NULL;
-          double time_cpu1 = 0.0, time_real1 = 0.0;
-          double time_cpu2 = 0.0, time_real2 = 0.0;
-          int seed(0);
-          int run_id(0);
+            // TODO: Check for EasyFitResult container
+            // results_files_easyfit_
 
-          tree->SetCacheEntryRange(0,tree->GetEntries());
-          
-          tree->AddBranchToCache(result_branch, true);
-          result_branch->SetAddress(&fit_result);
-          
-          if (result2_branch != NULL) {
-            tree->AddBranchToCache(result2_branch, true);
-            result2_branch->SetAddress(&fit_result2);
-          }
-          if (time_cpu1_branch != NULL) {
-            tree->AddBranchToCache(time_cpu1_branch, true);
-            time_cpu1_branch->SetAddress(&time_cpu1);
-          }
-          if (time_real1_branch != NULL) {
-            tree->AddBranchToCache(time_real1_branch, true);
-            time_real1_branch->SetAddress(&time_real1);
-          }
-          if (time_cpu2_branch != NULL) {
-            tree->AddBranchToCache(time_cpu2_branch, true);
-            time_cpu2_branch->SetAddress(&time_cpu2);
-          }
-          if (time_real2_branch != NULL) {
-            tree->AddBranchToCache(time_real2_branch, true);
-            time_real2_branch->SetAddress(&time_real2);
-          }
-          if (seed_branch != NULL) {
-            tree->AddBranchToCache(seed_branch, true);
-            seed_branch->SetAddress(&seed);
-          }
-          if (run_id_branch != NULL) {
-            tree->AddBranchToCache(run_id_branch, true);
-            run_id_branch->SetAddress(&run_id);
-          }
-          tree->StopCacheLearningPhase();
-          
-          using namespace doocore::io;
-          std::string title_progress = "Reading fit results from " + (*it_files).first() + ":" + (*it_files).second();
-          Progress p(title_progress, tree->GetEntries());
-          for (int i=0; i<tree->GetEntries(); ++i) {
-            tree->GetEntry(i);
-            
-            // if (debug_) {
-            //   if (fit_result != NULL && FitResultOkay(*fit_result)) {
-            //     RooFitResult* fr = new RooFitResult(*fit_result);
-            //     vector_debug.push_back(fr);
-            //   }
-            // }
+            TBranch* branch_easyfit_probe = tree->GetBranch("fr0_fcn");
 
-            // save a copy
-            
-            // if (!debug_) {
-            if (fit_result != NULL && FitResultOkay(*fit_result)) {
-
-              // std::cout << "pushing " << fit_result << std::endl;
-              // std::cout << "pushing " << fit_result2 << std::endl;
-
-              fit_results_read_queue_.push(std::make_tuple(fit_result,
-                                                           fit_result2,
-                                                           time_cpu1,
-                                                           time_real1,
-                                                           time_cpu2,
-                                                           time_real2,
-                                                           seed,
-                                                           run_id));
-              
-              // fit_result->Print();
-              //fit_result2->Print();
-
-              results_stored++;
+            if (branch_easyfit_probe != nullptr) {
+              sinfo << "Tree " << it_files->first() << ":" << it_files->second() << " is an EasyFitResult container. Will process separately." << endmsg;
+              results_files_easyfit_.push_back(*it_files);
             } else {
-              if (fit_result == NULL) {
-                serr << "Fit result number " << i << " in file " << *it_files << " is NULL and therefore neglected. This indicates corrupted files and should never happen." << endmsg;
-                while (true) {}
-              } else {
-                delete fit_result;
-                if (fit_result2 != NULL) {
-                  delete fit_result2;
-                }
-                fit_result = nullptr;
-                fit_result2 = nullptr;
-                
-                swarn << "Fit result number " << i << " in file " << *it_files << " neglected." << endmsg;
-              }
-              results_neglected++;
+              serr << "Cannot find branch " << config_toystudy_.fit_result1_branch_name() << " in tree. Cannot read in fit results." << endmsg;
+              //throw ExceptionCannotReadFitResult();
             }
-            fit_result = nullptr;
-            fit_result2 = nullptr;
-            // }
+          } else { // if (result_branch == NULL) {
+            // Fit times
+            TBranch* time_cpu1_branch  = tree->GetBranch("time_cpu1");
+            TBranch* time_real1_branch = tree->GetBranch("time_real1");
+            TBranch* time_cpu2_branch  = tree->GetBranch("time_cpu2");
+            TBranch* time_real2_branch = tree->GetBranch("time_real2");
+            TBranch* seed_branch       = tree->GetBranch("seed");
+            TBranch* run_id_branch     = tree->GetBranch("run_id");
+            
+            RooFitResult* fit_result  = NULL;
+            RooFitResult* fit_result2 = NULL;
+            double time_cpu1 = 0.0, time_real1 = 0.0;
+            double time_cpu2 = 0.0, time_real2 = 0.0;
+            int seed(0);
+            int run_id(0);
 
-            // while (fit_results_release_queue_.size() > 0) {
-            //   const RooFitResult* dummy = nullptr;
-            //   FitResultContainer fit_results(dummy,dummy,0.0,0.0,0.0,0.0,0,0);
-            //   if (fit_results_release_queue_.wait_and_pop(fit_results)) {
-            //     sdebug << "Deleting fit results." << endmsg;
-            //     if (std::get<0>(fit_results) != NULL) delete std::get<0>(fit_results);
-            //     if (std::get<1>(fit_results) != NULL) delete std::get<1>(fit_results);
-            //   }
-            // }
-            PurgeReleasedFitResults();
+            tree->SetCacheEntryRange(0,tree->GetEntries());
+            
+            tree->AddBranchToCache(result_branch, true);
+            result_branch->SetAddress(&fit_result);
+            
+            if (result2_branch != NULL) {
+              tree->AddBranchToCache(result2_branch, true);
+              result2_branch->SetAddress(&fit_result2);
+            }
+            if (time_cpu1_branch != NULL) {
+              tree->AddBranchToCache(time_cpu1_branch, true);
+              time_cpu1_branch->SetAddress(&time_cpu1);
+            }
+            if (time_real1_branch != NULL) {
+              tree->AddBranchToCache(time_real1_branch, true);
+              time_real1_branch->SetAddress(&time_real1);
+            }
+            if (time_cpu2_branch != NULL) {
+              tree->AddBranchToCache(time_cpu2_branch, true);
+              time_cpu2_branch->SetAddress(&time_cpu2);
+            }
+            if (time_real2_branch != NULL) {
+              tree->AddBranchToCache(time_real2_branch, true);
+              time_real2_branch->SetAddress(&time_real2);
+            }
+            if (seed_branch != NULL) {
+              tree->AddBranchToCache(seed_branch, true);
+              seed_branch->SetAddress(&seed);
+            }
+            if (run_id_branch != NULL) {
+              tree->AddBranchToCache(run_id_branch, true);
+              run_id_branch->SetAddress(&run_id);
+            }
+            tree->StopCacheLearningPhase();
+            
+            using namespace doocore::io;
+            std::string title_progress = "Reading fit results from " + (*it_files).first() + ":" + (*it_files).second();
+            Progress p(title_progress, tree->GetEntries());
+            for (int i=0; i<tree->GetEntries(); ++i) {
+              tree->GetEntry(i);
+              
+              // save a copy
+              if (fit_result != NULL && FitResultOkay(*fit_result)) {
+                fit_results_read_queue_.push(std::make_tuple(fit_result,
+                                                             fit_result2,
+                                                             time_cpu1,
+                                                             time_real1,
+                                                             time_cpu2,
+                                                             time_real2,
+                                                             seed,
+                                                             run_id));
+                results_stored++;
+              } else {
+                if (fit_result == NULL) {
+                  serr << "Fit result number " << i << " in file " << *it_files << " is NULL and therefore neglected. This indicates corrupted files and should never happen." << endmsg;
+                  while (true) {}
+                } else {
+                  delete fit_result;
+                  if (fit_result2 != NULL) {
+                    delete fit_result2;
+                  }
+                  fit_result = nullptr;
+                  fit_result2 = nullptr;
+                  
+                  swarn << "Fit result number " << i << " in file " << *it_files << " neglected." << endmsg;
+                }
+                results_neglected++;
+              }
+              fit_result = nullptr;
+              fit_result2 = nullptr;
+
+              PurgeReleasedFitResults();
+
+              if (config_toystudy_.num_toys_read() > 0 && results_stored >= config_toystudy_.num_toys_read()) {
+                break;
+              }
+
+              ++p;
+            }
+            p.Finish();
+
+            delete tree;
+            file.Close();
 
             if (config_toystudy_.num_toys_read() > 0 && results_stored >= config_toystudy_.num_toys_read()) {
+              //sinfo << "Read in " << results_stored << " toys as requested. Finishing." << endmsg;
               break;
             }
-
-            ++p;
-          }
-          p.Finish();
-
-          delete tree;
-          file.Close();
-
-          if (config_toystudy_.num_toys_read() > 0 && results_stored >= config_toystudy_.num_toys_read()) {
-            //sinfo << "Read in " << results_stored << " toys as requested. Finishing." << endmsg;
-            break;
-          }
-        }
-      }
-    }
+          } // if (result_branch == NULL) {
+        } // if (tree == NULL) {
+      } // if (file.IsZombie() || !file.IsOpen()) {
+    } // for (std::vector<doofit::config::CommaSeparatedPair<std::string>>::const_iterator it_files = results_files.begin(); it_files != results_files.end(); ++it_files) {
     fit_results_read_queue_.disable_queue();
     sinfo << "Read in " << results_stored << " fit results. (" << results_neglected << " results negelected, that is " << static_cast<double>(results_neglected)/static_cast<double>(results_stored+results_neglected)*100.0 << "%)" << endmsg;
     sinfo.Ruler();

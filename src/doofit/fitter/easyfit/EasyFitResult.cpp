@@ -47,8 +47,6 @@ doofit::fitter::easyfit::EasyFitResult::EasyFitResult(TTree& tree, std::string p
     status_ptrs_.push_back(std::make_pair(new std::string(""), 0));
   }
 
-  sdebug << "Initializing tree: " << endmsg;
-
   TObjArray* list_leaves  = tree.GetListOfLeaves();
   unsigned int num_leaves = list_leaves->GetEntries();
 
@@ -157,7 +155,8 @@ void doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitRes
     initialized_ = true;
   } else {
     // before the other fit result is transferred, do consistency checks
-    bool fit_result_transferable = true;
+    // bool fit_result_transferable = true;
+
     // TODO: Implement consistency checks.
     // if (status_.size() != fit_result.numStatusHistory()) {
     //   serr << "Stored fit result and new fit result have different number of fit status. Cannot continue." << endmsg;
@@ -167,13 +166,6 @@ void doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitRes
     quality_covariance_matrix_ = fit_result.covQual();
     fcn_ = fit_result.minNll();
     edm_ = fit_result.edm();
-
-    // for (int i=0; i<status_.size(); ++i) {
-    //   sdebug << &status_.at(i).first << " - " << &status_.at(i).second << endmsg;
-    // }
-    // for (auto var : parameters_const_) {
-    //   sdebug << var.first << " - " << &parameters_const_.at(var.first) << " -- " << &(parameters_const_.at(var.first).value_) << endmsg;
-    // }
 
     // transfer fit status
     for (unsigned int i=0; i<fit_result.numStatusHistory(); ++i) {
@@ -217,14 +209,6 @@ void doofit::fitter::easyfit::EasyFitResult::ConvertRooFitResult(const RooFitRes
       parameters_float_init_.at(evar.name()) = evar;
     }
     delete iter;
-
-    // for (int i=0; i<status_.size(); ++i) {
-    //   sdebug << &status_.at(i).first << " - " << &status_.at(i).second << endmsg;
-    // }
-    // for (auto var : parameters_const_) {
-    //   sdebug << var.first << " - " << &parameters_const_.at(var.first) << " -- " << &(parameters_const_.at(var.first).value_) << endmsg;
-    // }
-
   }
 }
 
@@ -249,10 +233,10 @@ void doofit::fitter::easyfit::EasyFitResult::RegisterBranchesInTree(TTree& tree,
   RegisterBranch(tree, &edm_, prefix+"edm", prefix+"edm/D");
 
   for (auto it=parameters_const_.begin(), end=parameters_const_.end(); it!=end; ++it) {
-    CreateBranchesForVariable(tree, it->second, prefix+"const_"+it->first);
+    CreateBranchesForConstInitVariable(tree, it->second, prefix+"const_"+it->first);
   }
   for (auto it=parameters_float_init_.begin(), end=parameters_float_init_.end(); it!=end; ++it) {
-    CreateBranchesForVariable(tree, it->second, prefix+"init_"+it->first);
+    CreateBranchesForConstInitVariable(tree, it->second, prefix+"init_"+it->first);
   }
   for (auto it=parameters_float_final_.begin(), end=parameters_float_final_.end(); it!=end; ++it) {
     CreateBranchesForVariable(tree, it->second, prefix+"final_"+it->first);
@@ -280,44 +264,90 @@ void doofit::fitter::easyfit::EasyFitResult::Print() const {
   fprinter.Print();
 }
 
-void doofit::fitter::easyfit::EasyFitResult::RegisterBranch(TTree& tree, void* ptr, std::string name, std::string leaflist) {
+bool doofit::fitter::easyfit::EasyFitResult::RegisterBranch(TTree& tree, void* ptr, std::string name, std::string leaflist) {
   if (tree.GetEntries() == 0) {
     tree.Branch(name.c_str(), ptr, leaflist.c_str());
+    return true;
   } else {
-    tree.SetBranchAddress(name.c_str(), ptr);
+    if (tree.GetBranch(name.c_str()) != nullptr) {
+      tree.SetBranchAddress(name.c_str(), ptr);
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
-void doofit::fitter::easyfit::EasyFitResult::RegisterStringBranch(TTree& tree, std::string** ptr, std::string name) {
+bool doofit::fitter::easyfit::EasyFitResult::RegisterStringBranch(TTree& tree, std::string** ptr, std::string name) {
   using namespace doocore::io;
-
-  sdebug << **ptr << endmsg;
 
   if (tree.GetEntries() == 0) {
     tree.Branch(name.c_str(), ptr);
+    return true;
   } else {
-    tree.SetBranchAddress(name.c_str(), ptr);
+    if (tree.GetBranch(name.c_str()) != nullptr) {
+      tree.SetBranchAddress(name.c_str(), ptr);
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
 
 void doofit::fitter::easyfit::EasyFitResult::CreateBranchesForVariable(TTree& tree, EasyFitVariable& var, std::string name) {
-  RegisterStringBranch(tree, &var.title_, name+"_title");
-  RegisterStringBranch(tree, &var.unit_, name+"_unit");
+  if (!RegisterStringBranch(tree, &var.title_, name+"_title")) {
+    *var.title_ = "";
+  }
+  if (!RegisterStringBranch(tree, &var.unit_, name+"_unit")) {
+    *var.unit_ = "";
+  }
 
-  RegisterBranch(tree, &var.value_, name+"_value", name+"_value/D");
-  RegisterBranch(tree, &var.min_, name+"_min", name+"_min/D");
-  RegisterBranch(tree, &var.max_, name+"_max", name+"_max/D");
+  if (!RegisterBranch(tree, &var.value_, name+"_value", name+"_value/D")) {
+    var.value_ = 0.0;
+  }
+  if (!RegisterBranch(tree, &var.min_, name+"_min", name+"_min/D")) {
+    var.min_ = std::numeric_limits<double>::infinity();
+  }
+  if (!RegisterBranch(tree, &var.max_, name+"_max", name+"_max/D")) {
+    var.max_ = std::numeric_limits<double>::infinity();
+  }
 
-  RegisterBranch(tree, &var.has_error_, name+"_has_error", name+"_has_error/O");
-  RegisterBranch(tree, &var.has_asym_error_, name+"_has_asym_error", name+"_has_asym_error/O");
+  if (!RegisterBranch(tree, &var.has_error_, name+"_has_error", name+"_has_error/O")) {
+    var.has_error_ = false;
+  }
+  if (!RegisterBranch(tree, &var.has_asym_error_, name+"_has_asym_error", name+"_has_asym_error/O")) {
+    var.has_asym_error_ = false;
+  }
 
-  RegisterBranch(tree, &var.error_, name+"_error", name+"_error/D");
-  RegisterBranch(tree, &var.error_low_, name+"_error_low", name+"_error_low/D");
-  RegisterBranch(tree, &var.error_high_, name+"_error_high", name+"_error_high/D");
+  if (!RegisterBranch(tree, &var.error_, name+"_error", name+"_error/D")) {
+    var.error_ = std::numeric_limits<double>::quiet_NaN();
+  }
+  if (!RegisterBranch(tree, &var.error_low_, name+"_error_low", name+"_error_low/D")) {
+    var.error_low_ = std::numeric_limits<double>::quiet_NaN();
+  }
+  if (!RegisterBranch(tree, &var.error_high_, name+"_error_high", name+"_error_high/D")) {
+    var.error_high_ = std::numeric_limits<double>::quiet_NaN();
+  }
 
-  RegisterBranch(tree, &var.constant_, name+"_constant", name+"_constant/O");
+  if (!RegisterBranch(tree, &var.constant_, name+"_constant", name+"_constant/O")) {
+    var.constant_ = true;
+  }
 }
+
+void doofit::fitter::easyfit::EasyFitResult::CreateBranchesForConstInitVariable(TTree& tree, EasyFitVariable& var, std::string name) {
+  if (!RegisterStringBranch(tree, &var.title_, name+"_title")) {
+    *var.title_ = "";
+  }
+  if (!RegisterStringBranch(tree, &var.unit_, name+"_unit")) {
+    *var.unit_ = "";
+  }
+
+  if (!RegisterBranch(tree, &var.value_, name+"_value", name+"_value/D")) {
+    var.value_ = 0.0;
+  }
+}
+
 
 
 

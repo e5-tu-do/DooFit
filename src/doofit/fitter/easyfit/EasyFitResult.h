@@ -100,11 +100,12 @@ class EasyFitResult {
   /**
    * @brief Unimplemented assignment operator
    */
-  EasyFitResult& operator=(const EasyFitResult& other) {}
+  EasyFitResult& operator=(const EasyFitResult&) { return *this; }
 
-  void RegisterBranch(TTree& tree, void* ptr, std::string name, std::string leaflist);
-  void RegisterStringBranch(TTree& tree, std::string** ptr, std::string name);
+  bool RegisterBranch(TTree& tree, void* ptr, std::string name, std::string leaflist);
+  bool RegisterStringBranch(TTree& tree, std::string** ptr, std::string name);
   void CreateBranchesForVariable(TTree& tree, EasyFitVariable& var, std::string name);
+  void CreateBranchesForConstInitVariable(TTree& tree, EasyFitVariable& var, std::string name);
 
   /**
    * @brief All floating parameters (initial state before fit)
@@ -248,7 +249,7 @@ class EasyFitVariable {
       return *this;
     }
 
-    std::cout << "ASSIGNMENT" << std::endl;
+    //std::cout << "ASSIGNMENT" << std::endl;
 
     name_ = other.name_;
     delete title_;    

@@ -236,12 +236,16 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReadFitResultsToy(doofi
     fit_result_container = toy_study.GetFitResult();
     delete fit_result_0;
     delete fit_result_1;
-    fit_result_0 = new EasyFitResult(*std::get<0>(fit_result_container));
-    fit_result_1 = new EasyFitResult(*std::get<1>(fit_result_container));
+    if (std::get<0>(fit_result_container) != nullptr && std::get<1>(fit_result_container) != nullptr) {
+      fit_result_0 = new EasyFitResult(*std::get<0>(fit_result_container));
+      fit_result_1 = new EasyFitResult(*std::get<1>(fit_result_container));
+    }
 
     // sdebug << "fit_result_0 = " << fit_result_0 << endmsg;
     // sdebug << "fit_result_1 = " << fit_result_1 << endmsg;
   }
+
+  toy_study.PurgeReleasedFitResults();
 
   hist.Draw();
   c.SaveAs("delta_chisq.pdf");
