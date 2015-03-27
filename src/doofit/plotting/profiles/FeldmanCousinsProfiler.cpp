@@ -317,7 +317,7 @@ void doofit::plotting::profiles::FeldmanCousinsProfiler::ReleaseAllFitResults(do
 
 bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const doofit::fitter::easyfit::EasyFitResult& fit_result) const {
   using namespace doocore::io;
-  if (fit_result.quality_covariance_matrix() < 2 && fit_result.quality_covariance_matrix() != -1) {
+  if (fit_result.quality_covariance_matrix() < 2) { // && fit_result.quality_covariance_matrix() != -1) {
     // sdebug << "rejected for covariance: " << fit_result.quality_covariance_matrix() << endmsg;
     return false;
   } else if (fit_result.status().at(0).second < 0) {
