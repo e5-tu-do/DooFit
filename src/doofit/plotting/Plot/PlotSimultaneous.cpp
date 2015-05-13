@@ -399,11 +399,11 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     Plot plot(config_plot_, dimension_, data, *pdf_, components_regexps_, plot_name);
 
     const std::map<std::string, std::string>& label_map(config_plot_.simultaneous_category_labels());
-    sdebug << "summed plot, found " << label_map.count("summed") << " map entries." << endmsg;
+    // sdebug << "summed plot, found " << label_map.count("summed") << " map entries." << endmsg;
 
-    for (auto label : label_map) {
-      sdebug << "label " << label.first << " - " << label.second << endmsg;
-    }
+    // for (auto label : label_map) {
+    //   sdebug << "label " << label.first << " - " << label.second << endmsg;
+    // }
 
     if (label_map.count("summed") > 0) {
       //sdebug << name_category << " - " << label_map.at(name_category) << endmsg;
