@@ -22,6 +22,7 @@
 #include "RooHist.h"
 #include "RooBinning.h"
 #include <RooMsgService.h>
+#include <RooResolutionModel.h>
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -220,7 +221,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
          it != datasets_.end(); ++it) {
       if ((*it)->isWeighted()) {
-        sdebug << "Weighted dataset, setting SumW2 errors." << endmsg;
+        // sdebug << "Weighted dataset, setting SumW2 errors." << endmsg;
         weight_arg = DataError(RooAbsData::SumW2);
       }
       
@@ -249,6 +250,9 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.9);
   
   if (!weighted_dataset && min_plot < 0.5) {
+    min_plot = 0.5;
+  }
+  if (weighted_dataset && min_plot < 0.5) {
     min_plot = 0.5;
   }
 
@@ -311,7 +315,8 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //        }
 //      }
 //    }
-    
+
+    double scale_normalization(1.0);
     RooCmdArg normalisation_hack;
     if (config_plot_.num_cpu() > 1 && !ignore_num_cpu_) {
       for (std::vector<RooCmdArg>::const_iterator it = plot_args_pdf_.begin();
@@ -326,7 +331,9 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
             if (var != NULL) {
               if (pdf_->observableOverlaps(dataset_normalisation, *var)) {
                 swarn << "Warning in Plot::PlotHandler(...): Plotting with multiple processes and projection dataset. PDF depends upon " << *var << ". Will manipulate normalisation to fix RooFit bugs." << endmsg;
-                normalisation_hack = Normalization(1./dataset_normalisation->sumEntries());
+                scale_normalization = 1./dataset_normalisation->sumEntries();
+                normalisation_hack = Normalization(scale_normalization);
+                sdebug << "Scaling total PDF by: " << scale_normalization << endmsg;
               }
             }
           }
@@ -353,9 +360,43 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
       line_width = 2.0;
     }
 
+    bool fix_comp_normalization(false);
+    for (auto component : components_) {
+      if (component.getSize() > 0) {
+        TIterator* it = component.createIterator();
+        RooAbsArg* arg = NULL;
+        while((arg = dynamic_cast<RooAbsArg*>(it->Next()))) {
+          RooResolutionModel* res = dynamic_cast<RooResolutionModel*>(arg);
+          if (res != NULL) {
+            if (!fix_comp_normalization) {
+              swarn << "Warning in Plot::PlotHandler(...): One of the component PDFs is a RooResolutionModel. This can break the normalization for component plotting. Will try to fix..." << endmsg;
+              fix_comp_normalization = true;
+            }
+          }
+        }
+      }
+    }
+
+    RooArgSet dimensions(dimension_);
     for (std::vector<RooArgSet>::const_iterator it = components_.begin();
          it != components_.end(); ++it) {
       if (it->getSize() > 0) {
+        if (fix_comp_normalization) {
+          TIterator* it_comp = it->createIterator();
+          RooAbsArg* arg = NULL;
+          while((arg = dynamic_cast<RooAbsArg*>(it_comp->Next()))) {
+            RooAbsPdf* pdf = dynamic_cast<RooAbsPdf*>(arg);
+            RooResolutionModel* res = dynamic_cast<RooResolutionModel*>(arg);
+            if (pdf != nullptr && res == nullptr) {
+              // pdf->Print("v");
+
+              // sdebug << pdf->GetName() << endmsg;
+              // sdebug << "Scaling this PDF by: " << scale_normalization*config_plot_.additional_normalization() << endmsg;
+              normalisation_hack = Normalization(scale_normalization*config_plot_.additional_normalization());
+            }
+          }
+        }
+
 //        sinfo << "Plotting component " << it->first()->GetName() << ", sum entries: " << dataset_normalisation->sumEntries() << endmsg;
         RooMsgService::instance().setStreamStatus(1, false);
         RooMsgService::instance().setStreamStatus(0, false);
@@ -368,6 +409,14 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
       ++p;
     }
     
+    if (scale_normalization != 1.0) {
+      normalisation_hack = Normalization(scale_normalization);
+      // sdebug << "Scaling total PDF by: " << scale_normalization << endmsg;
+    } else {
+      normalisation_hack = RooCmdArg::none(); 
+      // sdebug << "Not scaling total PDF by: " << scale_normalization << endmsg;
+    }
+
     RooMsgService::instance().setStreamStatus(1, false);
     RooMsgService::instance().setStreamStatus(0, false);
     pdf_->plotOn(plot_frame, MultiArg(LineColor(config_plot_.GetPdfLineColor(0)), LineWidth(line_width), LineStyle(config_plot_.GetPdfLineStyle(0)), projection_range_arg, arg_num_cpu, normalisation_hack, Precision(1e-4)), MultiArg(arg1, arg2, arg3, arg4, arg5, arg6, arg7));
