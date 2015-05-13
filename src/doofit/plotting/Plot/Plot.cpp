@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <cmath>
 
 // boost
 #include <boost/regex.hpp>
@@ -249,6 +250,9 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
 //  sdebug << "minimum data entry in dataset: " << min_data_entry << endmsg;
   double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.9);
   
+  double dummy, distance_power10;
+  distance_power10 = 1.0 - std::modf(std::log10(min_plot) , &dummy);
+
   if (!weighted_dataset && min_plot < 0.5) {
     min_plot = 0.5;
   }
@@ -257,8 +261,19 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   }
 
 //  sdebug << "minimum entry in histogram: " << min_data_entry << endmsg;
-//  sdebug << "minimum for plot range: " << min_plot << endmsg;
+  // sdebug << "minimum for plot range: " << min_plot << endmsg;
+  // sdebug << "distance to power of 10: " << distance_power10 << endmsg;
   
+  // if plot y minimum is too close to a power of ten the log plot labels will 
+  // be clipped. Take a slightly lower value then.
+  if (distance_power10 > 0.0 && distance_power10 < 0.1) {
+    min_plot *= 0.8;
+  }
+
+  // distance_power10 = 1.0 - std::modf(std::log10(min_plot) , &dummy);
+  // sdebug << "minimum for plot range: " << min_plot << endmsg;
+  // sdebug << "distance to power of 10: " << distance_power10 << endmsg;
+
   std::string label_string(config_plot_.label_text());
   double label_x(0.65), label_y(0.85);
   TLatex label_base(0,0,label_string.c_str());
