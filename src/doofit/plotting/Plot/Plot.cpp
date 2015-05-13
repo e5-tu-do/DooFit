@@ -275,7 +275,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   // sdebug << "distance to power of 10: " << distance_power10 << endmsg;
 
   std::string label_string(config_plot_.label_text());
-  double label_x(0.65), label_y(0.85);
+  double label_x(0.65), label_y(0.78);
   TLatex label_base(0,0,label_string.c_str());
   TLatex label_add(0,0,plot_label_additional_.c_str());
   double xsize_base = label_base.GetXsize();
@@ -284,7 +284,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
   // sdebug << "additional label x size: " << xsize << endmsg;
   if (label_string.length() > 0 && plot_label_additional_.length() > 0) {
     label_string = "#splitline{" + label_string + "}{" + plot_label_additional_ + "}";
-    label_y = 0.82;
+    label_y = 0.76;
   } else if (plot_label_additional_.length() > 0) {
     label_string = plot_label_additional_;
   }
