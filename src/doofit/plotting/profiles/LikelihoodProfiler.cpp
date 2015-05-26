@@ -239,6 +239,12 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
     TGraph graph(val_nll.size(), &val_x_sort[0], &val_nll_sort[0]);
 
+    // print out 1sigma CLs
+    double xmin(val_x_sort.front());
+    double xmax(val_x_sort.back());
+    std::pair<double, double> cl_1sigma(FindGraphXValues(graph, xmin, xmax, 0.5), FindGraphXValues(graph, xmin, xmax, 0.5, -1.0));
+    sinfo << "1 sigma CL interval : [" << cl_1sigma.first << ", " << cl_1sigma.second << "]" << endmsg;
+
     if (val_nll.size() < 25) {
       graph.Draw("APC");
       graph.SetMarkerStyle(2);
@@ -478,4 +484,53 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   }
 }
 
+double doofit::plotting::profiles::LikelihoodProfiler::FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction) const {
+  using namespace doocore::io;
+  TAxis* xaxis = graph.GetXaxis();
 
+  double x_lo(xmin);
+  double x_hi(xmax);
+
+  double x_start(xmin);
+  double x_end(xmax);
+  if (direction < 0.0) {
+    x_start = xmax;
+    x_end = xmin;
+  }
+
+  // sdebug << "increment " << (x_end - x_start)/100.0 << endmsg;
+  // sdebug << "x_start " << x_start << endmsg;
+  // sdebug << "x_end " << x_end << endmsg;
+  // sdebug << "value " << value << endmsg;
+
+  for (double x=x_start; x*direction<x_end*direction; x+=(x_end - x_start)/100.0) {
+    double y(graph.Eval(x, nullptr, ""));
+    // sdebug << "x = " << x << ", y = " << y << endmsg;
+
+    // prescan in 100 bins for monotonically ___decreasing___ function!
+    if (y < value) {
+      x_lo = x;
+      break; // if function is instead increasing, the break has to follow the x_hi = x assignment
+    } else if (y > value) {
+      x_hi = x;
+    }
+  }
+
+  double eps(1e-6);
+  double x_test, y;
+  while (std::abs(x_hi-x_lo) > eps) {
+    x_test = (x_lo+x_hi)/2.0;
+    y = graph.Eval(x_test, nullptr, "");
+    
+    // sdebug << "it:  " << x_lo << " - " << x_hi << " with y = " << y << endmsg;
+
+    if (y < value) {
+      x_lo = x_test;
+    } else if (y > value) {
+      x_hi = x_test;
+    }
+  }
+
+  // sdebug << "after:  " << x_lo << " - " << x_hi << endmsg;
+  return (x_lo+x_hi)/2.0;
+}
