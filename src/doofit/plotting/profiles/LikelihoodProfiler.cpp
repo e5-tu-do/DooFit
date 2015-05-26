@@ -159,13 +159,19 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
         // sdebug << var->GetName() << " = " << var_fixed->getVal() << ", ";
 
-        val_scan[var->GetName()].push_back(var_fixed->getVal());
-
-        if (min_scan_val.count(var->GetName()) == 0 || min_scan_val[var->GetName()] > var_fixed->getVal()) {
-          min_scan_val[var->GetName()] = var_fixed->getVal();
+        double value{var_fixed->getVal()};        
+        if (std::abs(value) < 1e-12) {
+          value = 0.0;
         }
-        if (max_scan_val.count(var->GetName()) == 0 || max_scan_val[var->GetName()] < var_fixed->getVal()) {
-          max_scan_val[var->GetName()] = var_fixed->getVal();
+        // sdebug << "value is: " << value << " (was " << var_fixed->getVal() << ")" << endmsg;
+
+        val_scan[var->GetName()].push_back(value);
+
+        if (min_scan_val.count(var->GetName()) == 0 || min_scan_val[var->GetName()] > value) {
+          min_scan_val[var->GetName()] = value;
+        }
+        if (max_scan_val.count(var->GetName()) == 0 || max_scan_val[var->GetName()] < value) {
+          max_scan_val[var->GetName()] = value;
         }
       }
 
@@ -393,6 +399,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
           interpolation /= num_interpolation;
           // sdebug << "Bin (" << i << "," << j << ") is zero. Will interpolate with " <<  num_interpolation << " bins to " << interpolation << "." << endmsg;
           histogram.SetBinContent(i,j, interpolation);
+          histogram_dbg.SetBinContent(i,j, interpolation);
+
           ++num_interpolated_bins;
         }
       }
@@ -436,7 +444,14 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
     gStyle->SetNumberContours(NCont);
     gStyle->SetPaintTextFormat(".1f");
-    histogram_dbg.Draw("COLZ");
+
+    histogram_dbg.GetZaxis()->SetRangeUser(min_nll, max_nll);
+    histogram_dbg.SetXTitle(scan_vars_titles_.at(0).c_str());
+    histogram_dbg.SetYTitle(scan_vars_titles_.at(1).c_str());
+    histogram_dbg.SetZTitle("#DeltaLL");
+
+    histogram_dbg.SetContour(stops_cl.size(), stops_cl.data());
+    histogram_dbg.Draw("COL"); // use COLZ if you want to draw z axis
     doocore::lutils::printPlot(&c, "profile_dbg", plot_path, true);
 
     // fancy plot

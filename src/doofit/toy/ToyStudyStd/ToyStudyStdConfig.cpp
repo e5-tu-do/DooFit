@@ -63,6 +63,9 @@ namespace toy {
       scfg << "Branch name fit result 1:          " << fit_result1_branch_name_ << endmsg;
       scfg << "Branch name fit result 2:          " << fit_result2_branch_name_ << endmsg;
     }
+    if (store_converted_result_filename_treename_.first().size() > 0) {
+      scfg << "File and tree to save converted result to: " << store_result_filename_treename_ << endmsg;
+    }
     
     for (vector<config::CommaSeparatedPair<std::string>>::const_iterator it = read_results_filename_treename_.begin(); it != read_results_filename_treename_.end(); ++it) {
       scfg << "File and tree to read result from: " << *it << endmsg;
@@ -103,6 +106,7 @@ namespace toy {
     
     generation->add_options()
     (GetOptionString("store_result_filename_treename").c_str(), po::value<config::CommaSeparatedPair<std::string>>(&store_result_filename_treename_),"File name and tree name to save fit results to (set as filename,treename)")
+    (GetOptionString("store_converted_result_filename_treename").c_str(), po::value<config::CommaSeparatedPair<std::string>>(&store_converted_result_filename_treename_),"File name and tree name to save converted fit results to (set as filename,treename)")
     (GetOptionString("fit_result1_branch_name").c_str(), po::value<std::string>(&fit_result1_branch_name_)->default_value("fit_results"),"Fit result 1 branch name in tree")
     (GetOptionString("fit_result2_branch_name").c_str(), po::value<std::string>(&fit_result2_branch_name_)->default_value("fit_results2"),"Fit result 2 branch name in tree")
     (GetOptionString("read_results_filename_treename").c_str(), po::value<vector<config::CommaSeparatedPair<std::string>> >(&read_results_filename_treename_)->composing(), "File names and tree names to read fit results from (set as filename,treename)")

@@ -127,6 +127,11 @@ class PlotConfig : public config::AbsConfig {
    *  @brief Getter for y plot range (where applicable)
    */
   std::pair<double, double> plot_range_y() const { return std::make_pair(plot_range_y_.first(), plot_range_y_.second()); }
+
+  /**
+   *  @brief Getter for additional normalization
+   */
+  double additional_normalization() const { return additional_normalization_; } 
   ///@}
 
   /** @name Simultaneous PDF plotting getters
@@ -256,6 +261,11 @@ class PlotConfig : public config::AbsConfig {
    *  @brief Setter for y plot range (where applicable)
    */
   void set_plot_range_y(double min_y, double max_y) { plot_range_y_.set_first(min_y); plot_range_y_.set_second(max_y); } 
+
+  /**
+   *  @brief Setter for additional normalization
+   */
+  void set_additional_normalization(double additional_normalization) const { additional_normalization_ = additional_normalization; } 
   ///@}
 
   /** @name Simultaneous PDF plotting setters/configuration
@@ -412,6 +422,10 @@ class PlotConfig : public config::AbsConfig {
    */
   config::CommaSeparatedPair<double> plot_range_y_;
 
+  /**
+   *  @brief Additional normalization (where applicable)
+   */
+  mutable double additional_normalization_;
 };
 
 } // namespace plotting

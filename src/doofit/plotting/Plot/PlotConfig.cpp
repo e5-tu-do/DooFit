@@ -42,7 +42,8 @@ PlotConfig::PlotConfig(const std::string& name)
   simultaneous_plot_all_categories_(false),
   simultaneous_plot_all_slices_(false),
   plot_range_x_(0.0,0.0),
-  plot_range_y_(0.0,0.0)
+  plot_range_y_(0.0,0.0),
+  additional_normalization_(1.0)
 {
   //pdf_linecolor_map_.Parse("1,214,206,226,222,210,217,94,138,220");
   pdf_linecolor_map_.Parse("1,214,210,226,222,206,217,94,138,220");
