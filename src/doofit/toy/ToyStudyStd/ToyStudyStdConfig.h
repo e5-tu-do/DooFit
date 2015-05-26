@@ -65,6 +65,12 @@ namespace toy {
      */
     const config::CommaSeparatedPair<std::string>& store_result_filename_treename() const {return store_result_filename_treename_;}
     /**
+     *  @brief Getter for file name and tree name to store converted fit result to
+     *
+     *  @return current value of store_converted_result_filename_treename_
+     */
+    const config::CommaSeparatedPair<std::string>& store_converted_result_filename_treename() const {return store_converted_result_filename_treename_;}
+    /**
      *  @brief Getter for fit result 1 branch name
      *
      *  @return current value of fit_result1_branch_name_
@@ -214,6 +220,12 @@ namespace toy {
      */
     void set_store_result_filename_treename(const config::CommaSeparatedPair<std::string>& result_file_tree) {store_result_filename_treename_ = result_file_tree;}
     /**
+     *  @brief Setter for file name and tree name to store converted fit result to
+     *
+     *  @param result_file_tree new value for store_converted_result_filename_treename_
+     */
+    void set_store_converted_result_filename_treename(const config::CommaSeparatedPair<std::string>& result_file_tree) {store_converted_result_filename_treename_ = result_file_tree;}    
+    /**
      *  @brief Setter for fit result 1 branch name
      *
      *  @param fit_result1_branch_name new value for fit_result1_branch_name_
@@ -235,7 +247,7 @@ namespace toy {
      *
      *  @see set_read_results_filename_treename()
      *
-     *  @param result_file_tree new value for store_result_filename_treename_ as comma-separated string "pattern,treename"
+     *  @param result_file_tree new value for read_result_filename_treename_ as comma-separated string "pattern,treename"
      */
     void set_read_results_filename_treename_pattern(const config::CommaSeparatedPair<std::string>& read_results_filename_treename_pattern) {read_results_filename_treename_pattern_ = read_results_filename_treename_pattern;}
     /**
@@ -455,6 +467,12 @@ namespace toy {
      *  @see ToyStudyStdConfig::set_store_result_filename_treename()
      */
     config::CommaSeparatedPair<std::string> store_result_filename_treename_;
+    /**
+     *  @brief File name and tree name to store converted fit results to
+     *
+     *  @see ToyStudyStdConfig::set_store_converted_result_filename_treename()
+     */
+    config::CommaSeparatedPair<std::string> store_converted_result_filename_treename_;
     /**
      *  @brief Fit result 1 branch name
      *
