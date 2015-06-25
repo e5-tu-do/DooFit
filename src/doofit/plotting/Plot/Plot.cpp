@@ -352,7 +352,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
                 swarn << "Warning in Plot::PlotHandler(...): Plotting with multiple processes and projection dataset. PDF depends upon " << *var << ". Will manipulate normalisation to fix RooFit bugs." << endmsg;
                 scale_normalization = 1./dataset_normalisation->sumEntries();
                 normalisation_hack = Normalization(scale_normalization);
-                sdebug << "Scaling total PDF by: " << scale_normalization << endmsg;
+                // sdebug << "Scaling total PDF by: " << scale_normalization << endmsg;
               }
             }
           }

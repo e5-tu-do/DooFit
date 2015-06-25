@@ -112,6 +112,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
 
           std::string name_category(sim_cat_type->GetName());
           const std::map<std::string, std::string>& label_map(config_plot_.simultaneous_category_labels());
+          // sdebug << "This category is " << name_category << endmsg;
           if (label_map.count(name_category) > 0) {
             //sdebug << name_category << " - " << label_map.at(name_category) << endmsg;
             plot.set_plot_label_additional(label_map.at(name_category));
