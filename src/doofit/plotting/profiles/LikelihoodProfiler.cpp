@@ -486,7 +486,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
 double doofit::plotting::profiles::LikelihoodProfiler::FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction) const {
   using namespace doocore::io;
-  TAxis* xaxis = graph.GetXaxis();
+  // TAxis* xaxis = graph.GetXaxis();
 
   double x_lo(xmin);
   double x_hi(xmax);

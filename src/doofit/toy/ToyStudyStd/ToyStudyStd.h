@@ -525,7 +525,7 @@ namespace toy {
     /**
      *  @brief Position in currently opened TTree for EasyFitResult input
      */
-    unsigned long long position_tree_easyfit_;
+    long long position_tree_easyfit_;
 
     /**
      *  @brief Number of available EasyFitResults

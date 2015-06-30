@@ -623,14 +623,14 @@ namespace toy {
         ValueWithError<double> val_mean(var_mean->getVal(), var_mean->getError());
         ValueWithError<double> val_sigma(var_sigma->getVal(), var_sigma->getError());
 
-        pt = new TPaveText(0.6, 0.78, 0.9, 0.9, "NB NDC");
+        pt = new TPaveText(0.57, 0.77, 0.92, 0.92, "NB NDC");
         pt->SetFillColor(kWhite);
         //pt->SetOption("NB");
         pt->SetTextAlign(12);
         pt->SetBorderSize(1);
         pt->SetMargin(0.05);
         pt->SetTextFont(133);
-        pt->SetTextSize(20);
+        pt->SetTextSize(30);
 
         std::string str_mean("m = ");
         str_mean += val_mean.FormatStringTLatex();
@@ -653,11 +653,13 @@ namespace toy {
           boost::replace_all(str_mean,  "-", "#minus");
           boost::replace_all(str_sigma, "-", "#minus");
 
-          pt->SetX1(0.6);
+          pt->SetX1(0.45);
         }
 
         pt->AddText(str_mean.c_str());
         pt->AddText(str_sigma.c_str());
+
+        frame->SetMaximum(frame->GetMaximum()*1.3);
 
       } else if (fit_status != 0) {
         swarn << "ToyStudyStd::PlotEvaluatedParameters(): Gaussian fit for " << parameter->GetName() << " failed. Will not plot." << endmsg;
