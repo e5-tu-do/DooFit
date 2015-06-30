@@ -30,11 +30,16 @@ namespace doofit {
   namespace config {
     class CommonConfig; 
   }
-  
+  namespace fitter { namespace easyfit {
+    class EasyFitResult;
+  }}
 namespace toy {
   
+  // fit_result1, fit_result2, time_cpu1, time_real1, time_cpu2, time_real2, seed, run_id
   typedef std::tuple<const RooFitResult*,const RooFitResult*,double,double,double,double,int,int> FitResultContainer;
-  
+
+  // fit_result1, fit_result2
+  typedef std::tuple<const doofit::fitter::easyfit::EasyFitResult*,const doofit::fitter::easyfit::EasyFitResult*> EasyFitResultContainer;
   
   /** @class ToyStudyStd
    *  @brief Standard toy study for DooFit to help conduct and evaluate mass toy fits
@@ -56,43 +61,41 @@ namespace toy {
    *  @author Florian Kruse
    */
 
-    /**
-     *  @brief Evaluate fit result quality
-     *
-     *  For a given fit result evaluate the fit quality (i.e. convergence, 
-     *  covariance matrix quality and so on).
-     *
-     *  @param fit_result RooFitResult to use for evaluation
-     *  @param min_acceptable_cov_matrix_quality minimal acceptable covariance quality
-     *  @return true if fit result is okay, false if not
-     */
-    bool FitResultOkay(const RooFitResult& fit_result, int min_acceptable_cov_matrix_quality);
-    
-    /**
-     *  @brief Check if fit result has (nearly) no varied parameters
-     *
-     *  For a given fit result evaluate the fit quality in terms of parameter
-     *  variation. If more than 80% of non-fixed parameters have not been varied
-     *  the fit result is to be neglected.
-     *
-     *  @param fit_result RooFitResult to use for evaluation
-     *  @return true if fit result is problematic, false if not
-     */
-    bool FitResultNotVariedParameterSet(const RooFitResult& fit_result);
+  /**
+   *  @brief Evaluate fit result quality
+   *
+   *  For a given fit result evaluate the fit quality (i.e. convergence, 
+   *  covariance matrix quality and so on).
+   *
+   *  @param fit_result RooFitResult to use for evaluation
+   *  @param min_acceptable_cov_matrix_quality minimal acceptable covariance quality
+   *  @return true if fit result is okay, false if not
+   */
+  bool FitResultOkay(const RooFitResult& fit_result, int min_acceptable_cov_matrix_quality);
 
-    /**
-     *  @brief Check if fit result has no asymmetric errors for at least one parameter
-     *
-     *  For a given fit result evaluate the fit quality in terms of asymmetric 
-     *  errors. If at least one parameter has no asymmetric errors, true is 
-     *  returned.
-     *
-     *  @param fit_result RooFitResult to use for evaluation
-     *  @return true if fit result is problematic, false if not
-     */
-    bool FitResultNoAsymmetricErrors(const RooFitResult& fit_result);
+  /**
+   *  @brief Check if fit result has (nearly) no varied parameters
+   *
+   *  For a given fit result evaluate the fit quality in terms of parameter
+   *  variation. If more than 80% of non-fixed parameters have not been varied
+   *  the fit result is to be neglected.
+   *
+   *  @param fit_result RooFitResult to use for evaluation
+   *  @return true if fit result is problematic, false if not
+   */
+  bool FitResultNotVariedParameterSet(const RooFitResult& fit_result);
 
-   
+  /**
+   *  @brief Check if fit result has no asymmetric errors for at least one parameter
+   *
+   *  For a given fit result evaluate the fit quality in terms of asymmetric 
+   *  errors. If at least one parameter has no asymmetric errors, true is 
+   *  returned.
+   *
+   *  @param fit_result RooFitResult to use for evaluation
+   *  @return true if fit result is problematic, false if not
+   */
+  bool FitResultNoAsymmetricErrors(const RooFitResult& fit_result);
 
   class ToyStudyStd {
    public:
@@ -222,6 +225,24 @@ namespace toy {
      *  @return tuple of fit results and respective fit times (CPU and real)
      */
     FitResultContainer GetFitResult();
+
+    /**
+     *  @brief Get next EasyFitResult (pair) in queue
+     *
+     *  On demand open files and trees containing EasyFitResults and return next
+     *  EasyFitResultContainer in queue. 
+     *
+     *  Returned EasyFitResult references will be overwritten on next call. If 
+     *  necessary, the caller has to copy the EasyFitResults themself.
+     *
+     *  @return tuple of fit results
+     */
+    EasyFitResultContainer GetEasyFitResult();
+
+    unsigned long long NumberOfAvailableEasyFitResults();
+
+    unsigned int NumberOfStoredResults() const { return fit_results_read_queue_.size(); }
+
     /**
      *  @brief Release a fit result (pair) for deletion
      *
@@ -476,6 +497,41 @@ namespace toy {
      *  @brief Thread-safe queue for fit results to delete
      */
     doocore::lutils::concurrent_queue<FitResultContainer > fit_results_release_queue_;
+    ///@}
+
+    /** @name EasyFitResult input support
+     *  Member objects for input of EasyFitResult containers
+     */
+    ///@{
+    /**
+     *  @brief Files containing EasyFitResults
+     */
+    std::list<doofit::config::CommaSeparatedPair<std::string>> results_files_easyfit_;
+
+    /**
+     *  @brief Currently opened TFile + TTree for EasyFitResult input
+     */
+    std::pair<TFile*,TTree*> file_tree_easyfit_;
+
+    /**
+     *  @brief Position in currently opened TTree for EasyFitResult input
+     */
+    unsigned long long position_tree_easyfit_;
+
+    /**
+     *  @brief Number of available EasyFitResults
+     */
+    unsigned long long num_easyfit_results_;
+
+    /**
+     *  @brief Current EasyFitResult #1
+     */
+    doofit::fitter::easyfit::EasyFitResult* easyfit_result_0_;
+
+    /**
+     *  @brief Current EasyFitResult #2
+     */
+    doofit::fitter::easyfit::EasyFitResult* easyfit_result_1_;
     ///@}
 
     bool debug_;

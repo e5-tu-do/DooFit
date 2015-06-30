@@ -15,6 +15,7 @@
 #include <doocore/io/MsgStream.h>
 
 // from project
+#include "doofit/fitter/easyfit/EasyFitResult.h"
 
 // forward declarations
 class RooFitResult;
@@ -52,6 +53,13 @@ class FitResultPrinter {
    *  @param fit_result the fit result to print
    */
   FitResultPrinter(const RooFitResult& fit_result);
+
+  /**
+   *  @brief Default constructor for FitResultPrinter
+   *
+   *  @param fit_result the fit result to print
+   */
+  FitResultPrinter(const doofit::fitter::easyfit::EasyFitResult& fit_result);
   
   ~FitResultPrinter() {}
   
@@ -115,7 +123,7 @@ class FitResultPrinter {
   void PlotHandler() const;
   
  private:
-  const RooFitResult& fit_result_;
+  doofit::fitter::easyfit::EasyFitResult fit_result_;
 
   bool full_precision_printout_;
   bool print_pulls_;

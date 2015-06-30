@@ -112,6 +112,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
 
           std::string name_category(sim_cat_type->GetName());
           const std::map<std::string, std::string>& label_map(config_plot_.simultaneous_category_labels());
+          // sdebug << "This category is " << name_category << endmsg;
           if (label_map.count(name_category) > 0) {
             //sdebug << name_category << " - " << label_map.at(name_category) << endmsg;
             plot.set_plot_label_additional(label_map.at(name_category));
@@ -120,6 +121,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           plot.plot_args_pdf_  = this->plot_args_pdf_;
           plot.plot_args_data_ = this->plot_args_data_;
           plot.plot_range_     = this->plot_range_;
+          plot.plot_asymmetry_ = this->plot_asym_;
           
           // 20130905 FK: deactivated this manual setting of the plot range as it
           //              can dramatically increase plot time. Maybe need to
@@ -397,6 +399,21 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     //  plot_name = std::string(dimension_.GetName()) + "_summed";
     plot_name = plot_name_ + "_summed";
     Plot plot(config_plot_, dimension_, data, *pdf_, components_regexps_, plot_name);
+
+    const std::map<std::string, std::string>& label_map(config_plot_.simultaneous_category_labels());
+    // sdebug << "summed plot, found " << label_map.count("summed") << " map entries." << endmsg;
+
+    // for (auto label : label_map) {
+    //   sdebug << "label " << label.first << " - " << label.second << endmsg;
+    // }
+
+    if (label_map.count("summed") > 0) {
+      //sdebug << name_category << " - " << label_map.at(name_category) << endmsg;
+      plot.set_plot_label_additional(label_map.at("summed"));
+    } else {
+      plot.plot_label_additional_  = this->plot_label_additional_;
+    }
+
     plot.plot_args_pdf_  = this->plot_args_pdf_;
     plot.plot_args_data_ = this->plot_args_data_;
     plot.plot_range_     = this->plot_range_;

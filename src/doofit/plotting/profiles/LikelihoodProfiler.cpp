@@ -159,13 +159,19 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
         // sdebug << var->GetName() << " = " << var_fixed->getVal() << ", ";
 
-        val_scan[var->GetName()].push_back(var_fixed->getVal());
-
-        if (min_scan_val.count(var->GetName()) == 0 || min_scan_val[var->GetName()] > var_fixed->getVal()) {
-          min_scan_val[var->GetName()] = var_fixed->getVal();
+        double value{var_fixed->getVal()};        
+        if (std::abs(value) < 1e-12) {
+          value = 0.0;
         }
-        if (max_scan_val.count(var->GetName()) == 0 || max_scan_val[var->GetName()] < var_fixed->getVal()) {
-          max_scan_val[var->GetName()] = var_fixed->getVal();
+        // sdebug << "value is: " << value << " (was " << var_fixed->getVal() << ")" << endmsg;
+
+        val_scan[var->GetName()].push_back(value);
+
+        if (min_scan_val.count(var->GetName()) == 0 || min_scan_val[var->GetName()] > value) {
+          min_scan_val[var->GetName()] = value;
+        }
+        if (max_scan_val.count(var->GetName()) == 0 || max_scan_val[var->GetName()] < value) {
+          max_scan_val[var->GetName()] = value;
         }
       }
 
@@ -232,6 +238,12 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     }
 
     TGraph graph(val_nll.size(), &val_x_sort[0], &val_nll_sort[0]);
+
+    // print out 1sigma CLs
+    double xmin(val_x_sort.front());
+    double xmax(val_x_sort.back());
+    std::pair<double, double> cl_1sigma(FindGraphXValues(graph, xmin, xmax, 0.5), FindGraphXValues(graph, xmin, xmax, 0.5, -1.0));
+    sinfo << "1 sigma CL interval : [" << cl_1sigma.first << ", " << cl_1sigma.second << "]" << endmsg;
 
     if (val_nll.size() < 25) {
       graph.Draw("APC");
@@ -393,6 +405,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
           interpolation /= num_interpolation;
           // sdebug << "Bin (" << i << "," << j << ") is zero. Will interpolate with " <<  num_interpolation << " bins to " << interpolation << "." << endmsg;
           histogram.SetBinContent(i,j, interpolation);
+          histogram_dbg.SetBinContent(i,j, interpolation);
+
           ++num_interpolated_bins;
         }
       }
@@ -436,7 +450,14 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
     gStyle->SetNumberContours(NCont);
     gStyle->SetPaintTextFormat(".1f");
-    histogram_dbg.Draw("COLZ");
+
+    histogram_dbg.GetZaxis()->SetRangeUser(min_nll, max_nll);
+    histogram_dbg.SetXTitle(scan_vars_titles_.at(0).c_str());
+    histogram_dbg.SetYTitle(scan_vars_titles_.at(1).c_str());
+    histogram_dbg.SetZTitle("#DeltaLL");
+
+    histogram_dbg.SetContour(stops_cl.size(), stops_cl.data());
+    histogram_dbg.Draw("COL"); // use COLZ if you want to draw z axis
     doocore::lutils::printPlot(&c, "profile_dbg", plot_path, true);
 
     // fancy plot
@@ -463,4 +484,53 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   }
 }
 
+double doofit::plotting::profiles::LikelihoodProfiler::FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction) const {
+  using namespace doocore::io;
+  TAxis* xaxis = graph.GetXaxis();
 
+  double x_lo(xmin);
+  double x_hi(xmax);
+
+  double x_start(xmin);
+  double x_end(xmax);
+  if (direction < 0.0) {
+    x_start = xmax;
+    x_end = xmin;
+  }
+
+  // sdebug << "increment " << (x_end - x_start)/100.0 << endmsg;
+  // sdebug << "x_start " << x_start << endmsg;
+  // sdebug << "x_end " << x_end << endmsg;
+  // sdebug << "value " << value << endmsg;
+
+  for (double x=x_start; x*direction<x_end*direction; x+=(x_end - x_start)/100.0) {
+    double y(graph.Eval(x, nullptr, ""));
+    // sdebug << "x = " << x << ", y = " << y << endmsg;
+
+    // prescan in 100 bins for monotonically ___decreasing___ function!
+    if (y < value) {
+      x_lo = x;
+      break; // if function is instead increasing, the break has to follow the x_hi = x assignment
+    } else if (y > value) {
+      x_hi = x;
+    }
+  }
+
+  double eps(1e-6);
+  double x_test, y;
+  while (std::abs(x_hi-x_lo) > eps) {
+    x_test = (x_lo+x_hi)/2.0;
+    y = graph.Eval(x_test, nullptr, "");
+    
+    // sdebug << "it:  " << x_lo << " - " << x_hi << " with y = " << y << endmsg;
+
+    if (y < value) {
+      x_lo = x_test;
+    } else if (y > value) {
+      x_hi = x_test;
+    }
+  }
+
+  // sdebug << "after:  " << x_lo << " - " << x_hi << endmsg;
+  return (x_lo+x_hi)/2.0;
+}
