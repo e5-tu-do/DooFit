@@ -653,7 +653,7 @@ namespace toy {
           boost::replace_all(str_mean,  "-", "#minus");
           boost::replace_all(str_sigma, "-", "#minus");
 
-          pt->SetX1(0.45);
+          pt->SetX1(0.46);
         }
 
         pt->AddText(str_mean.c_str());
