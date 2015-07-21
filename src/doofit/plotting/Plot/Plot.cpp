@@ -272,6 +272,8 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
     min_plot *= 0.8;
   }
 
+  // min_plot = 10.0;
+
   // distance_power10 = 1.0 - std::modf(std::log10(min_plot) , &dummy);
   // sdebug << "minimum for plot range: " << min_plot << endmsg;
   // sdebug << "distance to power of 10: " << distance_power10 << endmsg;
@@ -350,7 +352,7 @@ void Plot::PlotHandler(ScaleType sc_y, std::string suffix) const {
                 swarn << "Warning in Plot::PlotHandler(...): Plotting with multiple processes and projection dataset. PDF depends upon " << *var << ". Will manipulate normalisation to fix RooFit bugs." << endmsg;
                 scale_normalization = 1./dataset_normalisation->sumEntries();
                 normalisation_hack = Normalization(scale_normalization);
-                sdebug << "Scaling total PDF by: " << scale_normalization << endmsg;
+                // sdebug << "Scaling total PDF by: " << scale_normalization << endmsg;
               }
             }
           }
