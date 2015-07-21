@@ -19,6 +19,7 @@
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
 #include "doocore/lutils/lutils.h"
 #include "doocore/io/MsgStream.h"
+#include "doofit/plotting/Plot/PlotConfig.h"
 
 // forward declarations
 class RooFitResult;
@@ -32,7 +33,8 @@ namespace doofit {
   }
   namespace fitter { namespace easyfit {
     class EasyFitResult;
-  }}
+  }
+}
 namespace toy {
   
   // fit_result1, fit_result2, time_cpu1, time_real1, time_cpu2, time_real2, seed, run_id
@@ -107,8 +109,9 @@ namespace toy {
      *
      *  @param cfg_com CommonConfig for the general configuration.
      *  @param cfg_tstudy ToyStudyStdConfig for this specific toy study.
+     *  @param cfg_plot PlotConfig for this specific toy study.
      */
-    ToyStudyStd(const config::CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy);
+    ToyStudyStd(const config::CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy, const doofit::plotting::PlotConfig& cfg_plot);
     
     /**
      *  @brief Destructor for ToyStudyStd
@@ -412,6 +415,12 @@ namespace toy {
      *  \brief ToyFactoryStdConfig instance to use
      */
     const ToyStudyStdConfig& config_toystudy_;
+
+    /**
+     *  \brief CommonConfig instance to use
+     */
+    const doofit::plotting::PlotConfig& config_plot_;
+
     /**
      *  \brief Container for read in and active fit results
      */
@@ -516,7 +525,7 @@ namespace toy {
     /**
      *  @brief Position in currently opened TTree for EasyFitResult input
      */
-    unsigned long long position_tree_easyfit_;
+    long long position_tree_easyfit_;
 
     /**
      *  @brief Number of available EasyFitResults
