@@ -12,6 +12,7 @@
 #include "boost/random/random_device.hpp"
 #include <boost/thread.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/format.hpp>
 
 // ROOT
 #include "TTree.h"
@@ -48,6 +49,7 @@
 #include "doofit/config/CommaSeparatedPair.h"
 #include "doofit/config/CommaSeparatedList.h"
 #include "doofit/toy/ToyStudyStd/ToyStudyStdConfig.h"
+#include "doofit/plotting/Plot/PlotConfig.h"
 #include <doofit/fitter/easyfit/EasyFitResult.h>
 
 using namespace ROOT;
@@ -59,9 +61,10 @@ namespace toy {
   namespace fs = boost::filesystem;
   bool ToyStudyStd::abort_save_ = false;
   
-  ToyStudyStd::ToyStudyStd(const config::CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy) :
+  ToyStudyStd::ToyStudyStd(const config::CommonConfig& cfg_com, const ToyStudyStdConfig& cfg_tstudy, const doofit::plotting::PlotConfig& cfg_plot) :
   config_common_(cfg_com),
   config_toystudy_(cfg_tstudy),
+  config_plot_(cfg_plot),
   fit_results_(),
   fit_results_bookkeep_(),
   evaluated_values_(NULL),
@@ -233,7 +236,7 @@ namespace toy {
         doofit::config::CommaSeparatedPair<std::string> file_tree = results_files_easyfit_.front();
         results_files_easyfit_.pop_front();
 
-        sdebug << "Opening " << file_tree.first().c_str() << endmsg;
+        // sdebug << "Opening " << file_tree.first().c_str() << endmsg;
         file = new TFile(file_tree.first().c_str(), "read");
         tree = dynamic_cast<TTree*>(file->Get(file_tree.second().c_str()));
       }
@@ -586,6 +589,8 @@ namespace toy {
       if (config_toystudy_.plot_symmetric_around_mean() && gauss != nullptr /* && param_name.substr(0,4).compare("time") != 0 */) {
         // Define plot range symmetrical around mean of Gaussian fit
         double range_limit = std::max(mean->getVal() - minmax.first, minmax.second - mean->getVal());
+        minmax.first = mean->getVal() - range_limit;
+        minmax.second = mean->getVal() + range_limit;
         frame = parameter->frame(Range(mean->getVal() - range_limit, mean->getVal() + range_limit));
       }
 
@@ -609,21 +614,23 @@ namespace toy {
 
       TPaveText* pt = nullptr;
       if (gauss != NULL && fit_status == 0) {
-        if (plot_gauss_pdf_for_init_distributions) gauss->plotOn(frame);
+        // sdebug << config_plot_.GetPdfLineColor(1) << endmsg;
+
+        if (plot_gauss_pdf_for_init_distributions) gauss->plotOn(frame, LineColor(config_plot_.GetPdfLineColor(1)));
         //param_frame = gauss->paramOn(frame, Layout(0.6, 0.9, 0.9));
 
         using namespace doocore::statistics::general;
         ValueWithError<double> val_mean(var_mean->getVal(), var_mean->getError());
         ValueWithError<double> val_sigma(var_sigma->getVal(), var_sigma->getError());
 
-        pt = new TPaveText(0.6, 0.78, 0.9, 0.9, "NB NDC");
+        pt = new TPaveText(0.57, 0.77, 0.92, 0.92, "NB NDC");
         pt->SetFillColor(kWhite);
         //pt->SetOption("NB");
         pt->SetTextAlign(12);
         pt->SetBorderSize(1);
         pt->SetMargin(0.05);
         pt->SetTextFont(133);
-        pt->SetTextSize(20);
+        pt->SetTextSize(30);
 
         std::string str_mean("m = ");
         str_mean += val_mean.FormatStringTLatex();
@@ -646,11 +653,13 @@ namespace toy {
           boost::replace_all(str_mean,  "-", "#minus");
           boost::replace_all(str_sigma, "-", "#minus");
 
-          pt->SetX1(0.6);
+          pt->SetX1(0.46);
         }
 
         pt->AddText(str_mean.c_str());
         pt->AddText(str_sigma.c_str());
+
+        frame->SetMaximum(frame->GetMaximum()*1.3);
 
       } else if (fit_status != 0) {
         swarn << "ToyStudyStd::PlotEvaluatedParameters(): Gaussian fit for " << parameter->GetName() << " failed. Will not plot." << endmsg;
@@ -660,6 +669,20 @@ namespace toy {
       if (pt != nullptr) {
         pt->Draw();
       }
+
+      double width_bin = static_cast<double>(minmax.second-minmax.first)/static_cast<double>(num_bins);
+      std::stringstream str;
+      using boost::format;
+      str << format("%1$.1g") % width_bin;
+
+      TString ylabel = frame->GetYaxis()->GetTitle();
+      ylabel.ReplaceAll("Events","Pseudo-experiments");
+
+      std::string label_y = "Pseudo-experiments / " + str.str();
+
+      // sdebug << label_y << endmsg;
+
+      frame->GetYaxis()->SetTitle(label_y.c_str());
 
       TString plot_name = parameter->GetName();
       doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);

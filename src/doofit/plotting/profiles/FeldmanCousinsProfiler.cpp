@@ -302,10 +302,12 @@ const doofit::fitter::easyfit::EasyFitResult& doofit::plotting::profiles::Feldma
   if (fit_results_data_scan_.count(scan_point_copy) > 0) {
     const EasyFitResult& fit_result = fit_results_data_scan_.at(scan_point_copy);
     return fit_result;
-  } 
+  } else {
+    throw;
+  }
 }
 
-void doofit::plotting::profiles::FeldmanCousinsProfiler::ReleaseAllFitResults(doofit::toy::ToyStudyStd& toy_study) {
+void doofit::plotting::profiles::FeldmanCousinsProfiler::ReleaseAllFitResults(doofit::toy::ToyStudyStd& ) {
   using namespace doofit::toy;
   using namespace doocore::io;
 
@@ -333,7 +335,7 @@ bool doofit::plotting::profiles::FeldmanCousinsProfiler::FitResultOkay(const doo
 
 double doofit::plotting::profiles::FeldmanCousinsProfiler::FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction) const {
   using namespace doocore::io;
-  TAxis* xaxis = graph.GetXaxis();
+  // TAxis* xaxis = graph.GetXaxis();
 
   double x_lo(xmin);
   double x_hi(xmax);
