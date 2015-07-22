@@ -83,10 +83,10 @@ class PlotSimultaneous : public Plot {
    *  This function will perform the actual plotting and is called by public
    *  functions.
    *
-   *  @param logy use logarithmic y scale
-   *  @param suffix suffix to put after file names
+   *  @param sc_x ScaleType for x-axis
+   *  @param sc_y ScaleType for y-axis
    */
-  virtual void PlotHandler(ScaleType sc_y, std::string suffix="") const;
+  virtual void PlotHandler(ScaleType sc_x, ScaleType sc_y) const;
   
  private:
   /**
