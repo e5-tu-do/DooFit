@@ -44,7 +44,8 @@ PlotSimultaneous::PlotSimultaneous(const PlotConfig& cfg_plot, const RooAbsRealL
   
 }
 
-void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
+void PlotSimultaneous::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
+  std::string suffix="_log";
   const RooSimultaneous& pdf = *dynamic_cast<const RooSimultaneous*>(pdf_);
   const RooAbsData& data     = *datasets_.front();
   RooAbsData& data_nonconst_fucking_roofit = const_cast<RooAbsData&>(data);
@@ -203,7 +204,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
           
   //        TStopwatch sw_plot; sw_plot.Start();
-          plot.PlotHandler(sc_y, suffix);
+          plot.PlotHandler(sc_x, sc_y);
   //        sdebug << "This plot took " << sw_plot << endmsg;
           
           if (set_project != NULL) delete set_project;
@@ -357,7 +358,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           plot.set_ignore_num_cpu(true);
 
   //        TStopwatch sw_plot; sw_plot.Start();
-          plot.PlotHandler(sc_y, suffix);
+          plot.PlotHandler(sc_x, sc_y);
   //        sdebug << "This plot took " << sw_plot << endmsg;
           
           if (set_project != NULL) delete set_project;
@@ -485,7 +486,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     // Only possible way to avoid plotting problems: Do not use NumCPU for complete fit of whole PDF on all data.
     plot.set_ignore_num_cpu(true);
 //    TStopwatch sw_plot; sw_plot.Start();
-    plot.PlotHandler(sc_y, suffix);
+    plot.PlotHandler(sc_x, sc_y);
 //    sdebug << "This plot took " << sw_plot << endmsg;
 
     if (set_project != NULL) delete set_project;

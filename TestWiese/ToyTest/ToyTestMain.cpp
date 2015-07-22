@@ -132,7 +132,7 @@ void PlotResults(const RooAbsPdf& pdf, const RooAbsData& data, const doofit::plo
     RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
     if (var != NULL) {
       Plot myplot(cfg_plot, *var, data, pdf, components);
-      myplot.PlotItLogNoLogY();
+      myplot.PlotIt();
     }
   }
 }
