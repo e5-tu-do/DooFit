@@ -96,11 +96,17 @@ enum ScaleType {
    *   Plot myplot(cfg_plot, mass, *data, RooArgList(p,g,e));
    *   myplot.PlotIt();
    *
+   *   // plot PDF and scale x- and y-axis independently (choose between kLinear, kLogarithmic or kBoth). The default value is kLinear
+   *   Plot myplot2(cfg_plot, mass, *data, RooArgList(p,g,e), "different_scaling");
+   *   myplot2.set_scaletype_x(doofit::plotting::kBoth);
+   *   myplot2.set_scaletype_y(doofit::plotting::kBoth);
+   *   myplot2.PlotIt();
+   *
    *   // plot PDF and specify components via regular expressions
    *   std::vector<std::string> components;
    *   components += "pdf_sig_.*", "pdf_bkg_.*";
-   *   Plot myplot2(cfg_plot, mass, *data, p, components, "mass2");
-   *   myplot2.PlotIt();
+   *   Plot myplot3(cfg_plot, mass, *data, p, components, "mass3");
+   *   myplot3.PlotIt();
    * }
    * @endcode
    *
