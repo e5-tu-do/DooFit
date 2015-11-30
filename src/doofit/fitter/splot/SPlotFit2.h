@@ -13,6 +13,7 @@
 // from RooFit
 #include "RooArgList.h"
 #include "RooArgSet.h"
+#include "RooFitResult.h"
 
 // from DooFit
 #include "doofit/fitter/easyfit/EasyFit.h"
@@ -156,6 +157,7 @@ class SPlotFit2{
   RooAbsPdf* get_pdf_disc_full(){return pdf_;}
   RooAbsPdf* get_pdf_cont(const std::string& comp_name){ return cont_pdfs_prod_[comp_name];}
   const RooArgList& cont_vars() const {return cont_vars_;}
+  RooFitResult* get_fit_result(){return fit_result_;}
   
   bool use_minos()  const {return use_minos_;}
   
@@ -212,6 +214,7 @@ class SPlotFit2{
   doofit::fitter::easyfit::EasyFit* easyfitter_;
 
   TString starting_values_;  
+  RooFitResult* fit_result_;
 };
 
 } //namespace splot
