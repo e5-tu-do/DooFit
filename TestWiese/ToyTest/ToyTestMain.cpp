@@ -132,7 +132,7 @@ void PlotResults(const RooAbsPdf& pdf, const RooAbsData& data, const doofit::plo
     RooRealVar* var = dynamic_cast<RooRealVar*>(arg);
     if (var != NULL) {
       Plot myplot(cfg_plot, *var, data, pdf, components);
-      myplot.PlotItLogNoLogY();
+      myplot.PlotIt();
     }
   }
 }
@@ -191,7 +191,7 @@ void TestToys(int argc, char *argv[]) {
   // toy sample generation
   ToyFactoryStd tfac(cfg_com, cfg_tfac);
   RooDataSet* data = NULL;
-  ToyStudyStd tstudy(cfg_com, cfg_tstudy);
+  ToyStudyStd tstudy(cfg_com, cfg_tstudy, cfg_plot);
 
   // generate 10 toy samples, fit and store results
   for (int i=0; i<10; ++i) {

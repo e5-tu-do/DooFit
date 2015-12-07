@@ -40,6 +40,29 @@ public:
 	      RooAbsReal& _production_asym_,
         int         _tag_sign_os_=+1,
         int         _tag_sign_ss_=+1);
+
+  Coefficient2(const std::string& name,
+        RooAbsReal& _cp_coeff_,
+        RooAbsReal& _cp_coeff_shift_,
+        CoeffType   _coeff_type_,
+        RooAbsCategory& _tag_os_,
+        RooAbsReal& _eta_os_,
+        RooAbsReal& _avg_eta_os_,
+        RooAbsReal& _p0_os_,
+        RooAbsReal& _p1_os_,
+        RooAbsReal& _delta_p0_os_,
+        RooAbsReal& _delta_p1_os_,
+        RooAbsCategory& _tag_ss_,
+        RooAbsReal& _eta_ss_,
+        RooAbsReal& _avg_eta_ss_,
+        RooAbsReal& _p0_ss_,
+        RooAbsReal& _p1_ss_,
+        RooAbsReal& _delta_p0_ss_,
+        RooAbsReal& _delta_p1_ss_,
+        RooAbsReal& _production_asym_,
+        int         _tag_sign_os_=+1,
+        int         _tag_sign_ss_=+1);
+
   Coefficient2(const Coefficient2& other, const char* name=0) ;
   virtual TObject* clone(const char* newname) const { return new Coefficient2(*this,newname); }
   inline virtual ~Coefficient2() { }
@@ -51,8 +74,9 @@ public:
 protected:
 
   RooRealProxy cp_coeff_ ;
+  RooRealProxy cp_coeff_shift_ ;
   CoeffType    coeff_type_ ;
-  
+
   RooCategoryProxy tag_os_ ;
   RooRealProxy eta_os_ ;
   RooRealProxy avg_eta_os_ ;

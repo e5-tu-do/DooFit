@@ -64,6 +64,7 @@ namespace config {
     void Parse(const std::string& str) {
       std::vector<std::string> elements = DecomposeString(str);
       
+      vec_.clear();
       for (std::vector<std::string>::const_iterator it=elements.begin();
            it != elements.end(); ++it) {
         vec_.push_back(boost::lexical_cast<T>(*it));

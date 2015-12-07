@@ -2,6 +2,7 @@
 
 // from STL
 #include <set>
+#include <cmath>
 
 // from ROOT
 #include "TCanvas.h"
@@ -121,6 +122,13 @@ bool doofit::plotting::profiles::LikelihoodProfiler::FitResultOkay(const RooFitR
   }
 }
 
+double polar_r(double xmin, double ymin, double x, double y) {
+  return std::sqrt((x-xmin)*(x-xmin) + (y-ymin)*(y-ymin));
+}
+
+double polar_phi(double xmin, double ymin, double x, double y) {
+  return std::atan2(y-ymin,x-xmin);
+}
 
 void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::string& plot_path) {
   using namespace doocore::io;
@@ -128,17 +136,22 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   std::map<std::string, std::vector<double>> val_scan;
   std::vector<double> val_nll;
 
+  if (fit_results_.empty()) {
+    serr << "LikelihoodProfiler::PlotHandler(...): No fit results loaded. Cannot plot!" << endmsg;
+    throw;
+  }
   for (auto var : scan_vars_) {
     RooRealVar* var_fixed = dynamic_cast<RooRealVar*>(fit_results_.front()->constPars().find(var->GetName()));
     scan_vars_titles_.push_back(var_fixed->GetTitle());
     scan_vars_names_.push_back(var_fixed->GetName());
   }
 
-  // int i = 0;
+  int i = 0;
   double min_nll(0.0);
   double max_nll(0.0);
   std::map<std::string, double> min_scan_val;
   std::map<std::string, double> max_scan_val;
+  int pos_min_nll(0);
 
   Progress p("Processing read in fit results", fit_results_.size());
   unsigned int num_neglected(0);
@@ -155,28 +168,49 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
 
         // sdebug << var->GetName() << " = " << var_fixed->getVal() << ", ";
 
-        val_scan[var->GetName()].push_back(var_fixed->getVal());
-
-        if (min_scan_val.count(var->GetName()) == 0 || min_scan_val[var->GetName()] > var_fixed->getVal()) {
-          min_scan_val[var->GetName()] = var_fixed->getVal();
+        double value{var_fixed->getVal()};        
+        if (std::abs(value) < 1e-12) {
+          value = 0.0;
         }
-        if (max_scan_val.count(var->GetName()) == 0 || max_scan_val[var->GetName()] < var_fixed->getVal()) {
-          max_scan_val[var->GetName()] = var_fixed->getVal();
+
+        // std::string name(var->GetName());
+        // if (name == "par_bssig_time_C") {
+        //   // sdebug << "par_bssig_time_C" << endmsg;
+        //   value -= 0.25;
+        // }
+
+        // if (name == "par_bssig_time_S") {
+        //   // sdebug << "par_bssig_time_S" << endmsg;
+        //   value -= 0.00;
+        // }
+
+        // sdebug << "value is: " << value << " (was " << var_fixed->getVal() << ")" << endmsg;
+
+        val_scan[var->GetName()].push_back(value);
+
+        if (min_scan_val.count(var->GetName()) == 0 || min_scan_val[var->GetName()] > value) {
+          min_scan_val[var->GetName()] = value;
+        }
+        if (max_scan_val.count(var->GetName()) == 0 || max_scan_val[var->GetName()] < value) {
+          max_scan_val[var->GetName()] = value;
         }
       }
 
-      // sdebug << endmsg;
       // sdebug << "  nll = " << result->minNll() << endmsg;
+      // sdebug << endmsg;
 
       if (min_nll == 0.0 || min_nll > result->minNll()) {
+        sdebug << "minNLL was " <<min_nll << ", will be: " <<result->minNll()<< " at " << i << endmsg;
+
         min_nll = result->minNll();
+        pos_min_nll = val_nll.size();
       }
       if (max_nll == 0.0 || max_nll < result->minNll()) {
         max_nll = result->minNll();
       }
       val_nll.push_back(result->minNll());
 
-      ++p;
+      ++p;++i;
     } else { // if (FitResultOkay(*result)) {
       //swarn << "Neglecting fit result!" << endmsg;
       ++num_neglected;
@@ -189,6 +223,8 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     swarn << "Number of neglected fit results: " << num_neglected << " (" << static_cast<double>(num_neglected)/val_nll.size()*100.0 << "%)" << endmsg;
   }
 
+  sdebug << "minNLL = " << min_nll << endmsg;
+
   for (auto &nll : val_nll) {
     if (nll != 0.0) {
       nll -= min_nll;
@@ -200,10 +236,12 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     gStyle->SetPadLeftMargin(0.12);
     gStyle->SetTitleOffset(0.75, "y");
   } else if (val_scan.size() == 2) {
-    doocore::lutils::setStyle("2d");
+    doocore::lutils::setStyle("LHCbOptimized2d");
     //gStyle->SetNumberContours(999);
     //gStyle->SetPadRightMargin(0.16);
-    gStyle->SetPadRightMargin(0.06);
+    gStyle->SetPadRightMargin(0.03);
+    gStyle->SetPadBottomMargin(0.17);
+    gStyle->SetPadLeftMargin(0.15);
     gStyle->SetTitleOffset(0.75, "z");
   }
 
@@ -228,6 +266,12 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     }
 
     TGraph graph(val_nll.size(), &val_x_sort[0], &val_nll_sort[0]);
+
+    // print out 1sigma CLs
+    double xmin(val_x_sort.front());
+    double xmax(val_x_sort.back());
+    std::pair<double, double> cl_1sigma(FindGraphXValues(graph, xmin, xmax, 0.5), FindGraphXValues(graph, xmin, xmax, 0.5, -1.0));
+    sinfo << "1 sigma CL interval : [" << cl_1sigma.first << ", " << cl_1sigma.second << "]" << endmsg;
 
     if (val_nll.size() < 25) {
       graph.Draw("APC");
@@ -257,6 +301,7 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     const std::vector<double>& val_x = val_scan[scan_vars_names_.at(0)];
     const std::vector<double>& val_y = val_scan[scan_vars_names_.at(1)];
 
+    // pos_min_nll
     // sdebug << val_x << endmsg;
     // sdebug << val_y << endmsg;
 
@@ -370,26 +415,74 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     }
     p_hist.Finish();
 
+    sdebug << "Minimum nll at vector position " << pos_min_nll << ", that is x = " << val_x[pos_min_nll] << ", y = " << val_y[pos_min_nll] << endmsg;
+    sdebug << "Minimum nll at bin number " << histogram_dbg.FindBin(val_x.at(pos_min_nll), val_y.at(pos_min_nll)) << endmsg;
+    int bin_min_nll = histogram_dbg.FindBin(val_x.at(pos_min_nll), val_y.at(pos_min_nll));
+    int bin_min_x(0), bin_min_y(0), bin_min_z(0);
+    histogram_dbg.GetBinXYZ(bin_min_nll, bin_min_x, bin_min_y, bin_min_z);
+
     unsigned int num_interpolated_bins(0);
     for (int i=1; i<=histogram.GetNbinsX(); ++i) {
       for (int j=1; j<=histogram.GetNbinsY(); ++j) {
         if (histogram.GetBinContent(i,j) == 0.0) {
           int num_interpolation(0);
           double interpolation(0.0);
-          for (int ii=std::max(i-1,1); ii<std::min(i+1,histogram.GetNbinsX()); ++ii) {
-            for (int jj=std::max(j-1,1); jj<std::min(j+1,histogram.GetNbinsY()); ++jj) {
+          double sum_weights(0.0);
+
+          // double value_neighbor_x_low(0.0);
+          // int    pos_neighbor_x_low(0);
+          // double value_neighbor_x_high(0.0);
+          // int    pos_neighbor_x_high(0);
+
+          // for (int ii=i; ii>1; --ii) {
+          //   if (histogram.GetBinContent(ii,j) != 0.0) {
+          //     value_neighbor_x_low = histogram.GetBinContent(ii,j);
+          //     pos_neighbor_x_low = ii;
+          //     sdebug << "in bin " << i << "," << j << ": found next lower x neighbor in bin " << ii << "," << j << " as " << value_neighbor_x_low << endmsg;
+          //     break;
+          //   }
+          // }
+          // for (int ii=i; ii<=histogram.GetNbinsX(); ++ii) {
+          //   if (histogram.GetBinContent(ii,j) != 0.0) {
+          //     value_neighbor_x_high = histogram.GetBinContent(ii,j);
+          //     pos_neighbor_x_high = ii;
+          //     sdebug << "in bin " << i << "," << j << ": found next higher x neighbor in bin " << ii << "," << j << " as " << value_neighbor_x_high << endmsg;
+          //     break;
+          //   }
+          // }
+
+          // sdebug << "in bin " << i << "," << j << ": r   = " << polar_r(bin_min_x, bin_min_y, i, j) << endmsg;
+          // sdebug << "in bin " << i << "," << j << ": phi = " << polar_phi(bin_min_x, bin_min_y, i, j) << endmsg;
+
+          for (int ii=std::max(i-2,1); ii<std::min(i+2,histogram.GetNbinsX()); ++ii) {
+            for (int jj=std::max(j-2,1); jj<std::min(j+2,histogram.GetNbinsY()); ++jj) {
               if (histogram.GetBinContent(ii,jj) != 0.0) {
                 // sdebug << ii << " - " << jj << endmsg;
-                interpolation += histogram.GetBinContent(ii,jj);
+
+                double dist_r   = std::abs(polar_r(bin_min_x, bin_min_y, i, j)   - polar_r(bin_min_x, bin_min_y, ii, jj));
+                double dist_phi = std::abs(polar_phi(bin_min_x, bin_min_y, i, j) - polar_phi(bin_min_x, bin_min_y, ii, jj));
+                double weight   = std::min(10000.0,1.0/std::tan(std::min(dist_r, 1.57)));
+                // sdebug << "  r distance to   (" << ii << "," << jj << ") = " << dist_r << endmsg;
+                // sdebug << "  phi distance to (" << ii << "," << jj << ") = " << dist_phi << endmsg;
+                // sdebug << "  weight to       (" << ii << "," << jj << ") = " << weight << endmsg;
+
+                // sdebug << histogram.GetBinContent(ii,jj) << endmsg;
+                // sdebug << weight*histogram.GetBinContent(ii,jj) << endmsg;
+
+                interpolation += weight*histogram.GetBinContent(ii,jj);
                 ++num_interpolation;
+                sum_weights += weight;
               }
             }
           }
 
-          interpolation /= num_interpolation;
-          // sdebug << "Bin (" << i << "," << j << ") is zero. Will interpolate with " <<  num_interpolation << " bins to " << interpolation << "." << endmsg;
-          histogram.SetBinContent(i,j, interpolation);
-          ++num_interpolated_bins;
+          if (num_interpolation > 0) {
+            interpolation /= sum_weights;
+            // sdebug << "Bin (" << i << "," << j << ") is zero. Will interpolate with " <<  num_interpolation << " bins to " << interpolation << "." << endmsg;
+            histogram.SetBinContent(i,j, interpolation);
+            // histogram_dbg.SetBinContent(i,j, interpolation);
+            ++num_interpolated_bins;
+          }
         }
       }
     }
@@ -432,7 +525,16 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
     TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
     gStyle->SetNumberContours(NCont);
     gStyle->SetPaintTextFormat(".1f");
-    histogram_dbg.Draw("COLZ");
+
+    // c.SetPadBottomMargin(0.6);
+
+    histogram_dbg.GetZaxis()->SetRangeUser(min_nll, max_nll);
+    histogram_dbg.SetXTitle(scan_vars_titles_.at(0).c_str());
+    histogram_dbg.SetYTitle(scan_vars_titles_.at(1).c_str());
+    histogram_dbg.SetZTitle("#DeltaLL");
+
+    histogram_dbg.SetContour(stops_cl.size(), stops_cl.data());
+    histogram_dbg.Draw("COL"); // use COLZ if you want to draw z axis
     doocore::lutils::printPlot(&c, "profile_dbg", plot_path, true);
 
     // fancy plot
@@ -459,4 +561,53 @@ void doofit::plotting::profiles::LikelihoodProfiler::PlotHandler(const std::stri
   }
 }
 
+double doofit::plotting::profiles::LikelihoodProfiler::FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction) const {
+  using namespace doocore::io;
+  // TAxis* xaxis = graph.GetXaxis();
 
+  double x_lo(xmin);
+  double x_hi(xmax);
+
+  double x_start(xmin);
+  double x_end(xmax);
+  if (direction < 0.0) {
+    x_start = xmax;
+    x_end = xmin;
+  }
+
+  // sdebug << "increment " << (x_end - x_start)/100.0 << endmsg;
+  // sdebug << "x_start " << x_start << endmsg;
+  // sdebug << "x_end " << x_end << endmsg;
+  // sdebug << "value " << value << endmsg;
+
+  for (double x=x_start; x*direction<x_end*direction; x+=(x_end - x_start)/100.0) {
+    double y(graph.Eval(x, nullptr, ""));
+    // sdebug << "x = " << x << ", y = " << y << endmsg;
+
+    // prescan in 100 bins for monotonically ___decreasing___ function!
+    if (y < value) {
+      x_lo = x;
+      break; // if function is instead increasing, the break has to follow the x_hi = x assignment
+    } else if (y > value) {
+      x_hi = x;
+    }
+  }
+
+  double eps(1e-6);
+  double x_test, y;
+  while (std::abs(x_hi-x_lo) > eps) {
+    x_test = (x_lo+x_hi)/2.0;
+    y = graph.Eval(x_test, nullptr, "");
+    
+    // sdebug << "it:  " << x_lo << " - " << x_hi << " with y = " << y << endmsg;
+
+    if (y < value) {
+      x_lo = x_test;
+    } else if (y > value) {
+      x_hi = x_test;
+    }
+  }
+
+  // sdebug << "after:  " << x_lo << " - " << x_hi << endmsg;
+  return (x_lo+x_hi)/2.0;
+}

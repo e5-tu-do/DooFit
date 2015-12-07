@@ -43,7 +43,7 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
   } else {
     
     gROOT->SetStyle("Plain");
-    lu::setStyle();
+    lu::setStyle("LHCbOptimized");
 
     RooArgList par_list_float_final = fit_result_.floatParsFinal();
     TH2* hist_corr = fit_result_.correlationHist();
@@ -99,6 +99,7 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
         bin_x++;
       }
       // hist_corr->Print();
+      delete hist_corr; hist_corr = nullptr;
       hist_corr = hist_selected;
       // hist_corr->Print();
       par_list_float_final.removeAll();
@@ -122,17 +123,19 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
     axis->SetLabelSize(label_size_x_axis);
     axis->SetLabelFont(42); 
     axis->LabelsOption("v");
+    axis->SetLabelOffset(0.005);
     RenameAxisLabel(axis, par_list_float_final);
     axis = hist_corr->GetYaxis();
     axis->SetLabelSize(label_size_y_axis);
     axis->SetLabelFont(42);
     axis->LabelsOption("h");
+    axis->SetLabelOffset(0.005);
     max_xsize = RenameAxisLabel(axis, par_list_float_final) * label_scale_;
     
   //  sdebug << "max_xsize = " << max_xsize << endmsg;
     
     TCanvas canvas("canvas","canvas",800,600);
-    canvas.SetRightMargin(0.1);
+    canvas.SetRightMargin(0.15);
     canvas.SetLeftMargin(max_xsize*0.35); 
     canvas.SetTopMargin(0.05);
     canvas.SetBottomMargin(max_xsize*0.45);
@@ -162,7 +165,12 @@ void doofit::plotting::correlations::CorrelationPlot::PlotHandler(const std::str
     Double_t blue[NRGBs]  = { 0.20 , 1.00 , 1.00 , 1.00 , 1.00 , 1.00 , 0.20 , 0.00 , 0.00 };
     TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
     gStyle->SetNumberContours(NCont);
-    gStyle->SetPaintTextFormat(".1f");
+
+    if (hist_corr->GetNbinsX() > 15) {
+      gStyle->SetPaintTextFormat(".1f");
+    } else {
+      gStyle->SetPaintTextFormat(".2f");
+    }
     
     float max = hist_corr->GetBinContent(hist_corr->GetMaximumBin());
     float min = hist_corr->GetBinContent(hist_corr->GetMinimumBin());

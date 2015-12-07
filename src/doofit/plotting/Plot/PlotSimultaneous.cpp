@@ -38,19 +38,21 @@ namespace plotting {
 
 PlotSimultaneous::PlotSimultaneous(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const RooAbsData& dataset, const RooSimultaneous& pdf, const std::vector<std::string>& components, const std::string& plot_name)
 : Plot(cfg_plot, dimension, dataset, pdf, components, plot_name),
-  components_regexps_(components)
+  components_regexps_(components),
+  plot_asym_(false)
 {
-  
+
 }
 
-void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
+void PlotSimultaneous::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
+  std::string suffix="_log";
   const RooSimultaneous& pdf = *dynamic_cast<const RooSimultaneous*>(pdf_);
   const RooAbsData& data     = *datasets_.front();
   RooAbsData& data_nonconst_fucking_roofit = const_cast<RooAbsData&>(data);
   RooAbsCategoryLValue& sim_cat = const_cast<RooAbsCategoryLValue&>(pdf.indexCat());
   //TList* data_split = data.split(sim_cat);
   std::string plot_name;
-  
+
   std::map<std::string, RooCategory*> categories;
 
   RooCatType* sim_cat_type = NULL;
@@ -61,17 +63,17 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     RooAbsPdf& sub_pdf = *(pdf.getPdf(sim_cat_type->GetName()));
     if (&sub_pdf != NULL) {
       //RooAbsData& sub_data = *dynamic_cast<RooAbsData*>(data_split->FindObject(sim_cat_type->GetName()));
-      // sim_cat.Print();
-      // sdebug << sim_cat_type->getVal() << endmsg;
+
+
       sim_cat.setIndex(sim_cat_type->getVal());
-      
+
       std::string cut_string = "";
       const RooSuperCategory* super_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
       const RooCategory* std_cat        = dynamic_cast<const RooCategory*>(&sim_cat);
       if (super_cat != NULL) {
         RooLinkedListIter* it  = (RooLinkedListIter*)super_cat->inputCatList().createIterator();
         RooAbsArg*         arg = NULL;
-        
+
         while ((arg=(RooAbsArg*)it->Next())) {
           RooCategory* cat = dynamic_cast<RooCategory*>(arg);
           if (cat != NULL) {
@@ -84,9 +86,9 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
             serr << "Error in PlotSimultaneous::PlotHandler(...): Cannot handle category component " << arg->GetName() << endmsg;
           }
         }
-        
+
         //sdebug << "Cut string: " << cut_string << endmsg;
-        
+
         delete it;
       } else if (std_cat != NULL) {
         cut_string = std::string(std_cat->GetName()) + "==" + std::to_string(std_cat->getIndex());
@@ -96,7 +98,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
       if (config_plot_.simultaneous_plot_all_categories()) {
         RooAbsData* sub_data2 = data_nonconst_fucking_roofit.reduce(Cut(cut_string.c_str()));
         RooAbsData& sub_data = *sub_data2;
-        
+
         if (&sub_data == NULL) {
           serr << "PlotSimultaneous::PlotHandler(...): sub dataset for category " << sim_cat_type->GetName() << " empty. Will not plot. " << endmsg;
         } else {
@@ -104,19 +106,29 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           RooRealVar var(dynamic_cast<const RooRealVar&>(dimension_));
           sub_data.getRange(var, min, max);
           //sdebug << "Range: " << min << "," << max << endmsg;
-          
+
           //plot_name = std::string(dimension_.GetName()) + "_" + sim_cat_type->GetName();
           plot_name = plot_name_ + "_" + sim_cat_type->GetName();
           Plot plot(config_plot_, dimension_, sub_data, sub_pdf, components_regexps_, plot_name);
+
+          std::string name_category(sim_cat_type->GetName());
+          const std::map<std::string, std::string>& label_map(config_plot_.simultaneous_category_labels());
+          // sdebug << "This category is " << name_category << endmsg;
+          if (label_map.count(name_category) > 0) {
+            //sdebug << name_category << " - " << label_map.at(name_category) << endmsg;
+            plot.set_plot_label_additional(label_map.at(name_category));
+          }
+
           plot.plot_args_pdf_  = this->plot_args_pdf_;
           plot.plot_args_data_ = this->plot_args_data_;
           plot.plot_range_     = this->plot_range_;
-          
+          plot.plot_asymmetry_ = this->plot_asym_;
+
           // 20130905 FK: deactivated this manual setting of the plot range as it
           //              can dramatically increase plot time. Maybe need to
           //              rethink that later
           //plot.AddPlotArg(Range(min,max));
-          
+
           // go through supplied cmd args and if necessary adapt ProjWData argument
           bool project_arg_found         = false;
           RooArgSet* set_project         = NULL;
@@ -129,19 +141,19 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
               sinfo << "Found ProjWData() argument. Will change projection dataset accordingly." << endmsg;
               project_arg_found = true;
               binned_projection = it->getInt(0);
-              
+
               // check for binned projection and if so generate binned dataset here to
               // accelerate projection
               set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
               if (binned_projection) {
                 sinfo << " Binned projection is requested. Will generate a binned dataset to accelerate projection." << endmsg;
-                
+
                 data_reduced = sub_data.reduce(*set_project);
                 std::string name_data_hist = std::string(sub_data.GetName()) + "_hist" + sim_cat_type->GetName();
                 data_project = new RooDataHist(name_data_hist.c_str(), "binned projection dataset", *data_reduced->get(), *data_reduced);
 
                 sinfo << " Created binned dataset with " << data_project->numEntries() << " bins." << endmsg;
-                
+
                 unsigned int num_nonempty_bins = 0;
                 for (int i=0; i<data_project->numEntries(); ++i) {
                   data_project->get(i);
@@ -157,16 +169,16 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
                 data_project = data_reduced = sub_data.reduce(*set_project);
                 //data_project = &sub_data;
               }
-              
+
   //            //data_reduced = &sub_data;
   //            swarn << "Projection set: " << *set_project << endmsg;
   //            data.Print();
   //            sub_data.Print();
   //            data_reduced->Print();
-  //            
+  //
   //            const RooAbsData* orig_data = dynamic_cast<const RooAbsData*>(it->getObject(1));
   //            orig_data->Print();
-              
+
               // create the new projection argument
               *it = ProjWData(*dynamic_cast<const RooArgSet*>(it->getObject(0)),
                               *data_project, // works, WTF?
@@ -177,8 +189,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
                               binned_projection);
             }
           }
-          
-          doocore::lutils::setStyle("LHCbOptimized");
+
+          doocore::lutils::setStyle(config_plot_.plot_style());
           config_plot_.OnDemandOpenPlotStack();
           TCanvas c1("c1","c1",900,900);
           std::string label_text1 = std::string("Next plots: dimension ") + dimension_.GetName() + ", category " + sim_cat_type->GetName();
@@ -192,11 +204,11 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           label.SetFillColor(0);
           label.Draw();
           c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
-          
+
   //        TStopwatch sw_plot; sw_plot.Start();
-          plot.PlotHandler(sc_y, suffix);
+          plot.PlotHandler(sc_x, sc_y);
   //        sdebug << "This plot took " << sw_plot << endmsg;
-          
+
           if (set_project != NULL) delete set_project;
           if (data_reduced != NULL && data_reduced != &sub_data) {
             delete data_reduced;
@@ -208,17 +220,17 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           if (binned_projection) {
             delete data_project;
           }
-          
+
           ++num_slices;
         }
-        
+
         if (sub_data2 != NULL) {
           delete sub_data2;
         }
       }
     }
   }
-  
+
   if (config_plot_.simultaneous_plot_all_slices()) {
     for (auto pair_cat : categories) {
       RooCategory* category = pair_cat.second;
@@ -244,10 +256,20 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
 
           plot_name = plot_name_ + "_" + cat_type->GetName();
           Plot plot(config_plot_, dimension_, sub_data, pdf, components_regexps_, plot_name);
+
+          std::string name_category(cat_type->GetName());
+          const std::map<std::string, std::string>& label_map(config_plot_.simultaneous_category_labels());
+          if (label_map.count(name_category) > 0) {
+            //sdebug << name_category << " - " << label_map.at(name_category) << endmsg;
+            plot.set_plot_label_additional(label_map.at(name_category));
+          }
+
+
           plot.plot_args_pdf_  = this->plot_args_pdf_;
           plot.plot_args_data_ = this->plot_args_data_;
           plot.plot_range_     = this->plot_range_;
-                  
+          plot.plot_asymmetry_ = this->plot_asym_;
+
           // go through supplied cmd args and if necessary adapt ProjWData argument
           bool project_arg_found         = false;
           RooArgSet* set_project         = NULL;
@@ -263,10 +285,10 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
               sinfo << "Found ProjWData() argument. Will join with " << sim_cat.GetName() << " on same dataset." << endmsg;
               project_arg_found = true;
               binned_projection = it->getInt(0);
-              
+
               // copy argset for projection and add simultaneous category variables
               set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
-              
+
               const RooSuperCategory* super_sim_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
               if (super_sim_cat) {
                 // The simultaneous category is a super category and will not be in the
@@ -275,19 +297,19 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
               } else {
                 set_project->add(sim_cat);
               }
-              
+
               // check for binned projection and if so generate binned dataset here to
               // accelerate projection
               if (binned_projection) {
                 sinfo << " Binned projection is requested. Will generate a binned dataset to accelerate projection." << endmsg;
-                
+
                 RooAbsData* data_proj = const_cast<RooAbsData*>(data_all);
                 data_reduced = data_proj->reduce(*set_project);
                 std::string name_data_hist = std::string(data_proj->GetName()) + "_hist";
                 data_project = new RooDataHist(name_data_hist.c_str(), "binned projection dataset", *data_reduced->get(), *data_reduced);
-                
+
                 sinfo << " Created binned dataset with " << data_project->numEntries() << " bins." << endmsg;
-                
+
                 unsigned int num_nonempty_bins = 0;
                 for (int i=0; i<data_project->numEntries(); ++i) {
                   data_project->get(i);
@@ -304,7 +326,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
                 data_project = data_reduced = data_proj->reduce(*set_project);
                 //data_project = dynamic_cast<const RooAbsData*>(it->getObject(1));
               }
-              
+
               // create the new projection argument
               *it = ProjWData(*set_project,
                               *data_project,
@@ -319,8 +341,8 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
 
           // RooCmdArg arg_slice = Slice(*category);
           // plot.AddPlotArg(arg_slice);
-          
-          doocore::lutils::setStyle("LHCbOptimized");
+
+          doocore::lutils::setStyle(config_plot_.plot_style());
           config_plot_.OnDemandOpenPlotStack();
           TCanvas c1("c1","c1",900,900);
           std::string label_text1 = std::string("Next plots: dimension ") + dimension_.GetName() + ", category " + cat_type->GetName();
@@ -334,14 +356,14 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           label.SetFillColor(0);
           label.Draw();
           c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
-          
+
           // Only possible way to avoid plotting problems: Do not use NumCPU for complete fit of whole PDF on all data.
           plot.set_ignore_num_cpu(true);
 
   //        TStopwatch sw_plot; sw_plot.Start();
-          plot.PlotHandler(sc_y, suffix);
+          plot.PlotHandler(sc_x, sc_y);
   //        sdebug << "This plot took " << sw_plot << endmsg;
-          
+
           if (set_project != NULL) delete set_project;
           if (data_reduced != NULL && data_reduced != &sub_data) {
             delete data_reduced;
@@ -350,7 +372,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           if (binned_projection) {
             delete data_project;
           }
-          
+
           //++num_slices;
 
         }
@@ -375,14 +397,30 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     label.SetFillColor(0);
     label.Draw();
     c1.Print(std::string(config_plot_.plot_directory()+"/pdf/AllPlots"+config_plot_.plot_appendix()+".pdf").c_str());
-    
+
     //  plot_name = std::string(dimension_.GetName()) + "_summed";
     plot_name = plot_name_ + "_summed";
     Plot plot(config_plot_, dimension_, data, *pdf_, components_regexps_, plot_name);
+
+    const std::map<std::string, std::string>& label_map(config_plot_.simultaneous_category_labels());
+    // sdebug << "summed plot, found " << label_map.count("summed") << " map entries." << endmsg;
+
+    // for (auto label : label_map) {
+    //   sdebug << "label " << label.first << " - " << label.second << endmsg;
+    // }
+
+    if (label_map.count("summed") > 0) {
+      //sdebug << name_category << " - " << label_map.at(name_category) << endmsg;
+      plot.set_plot_label_additional(label_map.at("summed"));
+    } else {
+      plot.plot_label_additional_  = this->plot_label_additional_;
+    }
+
     plot.plot_args_pdf_  = this->plot_args_pdf_;
     plot.plot_args_data_ = this->plot_args_data_;
     plot.plot_range_     = this->plot_range_;
-    
+    plot.plot_asymmetry_ = this->plot_asym_;
+
     // go through supplied cmd args and if necessary merge ProjWData arguments
     bool project_arg_found         = false;
     RooArgSet* set_project         = NULL;
@@ -394,14 +432,14 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
          it != plot.plot_args_pdf_.end(); ++it) {
       if (std::string(it->GetName()) == "ProjData") {
         data_all = dynamic_cast<const RooAbsData*>(it->getObject(1));
-        
+
         sinfo << "Found ProjWData() argument. Will join with " << sim_cat.GetName() << " on same dataset." << endmsg;
         project_arg_found = true;
         binned_projection = it->getInt(0);
-        
+
         // copy argset for projection and add simultaneous category variables
         set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
-        
+
         const RooSuperCategory* super_sim_cat = dynamic_cast<const RooSuperCategory*>(&sim_cat);
         if (super_sim_cat) {
           // The simultaneous category is a super category and will not be in the
@@ -410,19 +448,19 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
         } else {
           set_project->add(sim_cat);
         }
-        
+
         // check for binned projection and if so generate binned dataset here to
         // accelerate projection
         if (binned_projection) {
           sinfo << " Binned projection is requested. Will generate a binned dataset to accelerate projection." << endmsg;
-          
+
           RooAbsData* data_proj = const_cast<RooAbsData*>(data_all);
           data_reduced = data_proj->reduce(*set_project);
           std::string name_data_hist = std::string(data_proj->GetName()) + "_hist";
           data_project = new RooDataHist(name_data_hist.c_str(), "binned projection dataset", *data_reduced->get(), *data_reduced);
-          
+
           sinfo << " Created binned dataset with " << data_project->numEntries() << " bins." << endmsg;
-          
+
           unsigned int num_nonempty_bins = 0;
           for (int i=0; i<data_project->numEntries(); ++i) {
             data_project->get(i);
@@ -439,7 +477,7 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
           data_project = data_reduced = data_proj->reduce(*set_project);
           //data_project = dynamic_cast<const RooAbsData*>(it->getObject(1));
         }
-        
+
         // create the new projection argument
         *it = ProjWData(*set_project,
                         *data_project,
@@ -448,11 +486,11 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
     }
     RooArgSet set_project_local(sim_cat);
     if (!project_arg_found) plot.AddPlotArg(ProjWData(set_project_local,data));
-    
+
     // Only possible way to avoid plotting problems: Do not use NumCPU for complete fit of whole PDF on all data.
     plot.set_ignore_num_cpu(true);
 //    TStopwatch sw_plot; sw_plot.Start();
-    plot.PlotHandler(sc_y, suffix);
+    plot.PlotHandler(sc_x, sc_y);
 //    sdebug << "This plot took " << sw_plot << endmsg;
 
     if (set_project != NULL) delete set_project;
@@ -466,13 +504,13 @@ void PlotSimultaneous::PlotHandler(ScaleType sc_y, std::string suffix) const {
       delete data_project;
     }
   }
-  
+
 //  TIter next(data_split);
 //  TObject *obj = NULL;
 //  while ((obj = next())) {
 //    delete obj;
 //  }
 }
-  
+
 } // namespace plotting
 } // namespace doofit

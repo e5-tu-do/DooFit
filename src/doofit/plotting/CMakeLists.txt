@@ -5,7 +5,7 @@ fitresult/FitResultPrinter.h fitresult/FitResultPrinter.cpp
 profiles/LikelihoodProfiler.h profiles/LikelihoodProfiler.cpp
 profiles/FeldmanCousinsProfiler.h profiles/FeldmanCousinsProfiler.cpp)
 
-target_link_libraries(Plotting Toy Config ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(Plotting Toy dfFitter Config ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
 
 install(TARGETS Plotting DESTINATION lib)
 install(FILES Plot/Plot.h Plot/PlotSimultaneous.h Plot/PlotConfig.h DESTINATION include/doofit/plotting/Plot)

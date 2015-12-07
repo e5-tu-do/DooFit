@@ -122,6 +122,8 @@ class LikelihoodProfiler {
    */
   bool FitResultOkay(const RooFitResult& fit_result) const;
 
+  double FindGraphXValues(TGraph& graph, double xmin, double xmax, double value, double direction=+1.0) const;
+
  private:
   /**
    *  @brief PlotConfig instance to use

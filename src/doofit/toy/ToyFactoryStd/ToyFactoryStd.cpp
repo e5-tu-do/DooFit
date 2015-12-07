@@ -3,6 +3,7 @@
 // STL
 #include <cstring>
 #include <vector>
+#include <csignal>
 
 // POSIX/UNIX
 #include <unistd.h>
@@ -47,13 +48,22 @@ using namespace doocore::io;
 
 namespace doofit {
 namespace toy {
+
+  bool ToyFactoryStd::signal_caught_ = false;
+  jmp_buf ToyFactoryStd::jump_buffer_;
+
   ToyFactoryStd::ToyFactoryStd(const config::CommonConfig& cfg_com, const ToyFactoryStdConfig& cfg_tfac) :
   config_common_(cfg_com),
   config_toyfactory_(cfg_tfac)
   {
+    using namespace doocore::io;
     if (cfg_tfac.random_seed()>=0) {
     	RooRandom::randomGenerator()->SetSeed(cfg_tfac.random_seed());
+    // } else {
+    //   swarn << "ToyFactoryStd::ToyFactoryStd(): Random seed set to illegal value " << cfg_tfac.random_seed() << ". Will not touch random generator." << endmsg;
     }
+    signal(SIGABRT, SignalHandler);
+    signal_caught_ = false;
   }
   
   ToyFactoryStd::~ToyFactoryStd(){
@@ -199,6 +209,9 @@ namespace toy {
       set_constrained_parameters_.removeAll();
 
       sinfo << "Drawing values of constrained parameters." << endmsg;
+      swarn << "WARNING: According to arXiv:1210.7141 this is the wrong way to handle constraints in toy generation!" << endmsg;
+      swarn << "You should not draw new true values of constrained parameters for the generation stage, but rather" << endmsg;
+      swarn << "draw a new constrained mean for the following fit." << endmsg;
       sinfo.set_indent(sinfo.indent()+2);
       
       TIterator* arg_it = argset_constraining_pdfs->createIterator();
@@ -209,6 +222,8 @@ namespace toy {
         RooAbsPdf* constr_pdf    = dynamic_cast<RooAbsPdf*>(arg);
         RooArgSet* constr_params = constr_pdf->getObservables(parameters);
         
+        // constr_pdf->getParameters(parameters)->Print();
+
         sinfo << "Drawing for " << *constr_params << " with PDF " << constr_pdf->GetName() << endmsg;
         
         if (config_toyfactory_.parameter_read_file().size() > 0) {
@@ -455,6 +470,24 @@ namespace toy {
     return matched_sections;
   }
   
+  
+
+  void ToyFactoryStd::SignalHandler( int signum ) {
+    using namespace doocore::io;
+    if (signum == SIGABRT) {
+      swarn << "Caught SIGABRT signal. Problematic generation occured. Will drop the whole sample." << endmsg;
+      signal_caught_ = true;
+      //jmp_buf jump_buffer_;
+      longjmp(jump_buffer_, 1);
+    } else {
+      // cleanup and close up stuff here  
+      // terminate program  
+      exit(signum);
+    }
+  }
+
+
+
   RooDataSet* ToyFactoryStd::GenerateForPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     RooDataSet* data = NULL;
     bool have_to_delete_proto_data = false;
@@ -590,11 +623,24 @@ namespace toy {
         data = dynamic_cast<RooDataSet*>(proto_set->reduce(EventRange(0, yield_to_generate)));
       } else {
         if (yield_to_generate > 0.0) {
+
+          // set jump point in case RooFit sends SIGABRT (only way to catch this...)
+          int val = setjmp(jump_buffer_);
+          //sdebug << "val = " << val << ", signal_caught_ = " << signal_caught_ << endmsg;
+
+          if (val == 0.0 && !signal_caught_) {
 #if ROOT_VERSION_CODE >= ROOT_VERSION(5,32,0)
-          data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
+            data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg, AutoBinned(false));
 #else
-          data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
+            data = pdf.generate(*obs_argset, yield_to_generate, extend_arg, proto_arg);
 #endif
+          } else {
+            // if SIGABRT is caught, throw a proper exception
+            serr << "ToyFactoryStd::GenerateForPdf(...): RooFit threw SIGABRT signal. Cannot continue." << endmsg;
+            signal(SIGABRT, SIG_DFL);
+            sinfo.set_indent(0);
+            throw RooFitSendingSIGABRTException();
+          }
         } else {
           // in case expected yield is zero, RooFit will still generate 1 event. Fix that with an empty dataset.
 
