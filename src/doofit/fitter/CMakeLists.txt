@@ -1,11 +1,11 @@
-add_library(dfFitter SHARED 
+add_library(dfFitter STATIC
   splot/SPlotFit2.h       splot/SPlotFit2.cpp
   easyfit/EasyFit.h       easyfit/EasyFit.cpp
   easyfit/EasyFitResult.h easyfit/EasyFitResult.cpp
   AbsFitter.h             AbsFitter.cpp
 )
 
-target_link_libraries(dfFitter ${ALL_LIBRARIES} ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(dfFitter Plotting ${ALL_LIBRARIES} ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
 
 install(TARGETS dfFitter DESTINATION lib)
 install(FILES splot/SPlotFit2.h DESTINATION include/doofit/fitter/splot)

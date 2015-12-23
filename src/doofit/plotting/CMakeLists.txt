@@ -1,4 +1,4 @@
-add_library(Plotting SHARED Plot/Plot.h Plot/Plot.cpp Plot/PlotSimultaneous.h
+add_library(Plotting STATIC Plot/Plot.h Plot/Plot.cpp Plot/PlotSimultaneous.h
 Plot/PlotSimultaneous.cpp Plot/PlotConfig.h Plot/PlotConfig.cpp
 correlations/CorrelationPlot.h correlations/CorrelationPlot.cpp
 fitresult/FitResultPrinter.h fitresult/FitResultPrinter.cpp
