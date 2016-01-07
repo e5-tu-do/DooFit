@@ -645,7 +645,9 @@ namespace toy {
           // in case expected yield is zero, RooFit will still generate 1 event. Fix that with an empty dataset.
 
           RooArgSet args(*obs_argset);
-          args.add(*proto_set->get());
+          if (proto_set != NULL) {
+            args.add(*proto_set->get());
+          }
           // args.Print();
 
           data = new RooDataSet("data_empty", "data_empty", args);
