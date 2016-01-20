@@ -12,6 +12,6 @@ install(TARGETS dfFitter DESTINATION lib)
 install(FILES splot/SPlotFit2.h DESTINATION include/doofit/fitter/splot)
 install(FILES easyfit/EasyFit.h DESTINATION include/doofit/fitter/easyfit)
 install(FILES easyfit/EasyFitResult.h DESTINATION include/doofit/fitter/easyfit)
-install(FILES easyfit/FitResultPrinter.h DESTINATION include/doofit/plotting/easyfit)
+install(FILES easyfit/FitResultPrinter.h DESTINATION include/doofit/fitter/easyfit)
 install(FILES AbsFitter.h DESTINATION include/doofit/fitter)
 
