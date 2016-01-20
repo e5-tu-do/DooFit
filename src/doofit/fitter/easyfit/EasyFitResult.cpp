@@ -19,7 +19,7 @@
 #include <doocore/io/MsgStream.h>
 
 // from project
-#include "doofit/plotting/fitresult/FitResultPrinter.h"
+#include "doofit/fitter/easyfit/FitResultPrinter.h"
 
 doofit::fitter::easyfit::EasyFitResult::EasyFitResult(const RooFitResult& fit_result) :
  num_status_(0),
@@ -260,7 +260,7 @@ void doofit::fitter::easyfit::EasyFitResult::RegisterBranchesInTree(TTree& tree,
 }
 
 void doofit::fitter::easyfit::EasyFitResult::Print() const {
-  doofit::plotting::fitresult::FitResultPrinter fprinter(*this);
+  doofit::fitter::easyfit::FitResultPrinter fprinter(*this);
   fprinter.Print();
 }
 

@@ -10,7 +10,7 @@
 #include <boost/regex.hpp>
 
 // ROOT
-#include "TIterator.h" 
+#include "TIterator.h"
 #include "TString.h"
 #include "TAxis.h"
 
@@ -52,7 +52,7 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
 {
   datasets_.push_back(&dataset);
   pdf_ = dynamic_cast<RooAbsPdf*>(pdfs.first());
-  
+
   if (&dimension_ == NULL) {
     serr << "Plot::Plot(): Dimension is invalid." << endmsg;
     throw 1;
@@ -64,11 +64,11 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
   if (plot_name_ == "") {
     plot_name_ = dimension_.GetName();
   }
-  
+
   for (int i=1; i<pdfs.getSize(); ++i) {
     RooAbsArg* sub_arg = pdfs.at(i);
     const RooAbsPdf* sub_pdf = dynamic_cast<RooAbsPdf*>(sub_arg);
-    
+
     if (sub_pdf != NULL) {
       components_.push_back(RooArgSet(*sub_pdf));
     }
@@ -87,7 +87,7 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
 {
   datasets_.push_back(&dataset);
   pdf_ = &pdf;
-  
+
   if (pdf_ == nullptr) {
     swarn << "Plot::Plot(): Main PDF is invalid. Trying to plot anyway." << endmsg;
     // throw 1;
@@ -103,20 +103,20 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
   if (plot_name_ == "") {
     plot_name_ = dimension_.GetName();
   }
-  
+
   // iterate over sub PDFs and match supplied regular expressions
   if (pdf_ != nullptr) {
     RooArgSet nodes;
     pdf.branchNodeServerList(&nodes);
-    
+
     for (std::vector<std::string>::const_iterator it = components.begin();
          it != components.end(); ++it) {
       boost::regex r(*it);
       components_.push_back(RooArgSet());
-      
+
       TIterator* it_nodes = nodes.createIterator();
       RooAbsArg* node = NULL;
-      
+
       while ((node = dynamic_cast<RooAbsArg*>(it_nodes->Next()))) {
         RooAbsPdf* pdf_node = dynamic_cast<RooAbsPdf*>(node);
         if (pdf_node != NULL) {
@@ -132,12 +132,12 @@ Plot::Plot(const PlotConfig& cfg_plot, const RooAbsRealLValue& dimension, const 
     }
   }
 }
-  
+
 void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
   std::string suffix="_log";
- 
+
   std::string plot_name = plot_name_;
-  
+
   std::stringstream logx_plot_name_sstr;
   logx_plot_name_sstr << plot_name << suffix << "x";
   std::string logx_plot_name = logx_plot_name_sstr.str();
@@ -149,11 +149,11 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
   std::stringstream logxy_plot_name_sstr;
   logxy_plot_name_sstr << plot_name << suffix << "xy";
   std::string logxy_plot_name = logxy_plot_name_sstr.str();
-  
+
   std::stringstream pull_plot_sstr;
   pull_plot_sstr << plot_name << "_pull";
   std::string pull_plot_name = pull_plot_sstr.str();
-  
+
   std::stringstream logx_pull_plot_sstr;
   logx_pull_plot_sstr << plot_name << "_pull" << suffix << "x";
   std::string logx_pull_plot_name = logx_pull_plot_sstr.str();
@@ -167,19 +167,19 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
   std::string logxy_pull_plot_name = logxy_pull_plot_sstr.str();
 
   sinfo << "Plotting " << dimension_.GetName() << " into directory " << config_plot_.plot_directory() << " as " << plot_name << endmsg;
-  
+
   doocore::lutils::setStyle(config_plot_.plot_style());
-  
+
   RooCmdArg range_arg;
-  
+
   // x range
   if (!dimension_.hasMin() && !dimension_.hasMax()) {
     double min, max;
-    
+
     // ugly const_cast because RooFit is stupid (RooDataSet::getRange needs non-const RooRealVar)
     RooRealVar* dimension_non_const = const_cast<RooRealVar*>(dynamic_cast<const RooRealVar*>(&dimension_));
     datasets_.front()->getRange(*dimension_non_const, min, max);
-    
+
     double min_t, max_t;
     for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin()+1;
          it != datasets_.end(); ++it) {
@@ -187,10 +187,10 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
       if (min_t < min) min = min_t;
       if (max_t > max) max = max_t;
     }
-    
+
     range_arg = Range(min, max);
   }
-  
+
   RooCmdArg cut_range_arg, projection_range_arg, frame_range_arg;
   RooBinning* binning = NULL;
   RooAbsData* dataset_reduced = NULL;
@@ -205,7 +205,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     RooAbsData* dataset = const_cast<RooAbsData*>(datasets_.front());
     //dataset_reduced = dataset->reduce(cut_range_arg);
     dataset_reduced = dataset->reduce(CutRange(plot_range_.c_str()));
-        
+
     //sdebug << "Created reduced dataset with " << dataset_reduced->numEntries() << " (original dataset has " << dataset->numEntries() << ")" << endmsg;
   }
 
@@ -220,18 +220,18 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
   if (plot_args_data_.size() > 6) arg_data7 = plot_args_data_[6];
 
   RooPlot* plot_frame = dimension_.frame(range_arg);
-    
+
   RooCmdArg weight_arg;
   bool weighted_dataset = false;
   RooAbsData* dataset_normalisation = NULL;
   if (dataset_reduced != NULL) {
-    if (dataset_reduced->isWeighted()) {
+    if (dataset_reduced->isWeighted()&&!plot_asymmetry_) {
       //sdebug << "Spotted a weighted dataset, setting SumW2 errors." << endmsg;
       weight_arg = DataError(RooAbsData::SumW2);
       weighted_dataset = true;
     }
     dataset_normalisation = dataset_reduced;
-    
+
     RooMsgService::instance().setStreamStatus(1, false);
     if (binning != NULL) {
       dataset_reduced->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg, MultiArg(arg_data1, arg_data2, arg_data3, arg_data4, arg_data5, arg_data6, arg_data7)/*, Rescale(1.0/(*it)->sumEntries())*/);
@@ -243,11 +243,11 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     dataset_normalisation = const_cast<RooAbsData*>(datasets_.front());
     for (std::vector<const RooAbsData*>::const_iterator it = datasets_.begin();
          it != datasets_.end(); ++it) {
-      if ((*it)->isWeighted()) {
+      if ((*it)->isWeighted()&&!plot_asymmetry_) {
         // sdebug << "Weighted dataset, setting SumW2 errors." << endmsg;
         weight_arg = DataError(RooAbsData::SumW2);
       }
-      
+
       RooMsgService::instance().setStreamStatus(1, false);
       if (binning != NULL) {
         (*it)->plotOn(plot_frame, Binning(*binning), cut_range_arg, weight_arg, MultiArg(arg_data1, arg_data2, arg_data3, arg_data4, arg_data5, arg_data6, arg_data7)/*, Rescale(1.0/(*it)->sumEntries())*/);
@@ -257,7 +257,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
       RooMsgService::instance().setStreamStatus(1, true);
     }
   }
-  
+
   // y range adaptively for log scale
   RooHist * data = (RooHist*) plot_frame->findObject(0,RooHist::Class());
   double x,y;
@@ -271,7 +271,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
   if (min_data_entry < 0.0) min_data_entry = 0.01;
 //  sdebug << "minimum data entry in dataset: " << min_data_entry << endmsg;
   double min_plot = TMath::Power(10.0,TMath::Log10(min_data_entry)-0.9);
-  
+
   double dummy, distance_power10;
   distance_power10 = 1.0 - std::modf(std::log10(min_plot) , &dummy);
 
@@ -285,8 +285,8 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
 //  sdebug << "minimum entry in histogram: " << min_data_entry << endmsg;
   // sdebug << "minimum for plot range: " << min_plot << endmsg;
   // sdebug << "distance to power of 10: " << distance_power10 << endmsg;
-  
-  // if plot y minimum is too close to a power of ten the log plot labels will 
+
+  // if plot y minimum is too close to a power of ten the log plot labels will
   // be clipped. Take a slightly lower value then.
   if (distance_power10 > 0.0 && distance_power10 < 0.1) {
     min_plot *= 0.8;
@@ -322,11 +322,11 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
   }
 
   TLatex label(label_x, label_y, label_string.c_str());
-  
+
   config_plot_.OnDemandOpenPlotStack();
   if (pdf_ != NULL) {
 //    RooPlot* plot_frame_pull = dimension_.frame(range_arg);
-    
+
     // I feel so stupid doing this but apparently RooFit leaves me no other way...
     RooCmdArg arg1, arg2, arg3, arg4, arg5, arg6, arg7;
     if (plot_args_pdf_.size() > 0) arg1 = plot_args_pdf_[0];
@@ -336,7 +336,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     if (plot_args_pdf_.size() > 4) arg5 = plot_args_pdf_[4];
     if (plot_args_pdf_.size() > 5) arg6 = plot_args_pdf_[5];
     if (plot_args_pdf_.size() > 6) arg7 = plot_args_pdf_[6];
-    
+
 //    if (dataset_reduced != NULL) {
 //      serr << "Reduced dataset available. Plotting this." << endmsg;
 //      if (binning != NULL) {
@@ -362,7 +362,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
            it != plot_args_pdf_.end(); ++it) {
         if (std::string(it->GetName()) == "ProjData") {
           RooArgSet* set_project = new RooArgSet(*dynamic_cast<const RooArgSet*>(it->getObject(0)));
-          
+
           TIterator* arg_it = set_project->createIterator();
           RooAbsArg* arg = NULL;
           while ((arg = (RooAbsArg*)arg_it->Next())) {
@@ -387,7 +387,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     } else if (ignore_num_cpu_ && config_plot_.num_cpu() > 1) {
       swarn << "Warning in Plot::PlotHandler(...): Multicore plotting is requested but intentionally disabled for this plot to avoid nasty RooFit plotting bugs." << endmsg;
     }
-    
+
     int i=1;
     int num_steps = components_.size()+1;
 
@@ -447,12 +447,12 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
       }
       ++p;
     }
-    
+
     if (scale_normalization != 1.0) {
       normalisation_hack = Normalization(scale_normalization);
       // sdebug << "Scaling total PDF by: " << scale_normalization << endmsg;
     } else {
-      normalisation_hack = RooCmdArg::none(); 
+      normalisation_hack = RooCmdArg::none();
       // sdebug << "Not scaling total PDF by: " << scale_normalization << endmsg;
     }
 
@@ -464,7 +464,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     RooMsgService::instance().setStreamStatus(0, true);
     ++p;
     p.Finish();
-    
+
     RooArgSet* parameters = pdf_->getParameters(dataset_normalisation);
     TIterator* it = parameters->createIterator();
     RooAbsArg* arg = NULL;
@@ -480,10 +480,10 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     }
     delete it;
     delete parameters;
-        
+
     // =10^(ln(11)/ln(10)-0.5)
     //plot_frame_pull->SetMinimum(0.5);
-    
+
     plot_frame->SetMinimum(0.0);
     plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
     if(plot_asymmetry_) {
@@ -493,12 +493,12 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
 
     // plot_frame->SetMinimum(-1.0);
     // plot_frame->SetMaximum(+1.0);
-    
+
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
     ylabel.ReplaceAll("Events","Candidates");
     if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
-    
+
     // linear plots in both axis
     if ((sc_x == kLinear || sc_x == kBoth)&&(sc_y == kLinear || sc_y == kBoth)) {
       doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false, false);
@@ -510,7 +510,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
       doocore::lutils::PlotSimple(logx_plot_name, plot_frame, label, config_plot_.plot_directory(), false, true);
       doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, true);
     }
-    
+
     plot_frame->SetMinimum(min_plot);
     //  logarithmic plots in y-axis
     if ((sc_x == kLinear || sc_x == kBoth)&&(sc_y == kLogarithmic || sc_y == kBoth)) {
@@ -524,18 +524,18 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
       doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, true);
     }
 
-    
+
     plot_frame->SetMinimum(0.5);
     plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
     if(plot_asymmetry_) {
       plot_frame->SetMinimum(-1.0);
       plot_frame->SetMaximum(1.0);
     }
-    
+
 //    TString ylabel = plot_frame->GetYaxis()->GetTitle();
 //    ylabel.ReplaceAll("Events","Candidates");
 //    plot_frame->GetYaxis()->SetTitle(ylabel);
-    
+
     std::string gauss_suffix = "_gauss";
     std::string gauss_suffix_allplots = "";
 
@@ -554,7 +554,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
       gauss_suffix = "nogauss";
       gauss_suffix_allplots = "nogauss";
     }
-    
+
 //    sdebug << "Plot y axis minimum for log scale plot: " << min_plot << endmsg;
     plot_frame->SetMinimum(min_plot);
     //  logarithmic plots in y-axis
@@ -572,8 +572,8 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
       gauss_suffix = "nogauss";
       gauss_suffix_allplots = "nogauss";
     }
-    
-    
+
+
 //    delete plot_frame_pull;
   } else {
     plot_frame->SetMinimum(0.0);
@@ -587,7 +587,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     ylabel.ReplaceAll("Events","Candidates");
     if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
-    
+
     // linear plots in both axis
     if ((sc_x == kLinear || sc_x == kBoth)&&(sc_y == kLinear || sc_y == kBoth)) {
       doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false, false);
@@ -599,7 +599,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
       doocore::lutils::PlotSimple(logx_plot_name, plot_frame, label, config_plot_.plot_directory(), false, true);
       doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, true);
     }
-    
+
     plot_frame->SetMinimum(min_plot);
     //  logarithmic plots in y-axis
     if ((sc_x == kLinear || sc_x == kBoth)&&(sc_y == kLogarithmic || sc_y == kBoth)) {
@@ -613,12 +613,12 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
       doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, true);
     }
   }
-  
+
   if (dataset_reduced != NULL) delete dataset_reduced;
   if (binning != NULL) delete binning;
   delete plot_frame;
 }
-  
+
 Plot::~Plot() {}
 
 } // namespace plotting

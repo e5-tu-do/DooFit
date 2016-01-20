@@ -1,5 +1,5 @@
-#ifndef DOOFIT_PLOTTING_FITRESULT_FITRESULTPRINTER_h
-#define DOOFIT_PLOTTING_FITRESULT_FITRESULTPRINTER_h
+#ifndef DOOFIT_FITTER_EASYFIT_FITRESULTPRINTER_h
+#define DOOFIT_FITTER_EASYFIT_FITRESULTPRINTER_h
 
 // STL
 #include <string>
@@ -21,8 +21,8 @@
 class RooFitResult;
 
 namespace doofit {
-namespace plotting {
-namespace fitresult {
+namespace fitter {
+namespace easyfit {
 
 /** @class FitResultPrinter
  *  @brief Flexible plotter for fitresults
@@ -131,8 +131,8 @@ class FitResultPrinter {
 };
 
 
-} // namespace fitresult
-} // namespace plotting
+} // namespace easyfit
+} // namespace fitter
 } // namespace doofit
 
-#endif //DOOFIT_PLOTTING_FITRESULT_FITRESULTPRINTER_h
+#endif //DOOFIT_FITTER_EASYFIT_FITRESULTPRINTER_h
