@@ -8,4 +8,5 @@ add_subdirectory(toy)
 add_subdirectory(roofit)
 add_subdirectory(tools)
 #add_subdirectory(extraroopdfs)
+add_subdirectory(analysis)
 
