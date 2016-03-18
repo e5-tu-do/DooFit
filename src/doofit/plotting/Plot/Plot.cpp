@@ -495,7 +495,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     // plot_frame->SetMaximum(+1.0);
 
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
-    ylabel.ReplaceAll("Events","Candidates");
+    ylabel.ReplaceAll("Events",config_plot_.y_axis_label());
     if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
 
@@ -533,7 +533,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     }
 
 //    TString ylabel = plot_frame->GetYaxis()->GetTitle();
-//    ylabel.ReplaceAll("Events","Candidates");
+//    ylabel.ReplaceAll("Events",config_plot_.y_axis_label());
 //    plot_frame->GetYaxis()->SetTitle(ylabel);
 
     std::string gauss_suffix = "_gauss";
@@ -584,7 +584,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     }
 
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
-    ylabel.ReplaceAll("Events","Candidates");
+    ylabel.ReplaceAll("Events",config_plot_.y_axis_label());
     if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
 

@@ -112,6 +112,13 @@ class PlotConfig : public config::AbsConfig {
   std::string label_text() const { return label_text_; }
 
   /**
+   * @brief Getter for y_axis_label
+   *
+   * @see set_y_axis_label()
+   **/
+  std::string y_axis_label() const { return y_axis_label_; }
+
+  /**
    * @brief Getter for plot_appendix_
    *
    * @see set_plot_appendix()
@@ -244,6 +251,17 @@ class PlotConfig : public config::AbsConfig {
   }
 
   /**
+   * @brief Setter for y_axis_label_
+   *
+   * Set replacement text of Events in y axis label.
+   *
+   * @param y_axis_label the string to replace "Events" in y axis label
+   **/
+  void set_y_axis_label(const std::string& y_axis_label) {
+    y_axis_label_ = y_axis_label;
+  }
+
+  /**
    * @brief Setter for plot_appendix_ 
    *
    * Set appendix for stacked plot output file name
@@ -371,6 +389,11 @@ class PlotConfig : public config::AbsConfig {
    *  @brief TLatex plot label text
    */
   std::string label_text_;
+
+  /**
+   *  @brief TLatex y axis label
+   */
+  std::string y_axis_label_;
 
   /**
    *  @brief Number of CPUs to use for plotting
