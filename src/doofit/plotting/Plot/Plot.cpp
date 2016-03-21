@@ -299,7 +299,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
   // sdebug << "distance to power of 10: " << distance_power10 << endmsg;
 
   std::string label_string(config_plot_.label_text());
-  double label_x(0.65), label_y(0.78);
+  double label_x(config_plot_.label_x()), label_y(config_plot_.label_y());
   TLatex label_base(0,0,label_string.c_str());
   TLatex label_add(0,0,plot_label_additional_.c_str());
   double xsize_base = label_base.GetXsize();

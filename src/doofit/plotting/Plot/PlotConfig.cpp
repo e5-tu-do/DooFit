@@ -35,6 +35,8 @@ PlotConfig::PlotConfig(const std::string& name)
   plot_directory_("Plot"),
   plot_style_("LHCbOptimized"),
   label_text_("LHCb"),
+  label_x_(0.65),
+  label_y_(0.78),
   y_axis_label_("Candidates"),
   num_cpu_(1),
   plot_stack_open_(false),
@@ -79,6 +81,8 @@ void PlotConfig::DefineOptions() {
   (GetOptionString("pdf_linecolors").c_str(), po::value<config::CommaSeparatedList<int> >(&pdf_linecolor_map_),"Line colors for plotted PDFs (comma-separated as col1,col2,...)")
   (GetOptionString("pdf_linestyles").c_str(), po::value<config::CommaSeparatedList<int> >(&pdf_linestyle_map_),"Line styles for plotted PDFs (comma-separated as style1,style2,...)")
   (GetOptionString("label_text").c_str(), po::value<std::string>(&label_text_)->default_value("LHCb"),"Label for plots")
+  (GetOptionString("label_x").c_str(), po::value<double>(&label_x_)->default_value(0.65),"X position of label in plots")
+  (GetOptionString("label_y").c_str(), po::value<double>(&label_y_)->default_value(0.78),"Y position of label in plots")
   (GetOptionString("y_axis_label").c_str(), po::value<std::string>(&y_axis_label_)->default_value("Candidates"),"Replacement string of Events in y axis label")
   (GetOptionString("plot_directory").c_str(), po::value<std::string>(&plot_directory_)->default_value("Plot"),"Output directory for plots")
   (GetOptionString("plot_appendix").c_str(), po::value<std::string>(&plot_appendix_)->default_value(""),"Plot appendix for stacked plots")
