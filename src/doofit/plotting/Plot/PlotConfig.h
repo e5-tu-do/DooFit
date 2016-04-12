@@ -112,6 +112,27 @@ class PlotConfig : public config::AbsConfig {
   std::string label_text() const { return label_text_; }
 
   /**
+   * @brief Getter for label_x_
+   *
+   * @see set_label_x()
+   **/
+  double label_x() const { return label_x_; }
+
+  /**
+   * @brief Getter for label_y_
+   *
+   * @see set_label_y()
+   **/
+  double label_y() const { return label_y_; }
+
+  /**
+   * @brief Getter for y_axis_label
+   *
+   * @see set_y_axis_label()
+   **/
+  std::string y_axis_label() const { return y_axis_label_; }
+
+  /**
    * @brief Getter for plot_appendix_
    *
    * @see set_plot_appendix()
@@ -224,7 +245,7 @@ class PlotConfig : public config::AbsConfig {
   /**
    * @brief Setter for plot_style_
    *
-   * Set plot output directory.
+   * Set plot style.
    *
    * @param plot_style the plot output directory to use
    **/
@@ -235,12 +256,41 @@ class PlotConfig : public config::AbsConfig {
   /**
    * @brief Setter for label_text_
    *
-   * Set plot output directory.
+   * Set text displayed in the label.
    *
    * @param label_text the plot output directory to use
    **/
   void set_label_text(const std::string& label_text) {
     label_text_ = label_text;
+  }
+
+  /**
+   * @brief Setter for label_x_
+   *
+   * Set x position of label.
+   *
+   * @param label_x the x position of the label
+   **/
+  void set_label_position_x(double label_x) { label_x_ = label_x; }
+
+  /**
+   * @brief Setter for label_y_
+   *
+   * Set y position of label.
+   *
+   * @param label_y the y position of the label
+   **/
+  void set_label_position_y(double label_y) { label_y_ = label_y; }
+
+  /**
+   * @brief Setter for y_axis_label_
+   *
+   * Set replacement text of Events in y axis label.
+   *
+   * @param y_axis_label the string to replace "Events" in y axis label
+   **/
+  void set_y_axis_label(const std::string& y_axis_label) {
+    y_axis_label_ = y_axis_label;
   }
 
   /**
@@ -371,6 +421,21 @@ class PlotConfig : public config::AbsConfig {
    *  @brief TLatex plot label text
    */
   std::string label_text_;
+
+  /**
+   *  @brief x position of label
+   */
+  double label_x_;
+
+  /**
+   *  @brief y position of label
+   */
+  double label_y_;
+
+  /**
+   *  @brief TLatex y axis label
+   */
+  std::string y_axis_label_;
 
   /**
    *  @brief Number of CPUs to use for plotting

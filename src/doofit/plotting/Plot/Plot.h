@@ -96,11 +96,17 @@ enum ScaleType {
    *   Plot myplot(cfg_plot, mass, *data, RooArgList(p,g,e));
    *   myplot.PlotIt();
    *
+   *   // plot PDF and scale x- and y-axis independently (choose between kLinear, kLogarithmic or kBoth). The default value is kLinear
+   *   Plot myplot2(cfg_plot, mass, *data, RooArgList(p,g,e), "different_scaling");
+   *   myplot2.set_scaletype_x(doofit::plotting::kBoth);
+   *   myplot2.set_scaletype_y(doofit::plotting::kBoth);
+   *   myplot2.PlotIt();
+   *
    *   // plot PDF and specify components via regular expressions
    *   std::vector<std::string> components;
    *   components += "pdf_sig_.*", "pdf_bkg_.*";
-   *   Plot myplot2(cfg_plot, mass, *data, p, components, "mass2");
-   *   myplot2.PlotIt();
+   *   Plot myplot3(cfg_plot, mass, *data, p, components, "mass3");
+   *   myplot3.PlotIt();
    * }
    * @endcode
    *
@@ -159,23 +165,9 @@ enum ScaleType {
     /**
      *  @brief Actually plot the plot in normal scale
      *
-     *  This function will plot the data in linear scale.
+     *  This function will plot the data in the axis scales you set with the ScaleType.
      */
-    void PlotIt() const { PlotHandler(kLinear); }
-
-    /**
-     *  @brief Actually plot the plot in log y scale
-     *
-     *  This function will plot the data in logarithmic scale on y axis.
-     */
-    void PlotItLogY() const { PlotHandler(kLogarithmic); }
-    
-    /**
-     *  @brief Actually plot the plot in normal and log y scale
-     *
-     *  This function will plot the data in linear and logarithmic y axis scale.
-     */
-    void PlotItLogNoLogY() const { PlotHandler(kBoth, "_log"); }
+    void PlotIt() const { PlotHandler(scaletype_x_, scaletype_y_); }
     
     /**
      *  @brief Destructor for Plot
@@ -234,6 +226,20 @@ enum ScaleType {
      */
      void set_plot_asymmetry(bool plot_asymmetry) { plot_asymmetry_ = plot_asymmetry; }
 
+     /**
+     *  @brief Set plotting mode for x-axis
+     *
+     *  @param scaletype set kLogarithmic, kLinear, kBoth 
+     */
+     void set_scaletype_x(ScaleType scaletype_x) { scaletype_x_ = scaletype_x; }
+
+     /**
+     *  @brief Set plotting mode for y-axis
+     *
+     *  @param scaletype set kLogarithmic, kLinear, kBoth 
+     */
+     void set_scaletype_y(ScaleType scaletype_y) { scaletype_y_ = scaletype_y; }
+
     /**
      *  @brief Friend class PlotSimultaneous
      */
@@ -251,10 +257,10 @@ enum ScaleType {
      *  This function will perform the actual plotting and is called by public
      *  functions.
      *
-     *  @param logy use logarithmic y scale
-     *  @param suffix suffix to put after file names for log plots (if sc_y == kBoth)
+     *  @param sc_x ScaleType for x-axis
+     *  @param sc_y ScaleType for y-axis
      */
-    virtual void PlotHandler(ScaleType sc_y, std::string suffix="") const;
+    virtual void PlotHandler(ScaleType sc_x, ScaleType sc_y) const;
 
     void set_ignore_num_cpu(bool ignore_num_cpu) { ignore_num_cpu_ = ignore_num_cpu; }
 
@@ -309,6 +315,9 @@ enum ScaleType {
     bool ignore_num_cpu_;
 
     bool plot_asymmetry_;
+
+    ScaleType scaletype_x_;
+    ScaleType scaletype_y_;
     
   private:
   };  
