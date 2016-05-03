@@ -86,7 +86,8 @@ SPlotFit2::SPlotFit2() :
   sweighted_hist_map_(),
   use_minos_(true),
   easyfitter_(NULL),
-  starting_values_("")
+  starting_values_(""),
+  fit_result_(NULL)
 {
   swarn << "SPlotFit2::SPlotFit2(): Using deprecated constructor without EasyFit. This functionality will go away in a future version. Please switch to EasyFit ASAP!" << endmsg;
 }
@@ -108,7 +109,8 @@ SPlotFit2::SPlotFit2(RooAbsPdf& pdf, RooDataSet& data, RooArgSet yields) :
   sweighted_hist_map_(),
   use_minos_(true),
   easyfitter_(NULL),
-  starting_values_("")
+  starting_values_(""),
+  fit_result_(NULL)
 {
   swarn << "SPlotFit2::SPlotFit2(RooAbsPdf&, RooDataSet&, RooArgSet): Using deprecated constructor without EasyFit. This functionality will go away in a future version. Please switch to EasyFit ASAP!" << endmsg;
 }
@@ -130,7 +132,8 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs, RooDataSet& data, std::vector
   sweighted_hist_map_(),
   use_minos_(true),
   easyfitter_(NULL),
-  starting_values_("")
+  starting_values_(""),
+  fit_result_(NULL)
 {
   swarn << "SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*>, RooDataSet&, std::vector<RooRealVar*>): Using deprecated constructor without EasyFit. This functionality will go away in a future version. Please switch to EasyFit ASAP!" << endmsg;
 
@@ -180,7 +183,8 @@ SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*> pdfs) :
   sweighted_data_map_(),
   sweighted_hist_map_(),
   use_minos_(true),
-  easyfitter_(NULL)
+  easyfitter_(NULL),
+  fit_result_(NULL)
 {
   swarn << "SPlotFit2::SPlotFit2(std::vector<RooAbsPdf*>): Using deprecated constructor without EasyFit. This functionality will go away in a future version. Please switch to EasyFit ASAP!" << endmsg;
   
@@ -263,9 +267,9 @@ void SPlotFit2::Fit(RooLinkedList* ext_fit_args) {
     //=========================================================================
     pdf_->getParameters(*input_data_)->readFromFile(starting_values_);
     // fit discriminating pdf
-    RooFitResult* fit_result = pdf_->fitTo(*input_data_, fitting_args);
-    fit_result->Print("v");
-    delete fit_result;
+    fit_result_ = pdf_->fitTo(*input_data_, fitting_args);
+    fit_result_->Print("v");
+    // delete fit_result;
 
     parameters_ = pdf().getParameters(*input_data_);
   }

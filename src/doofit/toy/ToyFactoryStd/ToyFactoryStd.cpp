@@ -645,7 +645,9 @@ namespace toy {
           // in case expected yield is zero, RooFit will still generate 1 event. Fix that with an empty dataset.
 
           RooArgSet args(*obs_argset);
-          args.add(*proto_set->get());
+          if (proto_set != NULL) {
+            args.add(*proto_set->get());
+          }
           // args.Print();
 
           data = new RooDataSet("data_empty", "data_empty", args);
@@ -680,15 +682,14 @@ namespace toy {
   RooDataSet* ToyFactoryStd::GenerateForAddedPdf(RooAbsPdf& pdf, const RooArgSet& argset_generation_observables, double expected_yield, bool extended, std::vector<RooDataSet*> proto_data) const {
     // if no external yield set, get expectation from PDF
     bool expected_yield_set = (expected_yield>0);
-    if (expected_yield==0) {
-      expected_yield = pdf.expectedEvents(argset_generation_observables);
-    }
-    sinfo << "RooAddPdf " << pdf.GetName();
-    
     RooAddPdf& add_pdf = dynamic_cast<RooAddPdf&>(pdf);
     const RooArgList& coefs = add_pdf.coefList();
     // whether PDF is extended or relying on coefficients
     bool add_pdf_extended = (coefs.getSize() == 0);
+    if (expected_yield==0 && add_pdf_extended) {
+      expected_yield = pdf.expectedEvents(argset_generation_observables);
+    }
+    sinfo << "RooAddPdf " << pdf.GetName();
     
     TIterator* it;
     if (add_pdf_extended) {
