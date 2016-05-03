@@ -1104,7 +1104,8 @@ namespace toy {
         //   double diff           = std::fabs(par_init_value - par_fit_value)/par_fit_error;
 
         //   std::string paramname = parameter->GetName();
-        //   if ( paramname == "parSigTimeSin2b_blind" && std::fabs(0.37 - par_fit_value) < 0.003 ){
+        //   if ( paramname == "parSigTimeSin2b" && std::fabs(0.8 - par_fit_value) < 0.003 ){
+        //     return true;
         //     if (par_fit_error > 0.1) return false;
         //     if (par_fit_error < 0.01) return false;
         //     sinfo << "par_init_value = " << par_init_value << ", par_fit_value = " << par_fit_value << ", par_fit_error = " << par_fit_error << endmsg;

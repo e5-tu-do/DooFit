@@ -299,7 +299,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
   // sdebug << "distance to power of 10: " << distance_power10 << endmsg;
 
   std::string label_string(config_plot_.label_text());
-  double label_x(0.65), label_y(0.78);
+  double label_x(config_plot_.label_x()), label_y(config_plot_.label_y());
   TLatex label_base(0,0,label_string.c_str());
   TLatex label_add(0,0,plot_label_additional_.c_str());
   double xsize_base = label_base.GetXsize();
@@ -495,7 +495,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     // plot_frame->SetMaximum(+1.0);
 
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
-    ylabel.ReplaceAll("Events","Candidates");
+    ylabel.ReplaceAll("Events",config_plot_.y_axis_label());
     if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
 
@@ -533,7 +533,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     }
 
 //    TString ylabel = plot_frame->GetYaxis()->GetTitle();
-//    ylabel.ReplaceAll("Events","Candidates");
+//    ylabel.ReplaceAll("Events",config_plot_.y_axis_label());
 //    plot_frame->GetYaxis()->SetTitle(ylabel);
 
     std::string gauss_suffix = "_gauss";
@@ -584,7 +584,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     }
 
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
-    ylabel.ReplaceAll("Events","Candidates");
+    ylabel.ReplaceAll("Events",config_plot_.y_axis_label());
     if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
 
