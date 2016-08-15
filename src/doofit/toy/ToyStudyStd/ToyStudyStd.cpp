@@ -5,6 +5,7 @@
 #include <utility>
 #include <queue>
 #include <list>
+#include <csignal>
 
 // boost
 #include "boost/interprocess/sync/file_lock.hpp"
