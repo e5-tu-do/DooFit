@@ -87,6 +87,9 @@ namespace toy {
     if (parameter_genvalue_read_file().size()>0) {
       scfg << "Read generation values from:       " << parameter_genvalue_read_file() << endmsg;
     }
+    if (parameter_fitbias_read_file().size()>0) {
+      scfg << "Read fit biases from:       " << parameter_fitbias_read_file() << endmsg;
+    }
     scfg << "Plotting of parameter vs error:    " << plot_parameter_vs_error_correlation_ << endmsg;
 
     scfg << "Perform reference toy analysis:    " << evaluate_reference_toys() << endmsg;
@@ -119,6 +122,7 @@ namespace toy {
     (GetOptionString("neglect_parameters_at_limit").c_str(), po::value<bool>(&neglect_parameters_at_limit_)->default_value(false),"Neglect any toy fit where at least one parameter is near the defined limits (default: false).")
     (GetOptionString("neglect_minos_problems").c_str(), po::value<bool>(&neglect_minos_problems_)->default_value(false),"Neglect any toy fit where at least one parameter has MINOS problems (default: false; only applies, if MINOS was run).")
     (GetOptionString("parameter_genvalue_read_file").c_str(), po::value<std::string>(&parameter_genvalue_read_file_),"Read in generation values from this file instead of using the init values in the fit results (default: empty, i.e. use init values).")
+    (GetOptionString("parameter_fitbias_read_file").c_str(), po::value<std::string>(&parameter_fitbias_read_file_),"Read in fit biases from this file (default: empty, i.e. assume nominal fitter is unbiased).")
     (GetOptionString("min_acceptable_cov_matrix_quality").c_str(), po::value<int>(&min_acceptable_cov_matrix_quality_),"Minimum acceptable covariance matrix quality for fit results.")
     (GetOptionString("plot_parameter_vs_error_correlation").c_str(), po::value<bool>(&plot_parameter_vs_error_correlation_)->default_value(false),"Plot correlation scatter plots of values of parameters vs. their errors (default: false)")
     (GetOptionString("evaluate_reference_toys").c_str(), po::value<bool>(&evaluate_reference_toys_)->default_value(false),"Perform reference toy analysis of each two toys with identical random seeds (default: false)")
