@@ -137,7 +137,13 @@ namespace toy {
      *  @return current value of parameter_genvalue_read_file_
      */
     const std::string& parameter_genvalue_read_file() const {return parameter_genvalue_read_file_;}
-    
+    /**
+     *  @brief Getter for file to read fit biases of parameters from
+     *
+     *  @return current value of parameter_fitbias_read_file_
+     */
+    const std::string& parameter_fitbias_read_file() const {return parameter_fitbias_read_file_;}
+
     /**
      *  @brief Getter for minimum acceptable covariance matrix quality for fit results
      *
@@ -334,7 +340,18 @@ namespace toy {
      *  @param parameter_genvalue_read_file new value for parameter_genvalue_read_file_
      */
     void set_parameter_genvalue_read_file(const std::string& parameter_genvalue_read_file) {parameter_genvalue_read_file_ = parameter_genvalue_read_file;}
-    
+    /**
+     *  @brief Setter for file to read fit biases of parameters from
+     *
+     *  The nominal fitter might be biased, i.e the fit might on average
+     *  return a shifted result compared to the true value used in the
+     *  generation. To account for this effect, specify a file where the
+     *  parameters and their corresponding fit biases are listed.
+     *
+     *  @param parameter_fitbias_read_file new value for parameter_fitbias_read_file_
+     */
+    void set_parameter_fitbias_read_file(const std::string& parameter_fitbias_read_file) {parameter_fitbias_read_file_ = parameter_fitbias_read_file;}
+
     /**
      *  @brief Setter for minimum acceptable covariance matrix quality for fit results
      *
@@ -530,6 +547,10 @@ namespace toy {
      *  @brief File to read generation values of parameters from before pull calculation
      */
     std::string parameter_genvalue_read_file_;
+    /**
+     *  @brief File to read fit bias of parameters from before residual and pull calculation
+     */
+    std::string parameter_fitbias_read_file_;
     
     /**
      *  @brief Minimum acceptable covariance matrix quality for fit results

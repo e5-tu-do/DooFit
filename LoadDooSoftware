@@ -2,9 +2,11 @@
 
 #trap catch_errors ERR
 
-if [ -z $ROOTVERS ]; then
+if [[ -z $ROOTVERS && -z $(command -v root-config) ]]; then
   echo "ROOT version not set. Cannot load DooSoftware."
   return
+elif [[ -z $ROOTVERS && -n $(command -v root-config) ]]; then
+  export ROOTVERS=$(root-config --version | tr "/" ".")
 fi
 
 echo "Loading DooSoftware for ROOT $ROOTVERS"
