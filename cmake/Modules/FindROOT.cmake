@@ -22,6 +22,8 @@ SET(ROOT_DEFINITIONS "")
 
 SET(ROOT_INSTALLED_VERSION_TOO_OLD FALSE)
 
+SET(ROOT_INSTALLED_VERSION_TOO_NEW FALSE)
+
 SET(ROOT_CONFIG_EXECUTABLE ROOT_CONFIG_EXECUTABLE-NOTFOUND)
 
 FIND_PROGRAM(ROOT_CONFIG_EXECUTABLE NAMES root-config PATHS
@@ -52,11 +54,20 @@ IF (ROOT_CONFIG_EXECUTABLE)
   IF (NOT ROOT_MIN_VERSION)
     SET(ROOT_MIN_VERSION "5.00/00")
   ENDIF (NOT ROOT_MIN_VERSION)
+
+  # from 6.08/00 on no backward compatibility for TMVA anymore
+  IF (NOT ROOT_MAX_VERSION)
+    SET(ROOT_MAX_VERSION "6.07/00")
+  ENDIF (NOT ROOT_MAX_VERSION)
    
   # now parse the parts of the user given version string into variables
   STRING(REGEX REPLACE "^([0-9]+)\\.[0-9][0-9]+\\/[0-9][0-9]+" "\\1" req_root_major_vers "${ROOT_MIN_VERSION}")
   STRING(REGEX REPLACE "^[0-9]+\\.([0-9][0-9])+\\/[0-9][0-9]+.*" "\\1" req_root_minor_vers "${ROOT_MIN_VERSION}")
   STRING(REGEX REPLACE "^[0-9]+\\.[0-9][0-9]+\\/([0-9][0-9]+)" "\\1" req_root_patch_vers "${ROOT_MIN_VERSION}")
+
+  STRING(REGEX REPLACE "^([0-9]+)\\.[0-9][0-9]+\\/[0-9][0-9]+" "\\1" max_root_major_vers "${ROOT_MAX_VERSION}")
+  STRING(REGEX REPLACE "^[0-9]+\\.([0-9][0-9])+\\/[0-9][0-9]+.*" "\\1" max_root_minor_vers "${ROOT_MAX_VERSION}")
+  STRING(REGEX REPLACE "^[0-9]+\\.[0-9][0-9]+\\/([0-9][0-9]+)" "\\1" max_root_patch_vers "${ROOT_MAX_VERSION}")
    
   # and now the version string given by qmake
   STRING(REGEX REPLACE "^([0-9]+)\\.[0-9][0-9]+\\/[0-9][0-9]+.*" "\\1" found_root_major_vers "${ROOTVERSION}")
@@ -69,6 +80,7 @@ IF (ROOT_CONFIG_EXECUTABLE)
 
   # compute an overall version number which can be compared at once
   MATH(EXPR req_vers "${req_root_major_vers}*10000 + ${req_root_minor_vers}*100 + ${req_root_patch_vers}")
+  MATH(EXPR max_vers "${max_root_major_vers}*10000 + ${max_root_minor_vers}*100 + ${max_root_patch_vers}")
   MATH(EXPR found_vers "${found_root_major_vers}*10000 + ${found_root_minor_vers}*100 + ${found_root_patch_vers}")
    
   IF (found_vers LESS req_vers)
@@ -77,6 +89,11 @@ IF (ROOT_CONFIG_EXECUTABLE)
   ELSE (found_vers LESS req_vers)
     SET(ROOT_FOUND TRUE)
   ENDIF (found_vers LESS req_vers)
+
+  IF (max_vers LESS found_vers)
+    MESSAGE("Current ROOT version \"${ROOTVERSION}\" is newer than 6.07/00, TMVA works differently now")
+    SET(ROOT_INSTALLED_VERSION_TOO_NEW TRUE)
+  ENDIF (max_vers LESS found_vers)
 
 ENDIF (ROOT_CONFIG_EXECUTABLE)
 
