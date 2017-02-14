@@ -37,3 +37,12 @@ RectangularPdf.h
 RooBCPGenDecayUt.h
 RooBMixAsymDecay.h
 DESTINATION include/doofit/roofit/pdfs)
+install(FILES
+${CMAKE_BINARY_DIR}/src/doofit/roofit/pdfs/BiasDelta_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/pdfs/DooBkgTagAsymDecay_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/pdfs/DooCubicSplineKnot_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/pdfs/DooCubicSplinePdf_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/pdfs/RectangularPdf_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/pdfs/RooBCPGenDecayUt_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/pdfs/RooBMixAsymDecay_dict_rdict.pcm
+DESTINATION lib)

@@ -46,3 +46,14 @@ add_dependencies(dfdecratecoeff dfdecratecoeff_dict)
 
 install(TARGETS dfamorosopdf dfapollonios dfgeneralizedhyperbolic dfipatia dfipatia2 dfjohnsonsu dfloggamma dfreparamghyp dfdecratecoeff DESTINATION lib)
 install(FILES RooIpatia2.h RooAmorosoPdf.h RooApollonios.h RooGeneralizedHyperbolic.h  RooJohnsonSU.h RooLogGamma.h RooReparamGHYP.h RooIpatia.h DecRateCoeff.h DESTINATION include/Urania)
+install(FILES
+${CMAKE_BINARY_DIR}/src/lhcb/Urania/RooIpatia2_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/lhcb/Urania/RooAmorosoPdf_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/lhcb/Urania/RooApollonios_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/lhcb/Urania/RooGeneralizedHyperbolic_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/lhcb/Urania/RooJohnsonSU_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/lhcb/Urania/RooLogGamma_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/lhcb/Urania/RooReparamGHYP_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/lhcb/Urania/RooIpatia_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/lhcb/Urania/DecRateCoeff_dict_rdict.pcm
+DESTINATION lib)

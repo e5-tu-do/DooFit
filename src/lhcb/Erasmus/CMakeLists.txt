@@ -17,3 +17,4 @@ add_dependencies(dfhornsdini dfhornsdini_dict)
 
 install(TARGETS dfhilldini dfhornsdini DESTINATION lib)
 install(FILES RooHILLdini.h RooHORNSdini.h DESTINATION include/Erasmus)
+install(FILES ${CMAKE_BINARY_DIR}/src/lhcb/Erasmus/RooHILLdini_dict_rdict.pcm ${CMAKE_BINARY_DIR}/src/lhcb/Erasmus/RooHORNSdini_dict_rdict.pcm DESTINATION lib)

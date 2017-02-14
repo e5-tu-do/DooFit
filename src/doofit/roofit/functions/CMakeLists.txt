@@ -133,4 +133,17 @@ DooDecRateCoeff.h
 ####DEPRECATED##################
 DESTINATION include/doofit/roofit/functions)
 
+install(FILES
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/CategoryToReal_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/Sum_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/Product_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/TripleProduct_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/CPCoefficient_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/LinearFunctionWithOffset_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/QuadraticFunctionWithOffset_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/AtanAcceptanceIncludingBeta_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/AtanAcceptance_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/TauCorrectionWithBetaFactor_dict_rdict.pcm
+${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/DooDecRateCoeff_dict_rdict.pcm
+DESTINATION lib)
 add_subdirectory(bdecay)
