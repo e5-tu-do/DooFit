@@ -32,16 +32,3 @@ install(FILES RooAmoroso.h RooCruijff.h RooAbsEffResModel.h RooAbsGaussModelEffi
 RooCubicSplineFun.h RooCubicSplineKnot.h RooEffConvGenContext.h
 RooEffResModel.h RooEffResAddModel.h RooGaussEfficiencyModel.h RooBinnedFun.h DESTINATION
 include/P2VV)
-install(FILES
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooAmoroso_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooCruijff_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooAbsEffResModel_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooAbsGaussModelEfficiency_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooCubicSplineFun_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooCubicSplineKnot_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooEffConvGenContext_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooEffResModel_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooEffResAddModel_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooGaussEfficiencyModel_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/P2VV/RooBinnedFun_dict_rdict.pcm
-DESTINATION lib)

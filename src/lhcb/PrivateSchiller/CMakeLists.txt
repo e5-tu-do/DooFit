@@ -19,9 +19,3 @@ add_dependencies(dfschillerroopdfs dfschillerroopdfsDict)
 install(TARGETS dfschillerroopdfs DESTINATION lib)
 install(FILES SchillerRooAbsEffResModel.h SchillerRooBinnedPdf.h SchillerRooEffConvGenContext.h SchillerRooEffResModel.h DESTINATION
 include/PrivateSchiller)
-install(FILES
-${CMAKE_BINARY_DIR}/src/lhcb/PrivateSchiller/SchillerRooAbsEffResModel_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/PrivateSchiller/SchillerRooBinnedPdf_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/PrivateSchiller/SchillerRooEffConvGenContext_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/lhcb/PrivateSchiller/SchillerRooEffResModel_dict_rdict.pcm
-DESTINATION lib)

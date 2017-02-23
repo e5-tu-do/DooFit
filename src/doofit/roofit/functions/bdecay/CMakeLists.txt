@@ -32,7 +32,3 @@ Coefficient2.h
 #CombinedTag.h
 #CombinedMistag.h
 DESTINATION include/doofit/roofit/functions/bdecay)
-install(FILES
-${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/bdecay/Coefficient_dict_rdict.pcm
-${CMAKE_BINARY_DIR}/src/doofit/roofit/functions/bdecay/Coefficient2_dict_rdict.pcm
-DESTINATION lib)

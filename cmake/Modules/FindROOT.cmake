@@ -310,6 +310,7 @@ macro (root_generate_dictionaries_local)
     set (_OUTTARGET ${_CLASS_BASE_NAME}_TARGET)
     set (_OUTDICT_HEADER ${_CLASS_BASE_NAME}_dict.h)
     set (_INHEADER_LINKDEF ${_CLASS_BASE_NAME}_LinkDef.h)
+    set (_OUTPCMDICT ${_CLASS_BASE_NAME}_dict_rdict.pcm)
     get_property(inc_dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 
     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_INHEADER_LINKDEF})
@@ -319,6 +320,7 @@ macro (root_generate_dictionaries_local)
         COMMAND LD_LIBRARY_PATH=${Root_LIBDIR}:$ENV{LD_LIBRARY_PATH} ${CMAKE_SOURCE_DIR}/cmake/Modules/rootcint_handler.py ${ROOTSYS}/bin/rootcint ${CMAKE_CURRENT_BINARY_DIR}/${_OUTDICT} ${CMAKE_CURRENT_SOURCE_DIR}/${_INHEADER} ${CMAKE_CURRENT_SOURCE_DIR}/${_INHEADER_LINKDEF} ${inc_dirs}
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_INHEADER}
         IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${_INHEADER}
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${_OUTPCMDICT} $ENV{DOOFITSYS}/lib
         COMMENT "Generating dictionary for class ${_CLASS_BASE_NAME} with LinkDef ${_INHEADER_LINKDEF}"
       )
     else (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_INHEADER_LINKDEF})
@@ -328,6 +330,7 @@ macro (root_generate_dictionaries_local)
         COMMAND LD_LIBRARY_PATH=${Root_LIBDIR}:$ENV{LD_LIBRARY_PATH} ${CMAKE_SOURCE_DIR}/cmake/Modules/rootcint_handler.py ${ROOTSYS}/bin/rootcint ${CMAKE_CURRENT_BINARY_DIR}/${_OUTDICT} ${CMAKE_CURRENT_SOURCE_DIR}/${_INHEADER}  ${inc_dirs}
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_INHEADER}
         IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${_INHEADER}
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${_OUTPCMDICT} $ENV{DOOFITSYS}/lib
         COMMENT "Generating dictionary for class ${_CLASS_BASE_NAME}"
       )
     endif (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_INHEADER_LINKDEF})
