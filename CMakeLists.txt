@@ -32,7 +32,7 @@ if(${APPLE})
 endif(${APPLE})
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   MESSAGE( STATUS "Building for Linux, switching on C++11 flags for Linux/gcc" )
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -pedantic -Wall -Wextra")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -std=c++14 -pedantic -Wall -Wextra")
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 install(FILES external/FindDooFit.cmake DESTINATION cmake/Modules)
@@ -55,6 +55,9 @@ include_directories(${GSL_INCLUDE_DIRS})
 link_directories(${GSL_LIBRARY_DIRS})
 
 set(ALL_LIBRARIES ${DooCore_LIBRARIES} ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
+
+MESSAGE( STATUS "Creating lib directory at $ENV{DOOFITSYS}")
+file(MAKE_DIRECTORY $ENV{DOOFITSYS}/lib)
 
 add_subdirectory(src)
 add_subdirectory(python)
