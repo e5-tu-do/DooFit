@@ -56,6 +56,9 @@ link_directories(${GSL_LIBRARY_DIRS})
 
 set(ALL_LIBRARIES ${DooCore_LIBRARIES} ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
 
+MESSAGE( STATUS "Creating lib directory at $ENV{DOOFITSYS}")
+file(MAKE_DIRECTORY $ENV{DOOFITSYS}/lib)
+
 add_subdirectory(src)
 add_subdirectory(python)
 add_subdirectory(TestWiese)
