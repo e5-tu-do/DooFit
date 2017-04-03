@@ -5,14 +5,19 @@ export PATH=$PATH:/usr/local/bin
 
 rvers=""
 dvvers=""
-for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
+for ver in `lb-run --list DaVinci | cut -d " " -f 1`
 do
-  rver=`bash PrintRootVersionForDVVersion $ver`
-  if [[ ! $rvers =~ $rver ]]; then
-    rvers="$rvers $rver"
-    dvvers="$dvvers $ver"
-    echo -n " $ver"
-  fi
+	# need to exclude v36r3p1 as it does not work properly for lb-run (Alex Birnkraut, 03.04.2017)
+	# it is the oldest DV version which should be abailabe via lb-run
+	if [[ ! "v36r3p1" == $ver ]]; then
+		# echo " $ver"
+		rver=`bash PrintRootVersionForDVVersion $ver`
+		if [[ ! $rvers =~ $rver ]]; then
+			rvers="$rvers $rver"
+			dvvers="$dvvers $ver"
+			echo -n " $ver"
+		fi
+	fi
 done
 
-#echo $dvvers
+echo $dvvers
