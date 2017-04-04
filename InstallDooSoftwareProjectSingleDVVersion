@@ -23,12 +23,24 @@ echo "Installing $module for DaVinci $dv_version from $base_dir"
 source /lhcbsoft/LHCbSoftwareSetup.sh > /dev/null 2>&1
 # source SetupProject.sh DaVinci $dv_version > /dev/null 2>&1
 # source LoadDooSoftware --ignore-local
-lb-run DaVinci/$dv_version LoadDooSoftware --ignore-local
 ROOTVERS=$(lb-run DaVinci/$dv_version root-config --version | tr "/" ".")
 ROOTSYS=$(lb-run DaVinci/$dv_version echo '$ROOTSYS')
 # setting the PATH and LD_LIBRARY_PATH to use the correct compiler and link with correct libraries
 PATH=$(lb-run DaVinci/$dv_version echo '$PATH'):$PATH
 LD_LIBRARY_PATH=$(lb-run DaVinci/$dv_version echo '$LD_LIBRARY_PATH'):$LD_LIBRARY_PATH
+#setting DooSoftware specific stuff
+DOOFITSYS=/doosoft/doofit/ROOT_v$ROOTVERS
+DOOCORESYS=/doosoft/doocore/ROOT_v$ROOTVERS
+DOOSELECTIONSYS=/doosoft/dooselection/ROOT_v$ROOTVERS
+BOOST_ROOT=$(dirname $(echo $LD_LIBRARY_PATH | tr ":" "\n" | grep Boost))
+
+echo "Using Boost from: $BOOST_ROOT"
+echo "Using DooFit from: $DOOFITSYS"
+echo "Using DooCore from: $DOOCORESYS"
+echo "Using DooSelection from: $DOOSELECTIONSYS"
+
+PATH=$PATH:$DOOCORESYS/bin:$DOOFITSYS/bin:$DOOSELECTIONSYS/bin
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOCORESYS/lib:$DOOFITSYS/lib:$DOOSELECTIONSYS/lib
 
 mkdir /tmp/$uuid
 cd /tmp/$uuid
