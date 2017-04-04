@@ -21,8 +21,11 @@ shift
 
 echo "Installing $module for DaVinci $dv_version from $base_dir"
 source /lhcbsoft/LHCbSoftwareSetup.sh > /dev/null 2>&1
-source SetupProject.sh DaVinci $dv_version > /dev/null 2>&1
-source LoadDooSoftware --ignore-local
+# source SetupProject.sh DaVinci $dv_version > /dev/null 2>&1
+# source LoadDooSoftware --ignore-local
+lb-run DaVinci/$dv_version LoadDooSoftware --ignore-local
+ROOTVERS=$(lb-run DaVinci/$dv_version root-config --version | tr "/" ".")
+
 mkdir /tmp/$uuid
 cd /tmp/$uuid
 echo "Starting build"
@@ -33,19 +36,19 @@ $CMAKE_EXECUTABLE -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $b
 rc=$?
 if [[ $rc != 0 ]] ; then
   make VERBOSE=""
-  echo 
-  echo 
-  echo 
-  echo 
+  echo
+  echo
+  echo
+  echo
   echo "ERROR: Could not complete build for DaVinci $dv_version"
-  echo 
-  echo 
-  echo 
-  echo 
+  echo
+  echo
+  echo
+  echo
   rm -rf /tmp/$uuid
   exit 1
 fi
-echo 
+echo
 echo "Deleting old version and installing new."
 echo
 rm -rf $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
