@@ -25,9 +25,10 @@ source /lhcbsoft/LHCbSoftwareSetup.sh > /dev/null 2>&1
 # source LoadDooSoftware --ignore-local
 lb-run DaVinci/$dv_version LoadDooSoftware --ignore-local
 ROOTVERS=$(lb-run DaVinci/$dv_version root-config --version | tr "/" ".")
-ROOTSYS=$(lb-run DaVinci/v42r0 python -c "import os; print os.environ['ROOTSYS']")
+ROOTSYS=$(lb-run DaVinci/v42r0 echo '$ROOTSYS')
 
-echo $ROOTSYS
+echo $PATH
+
 mkdir /tmp/$uuid
 cd /tmp/$uuid
 echo "Starting build"
