@@ -26,9 +26,9 @@ source /lhcbsoft/LHCbSoftwareSetup.sh > /dev/null 2>&1
 lb-run DaVinci/$dv_version LoadDooSoftware --ignore-local
 ROOTVERS=$(lb-run DaVinci/$dv_version root-config --version | tr "/" ".")
 ROOTSYS=$(lb-run DaVinci/$dv_version echo '$ROOTSYS')
-# setting the correct compiler versions from the cvmfs
-CC=$(lb-run DaVinci/$dv_version echo '$CC')
-CXX=$(lb-run DaVinci/$dv_version echo '$CXX')
+# setting the PATH and LD_LIBRARY_PATH to use the correct compiler and link with correct libraries
+PATH=$(lb-run DaVinci/$dv_version echo '$PATH'):$PATH
+LD_LIBRARY_PATH=$(lb-run DaVinci/$dv_version echo '$LD_LIBRARY_PATH'):$LD_LIBRARY_PATH
 
 mkdir /tmp/$uuid
 cd /tmp/$uuid
