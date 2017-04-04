@@ -21,26 +21,28 @@ shift
 
 echo "Installing $module for DaVinci $dv_version from $base_dir"
 source /lhcbsoft/LHCbSoftwareSetup.sh > /dev/null 2>&1
+IFS=$'\n'
+for i in $(lb-run DaVinci/$dv_version); do if [[ $i != *"BASH_FUNC_"* ]] && [[ $i != *"}" ]] && [[ $i != *"LC_CTYPE"* ]]; then export $i; fi; done
 # source SetupProject.sh DaVinci $dv_version > /dev/null 2>&1
-# source LoadDooSoftware --ignore-local
-ROOTVERS=$(lb-run DaVinci/$dv_version root-config --version | tr "/" ".")
-ROOTSYS=$(lb-run DaVinci/$dv_version echo '$ROOTSYS')
+source /doosoft/bin/LoadDooSoftware --ignore-local
+#ROOTVERS=$(lb-run DaVinci/$dv_version root-config --version | tr "/" ".")
+#ROOTSYS=$(lb-run DaVinci/$dv_version echo '$ROOTSYS')
 # setting the PATH and LD_LIBRARY_PATH to use the correct compiler and link with correct libraries
-PATH=$(lb-run DaVinci/$dv_version echo '$PATH'):$PATH
-LD_LIBRARY_PATH=$(lb-run DaVinci/$dv_version echo '$LD_LIBRARY_PATH'):$LD_LIBRARY_PATH
+#PATH=$(lb-run DaVinci/$dv_version echo '$PATH'):$PATH
+#LD_LIBRARY_PATH=$(lb-run DaVinci/$dv_version echo '$LD_LIBRARY_PATH'):$LD_LIBRARY_PATH
 #setting DooSoftware specific stuff
-DOOFITSYS=/doosoft/doofit/ROOT_v$ROOTVERS
-DOOCORESYS=/doosoft/doocore/ROOT_v$ROOTVERS
-DOOSELECTIONSYS=/doosoft/dooselection/ROOT_v$ROOTVERS
-BOOST_ROOT=$(dirname $(echo $LD_LIBRARY_PATH | tr ":" "\n" | grep Boost))
+#DOOFITSYS=/doosoft/doofit/ROOT_v$ROOTVERS
+#DOOCORESYS=/doosoft/doocore/ROOT_v$ROOTVERS
+#DOOSELECTIONSYS=/doosoft/dooselection/ROOT_v$ROOTVERS
+#BOOST_ROOT=$(dirname $(echo $LD_LIBRARY_PATH | tr ":" "\n" | grep Boost))
 
-echo "Using Boost from: $BOOST_ROOT"
-echo "Using DooFit from: $DOOFITSYS"
-echo "Using DooCore from: $DOOCORESYS"
-echo "Using DooSelection from: $DOOSELECTIONSYS"
+#echo "Using Boost from: $BOOST_ROOT"
+#echo "Using DooFit from: $DOOFITSYS"
+#echo "Using DooCore from: $DOOCORESYS"
+#echo "Using DooSelection from: $DOOSELECTIONSYS"
 
-PATH=$PATH:$DOOCORESYS/bin:$DOOFITSYS/bin:$DOOSELECTIONSYS/bin
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOCORESYS/lib:$DOOFITSYS/lib:$DOOSELECTIONSYS/lib
+#PATH=$PATH:$DOOCORESYS/bin:$DOOFITSYS/bin:$DOOSELECTIONSYS/bin
+#LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DOOCORESYS/lib:$DOOFITSYS/lib:$DOOSELECTIONSYS/lib
 
 mkdir /tmp/$uuid
 cd /tmp/$uuid
@@ -48,7 +50,7 @@ echo "Starting build"
 echo
 
 #cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir && make VERBOSE="" -j $num_cpu
-$CMAKE_EXECUTABLE -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir -DCMAKE_BUILD_TYPE=Release && make VERBOSE=""
+$CMAKE_EXECUTABLE -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir -DCMAKE_BUILD_TYPE=Release && make VERBOSE="" -j
 rc=$?
 if [[ $rc != 0 ]] ; then
   make VERBOSE=""
@@ -68,8 +70,8 @@ echo
 echo "Deleting old version and installing new."
 echo
 rm -rf $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
-mkdir -p $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
-make install
+mkdir -p $DOOSOFTROOT/$module/ROOT_v$ROOTVERS/lib
+make install -j
 cd /
 rm -rf /tmp/$uuid
 
