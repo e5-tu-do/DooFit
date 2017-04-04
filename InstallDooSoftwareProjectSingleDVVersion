@@ -33,7 +33,7 @@ echo "Starting build"
 echo
 
 #cmake -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir && make VERBOSE="" -j $num_cpu
-$CMAKE_EXECUTABLE -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir -DCMAKE_BUILD_TYPE=Release && make VERBOSE="" -j
+$CMAKE_EXECUTABLE -DCMAKE_INSTALL_PREFIX=$DOOSOFTROOT/$module/ROOT_v$ROOTVERS $base_dir -DCMAKE_BUILD_TYPE=Release && make VERBOSE=""
 rc=$?
 if [[ $rc != 0 ]] ; then
   make VERBOSE=""
@@ -54,7 +54,7 @@ echo "Deleting old version and installing new."
 echo
 rm -rf $DOOSOFTROOT/$module/ROOT_v$ROOTVERS
 mkdir -p $DOOSOFTROOT/$module/ROOT_v$ROOTVERS/lib
-make install -j
+make install
 cd /
 rm -rf /tmp/$uuid
 
