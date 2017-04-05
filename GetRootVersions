@@ -7,10 +7,9 @@ rvers=""
 dvvers=""
 for ver in `lb-run --list DaVinci | cut -d " " -f 1`
 do
-	# need to exclude v36r3p1 as it does not work properly for lb-run (Alex Birnkraut, 03.04.2017)
-	# it is the oldest DV version which should be abailabe via lb-run
-	if [[ ! "v36r3p1" == $ver ]]; then
-		# echo " $ver"
+	# older version are done afterwards with SetupProject.sh
+	ver_main=$(echo $ver|cut -c1-3)
+	if [[ ! "v36" == $ver_main ]]; then
 		rver=`bash PrintRootVersionForDVVersion $ver`
 		if [[ ! $rvers =~ $rver ]]; then
 			rvers="$rvers $rver"
@@ -20,4 +19,24 @@ do
 	fi
 done
 
+for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
+do
+	ver_main=$(echo $ver|cut -c1-3)
+	if [[ "v37" == $ver_main ]]; then
+		break
+	fi
+	dvvers_setup="$dvvers_setup $ver"
+done
+
+dvvers_setup_revers=$( echo $dvvers_setup | awk '{ for (i=NF; i>1; i--) printf("%s ",$i); print $1}')
+
+for ver in $dvvers_setup_revers
+do
+	rver=`bash PrintRootVersionForDVVersion $ver`
+	if [[ ! $rvers =~ $rver ]]; then
+		rvers="$rvers $rver"
+		dvvers="$dvvers $ver"
+		echo -n " $ver"
+	fi
+done
 # echo $dvvers
