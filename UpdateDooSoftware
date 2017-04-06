@@ -1,6 +1,6 @@
 #!/bin/bash
 
-packages="doocore doofit dooselection"
+packages="DooCore doofit dooselection"
 
 source /lhcbsoft/LHCbSoftwareSetup.sh #> /dev/null 2>&1
 export PATH=$PATH:/usr/local/bin
@@ -8,6 +8,8 @@ export PATH=$PATH:/usr/local/bin
 #echo "Probing ROOT versions"
 rvers=""
 dvvers=""
+dvvers_new=""
+dvvers_old=""
 echo -n "Installing for following DaVinci versions: "
 #for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
 #do
@@ -23,10 +25,21 @@ echo -n "Installing for following DaVinci versions: "
 dvvers=$(cat /doosoft/dv_versions)
 echo $dvvers
 
-#dvvers="v33r4"
+dvvers_new=${dvvers%v36r3*}
+dvvers_old=${dvvers##*v36r3p1}
+
+echo
+echo "Old DaVinci versions are: $dvvers_old"
+echo
+echo "New DaVinci versions are: $dvvers_new"
 
 for p in $packages; do
-  repo="ssh://git@git.e5.physik.tu-dortmund.de:10022/lhcbdoosoftware/$p.git"
+  if [[ $p == "DooCore" ]];
+  then
+    repo="https://github.com/e5-tu-do/$p.git"
+  else
+    repo="ssh://git@git.e5.physik.tu-dortmund.de:10022/lhcbdoosoftware/$p.git"
+  fi
   uuid=`uuidgen -r`
   tmpdir=/tmp/$uuid
   echo
@@ -34,12 +47,27 @@ for p in $packages; do
   echo
   git clone $repo $tmpdir
   cd $tmpdir
+  if [[ $p == "DooCore" ]];
+  then
+    tag="v2.10.0"
+  elif [[ $p == "doofit" ]];
+  then
+    tag="v2.31.0"
+  elif [[ $p == "dooselection" ]];
+  then
+    tag="v2.11.0"
+  fi
+  echo
+  echo "Checking out tag $tag of $p."
+  echo
+  git checkout $tag
+  InstallDooSoftwareProject $p $tmpdir "$dvvers_old"
   tag=`cat $tmpdir/install_version`
   echo
   echo "Checking out tag $tag of $p."
   echo
   git checkout $tag
-  InstallDooSoftwareProject $p $tmpdir "$dvvers"
+  InstallDooSoftwareProject $p $tmpdir "$dvvers_new"
   cd /
   rm -rf $tmpdir
 done
