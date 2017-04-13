@@ -11,16 +11,6 @@ dvvers=""
 dvvers_new=""
 dvvers_old=""
 echo -n "Installing for following DaVinci versions: "
-#for ver in `SetupProject.sh DaVinci --list-versions | cut -d " " -f 1`
-#do
-#  rver=`bash PrintRootVersionForDVVersion $ver`
-#  if [[ ! $rvers =~ $rver ]]; then
-#    rvers="$rvers $rver"
-#    dvvers="$dvvers $ver"
-#    echo -n " $ver"
-#  fi
-#done
-#echo ""
 
 dvvers=$(cat /doosoft/dv_versions)
 echo $dvvers
@@ -71,31 +61,3 @@ for p in $packages; do
   cd /
   rm -rf $tmpdir
 done
-
-#for p in $packages; do
-#  dir=$DOOSOFTROOT/repos/$p
-#  echo $dir
-#  if [ -d $dir/.svn ];
-#  then
-#    echo "$dir is a Subversion repository. Updating."
-#    sudo svn up $dir
-#    base=$dir/`cat $dir/install_version`
-#  fi
-#  if [ -d $dir/.git ];
-#  then
-#    echo "$dir is a git repository. Pulling changes."
-#    cd $dir
-#    sudo git checkout master
-#    sudo git pull
-#    tag=`cat $dir/install_version`
-#    sudo git checkout $tag
-#    base=$dir
-#  fi
-#  InstallDooSoftwareProject $p $base "$dvvers"
-#  if [ -d $dir/.git ];
-#  then
-#    echo "$dir is a git repository. Reverting to master."
-#    sudo git checkout master
-#  fi
-#done
-
