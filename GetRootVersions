@@ -14,7 +14,11 @@ do
 		if [[ ! $rvers =~ $rver ]]; then
 			rvers="$rvers $rver"
 			dvvers="$dvvers $ver"
-			echo -n " $ver"
+			if [[ $rver != "v5-99-05-lhcb" ]];
+				then
+				echo -n " $ver"
+				# echo " $rver"
+			fi
 		fi
 	fi
 done
@@ -36,7 +40,11 @@ do
 	if [[ ! $rvers =~ $rver ]]; then
 		rvers="$rvers $rver"
 		dvvers="$dvvers $ver"
-		echo -n " $ver"
+		if [[ $rver != "v5-99-05-lhcb" ]];
+			then
+			echo -n " $ver"
+			# echo " $rver"
+		fi
 	fi
 done
 # echo $dvvers

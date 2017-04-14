@@ -12,7 +12,7 @@ fi
 echo "Loading DooSoftware for ROOT $ROOTVERS"
 
 export DOOFITSYS=/doosoft/doofit/ROOT_v$ROOTVERS
-export DOOCORESYS=/doosoft/doocore/ROOT_v$ROOTVERS
+export DOOCORESYS=/doosoft/DooCore/ROOT_v$ROOTVERS
 export DOOSELECTIONSYS=/doosoft/dooselection/ROOT_v$ROOTVERS
 export BOOST_ROOT=$(dirname $(echo $LD_LIBRARY_PATH | tr ":" "\n" | grep Boost))
 
