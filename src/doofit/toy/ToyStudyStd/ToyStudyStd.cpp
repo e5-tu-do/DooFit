@@ -5,6 +5,7 @@
 #include <utility>
 #include <queue>
 #include <list>
+#include <csignal>
 
 // boost
 #include "boost/interprocess/sync/file_lock.hpp"
@@ -472,11 +473,10 @@ namespace toy {
       // double duration_sort(std::chrono::duration_cast<std::chrono::microseconds>(time_sort - time_correlation).count());
       // sdebug << "duration_sort = " << duration_sort*1e-3 << endmsg;
 
-      
       // if (param_name == "par_bssig_time_S_err") {
       //   minmax.second = 2.3;
       // }
-      
+
       // sinfo << "Plotting parameter " << param_name << " in range [" << minmax.first << "," << minmax.second << "]" << endmsg;
             
       RooRealVar* mean             = nullptr;
@@ -809,8 +809,8 @@ namespace toy {
     if (config_toystudy_.parameter_genvalue_read_file().size() > 0) {
       parameter_init_list.readFromFile(config_toystudy_.parameter_genvalue_read_file().c_str());
     }
-    
-    
+
+
     RooRealVar* parameters_at_limit = new RooRealVar("parameters_at_limit","number of parameters close to limits", 0.0, 0.0, 100.0);
     RooRealVar* minos_problems      = new RooRealVar("minos_problems","number of parameters with MINOS problems", 0.0, 0.0, 100.0);
     
@@ -867,6 +867,18 @@ namespace toy {
     TIterator* parameter_iter        = list_parameters.createIterator();
     RooRealVar* parameter            = NULL;
     bool problems                    = false;
+    RooArgSet list_fit_biases;
+    TIterator* fit_biases_iter       = list_parameters.createIterator();
+    RooRealVar par;
+    while ((parameter = (RooRealVar*)fit_biases_iter->Next())) {
+      par = CopyRooRealVar(*parameter);
+      par.removeRange();
+      par.setVal(0);
+      list_fit_biases.addClone(par);
+    }
+    if (config_toystudy_.parameter_fitbias_read_file().size() > 0) {
+      list_fit_biases.readFromFile(config_toystudy_.parameter_fitbias_read_file().c_str());
+    }
     
     while ((parameter = (RooRealVar*)parameter_iter->Next())) {
       TString pull_name = parameter->GetName() + TString("_pull");
@@ -881,6 +893,8 @@ namespace toy {
       TString lerr_desc = TString("Low error of ") + parameter->GetTitle();
       TString herr_name = parameter->GetName() + TString("_herr");
       TString herr_desc = TString("High error of ") + parameter->GetTitle();
+      TString fit_bias_name = parameter->GetName() + TString("_fit_bias");
+      TString fit_bias_desc = TString("Fit bias of ") + parameter->GetTitle();
       
       //double par_error = ((RooRealVar*)parameter_list.find(parameter->GetName()))->getError();
       
@@ -891,6 +905,7 @@ namespace toy {
       RooRealVar* lerr = new RooRealVar(lerr_name, lerr_desc, 0.0);
       RooRealVar* herr = new RooRealVar(herr_name, herr_desc, 0.0);
       RooRealVar& init = CopyRooRealVar(*(RooRealVar*)list_parameters_init.find(par.GetName()), std::string(init_name), std::string(init_desc));
+      RooRealVar& fit_bias = CopyRooRealVar(*(RooRealVar*)list_fit_biases.find(par.GetName()), std::string(fit_bias_name), std::string(fit_bias_desc));
 
       std::string ref_residual_name = std::string(parameter->GetName()) + std::string("_refresidual");
       std::string ref_residual_desc = std::string("#mu for ") + parameter->GetTitle();
@@ -918,7 +933,7 @@ namespace toy {
 
       double ref_residual_value(0.0);
       if (list_parameters_ref.getSize() > 0 && par_reference != nullptr) {
-        ref_residual_value = par.getVal() - par_reference->getVal();
+        ref_residual_value = par.getVal() - par_reference->getVal() - fit_bias.getVal();
         ref_residual->setVal(ref_residual_value);
       }
 
@@ -927,14 +942,14 @@ namespace toy {
       //                    Julian. We agree that a positive pull/residual should
       //                    reflect a parameter being overestimated. The previous
       //                    definition was in accordance with the CDF pull paper.
-      
+
       std::string name_parameter(parameter->GetName());
 
       // asymmetric error handling
       if (par.hasAsymError() && config_toystudy_.handle_asymmetric_errors()) {
         lerr_value = par.getErrorLo();
         herr_value = par.getErrorHi();
-        
+
         // if (name_parameter == "par_bdsig_time_C") {
         //   sdebug << "lerr_value = " << lerr_value << " -- herr_value = " << herr_value << endmsg;
         // }
@@ -943,23 +958,23 @@ namespace toy {
         herr->setVal(herr_value);
         
         if (par.getVal() <= init.getVal()) {
-          pull_value = -(init.getVal() - par.getVal())/herr_value;
+          pull_value = -(fit_bias.getVal() + init.getVal() - par.getVal())/herr_value;
         } else {
-          pull_value = -(par.getVal() - init.getVal())/lerr_value;
+          pull_value = -(par.getVal() - init.getVal() - fit_bias.getVal())/lerr_value;
         }
       } else {
         // if (name_parameter == "par_bdsig_time_C") {
         //   sdebug << "parameter par_bdsig_time_C ain't got no asymmetric errors." << endmsg;
         // }
-        pull_value = -(init.getVal() - par.getVal())/err_value;
+        pull_value = -(init.getVal() - par.getVal() - fit_bias.getVal())/err_value;
       }
       pull->setVal(pull_value);
       
-      double res_value = -(init.getVal() - par.getVal());
+      double res_value = -(fit_bias.getVal() + init.getVal() - par.getVal());
       res->setVal(res_value);
       
       err->setVal(err_value);
-            
+
       // if (name_parameter == "par_bssig_time_S") {
       //   if (herr_value > 0.6) {
       //     swarn << "Upper error of par_bssig_time_S is >0.6" << endmsg;
@@ -1031,6 +1046,7 @@ namespace toy {
     parameters.addOwned(*time_real);
     
     delete parameter_iter;
+    delete fit_biases_iter;
     return parameters;
   }
   
@@ -1104,7 +1120,8 @@ namespace toy {
         //   double diff           = std::fabs(par_init_value - par_fit_value)/par_fit_error;
 
         //   std::string paramname = parameter->GetName();
-        //   if ( paramname == "parSigTimeSin2b_blind" && std::fabs(0.37 - par_fit_value) < 0.003 ){
+        //   if ( paramname == "parSigTimeSin2b" && std::fabs(0.8 - par_fit_value) < 0.003 ){
+        //     return true;
         //     if (par_fit_error > 0.1) return false;
         //     if (par_fit_error < 0.01) return false;
         //     sinfo << "par_init_value = " << par_init_value << ", par_fit_value = " << par_fit_value << ", par_fit_error = " << par_fit_error << endmsg;

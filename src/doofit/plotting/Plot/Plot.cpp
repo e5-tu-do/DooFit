@@ -299,7 +299,7 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
   // sdebug << "distance to power of 10: " << distance_power10 << endmsg;
 
   std::string label_string(config_plot_.label_text());
-  double label_x(0.65), label_y(0.78);
+  double label_x(config_plot_.label_x()), label_y(config_plot_.label_y());
   TLatex label_base(0,0,label_string.c_str());
   TLatex label_add(0,0,plot_label_additional_.c_str());
   double xsize_base = label_base.GetXsize();
@@ -491,49 +491,45 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
       plot_frame->SetMaximum(1.0);
     }
 
-    // plot_frame->SetMinimum(-1.0);
-    // plot_frame->SetMaximum(+1.0);
-
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
-    ylabel.ReplaceAll("Events","Candidates");
+    ylabel.ReplaceAll("Events",config_plot_.y_axis_label());
     if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
 
     // linear plots in both axis
     if ((sc_x == kLinear || sc_x == kBoth)&&(sc_y == kLinear || sc_y == kBoth)) {
-      doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false, false);
-      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false);
+      doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, false);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, false);
     }
 
     //  logarithmic plots in x-axis
     if ((sc_x == kLogarithmic || sc_x == kBoth)&&(sc_y == kLinear || sc_y == kBoth)) {
-      doocore::lutils::PlotSimple(logx_plot_name, plot_frame, label, config_plot_.plot_directory(), false, true);
-      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, true);
+      doocore::lutils::PlotSimple(logx_plot_name, plot_frame, label, config_plot_.plot_directory(), false, true, false);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, true, false);
     }
 
     plot_frame->SetMinimum(min_plot);
     //  logarithmic plots in y-axis
     if ((sc_x == kLinear || sc_x == kBoth)&&(sc_y == kLogarithmic || sc_y == kBoth)) {
-      doocore::lutils::PlotSimple(logy_plot_name, plot_frame, label, config_plot_.plot_directory(), true, false);
-      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, false);
+      doocore::lutils::PlotSimple(logy_plot_name, plot_frame, label, config_plot_.plot_directory(), true, false, false);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, false, false);
     }
 
     //  logarithmic plots in x + y-axis
     if ((sc_x == kLogarithmic || sc_x == kBoth)&&(sc_y == kLogarithmic || sc_y == kBoth)) {
-      doocore::lutils::PlotSimple(logxy_plot_name, plot_frame, label, config_plot_.plot_directory(), true, true);
-      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, true);
+      doocore::lutils::PlotSimple(logxy_plot_name, plot_frame, label, config_plot_.plot_directory(), true, true, false);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, true, false);
     }
 
 
     plot_frame->SetMinimum(0.5);
-    plot_frame->SetMaximum(1.3*plot_frame->GetMaximum());
     if(plot_asymmetry_) {
       plot_frame->SetMinimum(-1.0);
       plot_frame->SetMaximum(1.0);
     }
 
 //    TString ylabel = plot_frame->GetYaxis()->GetTitle();
-//    ylabel.ReplaceAll("Events","Candidates");
+//    ylabel.ReplaceAll("Events",config_plot_.y_axis_label());
 //    plot_frame->GetYaxis()->SetTitle(ylabel);
 
     std::string gauss_suffix = "_gauss";
@@ -584,33 +580,33 @@ void Plot::PlotHandler(ScaleType sc_x, ScaleType sc_y) const {
     }
 
     TString ylabel = plot_frame->GetYaxis()->GetTitle();
-    ylabel.ReplaceAll("Events","Candidates");
+    ylabel.ReplaceAll("Events",config_plot_.y_axis_label());
     if(plot_asymmetry_) ylabel = "Raw mixing Asymmetry";
     plot_frame->GetYaxis()->SetTitle(ylabel);
 
     // linear plots in both axis
     if ((sc_x == kLinear || sc_x == kBoth)&&(sc_y == kLinear || sc_y == kBoth)) {
-      doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false, false);
-      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false);
+      doocore::lutils::PlotSimple(plot_name, plot_frame, label, config_plot_.plot_directory(), false, false, false);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, false, false);
     }
 
     //  logarithmic plots in x-axis
     if ((sc_x == kLogarithmic || sc_x == kBoth)&&(sc_y == kLinear || sc_y == kBoth)) {
-      doocore::lutils::PlotSimple(logx_plot_name, plot_frame, label, config_plot_.plot_directory(), false, true);
-      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, true);
+      doocore::lutils::PlotSimple(logx_plot_name, plot_frame, label, config_plot_.plot_directory(), false, true, false);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), false, true, false);
     }
 
     plot_frame->SetMinimum(min_plot);
     //  logarithmic plots in y-axis
     if ((sc_x == kLinear || sc_x == kBoth)&&(sc_y == kLogarithmic || sc_y == kBoth)) {
-      doocore::lutils::PlotSimple(logy_plot_name, plot_frame, label, config_plot_.plot_directory(), true, false);
-      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, false);
+      doocore::lutils::PlotSimple(logy_plot_name, plot_frame, label, config_plot_.plot_directory(), true, false, false);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, false, false);
     }
 
     //  logarithmic plots in x + y-axis
     if ((sc_x == kLogarithmic || sc_x == kBoth)&&(sc_y == kLogarithmic || sc_y == kBoth)) {
-      doocore::lutils::PlotSimple(logxy_plot_name, plot_frame, label, config_plot_.plot_directory(), true, true);
-      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, true);
+      doocore::lutils::PlotSimple(logxy_plot_name, plot_frame, label, config_plot_.plot_directory(), true, true, false);
+      doocore::lutils::PlotSimple("AllPlots"+config_plot_.plot_appendix(), plot_frame, label, config_plot_.plot_directory(), true, true, false);
     }
   }
 
