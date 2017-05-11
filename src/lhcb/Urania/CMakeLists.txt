@@ -12,6 +12,7 @@ root_generate_dictionaries_local(dfjohnsonsu_dict RooJohnsonSU.h)
 root_generate_dictionaries_local(dfloggamma_dict RooLogGamma.h)
 root_generate_dictionaries_local(dfreparamghyp_dict RooReparamGHYP.h)
 root_generate_dictionaries_local(dfdecratecoeff_dict DecRateCoeff.h)
+root_generate_dictionaries_local(dfdecratecoeffbd_dict DecRateCoeff_Bd.h)
 
 add_library(dfamorosopdf SHARED RooAmorosoPdf.cxx RooAmorosoPdf.h RooAmorosoPdf_dict.cc RooAmorosoPdf_dict.h)
 add_library(dfapollonios SHARED RooApollonios.cxx RooApollonios.h RooApollonios_dict.cc RooApollonios_dict.h)
@@ -22,6 +23,7 @@ add_library(dfjohnsonsu SHARED RooJohnsonSU.cxx RooJohnsonSU.h RooJohnsonSU_dict
 add_library(dfloggamma SHARED RooLogGamma.cxx RooLogGamma.h RooLogGamma_dict.cc RooLogGamma_dict.h)
 add_library(dfreparamghyp SHARED RooReparamGHYP.cxx RooReparamGHYP.h RooReparamGHYP_dict.cc RooReparamGHYP_dict.h)
 add_library(dfdecratecoeff SHARED DecRateCoeff.cxx DecRateCoeff.h DecRateCoeff_dict.cc DecRateCoeff_dict.h)
+add_library(dfdecratecoeffbd SHARED DecRateCoeff_Bd.cxx DecRateCoeff_Bd.h DecRateCoeff_Bd_dict.cc DecRateCoeff_Bd_dict.h DecRateCoeff_Bd_LinkDef.h)
 
 target_link_libraries(dfamorosopdf ${ALL_LIBRARIES})
 target_link_libraries(dfapollonios ${ALL_LIBRARIES})
@@ -32,6 +34,7 @@ target_link_libraries(dfjohnsonsu ${ALL_LIBRARIES})
 target_link_libraries(dfloggamma ${ALL_LIBRARIES})
 target_link_libraries(dfreparamghyp ${ALL_LIBRARIES})
 target_link_libraries(dfdecratecoeff ${ALL_LIBRARIES})
+target_link_libraries(dfdecratecoeffbd ${ALL_LIBRARIES})
 
 # see above, not sure if it works
 add_dependencies(dfamorosopdf dfamorosopdf_dict)
@@ -43,6 +46,7 @@ add_dependencies(dfjohnsonsu dfjohnsonsu_dict)
 add_dependencies(dfloggamma dfloggamma_dict)
 add_dependencies(dfreparamghyp dfreparamghyp_dict)
 add_dependencies(dfdecratecoeff dfdecratecoeff_dict)
+add_dependencies(dfdecratecoeffbd dfdecratecoeffbd_dict)
 
-install(TARGETS dfamorosopdf dfapollonios dfgeneralizedhyperbolic dfipatia dfipatia2 dfjohnsonsu dfloggamma dfreparamghyp dfdecratecoeff DESTINATION lib)
-install(FILES RooIpatia2.h RooAmorosoPdf.h RooApollonios.h RooGeneralizedHyperbolic.h  RooJohnsonSU.h RooLogGamma.h RooReparamGHYP.h RooIpatia.h DecRateCoeff.h DESTINATION include/Urania)
+install(TARGETS dfamorosopdf dfapollonios dfgeneralizedhyperbolic dfipatia dfipatia2 dfjohnsonsu dfloggamma dfreparamghyp dfdecratecoeff dfdecratecoeffbd DESTINATION lib)
+install(FILES RooIpatia2.h RooAmorosoPdf.h RooApollonios.h RooGeneralizedHyperbolic.h  RooJohnsonSU.h RooLogGamma.h RooReparamGHYP.h RooIpatia.h DecRateCoeff.h DecRateCoeff_Bd.h DESTINATION include/Urania)
