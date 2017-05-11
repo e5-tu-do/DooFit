@@ -50,9 +50,10 @@ public:
   virtual Int_t getCoefAnalyticalIntegral(Int_t coef, RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
   virtual Double_t coefAnalyticalIntegral(Int_t coef, Int_t code, const char* rangeName=0) const ;
   
-  //Int_t getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK=kTRUE) const;
-  //void initGenerator(Int_t code) ;
-  //void generateEvent(Int_t code);
+  // For Generator
+  Int_t getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK=kTRUE) const;
+  void initGenerator(Int_t code) ;
+  void generateEvent(Int_t code);
   
 protected:
   
@@ -71,10 +72,11 @@ protected:
   Int_t _basisExp ;
   Int_t _basisCos ;
   
-  //Double_t _genMixFrac ;   //! do not persist
+  // For Generator
+  Double_t _genMixFrac ;   //! do not persist
   //Double_t _genFlavFrac ;  //!
-  //Double_t _genFlavFracMix ;   //!
-  //Double_t _genFlavFracUnmix ; //!
+  Double_t _genFlavFracMix ;   //!
+  Double_t _genFlavFracUnmix ; //!
 
   
   ClassDef(RooBMixAsymDecay,1) // B Mixing decay PDF

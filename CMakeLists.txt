@@ -12,6 +12,7 @@ SET(CMAKE_CXX_FLAGS_PROFILING "-O3 -pg" CACHE STRING "Debug options." FORCE)
 
 #ADD_DEFINITIONS("-std=c++0x")
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{DOOMODULESYS}/cmake/Modules/")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{DOOCORESYS}/cmake/Modules/")
 
@@ -55,6 +56,9 @@ include_directories(${GSL_INCLUDE_DIRS})
 link_directories(${GSL_LIBRARY_DIRS})
 
 set(ALL_LIBRARIES ${DooCore_LIBRARIES} ${ROOT_LIBRARIES} ${ROOFIT_LIBRARIES} ${Boost_LIBRARIES})
+
+MESSAGE( STATUS "Creating lib directory at $ENV{DOOFITSYS}")
+file(MAKE_DIRECTORY $ENV{DOOFITSYS}/lib)
 
 add_subdirectory(src)
 add_subdirectory(python)
