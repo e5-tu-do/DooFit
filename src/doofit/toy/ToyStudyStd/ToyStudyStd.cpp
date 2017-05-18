@@ -37,6 +37,7 @@
 #include "RooRealVar.h"
 #include "RooGaussian.h"
 #include "RooPlot.h"
+#include "RooTreeDataStore.h"
 
 // from DooCore
 #include "doocore/io/MsgStream.h"
@@ -296,6 +297,7 @@ namespace toy {
   }
   
   void ToyStudyStd::EvaluateFitResults() {
+    RooDataSet::setDefaultStorageType(RooAbsData::Tree);
     const RooFitResult* dummy = nullptr;
     FitResultContainer fit_results(dummy, dummy, 0.0, 0.0, 0.0, 0.0, 0, 0);
     do {
@@ -386,6 +388,10 @@ namespace toy {
       serr << "Cannot plot as no fit results are evaluated." << endmsg;
       throw ExceptionCannotEvaluateFitResults();
     }
+
+    TFile data_tree_file("data_tree.root", "RECREATE");
+    (evaluated_values_->tree())->Write();
+    data_tree_file.Close();
  
     sinfo.Ruler();
     sinfo << "Plotting parameter distributions." << endmsg;
@@ -443,6 +449,51 @@ namespace toy {
             graph_value_error.GetYaxis()->SetTitle(error->GetTitle());
 
             std::string plot_name = param_name + "_err_corr" + postfix_error;
+            doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
+          }
+        }
+      }
+
+      std::vector<std::string> params_for_cor{"parS_pull",
+                                              "parC_pull"};
+
+      if (false && param_name.find("_pull") != std::string::npos) { //make configurable here
+
+        for (auto param_for_cor_name : params_for_cor) {
+          const RooRealVar* par_for_cor = dynamic_cast<const RooRealVar*>(parameters->find(param_for_cor_name.c_str()));
+
+          if (par_for_cor != nullptr && param_for_cor_name != param_name) {
+            sinfo << "Detailed! correlation plot for Parameter " << param_for_cor_name << " and " << param_name << "." << endmsg;
+
+            std::vector<double> values;
+            std::vector<double> par_for_cor_values;
+            values.reserve(evaluated_values_->numEntries());
+            par_for_cor_values.reserve(evaluated_values_->numEntries());
+
+            for (int i=0; i<evaluated_values_->numEntries(); ++i) {
+              const RooArgSet* params = evaluated_values_->get(i);
+              sdebug << param_name << " vs. " << param_for_cor_name << ": " << params->getRealValue(param_name.c_str()) << " vs. " << params->getRealValue(param_for_cor_name.c_str()) << endmsg;
+              double value = params->getRealValue(param_name.c_str());
+              double par_for_cor_value = params->getRealValue(param_for_cor_name.c_str());
+
+              if(isinf(value)){
+                value = 10000;
+              }
+              if(isinf(par_for_cor_value)){
+                par_for_cor_value = 10000;
+              }
+              values.push_back(value);
+              par_for_cor_values.push_back(par_for_cor_value);
+            }
+
+            TGraph graph_value_error(evaluated_values_->numEntries(), &values[0], &par_for_cor_values[0]);
+            TCanvas canvas("c", "c", 800, 600);
+            graph_value_error.Draw("AP");
+
+            graph_value_error.GetXaxis()->SetTitle(parameter->GetTitle());
+            graph_value_error.GetYaxis()->SetTitle(par_for_cor->GetTitle());
+
+            std::string plot_name = param_name + "_" + param_for_cor_name.c_str() + "_corr";
             doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
           }
         }
