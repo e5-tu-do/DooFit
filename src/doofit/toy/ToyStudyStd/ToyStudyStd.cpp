@@ -457,7 +457,7 @@ namespace toy {
       std::vector<std::string> params_for_cor{"parS_pull",
                                               "parC_pull"};
 
-      if (false && param_name.find("_pull") != std::string::npos) { //make configurable here
+      if (param_name.find("_pull") != std::string::npos) { //make configurable here
 
         for (auto param_for_cor_name : params_for_cor) {
           const RooRealVar* par_for_cor = dynamic_cast<const RooRealVar*>(parameters->find(param_for_cor_name.c_str()));
@@ -472,10 +472,11 @@ namespace toy {
 
             for (int i=0; i<evaluated_values_->numEntries(); ++i) {
               const RooArgSet* params = evaluated_values_->get(i);
-              sdebug << param_name << " vs. " << param_for_cor_name << ": " << params->getRealValue(param_name.c_str()) << " vs. " << params->getRealValue(param_for_cor_name.c_str()) << endmsg;
+              //sdebug << param_name << " vs. " << param_for_cor_name << ": " << params->getRealValue(param_name.c_str()) << " vs. " << params->getRealValue(param_for_cor_name.c_str()) << endmsg;
               double value = params->getRealValue(param_name.c_str());
               double par_for_cor_value = params->getRealValue(param_for_cor_name.c_str());
 
+              // Setting infs to 10000 manually, because they destroy 2D plots
               if(isinf(value)){
                 value = 10000;
               }
@@ -486,12 +487,12 @@ namespace toy {
               par_for_cor_values.push_back(par_for_cor_value);
             }
 
-            TGraph graph_value_error(evaluated_values_->numEntries(), &values[0], &par_for_cor_values[0]);
+            TGraph graph_pull_correlation(evaluated_values_->numEntries(), &values[0], &par_for_cor_values[0]);
             TCanvas canvas("c", "c", 800, 600);
-            graph_value_error.Draw("AP");
+            graph_pull_correlation.Draw("AP");
 
-            graph_value_error.GetXaxis()->SetTitle(parameter->GetTitle());
-            graph_value_error.GetYaxis()->SetTitle(par_for_cor->GetTitle());
+            graph_pull_correlation.GetXaxis()->SetTitle(parameter->GetTitle());
+            graph_pull_correlation.GetYaxis()->SetTitle(par_for_cor->GetTitle());
 
             std::string plot_name = param_name + "_" + param_for_cor_name.c_str() + "_corr";
             doocore::lutils::printPlot(&canvas, plot_name, config_toystudy_.plot_directory(), true);
