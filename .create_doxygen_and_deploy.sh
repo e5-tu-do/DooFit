@@ -26,7 +26,7 @@ then
 
 	echo "Uploading.."
 	# upload site
-	rsync -rq --delete --exclude=".*" html/ $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+	rsync -rq --delete --exclude=".*" -e "ssh -p 10023" html/ $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
 else
     echo '' >&2
     echo 'Warning: No documentation (html) files have been found!' >&2
