@@ -11,10 +11,7 @@ branches:
   - master
 env:
   global:
-    secure: gy0Y+anbOTh7Mg2BPtIriwUlcwRXuzolhW1LTtPNT6rvUje9IXBS1FD4uGtHLcSdkE/MWADgRjXaGqKPD9HZmxjGdhMl9GFplTvR1NpfLzZ6PB+2Tn9XSueH6ZwFLxJzD/cnVZOHDdEQbim+DETxjcg04rzXf0ZNnOLGd7dLIIXq55NwBKXXub/uqQ5e3x1Eus3M9zXksF9kEn1mm6/NfspSs7OmVWjNXsoTF6YDwGe3mGZKc+SsTe4tr30YcR6m+DwZ9ot0IOlCWwvD+616NrqG6GoQDB1oPj2fkdC9DvjQ0hx8LFINY5l/NUWH8x1KtWAtwadvYePqL8EU3fBlktvYzDcARYpoKAV296UluNld9X8/G67GMCDe6kPMd/BQTGQv2KFh+PvnP3lYRy0hg+sy+o5KbPLcvFeQ6C7kQJ6nqzFI2M7QdO8427vHzJA0118PB3e1mH0j89WMawf/wwdlQ6ZBTNI0lgykczQhs26L0hMFiACkG9gaVNAVo6RvrccfcvtDjVEdpxTXR3DUFa8d7ShLlOYe9sl9cbfS7pmCwR7toB/cgWUIjZHX+sJeIOA5NIDM/DykkLkjjkmSzPuMsoFXZKMYer2gFPgkRozNGCam53zhF1suUhiGCbaoqaW7D3cIDIdDzkITI2txUd/3sb+pnw8injMIVu4k8ic=
 script:
 - chmod +x .create_doxygen_and_deploy.sh
 - "./.create_doxygen_and_deploy.sh"
-env.global:
-- openssl aes-256-cbc -K $encrypted_b67e795066bc_key -iv $encrypted_b67e795066bc_iv
-  -in id_rsa_doofit.enc -out id_rsa_doofit -d
+

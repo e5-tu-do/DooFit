@@ -16,7 +16,7 @@ then
 
 	echo "Decrypting ssh key"
 	# decrypt private shh key
-	openssl aes-256-cbc -K $encrypted_2adf16dc08ac_key -iv $encrypted_2adf16dc08ac_iv -in id_rsa_doofit.enc -out id_rsa_doofit -d
+	openssl aes-256-cbc -K $encrypted_b67e795066bc_key -iv $encrypted_b67e795066bc_iv -in id_rsa_doofit.enc -out id_rsa_doofit -d
 
 	echo "Starting ssh agent"
 	# start ssh-agent and add the key
