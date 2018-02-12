@@ -10,13 +10,9 @@ doxygen doxygen.conf
 if [ -d "html" ] && [ -f "html/index.html" ];
 then
 	# add remote ssh-key to key-storage
-	echo "before adding host to known hosts"
-	cat ~/.ssh/known_hosts
 	# first add remote host to known hosts
 	ssh-keyscan -t rsa -p 10023 $DEPLOY_HOST 2> /dev/null | sort -u - ~/.ssh/known_hosts -o ~/.ssh/known_hosts
-	echo "Host should be added to known hosts"
-	cat ~/.ssh/known_hosts
-	echo "Decrypting ssh key"
+
 	# decrypt private shh key
 	openssl aes-256-cbc -K $encrypted_b67e795066bc_key -iv $encrypted_b67e795066bc_iv -in id_rsa_doofit.enc -out id_rsa_doofit -d
 	# start ssh-agent and add the key
