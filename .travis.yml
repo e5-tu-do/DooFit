@@ -14,4 +14,3 @@ env:
 script:
 - chmod +x .create_doxygen_and_deploy.sh
 - "./.create_doxygen_and_deploy.sh"
-
