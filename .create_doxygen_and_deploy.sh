@@ -13,7 +13,8 @@ then
 	echo "before adding host to known hosts"
 	cat ~/.ssh/known_hosts
 	# first add remote host to known hosts
-	ssh-keyscan -t rsa $DEPLOY_HOST 2> /dev/null | sort -u - ~/.ssh/known_hosts -o ~/.ssh/known_hosts
+	# ssh-keyscan -t rsa $DEPLOY_HOST 2> /dev/null | sort -u - ~/.ssh/known_hosts -o ~/.ssh/known_hosts
+	ssh-keyscan -t rsa $DEPLOY_HOST >> ~/.ssh/known_hosts
 	echo "Host should be added to known hosts"
 	cat ~/.ssh/known_hosts
 	echo "Decrypting ssh key"
