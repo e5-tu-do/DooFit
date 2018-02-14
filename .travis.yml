@@ -14,7 +14,7 @@ branches:
   - master
 script:
   - cd .. && git clone https://github.com/alexbirne/deploy_doxygen.git
-  - cd DooCore && doxygen doxygen.conf
+  - cd DooFit && doxygen doxygen.conf
   - mv html ../deploy_doxygen
   - cp id_rsa_doofit.enc ../deploy_doxygen
   - cd ../deploy_doxygen
