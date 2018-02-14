@@ -1,3 +1,6 @@
+sudo: required
+services:
+  - docker
 addons:
   apt:
     packages:
@@ -9,8 +12,11 @@ addons:
 branches:
   only:
   - master
-env:
-  global:
 script:
-- chmod +x .create_doxygen_and_deploy.sh
-- "./.create_doxygen_and_deploy.sh"
+  - cd .. && git clone https://github.com/alexbirne/deploy_doxygen.git
+  - cd DooCore && doxygen doxygen.conf
+  - mv html ../deploy_doxygen
+  - cp id_rsa_doofit.enc ../deploy_doxygen
+  - cd ../deploy_doxygen
+  - docker build --build-arg DECRYPTED_KEY=id_rsa_doofit.enc -t quick_doxygen_uploader .
+  - docker run -e DEPLOY_HOST=$DEPLOY_HOST -e DEPLOY_USER=$DEPLOY_USER -e DEPLOY_PATH=$DEPLOY_PATH -e DECRYPTED_SSH_KEY=id_rsa_doofit.enc -e decrypted_key=$encrypted_2f2e4db5ecb3_key -e encrypted_iv=$encrypted_2f2e4db5ecb3_iv quick_doxygen_uploader:latest
